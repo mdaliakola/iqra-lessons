@@ -2,16 +2,19 @@
 <html lang="en" class="dark">
 <head>
 <script>
-  if (window.top === window.self) {
-    document.documentElement.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px; font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
-  }
+if(window.top===window.self){
+document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IQRA VIRTUAL LAB - Gravitation Interactive Physics</title>
+<title>IQRA VIRTUAL LAB - Gravitation & Astrophysics</title>
 
 <!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Chart.js CDN for Real-Time Physics Graphs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,7 +22,7 @@
 <!-- Google Fonts (Inter & Noto Nastaliq Urdu) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
 
 <script>
   tailwind.config = {
@@ -31,12 +34,19 @@
           urdu: ['Noto Nastaliq Urdu', 'serif'],
         },
         colors: {
-          brand: {
-            50: '#f0f9ff',
-            500: '#06b6d4',
-            600: '#0891b2',
-            700: '#0e7490',
-            900: '#164e63',
+          space: {
+            950: '#030712',
+            900: '#0b0f19',
+            800: '#111827',
+            700: '#1f2937',
+          },
+          neon: {
+            cyan: '#06b6d4',
+            blue: '#3b82f6',
+            purple: '#8b5cf6',
+            pink: '#ec4899',
+            emerald: '#10b981',
+            amber: '#f59e0b',
           }
         }
       }
@@ -45,1726 +55,994 @@
 </script>
 
 <style>
-  /* Custom Scrollbar for Smart Panels */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #0f172a;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 5px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #0891b2;
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #030712; }
+  ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+  .glass-card {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* Urdu Text Adjustments */
+  .glass-card-glow {
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.15);
+  }
+
   .urdu-text {
     font-family: 'Noto Nastaliq Urdu', serif;
-    line-height: 2.2;
+    line-height: 2.3;
     direction: rtl;
   }
 
-  /* Range Input Touch Enhancements */
   input[type=range] {
     accent-color: #06b6d4;
-    height: 12px;
-    border-radius: 6px;
+    height: 10px;
+    border-radius: 5px;
   }
 
-  /* Intro Splash Animation */
   #intro-splash {
-    animation: fadeOut 0.6s ease-in-out 2.2s forwards;
+    animation: fadeOutSplash 0.7s ease-in-out 2.0s forwards;
   }
   
-  @keyframes fadeOut {
+  @keyframes fadeOutSplash {
     0% { opacity: 1; visibility: visible; }
     100% { opacity: 0; visibility: hidden; }
   }
 
-  .glow-text {
-    text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+  .glow-title {
+    text-shadow: 0 0 30px rgba(6, 182, 212, 0.8), 0 0 60px rgba(139, 92, 246, 0.4);
   }
 
-  canvas {
-    touch-action: none;
+  .pulse-glow {
+    animation: pulseGlow 2s infinite alternate;
   }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px rgba(6, 182, 212, 0.3); }
+    100% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.8); }
+  }
+
+  canvas { touch-action: none; }
 </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white">
 
-<!-- 1-2 Second Full-screen Intro Animation -->
-<div id="intro-splash" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center border-b-4 border-cyan-500">
-  <div class="animate-bounce mb-6">
-    <i class="fa-solid fa-atom text-cyan-400 text-8xl drop-shadow-[0_0_25px_rgba(6,182,212,0.8)]"></i>
+<body class="bg-space-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+
+<!-- 2-Second NASA/Apple Style Intro Screen -->
+<div id="intro-splash" class="fixed inset-0 z-50 bg-space-950 flex flex-col items-center justify-center p-6 text-center border-b-4 border-cyan-500">
+  <div class="relative mb-8">
+    <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 blur-2xl opacity-60 animate-pulse"></div>
+    <i class="fa-solid fa-orbit text-cyan-400 text-8xl relative z-10 animate-spin" style="animation-duration: 8s;"></i>
   </div>
-  <h1 class="text-5xl md:text-7xl font-extrabold tracking-wider text-white glow-text mb-4">
+  <h1 class="text-5xl md:text-7xl font-black tracking-widest text-white glow-title mb-3">
     IQRA VIRTUAL LAB
   </h1>
-  <p class="text-2xl md:text-3xl text-cyan-400 font-semibold tracking-wide">
-    Gravitation & Planetary Dynamics
+  <p class="text-2xl md:text-3xl text-cyan-400 font-bold tracking-wider">
+    GRAVITATION & CELESTIAL DYNAMICS
   </p>
   <div class="mt-8 flex items-center space-x-3 text-slate-400 text-lg">
     <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-2xl"></i>
-    <span>Initializing Smart Panel Virtual Experiments...</span>
+    <span>Loading Interactive Physics Engine...</span>
   </div>
 </div>
 
-<!-- Header Navigation -->
-<header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 shadow-lg">
+<header class="bg-space-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
     <!-- Brand Title -->
     <div class="flex items-center space-x-3">
-      <div class="bg-cyan-500/10 p-2.5 rounded-xl border border-cyan-500/30">
-        <i class="fa-solid fa-orbit text-cyan-400 text-3xl"></i>
+      <div class="bg-cyan-500/10 p-2.5 rounded-2xl border border-cyan-500/30">
+        <i class="fa-solid fa-atom text-cyan-400 text-3xl"></i>
       </div>
       <div>
         <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-2">
           IQRA <span class="text-cyan-400 font-light">VIRTUAL LAB</span>
         </h1>
-        <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Interactive Physics Module • Gravitation</p>
+        <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Interactive Physics Simulator • Smart Panel Suite</p>
       </div>
     </div>
 
-    <!-- Smart Panel Quick Tools -->
+    <!-- Live XP & Toolbar -->
     <div class="flex items-center space-x-3">
-      <button onclick="resetCurrentExperiment()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 font-bold px-4 py-2.5 rounded-xl transition text-base flex items-center gap-2 active:scale-95 shadow">
-        <i class="fa-solid fa-rotate-right"></i>
-        <span>Reset Lab</span>
+      <!-- XP Badge -->
+      <div class="bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl flex items-center gap-2">
+        <i class="fa-solid fa-trophy text-amber-400 text-lg"></i>
+        <span class="text-xs font-semibold text-slate-400 uppercase">XP</span>
+        <span id="user-xp" class="text-lg font-black text-amber-400 font-mono">0</span>
+      </div>
+
+      <!-- Language Toggle -->
+      <button onclick="toggleLanguage()" id="lang-btn" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-2">
+        <i class="fa-solid fa-language"></i>
+        <span id="lang-label">Urdu / اردو</span>
       </button>
-      <button onclick="toggleFullScreen()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2.5 rounded-xl transition text-base flex items-center gap-2 active:scale-95 shadow">
+
+      <!-- Compare Mode -->
+      <button onclick="toggleCompareModal()" class="bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-2">
+        <i class="fa-solid fa-columns"></i>
+        <span>Compare Mode</span>
+      </button>
+
+      <!-- Formula Builder -->
+      <button onclick="toggleFormulaModal()" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-2">
+        <i class="fa-solid fa-square-root-variable"></i>
+        <span>Formulas</span>
+      </button>
+
+      <!-- Full Screen -->
+      <button onclick="toggleFullScreen()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-2">
         <i class="fa-solid fa-expand"></i>
-        <span>Full Screen</span>
       </button>
     </div>
   </div>
 
-  <!-- Navigation Tabs (Horizontally Scrollable for Touch Panels) -->
-  <div class="bg-slate-950 border-t border-slate-800/80 px-4 py-2 overflow-x-auto whitespace-nowrap scrollbar-thin">
-    <div class="flex space-x-2 min-w-max mx-auto max-w-7xl" id="tab-container">
-      <button onclick="switchTab('circular')" id="tab-circular" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-cyan-600 text-white shadow-md">
-        <i class="fa-solid fa-circle-notch"></i> Circular & Centripetal
-      </button>
-      <button onclick="switchTab('kepler')" id="tab-kepler" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-ellipsis"></i> Kepler's 3 Laws
-      </button>
-      <button onclick="switchTab('universal')" id="tab-universal" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-magnet"></i> Universal Law ($G$)
-      </button>
-      <button onclick="switchTab('variation')" id="tab-variation" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-globe"></i> Variations in $g$
-      </button>
-      <button onclick="switchTab('mass-weight')" id="tab-mass-weight" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-weight-hanging"></i> Mass vs Weight
-      </button>
-      <button onclick="switchTab('freefall')" id="tab-freefall" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-arrow-down-long"></i> Freefall & Motion
-      </button>
-      <button onclick="switchTab('escape')" id="tab-escape" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-rocket"></i> Escape Velocity & $PE$
-      </button>
-      <button onclick="switchTab('waves')" id="tab-waves" class="tab-btn px-5 py-3 rounded-xl font-bold text-base transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        <i class="fa-solid fa-water"></i> Gravitational Waves
-      </button>
+  <div class="bg-space-950 border-t border-slate-800/80 px-4 py-2 overflow-x-auto whitespace-nowrap scrollbar-thin">
+    <div class="flex space-x-2 min-w-max mx-auto max-w-7xl items-center" id="module-chip-container">
+      <span class="text-xs font-bold uppercase text-slate-500 mr-2 flex items-center gap-1">
+        <i class="fa-solid fa-list-check"></i> 29 Modules:
+      </span>
+      <!-- Module chips generated dynamically by JS -->
     </div>
   </div>
 </header>
 
-<!-- Main Interactive Stage -->
-<main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-8">
+<main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-  <!-- ==================== TAB 1: CIRCULAR MOTION & CENTRIPETAL FORCE ==================== -->
-  <section id="content-circular" class="tab-content block space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <!-- Interactive Experiment Canvas (Left Column) -->
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 1: Rotating Mass Simulation
-          </span>
-          <span class="bg-cyan-900/60 text-cyan-300 text-xs px-3 py-1 rounded-full border border-cyan-500/30 font-mono">Live Physics Engine</span>
-        </div>
-
-        <!-- Canvas Container -->
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-circular" width="600" height="380" class="w-full h-auto cursor-pointer"></canvas>
-          
-          <div id="string-broken-alert" class="hidden absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-6 py-2 rounded-full font-bold shadow-lg text-lg animate-pulse">
-            <i class="fa-solid fa-triangle-exclamation mr-2"></i> String Snapped! Ball flies along Tangent!
-          </div>
-        </div>
-
-        <!-- Smart Touch Controls -->
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Angular Speed ($\omega$):</span>
-              <span id="circular-speed-val" class="text-cyan-400 font-mono">3.0 rad/s</span>
-            </label>
-            <input type="range" id="circular-speed" min="1" max="8" step="0.5" value="3" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Radius ($r$):</span>
-              <span id="circular-radius-val" class="text-cyan-400 font-mono">120 px</span>
-            </label>
-            <input type="range" id="circular-radius" min="60" max="160" step="10" value="120" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Mass ($m$):</span>
-              <span id="circular-mass-val" class="text-cyan-400 font-mono">2.0 kg</span>
-            </label>
-            <input type="range" id="circular-mass" min="0.5" max="5" step="0.5" value="2" class="w-full mt-2 cursor-pointer">
-          </div>
-        </div>
-
-        <div class="mt-4 flex flex-wrap gap-3">
-          <button onclick="cutString()" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-xl shadow transition text-lg flex items-center justify-center gap-2 active:scale-95">
-            <i class="fa-solid fa-scissors"></i> Snap / Cut String
-          </button>
-          <button onclick="resetCircular()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 px-6 rounded-xl border border-slate-700 shadow transition text-lg active:scale-95">
-            Reset String
-          </button>
-        </div>
+  <!-- Active Hub Banner -->
+  <div class="glass-card-glow p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div id="hub-icon-container" class="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl text-2xl">
+        <i class="fa-solid fa-circle-notch"></i>
       </div>
-
-      <!-- Bilingual Explanations (Right Column) -->
-      <div class="lg:col-span-5 space-y-4">
-        <!-- English Section -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-book-open"></i> Circular Motion & Centripetal Force
-          </h2>
-          <p class="text-slate-300 text-lg leading-relaxed">
-            When an object moves in a circular path at constant speed, its direction changes continuously. This causes continuous acceleration directed towards the center. 
-          </p>
-          <div class="mt-3 bg-slate-950 p-3 rounded-lg border border-cyan-500/30 text-cyan-300 font-mono text-center text-lg">
-            $F_c = \frac{m \cdot v^2}{r}$
-          </div>
-          <p class="mt-2 text-sm text-slate-400">
-            • <strong>Red Vector:</strong> Centripetal Force (towards center).<br>
-            • <strong>Green Vector:</strong> Tangential Velocity (direction of motion).
-          </p>
-        </div>
-
-        <!-- Urdu Section -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> دائروی حرکت اور مرکز مائل قوت
-          </h2>
-          <p class="text-slate-200 text-xl urdu-text leading-loose">
-            جب کوئی جسم کسی دائرے میں گھومتا ہے تو اس کی رفتار کی سمت مسلسل بدلتی رہتی ہے۔ اس سمت کو تبدیل کرنے کے لیے دائرے کے مرکز کی طرف ایک قوت کی ضرورت ہوتی ہے جسے <strong>مرکز مائل قوت (Centripetal Force)</strong> کہتے ہیں۔ اگر ڈوری ٹوٹ جائے تو جسم مماس (Tangent) کی سمت میں سیدھا نکل جاتا ہے۔
-          </p>
-        </div>
+      <div>
+        <h2 id="hub-title" class="text-xl md:text-2xl font-bold text-white">Hub 1: Dynamics & Circular Motion</h2>
+        <p id="hub-subtitle" class="text-sm text-slate-400">Discover force, velocity vectors, centripetal acceleration & inertia.</p>
       </div>
-
     </div>
-  </section>
 
-  <!-- ==================== TAB 2: KEPLER'S LAWS ==================== -->
-  <section id="content-kepler" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 2: Planetary Orbit Simulator
-          </span>
-          <div class="flex gap-2">
-            <button onclick="setKeplerLaw(1)" id="btn-kepler-1" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold text-sm">1st Law</button>
-            <button onclick="setKeplerLaw(2)" id="btn-kepler-2" class="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg font-bold text-sm">2nd Law</button>
-            <button onclick="setKeplerLaw(3)" id="btn-kepler-3" class="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg font-bold text-sm">3rd Law</button>
-          </div>
-        </div>
-
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-kepler" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Orbit Eccentricity ($e$):</span>
-              <span id="kepler-ecc-val" class="text-cyan-400 font-mono">0.60</span>
-            </label>
-            <input type="range" id="kepler-ecc" min="0.10" max="0.85" step="0.05" value="0.60" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Simulation Speed:</span>
-              <span id="kepler-speed-val" class="text-cyan-400 font-mono">1.0x</span>
-            </label>
-            <input type="range" id="kepler-speed" min="0.2" max="3.0" step="0.2" value="1.0" class="w-full mt-2 cursor-pointer">
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-sun"></i> Kepler's Three Laws of Planetary Motion
-          </h2>
-          <ul class="text-slate-300 text-base space-y-2">
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">1st Law (Ellipses):</strong> The orbit of a planet is an ellipse with the Sun at one of the two foci.
-            </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">2nd Law (Equal Areas):</strong> A line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time. (Planet moves faster near Perihelion!).
-            </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">3rd Law (Harmonic):</strong> The square of the orbital period ($T^2$) is directly proportional to the cube of the semi-major axis ($a^3$): <span class="text-cyan-400 font-mono">$T^2 \propto a^3$</span>.
-            </li>
-          </ul>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> کیپلر کے قوانینِ فلکیات
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            <strong>پہلا قانون:</strong> سیاروں کا مدار بیضوی (Ellipse) ہوتا ہے اور سورج اس کے ایک مرکز (Focus) پر واقع ہوتا ہے۔<br>
-            <strong>دوسرا قانون:</strong> سیارے کو سورج سے ملانے والا خط مساوی وقت میں مساوی رقبہ طے کرتا ہے۔<br>
-            <strong>تیسرا قانون:</strong> سیارے کے گردش کے وقت کا مربع ($T^2$) درمیانی فاصلے کے مکعب ($a^3$) کے راست تناسب میں ہوتا ہے۔
-          </p>
-        </div>
-      </div>
-
+    <!-- Learning Cycle Phase Indicators -->
+    <div class="flex items-center gap-2 text-xs font-bold">
+      <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">1. Observe</span>
+      <i class="fa-solid fa-chevron-right text-slate-600"></i>
+      <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-400">2. Predict</span>
+      <i class="fa-solid fa-chevron-right text-slate-600"></i>
+      <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-400">3. Experiment</span>
+      <i class="fa-solid fa-chevron-right text-slate-600"></i>
+      <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-400">4. Discover</span>
     </div>
-  </section>
+  </div>
 
-  <!-- ==================== TAB 3: NEWTON'S UNIVERSAL LAW ==================== -->
-  <section id="content-universal" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <!-- Primary Interactive Lab Workspace Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- Left Column: Simulation Canvas & Controls (7 Cols) -->
+    <div class="lg:col-span-7 space-y-4">
       
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
+      <!-- Canvas Card -->
+      <div class="glass-card rounded-2xl p-4 relative overflow-hidden">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 3: Gravitational Attractometer
-          </span>
-          <span class="text-sm font-mono text-cyan-300">G = 6.674 × 10⁻¹¹ N·m²/kg²</span>
-        </div>
-
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-universal" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Mass $m_1$:</span>
-              <span id="uni-m1-val" class="text-cyan-400 font-mono">500 kg</span>
-            </label>
-            <input type="range" id="uni-m1" min="100" max="1000" step="50" value="500" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Mass $m_2$:</span>
-              <span id="uni-m2-val" class="text-cyan-400 font-mono">500 kg</span>
-            </label>
-            <input type="range" id="uni-m2" min="100" max="1000" step="50" value="500" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Distance ($r$):</span>
-              <span id="uni-r-val" class="text-cyan-400 font-mono">10 m</span>
-            </label>
-            <input type="range" id="uni-r" min="4" max="25" step="1" value="10" class="w-full mt-2 cursor-pointer">
-          </div>
-        </div>
-
-        <div class="mt-4 p-4 bg-cyan-950/40 border border-cyan-500/30 rounded-xl text-center">
-          <div class="text-slate-400 text-sm uppercase tracking-widest font-semibold">Calculated Gravitational Force ($F$)</div>
-          <div id="uni-force-display" class="text-3xl md:text-4xl font-extrabold text-cyan-400 font-mono mt-1">1.67 × 10⁻7 N</div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-atom"></i> Universal Law of Gravitation
-          </h2>
-          <p class="text-slate-300 text-lg leading-relaxed">
-            Every particle attracts every other particle in the universe with a force directly proportional to the product of their masses and inversely proportional to the square of the distance between them.
-          </p>
-          <div class="mt-3 bg-slate-950 p-4 rounded-xl border border-cyan-500/30 text-center">
-            <span class="text-2xl font-mono text-cyan-300 font-bold">$F = G \frac{m_1 \cdot m_2}{r^2}$</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> نیوٹن کا عالمگیر قانونِ کششِ ثقل
-          </h2>
-          <p class="text-slate-200 text-xl urdu-text leading-loose">
-            کائنات کا ہر جسم دوسرے جسم کو اپنی طرف کھینچتا ہے۔ یہ قوتِ کشش دونوں اجسام کی کمیتوں (Masses) کے حاصلِ ضرب کے راست تناسب میں اور ان کے درمیانی فاصلے کے مربع کے معکوس تناسب میں ہوتی ہے۔
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== TAB 4: VARIATION IN G ==================== -->
-  <section id="content-variation" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 4: Earth Probe & $g$-Meter
-          </span>
-          <span class="text-sm font-mono text-cyan-300">Standard $g = 9.81 \text{ m/s}^2$</span>
-        </div>
-
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-variation" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
-
-        <!-- Controls for Height, Depth, Latitude -->
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Altitude Above Surface ($h$):</span>
-              <span id="var-h-val" class="text-cyan-400 font-mono">0 km</span>
-            </label>
-            <input type="range" id="var-h" min="0" max="6400" step="100" value="0" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Depth Inside Earth ($d$):</span>
-              <span id="var-d-val" class="text-cyan-400 font-mono">0 km</span>
-            </label>
-            <input type="range" id="var-d" min="0" max="6400" step="100" value="0" class="w-full mt-2 cursor-pointer">
-          </div>
-        </div>
-
-        <div class="mt-4 flex items-center justify-between p-4 bg-slate-950 border border-slate-800 rounded-xl">
-          <div>
-            <span class="text-slate-400 text-sm font-semibold">Surface Position:</span>
-            <div class="flex gap-3 mt-1">
-              <button onclick="setLatitude('equator')" id="btn-equator" class="px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm">Equator (Bulge)</button>
-              <button onclick="setLatitude('pole')" id="btn-pole" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-sm">Poles (Flattened)</button>
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-slate-400 text-xs font-semibold uppercase">Effective Acceleration ($g'$)</span>
-            <div id="var-g-display" class="text-3xl font-black text-cyan-400 font-mono">9.81 m/s²</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-mountain text-cyan-400"></i> Variations in Acceleration Due to Gravity ($g$)
-          </h2>
-          <ul class="text-slate-300 text-base space-y-2">
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">1. Shape of Earth:</strong> Earth is flattened at poles ($r$ is smaller $\rightarrow g = 9.83 \text{ m/s}^2$) and bulges at equator ($r$ is larger $\rightarrow g = 9.78 \text{ m/s}^2$).
-            </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">2. Height ($h$):</strong> As altitude increases, distance $r$ increases, so $g$ decreases: <span class="text-cyan-400 font-mono">$g' = g \left(\frac{R}{R+h}\right)^2$</span>.
-            </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <strong class="text-cyan-300">3. Depth ($d$):</strong> As you go deep inside Earth, effective mass decreases, so $g$ decreases linearly: <span class="text-cyan-400 font-mono">$g' = g \left(1 - \frac{d}{R}\right)$</span>. At Earth's center, $g = 0$!
-            </li>
-          </ul>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> اسراع بالخصوص ($g$) کی قدر میں تبدیلیاں
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            • <strong>زمین کی سطح پر:</strong> قطبین (Poles) پر $g$ کی قدر سب سے زیادہ ($9.83 \text{ m/s}^2$) اور خطِ استوا (Equator) پر سب سے کم ($9.78 \text{ m/s}^2$) ہوتی ہے۔<br>
-            • <strong>بلندی (Height) پر:</strong> اونچائی پر جانے سے $g$ کی قدر کم ہوتی ہے۔<br>
-            • <strong>گہرائی (Depth) میں:</strong> زمین کے اندر جانے سے بھی $g$ کی قدر کم ہوتی ہے اور زمین کے بالکل مرکز پر $g = 0$ ہوتا ہے۔
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== TAB 5: MASS VS WEIGHT ==================== -->
-  <section id="content-mass-weight" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 5: Intergalactic Scale
-          </span>
-          <span class="text-sm font-mono text-cyan-300">Weight Equation: W = m · g</span>
-        </div>
-
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-mass-weight" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Object Mass ($m$):</span>
-              <span id="mw-mass-val" class="text-cyan-400 font-mono">50 kg</span>
-            </label>
-            <input type="range" id="mw-mass" min="10" max="200" step="5" value="50" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 mb-2 block">Choose Celestial Body:</label>
-            <select id="mw-planet" onchange="updateMassWeight()" class="w-full bg-slate-900 text-cyan-400 font-bold p-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-cyan-500">
-              <option value="9.81">Earth (g = 9.81 m/s²)</option>
-              <option value="1.62">Moon (g = 1.62 m/s²)</option>
-              <option value="3.71">Mars (g = 3.71 m/s²)</option>
-              <option value="24.79">Jupiter (g = 24.79 m/s²)</option>
-              <option value="0.00">Deep Space (g = 0.00 m/s²)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mt-4 grid grid-cols-2 gap-4">
-          <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-            <span class="text-slate-400 text-xs font-semibold uppercase">Mass (Scalar)</span>
-            <div id="mw-mass-disp" class="text-3xl font-bold text-emerald-400 font-mono mt-1">50.0 kg</div>
-            <span class="text-xs text-slate-500">Constant Everywhere!</span>
-          </div>
-          <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-            <span class="text-slate-400 text-xs font-semibold uppercase">Weight (Vector Force)</span>
-            <div id="mw-weight-disp" class="text-3xl font-bold text-cyan-400 font-mono mt-1">490.5 N</div>
-            <span class="text-xs text-slate-500">Changes with Gravity!</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-scale-balanced"></i> Mass vs Weight
-          </h2>
-          <div class="space-y-3 text-slate-300 text-base">
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-emerald-400">Mass ($m$):</strong> The amount of matter contained in a body. It is a scalar quantity, measured in kilograms ($\text{kg}$), and remains <strong>constant everywhere</strong>.
-            </div>
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-cyan-400">Weight ($W$):</strong> The gravitational force exerted by Earth/planet on a body ($W = m \cdot g$). It is a vector quantity, measured in Newtons ($\text{N}$), and <strong>changes depending on local $g$</strong>.
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> کمیت (Mass) بمقابلہ وزن (Weight)
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            • <strong>کمیت (Mass):</strong> کسی جسم میں مادے کی مقدار ہے، یہ ہر جگہ یکساں رہتی ہے اور اسے کلوگرام ($\text{kg}$) میں ناپا جاتا ہے۔<br>
-            • <strong>وزن (Weight):</strong> وہ قوت ہے جس سے کششِ ثقل جسم کو کھینچتی ہے ($W = mg$)۔ یہ نیوٹن ($\text{N}$) میں ناپا جاتا ہے اور ہر سیارے پر بدلتا ہے۔
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== TAB 6: FREEFALL ==================== -->
-  <section id="content-freefall" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 6: Vacuum Drop Tower
+          <span class="text-cyan-400 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-flask text-lg"></i> <span id="lab-canvas-title">Interactive Physics Engine</span>
           </span>
           <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-300 font-semibold">Vacuum Mode:</span>
-            <button onclick="toggleVacuum()" id="btn-vacuum" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold text-xs">ON (No Air)</button>
+            <button onclick="togglePlayPause()" id="btn-playpause" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold text-xs flex items-center gap-1">
+              <i class="fa-solid fa-pause"></i> Pause
+            </button>
+            <button onclick="resetActiveSimulation()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-bold text-xs flex items-center gap-1">
+              <i class="fa-solid fa-rotate-right"></i> Reset
+            </button>
           </div>
         </div>
 
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-freefall" width="600" height="380" class="w-full h-auto"></canvas>
+        <!-- 60 FPS HTML5 Canvas -->
+        <div class="relative bg-space-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[380px]">
+          <canvas id="main-canvas" width="600" height="380" class="w-full h-auto cursor-pointer"></canvas>
+
+          <!-- Interactive Alert Overlay -->
+          <div id="canvas-alert" class="hidden absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-6 py-2 rounded-full font-bold shadow-lg text-sm animate-pulse flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i> <span id="canvas-alert-msg">Notice</span>
+          </div>
         </div>
 
-        <div class="mt-4 flex gap-4">
-          <button onclick="dropObjects()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow transition text-lg flex items-center justify-center gap-2 active:scale-95">
-            <i class="fa-solid fa-play"></i> Release Objects (Bowling Ball vs Feather)
-          </button>
-          <button onclick="resetFreefall()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 px-6 rounded-xl border border-slate-700 shadow transition text-lg active:scale-95">
-            Reset
-          </button>
+        <!-- Interactive Slider Controls Panel -->
+        <div class="mt-4 p-4 bg-space-950/80 rounded-xl border border-slate-800 space-y-3" id="control-sliders-container">
+          <!-- Dynamic Sliders loaded based on current selected module -->
         </div>
 
-        <div class="mt-4 grid grid-cols-3 gap-3 text-center bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono">
-          <div>
-            <span class="text-xs text-slate-400 block">Height ($h$)</span>
-            <span id="ff-h-disp" class="text-lg text-cyan-400">100 m</span>
+        <!-- Action Trigger Buttons -->
+        <div class="mt-3 flex flex-wrap gap-3" id="action-buttons-container">
+          <!-- Dynamic Action Buttons loaded per module -->
+        </div>
+      </div>
+
+      <!-- Live Physics Data Telemetry Panel -->
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+          <i class="fa-solid fa-gauge-high text-cyan-400"></i> Live Physics Telemetry & Calculations
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center font-mono" id="telemetry-grid">
+          <div class="bg-space-950 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400 block">Force (F)</span>
+            <span id="tele-force" class="text-base font-bold text-cyan-400">0.00 N</span>
           </div>
-          <div>
-            <span class="text-xs text-slate-400 block">Time ($t$)</span>
-            <span id="ff-t-disp" class="text-lg text-emerald-400">0.00 s</span>
+          <div class="bg-space-950 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400 block">Velocity (v)</span>
+            <span id="tele-velocity" class="text-base font-bold text-emerald-400">0.00 m/s</span>
           </div>
-          <div>
-            <span class="text-xs text-slate-400 block">Velocity ($v$)</span>
-            <span id="ff-v-disp" class="text-lg text-amber-400">0.0 m/s</span>
+          <div class="bg-space-950 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400 block">Acceleration (g/a)</span>
+            <span id="tele-accel" class="text-base font-bold text-amber-400">9.81 m/s²</span>
+          </div>
+          <div class="bg-space-950 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400 block">Energy / PE</span>
+            <span id="tele-energy" class="text-base font-bold text-purple-400">0.00 J</span>
           </div>
         </div>
       </div>
 
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-stopwatch"></i> Freefall & Kinematic Equations
-          </h2>
-          <p class="text-slate-300 text-base leading-relaxed">
-            In a vacuum (no air resistance), all objects accelerate at the exact same rate ($g = 9.81 \text{ m/s}^2$) regardless of mass. 
-          </p>
-          <div class="mt-3 bg-slate-950 p-3 rounded-xl border border-cyan-500/30 text-cyan-300 font-mono text-sm space-y-1">
-            <div>1. $v = u + gt \quad (u = 0 \rightarrow v = gt)$</div>
-            <div>2. $h = ut + \frac{1}{2}gt^2 \quad \rightarrow h = \frac{1}{2}gt^2$</div>
-            <div>3. $v^2 = u^2 + 2gh \quad \rightarrow v = \sqrt{2gh}$</div>
-          </div>
+      <!-- Real-Time Graph Section -->
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-cyan-400"></i> Real-Time Dynamic Graph
+          </h3>
+          <span id="graph-title-label" class="text-xs text-cyan-400 font-mono">Distance vs Time</span>
         </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> آزادانہ گرنا (Freefall)
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            خلا (Vacuum) میں ہوا کی مزاحمت ختم ہونے پر تمام اجسام (چاہے بھاری گیند ہو یا ہلکا پر) بالکل ایک ہی اسراع ($g$) کے ساتھ نیچے گرتے ہیں۔
-          </p>
+        <div class="h-48 w-full bg-space-950/60 p-2 rounded-xl border border-slate-800">
+          <canvas id="physics-graph-canvas"></canvas>
         </div>
       </div>
 
     </div>
-  </section>
 
-  <!-- ==================== TAB 7: ESCAPE VELOCITY & PE ==================== -->
-  <section id="content-escape" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Right Column: Discovery Missions, AI Assistant & Bilingual Theory (5 Cols) -->
+    <div class="lg:col-span-5 space-y-4">
       
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 7: Rocket Launchpad
+      <!-- Mission & Challenge Card -->
+      <div class="glass-card border-l-4 border-l-amber-400 rounded-2xl p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1">
+            <i class="fa-solid fa-bullseye"></i> Active Mission Task
           </span>
-          <span class="text-sm font-mono text-cyan-300">v_escape = 11.2 km/s</span>
+          <span id="mission-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            In Progress
+          </span>
+        </div>
+        <h3 id="mission-title" class="text-lg font-bold text-white">Mission 1: Snapping Centripetal String</h3>
+        <p id="mission-desc" class="text-sm text-slate-300 leading-relaxed">
+          Increase angular speed to max and cut the string. Observe which direction the ball flies!
+        </p>
+        <button onclick="verifyMissionObjective()" class="w-full bg-amber-500 hover:bg-amber-400 text-space-950 font-black py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-check-circle"></i> Verify Mission Completion
+        </button>
+      </div>
+
+      <!-- Discovery Prediction Question Card -->
+      <div class="glass-card rounded-2xl p-5 space-y-3">
+        <span class="text-xs font-bold uppercase tracking-widest text-cyan-400 flex items-center gap-1">
+          <i class="fa-solid fa-lightbulb"></i> Discovery Prediction
+        </span>
+        <h4 id="predict-question" class="text-base font-bold text-slate-100">
+          What happens to the centripetal force required if speed doubles?
+        </h4>
+        <div class="space-y-2 pt-1" id="predict-options-container">
+          <!-- Options rendered via JS -->
+        </div>
+        <div id="predict-feedback" class="hidden text-xs p-3 rounded-xl border"></div>
+      </div>
+
+      <!-- Bilingual Educational Concept Explanations -->
+      <div class="glass-card rounded-2xl p-5 space-y-4">
+        <!-- English Section -->
+        <div>
+          <h3 class="text-lg font-bold text-cyan-400 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap"></i> Scientific Concept (English)
+          </h3>
+          <p id="eng-concept-text" class="text-sm text-slate-300 leading-relaxed">
+            Centripetal force is the net force acting on an object moving in a circular path that is directed towards the center of curvature.
+          </p>
         </div>
 
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-escape" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
+        <hr class="border-slate-800">
 
-        <div class="mt-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <label class="text-sm font-semibold text-slate-300 flex justify-between">
-            <span>Launch Speed ($v$):</span>
-            <span id="rocket-v-val" class="text-cyan-400 font-mono">8.0 km/s</span>
-          </label>
-          <input type="range" id="rocket-v" min="2.0" max="15.0" step="0.5" value="8.0" class="w-full mt-2 cursor-pointer">
-        </div>
-
-        <div class="mt-4 flex gap-4">
-          <button onclick="launchRocket()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-xl shadow transition text-lg flex items-center justify-center gap-2 active:scale-95">
-            <i class="fa-solid fa-rocket"></i> Launch Rocket!
-          </button>
-          <button onclick="resetRocket()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 px-6 rounded-xl border border-slate-700 shadow transition text-lg active:scale-95">
-            Reset
-          </button>
+        <!-- Urdu Section -->
+        <div dir="rtl">
+          <h3 class="text-xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-2">
+            <i class="fa-solid fa-language"></i> سائنسی تصور (اردو)
+          </h3>
+          <p id="urdu-concept-text" class="text-base text-slate-200 urdu-text leading-loose">
+            مرکز مائل قوت وہ قوت ہے جو کسی جسم کو دائروی راستے میں حرکت پذیر رکھتی ہے اور اس کی سمت ہمیشہ دائرے کے مرکز کی طرف ہوتی ہے۔
+          </p>
         </div>
       </div>
 
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-bolt"></i> Escape Velocity & Gravitational PE
-          </h2>
-          <p class="text-slate-300 text-base leading-relaxed">
-            <strong>Escape Velocity ($v_{esc}$):</strong> The minimum initial velocity required for an object to overcome Earth's gravitational pull permanently.
-          </p>
-          <div class="mt-3 bg-slate-950 p-3 rounded-xl border border-cyan-500/30 text-cyan-300 font-mono text-center text-lg">
-            $v_{esc} = \sqrt{\frac{2 \cdot G \cdot M}{R}} = \sqrt{2 \cdot g \cdot R} \approx 11.2 \text{ km/s}$
+      <!-- AI Assistant Floating Helper -->
+      <div class="glass-card rounded-2xl p-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl text-xl">
+            <i class="fa-solid fa-robot"></i>
           </div>
-          <p class="mt-2 text-sm text-slate-400">
-            <strong>Gravitational Potential Energy:</strong> $V = -\frac{G \cdot M \cdot m}{R}$ (Negative at surface, zero at infinity).
-          </p>
+          <div>
+            <div class="text-xs font-bold text-purple-300">IQRA AI Physics Mentor</div>
+            <div class="text-xs text-slate-400">Need a hint or explanation?</div>
+          </div>
         </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> فراری رفتار (Escape Velocity)
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            وہ کم از کم ابتدائی رفتار جس سے پھینکنے پر کوئی جسم زمین کے کششِ ثقل کے میدان کو ہمیشہ کے لیے پار کر جائے، <strong>فراری رفتار</strong> کہلاتی ہے۔ زمین کے لیے یہ رفتار تقریباً $11.2 \text{ km/s}$ ہے۔
-          </p>
-        </div>
+        <button onclick="triggerAiHint()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition">
+          Ask Mentor
+        </button>
       </div>
 
     </div>
-  </section>
 
-  <!-- ==================== TAB 8: GRAVITATIONAL WAVES ==================== -->
-  <section id="content-waves" class="tab-content hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="text-cyan-400 font-bold text-lg flex items-center gap-2">
-            <i class="fa-solid fa-flask"></i> Interactive Lab 8: Binary Black Hole Spacetime Ripples
-          </span>
-          <span class="text-sm font-mono text-cyan-300">LIGO Interferometer Simulation</span>
-        </div>
+  </div>
 
-        <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[360px]">
-          <canvas id="canvas-waves" width="600" height="380" class="w-full h-auto"></canvas>
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Orbit Frequency:</span>
-              <span id="wave-freq-val" class="text-cyan-400 font-mono">1.5 Hz</span>
-            </label>
-            <input type="range" id="wave-freq" min="0.5" max="4.0" step="0.2" value="1.5" class="w-full mt-2 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-300 flex justify-between">
-              <span>Mass Magnitude:</span>
-              <span id="wave-amp-val" class="text-cyan-400 font-mono">Medium</span>
-            </label>
-            <input type="range" id="wave-amp" min="10" max="40" step="5" value="25" class="w-full mt-2 cursor-pointer">
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-water"></i> Gravitational Waves
-          </h2>
-          <p class="text-slate-300 text-base leading-relaxed">
-            Gravitational waves are ripples in the fabric of spacetime caused by accelerated massive celestial objects (like orbiting binary black holes or neutron stars). Predicted by Albert Einstein in 1916 and first directly detected by LIGO in 2015.
-          </p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg" dir="rtl">
-          <h2 class="text-2xl font-bold text-cyan-400 mb-2 urdu-text flex items-center gap-3">
-            <i class="fa-solid fa-language"></i> کششِ ثقل کی لہریں (Gravitational Waves)
-          </h2>
-          <p class="text-slate-200 text-lg urdu-text leading-loose">
-            جب دو عظیم الجثہ اجسام (جیسے بلیک ہولز) ایک دوسرے کے گرد تیزی سے گردش کرتے ہیں، تو وہ زمان و مکان (Spacetime) کے تانے بانے میں لہریں پیدا کرتے ہیں۔ ان لہروں کو کششِ ثقل کی لہریں کہا جاتا ہے۔
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== ASSESSMENT SECTION ==================== -->
-  <section class="bg-slate-900 border-2 border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+  <section class="glass-card rounded-2xl p-6 space-y-6 mt-8">
     <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-4">
       <div>
-        <h2 class="text-3xl font-extrabold text-white flex items-center gap-3">
-          <i class="fa-solid fa-clipboard-question text-cyan-400"></i> Test Your Knowledge
+        <h2 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
+          <i class="fa-solid fa-clipboard-check text-cyan-400"></i> Virtual Lab Assessment Center
         </h2>
-        <p class="text-slate-400 text-base mt-1">Interactive Touch Assessment for Smart Panel Displays</p>
+        <p class="text-slate-400 text-sm mt-1">25 Touch-Friendly Interactive Questions for Smart Panel Displays</p>
       </div>
-      <div id="quiz-score-badge" class="bg-slate-950 border border-slate-800 px-6 py-2.5 rounded-2xl text-xl font-bold text-cyan-400">
-        Score: <span id="quiz-score" class="text-white">0</span> / 5
+      <div class="bg-space-950 border border-slate-800 px-6 py-2.5 rounded-2xl text-lg font-bold text-cyan-400">
+        Score: <span id="quiz-score-num" class="text-white">0</span> / 25
       </div>
     </div>
 
-    <!-- Questions Container -->
-    <div class="space-y-6" id="quiz-container">
-      
-      <!-- Question 1 -->
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3" id="q1-card">
-        <h3 class="text-lg md:text-xl font-bold text-slate-100 flex items-start gap-3">
-          <span class="bg-cyan-600 text-white rounded-lg px-3 py-1 text-base font-extrabold">Q1</span>
-          <span>What happens to the centripetal force required to keep an object in circular motion if its speed ($v$) is doubled?</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-          <button onclick="checkAnswer(1, 0, false, this)" class="q1-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">A. Force remains the same</button>
-          <button onclick="checkAnswer(1, 1, false, this)" class="q1-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">B. Force is doubled ($2\times$)</button>
-          <button onclick="checkAnswer(1, 2, true, this)" class="q1-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">C. Force is quadrupled ($4\times$)</button>
-          <button onclick="checkAnswer(1, 3, false, this)" class="q1-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">D. Force is halved ($1/2\times$)</button>
-        </div>
-      </div>
-
-      <!-- Question 2 -->
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3" id="q2-card">
-        <h3 class="text-lg md:text-xl font-bold text-slate-100 flex items-start gap-3">
-          <span class="bg-cyan-600 text-white rounded-lg px-3 py-1 text-base font-extrabold">Q2</span>
-          <span>According to Kepler's Third Law, the square of orbital period ($T^2$) is proportional to:</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-          <button onclick="checkAnswer(2, 0, false, this)" class="q2-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">A. Semi-major axis ($r$)</button>
-          <button onclick="checkAnswer(2, 1, false, this)" class="q2-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">B. Square of semi-major axis ($r^2$)</button>
-          <button onclick="checkAnswer(2, 2, true, this)" class="q2-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">C. Cube of semi-major axis ($r^3$)</button>
-          <button onclick="checkAnswer(2, 3, false, this)" class="q2-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">D. Inverse of distance ($1/r$)</button>
-        </div>
-      </div>
-
-      <!-- Question 3 -->
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3" id="q3-card">
-        <h3 class="text-lg md:text-xl font-bold text-slate-100 flex items-start gap-3">
-          <span class="bg-cyan-600 text-white rounded-lg px-3 py-1 text-base font-extrabold">Q3</span>
-          <span>What is the value of acceleration due to gravity ($g$) at the exact geometric center of Earth?</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-          <button onclick="checkAnswer(3, 0, true, this)" class="q3-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">A. Zero ($0 \text{ m/s}^2$)</button>
-          <button onclick="checkAnswer(3, 1, false, this)" class="q3-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">B. $9.81 \text{ m/s}^2$</button>
-          <button onclick="checkAnswer(3, 2, false, this)" class="q3-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">C. Infinite ($\infty$)</button>
-          <button onclick="checkAnswer(3, 3, false, this)" class="q3-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">D. $19.6 \text{ m/s}^2$</button>
-        </div>
-      </div>
-
-      <!-- Question 4 -->
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3" id="q4-card">
-        <h3 class="text-lg md:text-xl font-bold text-slate-100 flex items-start gap-3">
-          <span class="bg-cyan-600 text-white rounded-lg px-3 py-1 text-base font-extrabold">Q4</span>
-          <span>An astronaut has a mass of $60 \text{ kg}$ on Earth. What will be their mass on the Moon ($g_{moon} = 1.62 \text{ m/s}^2$)?</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-          <button onclick="checkAnswer(4, 0, false, this)" class="q4-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">A. $10 \text{ kg}$</button>
-          <button onclick="checkAnswer(4, 1, true, this)" class="q4-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">B. $60 \text{ kg}$ (Mass remains constant!)</button>
-          <button onclick="checkAnswer(4, 2, false, this)" class="q4-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">C. $360 \text{ kg}$</button>
-          <button onclick="checkAnswer(4, 3, false, this)" class="q4-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">D. $0 \text{ kg}$</button>
-        </div>
-      </div>
-
-      <!-- Question 5 -->
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3" id="q5-card">
-        <h3 class="text-lg md:text-xl font-bold text-slate-100 flex items-start gap-3">
-          <span class="bg-cyan-600 text-white rounded-lg px-3 py-1 text-base font-extrabold">Q5</span>
-          <span>What is the minimum escape velocity required to launch a object away from Earth's gravitational field?</span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-          <button onclick="checkAnswer(5, 0, false, this)" class="q5-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">A. $9.8 \text{ km/s}$</button>
-          <button onclick="checkAnswer(5, 1, false, this)" class="q5-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">B. $2.4 \text{ km/s}$</button>
-          <button onclick="checkAnswer(5, 2, true, this)" class="q5-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">C. $11.2 \text{ km/s}$</button>
-          <button onclick="checkAnswer(5, 3, false, this)" class="q5-opt text-left p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-lg transition font-medium">D. $42.1 \text{ km/s}$</button>
-        </div>
-      </div>
-
+    <!-- Quiz Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="quiz-questions-grid">
+      <!-- 25 Questions populated dynamically by JavaScript engine -->
     </div>
   </section>
 
 </main>
 
-<footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-slate-500 text-sm">
+<!-- Footer -->
+<footer class="bg-space-900 border-t border-slate-800 py-6 mt-12 text-center text-slate-500 text-xs">
   <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex items-center space-x-2">
-      <i class="fa-solid fa-graduation-cap text-cyan-400 text-xl"></i>
-      <span class="font-bold text-slate-300">IQRA VIRTUAL LAB</span> — Interactive Physics Smart Panel Suite
+      <i class="fa-solid fa-atom text-cyan-400 text-lg"></i>
+      <span class="font-bold text-slate-300">IQRA VIRTUAL LAB</span> — Next-Gen Physics Simulation Platform
     </div>
-    <div class="text-xs">
-      Designed for Large Interactive Touch Displays • Full Physics Canvas Engine
+    <div>
+      Designed for Interactive Touch Displays (86") • WebGL / Canvas 60 FPS Physics Engine
     </div>
   </div>
 </footer>
 
+<!-- Compare Mode Modal -->
+<div id="modal-compare" class="fixed inset-0 z-50 bg-space-950/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+  <div class="glass-card border border-purple-500/40 rounded-3xl max-w-5xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <h3 class="text-2xl font-bold text-purple-300 flex items-center gap-2">
+        <i class="fa-solid fa-columns"></i> Side-by-Side Planet Gravity Comparator
+      </h3>
+      <button onclick="toggleCompareModal()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Earth Side -->
+      <div class="bg-space-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <h4 class="font-bold text-cyan-400 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-globe"></i> Earth Environment
+        </h4>
+        <div class="text-sm space-y-1 font-mono text-slate-300">
+          <div>Acceleration $g$: 9.81 m/s²</div>
+          <div>Mass $M$: 5.972 × 10²⁴ kg</div>
+          <div>Radius $R$: 6,371 km</div>
+          <div>Escape Velocity: 11.2 km/s</div>
+        </div>
+        <div class="p-3 bg-slate-900 rounded-xl text-center text-xs font-mono text-emerald-400">
+          Weight of 70kg Person: 686.7 N
+        </div>
+      </div>
+
+      <!-- Target Planet Side -->
+      <div class="bg-space-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <div class="flex justify-between items-center">
+          <h4 class="font-bold text-purple-400 text-lg flex items-center gap-2">
+            <i class="fa-solid fa-moon"></i> Target Body
+          </h4>
+          <select id="compare-planet-select" onchange="updateCompareData()" class="bg-slate-900 text-cyan-400 font-bold text-xs p-2 rounded-xl border border-slate-700">
+            <option value="moon">Moon (1.62 m/s²)</option>
+            <option value="mars">Mars (3.71 m/s²)</option>
+            <option value="jupiter">Jupiter (24.79 m/s²)</option>
+            <option value="sun">Sun (274.0 m/s²)</option>
+          </select>
+        </div>
+        <div class="text-sm space-y-1 font-mono text-slate-300" id="compare-target-stats">
+          <!-- Populated by JS -->
+        </div>
+        <div class="p-3 bg-slate-900 rounded-xl text-center text-xs font-mono text-purple-400" id="compare-target-weight">
+          <!-- Weight calculation -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Formula Builder Modal -->
+<div id="modal-formula" class="fixed inset-0 z-50 bg-space-950/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+  <div class="glass-card border border-blue-500/40 rounded-3xl max-w-4xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <h3 class="text-2xl font-bold text-blue-300 flex items-center gap-2">
+        <i class="fa-solid fa-square-root-variable"></i> Interactive Physics Derivations
+      </h3>
+      <button onclick="toggleFormulaModal()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+    </div>
+
+    <div class="space-y-4">
+      <div class="bg-space-950 p-4 rounded-xl border border-slate-800 space-y-2">
+        <h4 class="text-cyan-400 font-bold">1. Universal Gravitation Formula</h4>
+        <div class="text-xl font-mono text-white text-center bg-slate-900 p-3 rounded-lg">
+          $F = G \frac{m_1 \cdot m_2}{r^2}$
+        </div>
+        <p class="text-xs text-slate-400">Step 1: Force is directly proportional to product of masses ($F \propto m_1 m_2$).<br>Step 2: Force is inversely proportional to square of distance ($F \propto 1/r^2$).</p>
+      </div>
+
+      <div class="bg-space-950 p-4 rounded-xl border border-slate-800 space-y-2">
+        <h4 class="text-cyan-400 font-bold">2. Acceleration Due to Gravity ($g$)</h4>
+        <div class="text-xl font-mono text-white text-center bg-slate-900 p-3 rounded-lg">
+          $g = \frac{G \cdot M}{R^2}$
+        </div>
+        <p class="text-xs text-slate-400">Equating gravitational force with weight ($m \cdot g = G \frac{M \cdot m}{R^2}$). Mass $m$ cancels out!</p>
+      </div>
+
+      <div class="bg-space-950 p-4 rounded-xl border border-slate-800 space-y-2">
+        <h4 class="text-cyan-400 font-bold">3. Escape Velocity Formula</h4>
+        <div class="text-xl font-mono text-white text-center bg-slate-900 p-3 rounded-lg">
+          $v_{esc} = \sqrt{\frac{2 \cdot G \cdot M}{R}} = \sqrt{2 \cdot g \cdot R}$
+        </div>
+        <p class="text-xs text-slate-400">Equating Kinetic Energy ($\frac{1}{2} m v^2$) with Gravitational Potential Energy ($\frac{G M m}{R}$).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  /* Global State Engine */
-  let activeTab = 'circular';
-  let score = 0;
-  let answeredQuestions = {};
+  /* =========================================================================
+     GLOBAL VIRTUAL LAB STATE & ENGINE DATA
+     ========================================================================= */
+  let activeModuleId = 1; // 1 to 29
+  let isUrdu = false;
+  let isPaused = false;
+  let userXP = 0;
+  let activeChart = null;
 
-  // Tab Navigation Handler
-  function switchTab(tabId) {
-    activeTab = tabId;
+  // 29 Modules Data Definition
+  const modulesData = [
+    { id: 1, hub: 1, name: "1. Force", engDesc: "Observe how pushing an object accelerates it in the direction of force.", urduDesc: "مشاہدہ کریں کہ قوت لگانے سے جسم قوت کی سمت میں اسراع حاصل کرتا ہے۔", predictQ: "If you double the net force on a mass, what happens to acceleration?", options: ["Halves", "Doubles", "Quadruples"], correct: 1 },
+    { id: 2, hub: 1, name: "2. Motion", engDesc: "Track position, velocity and acceleration vectors continuously.", urduDesc: "مقام، رفتار اور اسراع کے ویکٹرز کا مسلسل مشاہدہ کریں۔", predictQ: "When velocity is constant, what is the net acceleration?", options: ["Zero", "Maximum", "9.81 m/s²"], correct: 0 },
+    { id: 3, hub: 1, name: "3. Circular Motion", engDesc: "An object moving in a circle changes direction continuously.", urduDesc: "دائروی حرکت میں جسم کی سمت مسلسل تبدیل ہوتی رہتی ہے۔", predictQ: "Speed is constant in uniform circular motion. Is velocity constant?", options: ["Yes", "No (Direction changes)", "Depends on radius"], correct: 1 },
+    { id: 4, hub: 1, name: "4. Centripetal Force", engDesc: "Force directed towards the center keeps the object in circle.", urduDesc: "مرکز مائل قوت جسم کو دائرے میں برقرار رکھتی ہے۔", predictQ: "What happens if string snaps?", options: ["Flies straight along tangent", "Flies outward radially", "Stops immediately"], correct: 0 },
     
-    // Update Tab Button Styles
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('bg-cyan-600', 'text-white', 'shadow-md');
-      btn.classList.add('bg-slate-800', 'text-slate-300');
+    { id: 5, hub: 2, name: "5. Kepler 1st Law", engDesc: "Planets orbit the Sun in ellipses with the Sun at one focus.", urduDesc: "سیارے بیضوی مداروں میں گردش کرتے ہیں اور سورج ایک مرکز پر ہوتا ہے۔", predictQ: "Where is the Sun located in an elliptical orbit?", options: ["At geometric center", "At one focus", "Outside the orbit"], correct: 1 },
+    { id: 6, hub: 2, name: "6. Kepler 2nd Law", engDesc: "A line segment sweep equal areas in equal time intervals.", urduDesc: "سیارے کو سورج سے ملانے والا خط مساوی وقت میں مساوی رقبہ طے کرتا ہے۔", predictQ: "When does a planet move fastest?", options: ["Closest to Sun (Perihelion)", "Farthest from Sun (Aphelion)", "Constant speed"], correct: 0 },
+    { id: 7, hub: 2, name: "7. Kepler 3rd Law", engDesc: "Square of orbital period T² is proportional to cube of distance r³.", urduDesc: "گردش کے وقت کا مربع (T²) درمیانی فاصلے کے مکعب (r³) کے متناسب ہوتا ہے۔", predictQ: "If orbital radius increases by 4x, period T increases by?", options: ["2x", "4x", "8x"], correct: 2 },
+    
+    { id: 8, hub: 3, name: "8. Universal Gravitation", engDesc: "F = G*(m1*m2)/r². Mass attracts mass.", urduDesc: "کائنات کا ہر جسم دوسرے جسم کو اپنی طرف کھینچتا ہے۔", predictQ: "If distance r between two masses is doubled, force F becomes?", options: ["1/2", "1/4", "2x"], correct: 1 },
+    { id: 9, hub: 3, name: "9. Earth Gravity", engDesc: "Earth exerts gravitational force towards its geometric center.", urduDesc: "زمین ہر جسم کو اپنے مرکز کی طرف کھینچتی ہے۔", predictQ: "Where does Earth's gravitational pull point?", options: ["Towards South Pole", "Towards Center of Earth", "Towards Equator"], correct: 1 },
+    { id: 10, hub: 3, name: "10. Variation of g", engDesc: "Acceleration due to gravity varies with position on Earth.", urduDesc: "اسراع بالخصوص g کی قدر مختلف مقامات پر بدلتی ہے۔", predictQ: "Is g constant everywhere on Earth?", options: ["Yes exact 9.81", "No, varies slightly", "Zero everywhere"], correct: 1 },
+    { id: 11, hub: 3, name: "11. g on Planets", engDesc: "Different planets have different gravitational acceleration.", urduDesc: "مختلف سیاروں پر کششِ ثقل مختلف ہوتی ہے۔", predictQ: "On which planet is g greatest?", options: ["Mars", "Earth", "Jupiter"], correct: 2 },
+    { id: 12, hub: 3, name: "12. g with Height", engDesc: "As altitude increases above Earth, g decreases as 1/(R+h)².", urduDesc: "بلندی پر جانے سے g کی قدر کم ہوتی ہے۔", predictQ: "At height h = Earth Radius R, g becomes?", options: ["g/2", "g/4", "Zero"], correct: 1 },
+    { id: 13, hub: 3, name: "13. g with Depth", engDesc: "Deep inside Earth, g decreases linearly to zero at core.", urduDesc: "زمین کے اندر گہرائی میں جانے سے g کی قدر کم ہوتی ہے۔", predictQ: "What is g at the geometric center of Earth?", options: ["9.81 m/s²", "Infinite", "Zero"], correct: 2 },
+    { id: 14, hub: 3, name: "14. g with Latitude", engDesc: "Earth bulges at equator and flattens at poles.", urduDesc: "زمین خطِ استوا پر ابھری ہوئی اور قطبین پر چپٹی ہے۔", predictQ: "Where is g maximum on Earth's surface?", options: ["At Poles", "At Equator", "At 45° Latitude"], correct: 0 },
+    
+    { id: 15, hub: 4, name: "15. Mass", engDesc: "Mass is amount of matter contained in a body. Scalar.", urduDesc: "کمیت کسی جسم میں مادے کی مقدار ہے۔", predictQ: "Does your mass change when you travel to the Moon?", options: ["Decreases", "Remains same", "Increases"], correct: 1 },
+    { id: 16, hub: 4, name: "16. Weight", engDesc: "Weight is force of gravity acting on mass (W = m*g). Vector.", urduDesc: "وزن وہ قوت ہے جس سے کششِ ثقل جسم کو کھینچتی ہے۔", predictQ: "Your weight on Moon compared to Earth is?", options: ["1/6th", "Same", "6 times"], correct: 0 },
+    { id: 17, hub: 4, name: "17. Mass vs Weight", engDesc: "Mass is constant scalar (kg); Weight is variable vector force (N).", urduDesc: "کمیت غیر متغیر ہے جبکہ وزن کشش کے ساتھ بدلتا ہے۔", predictQ: "Which balance measures mass independent of gravity?", options: ["Spring Balance", "Beam Balance", "Pressure Sensor"], correct: 1 },
+    { id: 18, hub: 4, name: "18. Gravitational Potential", engDesc: "Work done per unit mass in bringing it from infinity.", urduDesc: "کششِ ثقل کے میدان کا پوٹینشل۔", predictQ: "At infinite distance, gravitational potential is?", options: ["Maximum (+)", "Zero", "Negative Infinity"], correct: 1 },
+    { id: 19, hub: 4, name: "19. Potential Energy", engDesc: "U = -G*M*m/r. Energy stored due to position in field.", urduDesc: "کشش ثقل کے میدان میں ذخیرہ شدہ توانائی۔", predictQ: "As object gets closer to Earth, Potential Energy becomes?", options: ["More negative", "Positive", "Zero"], correct: 0 },
+    
+    { id: 20, hub: 5, name: "20. Escape Velocity", engDesc: "Minimum velocity required to escape Earth's gravity permanently (~11.2 km/s).", urduDesc: "فراری رفتار: زمین کی کشش سے ہمیشہ کے لیے نکلنے کی رفتار۔", predictQ: "Does escape velocity depend on the mass of launched rocket?", options: ["Yes", "No", "Only on fuel type"], correct: 1 },
+    { id: 21, hub: 5, name: "21. Orbital Velocity", engDesc: "Velocity required to maintain circular orbit around planet.", urduDesc: "مداری رفتار: سیارے کے گرد چکر لگانے کی رفتار۔", predictQ: "For low Earth orbit, orbital velocity is approx?", options: ["7.9 km/s", "11.2 km/s", "3.0 km/s"], correct: 0 },
+    { id: 22, hub: 5, name: "22. Artificial Satellites", engDesc: "Man-made spacecraft orbiting Earth (Geostationary vs Polar).", urduDesc: "مصنوعی سیارے: زمین کے گرد گھومنے والے خلاءی جہاز۔", predictQ: "Geostationary satellite period is?", options: ["12 Hours", "24 Hours", "90 Minutes"], correct: 1 },
+    { id: 23, hub: 5, name: "23. Free Fall", engDesc: "Motion under influence of gravity alone with no air resistance.", urduDesc: "آزادانہ گرنا: ہوا کی مزاحمت کے بغیر گرنا۔", predictQ: "In vacuum, heavy bowling ball vs feather fall?", options: ["Ball falls faster", "Feather falls faster", "Both fall together"], correct: 2 },
+    { id: 24, hub: 5, name: "24. Equations of Free Fall", engDesc: "v = gt, h = 1/2 gt², v² = 2gh.", urduDesc: "آزادانہ گرنے کی مساواتیں۔", predictQ: "Distance dropped after 2 seconds in vacuum (g=10 m/s²)?", options: ["10 m", "20 m", "40 m"], correct: 1 },
+    { id: 25, hub: 5, name: "25. Projectile vs Orbital", engDesc: "Newton's Cannonball: curve of projectile matches curvature of Earth.", urduDesc: "نیوٹن کی توپ: پروجیکٹائل کی موڑ زمین کی گولائی سے مل جاتی ہے۔", predictQ: "What happens if cannonball velocity equals 7.9 km/s?", options: ["Hits ground", "Enters circular orbit", "Escapes solar system"], correct: 1 },
+    
+    { id: 26, hub: 6, name: "26. Gravitational Waves", engDesc: "Ripples in spacetime caused by accelerating massive black holes.", urduDesc: "زمان و مکان میں پیدا ہونے والی لہریں۔", predictQ: "Gravitational waves travel at what speed?", options: ["Speed of Sound", "Speed of Light", "Instantaneous"], correct: 1 },
+    { id: 27, hub: 6, name: "27. Black Holes", engDesc: "Region where gravity is so strong that even light cannot escape.", urduDesc: "بلیک ہول: انتہائی شدید کشش کا علاقہ۔", predictQ: "The boundary of a Black Hole is called?", options: ["Photon Sphere", "Event Horizon", "Singularity Center"], correct: 1 },
+    { id: 28, hub: 2, name: "28. Tides", engDesc: "Rise and fall of ocean sea levels caused by Moon's gravity.", urduDesc: "سمندر میں مدوجزر جو چاند کی کشش سے ہوتا ہے۔", predictQ: "How many high tides occur per day on Earth?", options: ["1", "2", "4"], correct: 1 },
+    { id: 29, hub: 6, name: "29. Real Life Applications", engDesc: "GPS navigation, ISS weightlessness, rocket staging.", urduDesc: "عملی زندگی میں استعمالات: جی پی ایس اور خلائی اسٹیشن۔", predictQ: "Why do astronauts float in the ISS?", options: ["No gravity in space", "In continuous freefall together with ISS", "Magnetic boots"], correct: 1 }
+  ];
+
+  const quizDatabase = [
+    { q: "What provides the centripetal force for planets orbiting the Sun?", opts: ["Magnetic force", "Gravitational force", "Nuclear force", "Friction"], correct: 1 },
+    { q: "According to Kepler's 1st Law, planet orbits are:", opts: ["Perfect Circles", "Ellipses", "Hyperbolas", "Straight lines"], correct: 1 },
+    { q: "Kepler's 3rd Law states that T² is proportional to:", opts: ["r", "r²", "r³", "1/r"], correct: 2 },
+    { q: "Value of Universal Gravitational Constant G is:", opts: ["9.81 N·m²/kg²", "6.674 × 10⁻¹¹ N·m²/kg²", "1.62 N·m²/kg²", "3.0 × 10⁸ N·m²/kg²"], correct: 1 },
+    { q: "If distance between two masses is halved, gravitational force:", opts: ["Halves", "Doubles", "Quadruples (4x)", "Reduces to 1/4"], correct: 2 },
+    { q: "Value of acceleration due to gravity g at Earth center is:", opts: ["9.81 m/s²", "0 m/s²", "19.6 m/s²", "Infinite"], correct: 1 },
+    { q: "Where is value of g maximum on Earth surface?", opts: ["At Equator", "At Poles", "At Mount Everest", "Inside deep mine"], correct: 1 },
+    { q: "As height above Earth surface increases, value of g:", opts: ["Increases", "Decreases", "Remains same", "Becomes negative"], correct: 1 },
+    { q: "Which quantity remains constant everywhere in universe?", opts: ["Weight", "Mass", "Acceleration g", "Potential"], correct: 1 },
+    { q: "SI unit of Mass is ____ and Weight is ____:", opts: ["kg, N", "N, kg", "kg, kg", "N, N"], correct: 0 },
+    { q: "Escape velocity from Earth's surface is approximately:", opts: ["7.9 km/s", "11.2 km/s", "2.4 km/s", "42.1 km/s"], correct: 1 },
+    { q: "In a vacuum, a feather and a bowling ball dropped together will:", opts: ["Ball hits first", "Feather hits first", "Hit ground at same time", "Float indefinitely"], correct: 2 },
+    { q: "Gravitational potential energy at infinite distance is defined as:", opts: ["Zero", "Maximum positive", "Negative infinity", "100 Joules"], correct: 0 },
+    { q: "Geostationary satellite completes one orbit in:", opts: ["12 Hours", "24 Hours", "90 Minutes", "365 Days"], correct: 1 },
+    { q: "Waves generated by accelerated binary black holes are called:", opts: ["Sound Waves", "Gravitational Waves", "Light Waves", "Seismic Waves"], correct: 1 },
+    { q: "Boundary around Black Hole beyond which nothing escapes is:", opts: ["Event Horizon", "Corona", "Atmosphere", "Orbit Rim"], correct: 0 },
+    { q: "Ocean tides are mainly caused by gravitational pull of:", opts: ["Sun", "Moon", "Jupiter", "Mars"], correct: 1 },
+    { q: "An astronaut floating inside Space Station feels weightless because:", opts: ["Zero gravity in orbit", "Station and astronaut are in freefall", "Space suit negates mass", "Vacuum cancels gravity"], correct: 1 },
+    { q: "Formula for orbital velocity in low Earth orbit is:", opts: ["v = √(GM/R)", "v = √(2GM/R)", "v = GM/R²", "v = m·g"], correct: 0 },
+    { q: "Shape of Earth is slightly flattened at poles and bulges at equator due to:", opts: ["Rotation", "Tides", "Orbit speed", "Solar wind"], correct: 0 },
+    { q: "Equation of motion for distance dropped in freefall from rest is:", opts: ["h = v·t", "h = 1/2 g t²", "h = g t", "h = 2 g t"], correct: 1 },
+    { q: "Weight of 60kg person on Moon (g = 1.62 m/s²) is approx:", opts: ["600 N", "97.2 N", "60 N", "0 N"], correct: 1 },
+    { q: "Direction of tangential velocity in circular motion is:", opts: ["Towards center", "Perpendicular to radius", "Radially outward", "Opposite to force"], correct: 1 },
+    { q: "Universal Law of Gravitation was formulated by:", opts: ["Galileo", "Kepler", "Isaac Newton", "Albert Einstein"], correct: 2 },
+    { q: "Einstein's theory that explains gravity as curvature of spacetime is:", opts: ["Quantum Mechanics", "General Relativity", "Thermodynamics", "Electromagnetism"], correct: 1 }
+  ];
+
+  /* =========================================================================
+     DOM INITIALIZATION & UI HANDLERS
+     ========================================================================= */
+  window.onload = function() {
+    renderModuleChips();
+    switchModule(1);
+    renderQuizQuestions();
+    initPhysicsGraph();
+    startMasterAnimationLoop();
+  };
+
+  function renderModuleChips() {
+    const container = document.getElementById('module-chip-container');
+    modulesData.forEach(m => {
+      const btn = document.createElement('button');
+      btn.id = `chip-mod-${m.id}`;
+      btn.className = `px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 ${m.id === 1 ? 'bg-cyan-600 text-white shadow-md' : 'bg-space-900 text-slate-400 hover:bg-slate-800'}`;
+      btn.onclick = () => switchModule(m.id);
+      btn.innerHTML = `<span class="font-mono text-[10px] opacity-75">${m.id}</span> ${m.name.split('. ')[1]}`;
+      container.appendChild(btn);
+    });
+  }
+
+  function switchModule(id) {
+    activeModuleId = id;
+    const mod = modulesData.find(m => m.id === id);
+    if (!mod) return;
+
+    // Update Chips UI
+    modulesData.forEach(m => {
+      const el = document.getElementById(`chip-mod-${m.id}`);
+      if (el) {
+        if (m.id === id) {
+          el.className = 'px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 bg-cyan-600 text-white shadow-md';
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          el.className = 'px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 bg-space-900 text-slate-400 hover:bg-slate-800';
+        }
+      }
     });
 
-    const activeBtn = document.getElementById(`tab-${tabId}`);
-    if(activeBtn) {
-      activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
-      activeBtn.classList.add('bg-cyan-600', 'text-white', 'shadow-md');
-      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    // Update Hub Banner Title
+    document.getElementById('hub-title').innerText = `Module ${mod.id}: ${mod.name.split('. ')[1]}`;
+    document.getElementById('hub-subtitle').innerText = mod.engDesc;
+    document.getElementById('lab-canvas-title').innerText = `${mod.name} Interactive Lab Engine`;
 
-    // Hide all sections, show active
-    document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
-    const activeSec = document.getElementById(`content-${tabId}`);
-    if(activeSec) activeSec.classList.remove('hidden');
-  }
+    // Update Concepts
+    document.getElementById('eng-concept-text').innerText = mod.engDesc;
+    document.getElementById('urdu-concept-text').innerText = mod.urduDesc;
 
-  // Full Screen Toggle for Smart Panel
-  function toggleFullScreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.log(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  }
+    // Update Mission
+    document.getElementById('mission-title').innerText = `Mission ${mod.id}: Mastering ${mod.name.split('. ')[1]}`;
+    document.getElementById('mission-desc').innerText = `Experiment with the controls below to verify ${mod.engDesc}`;
+    document.getElementById('mission-status-badge').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+    document.getElementById('mission-status-badge').innerText = "In Progress";
 
-  // Reset active simulation
-  function resetCurrentExperiment() {
-    if (activeTab === 'circular') resetCircular();
-    if (activeTab === 'kepler') keplerEcc = 0.60;
-    if (activeTab === 'universal') {
-      document.getElementById('uni-m1').value = 500;
-      document.getElementById('uni-m2').value = 500;
-      document.getElementById('uni-r').value = 10;
-    }
-    if (activeTab === 'variation') {
-      document.getElementById('var-h').value = 0;
-      document.getElementById('var-d').value = 0;
-      setLatitude('equator');
-    }
-    if (activeTab === 'mass-weight') {
-      document.getElementById('mw-mass').value = 50;
-      document.getElementById('mw-planet').value = "9.81";
-      updateMassWeight();
-    }
-    if (activeTab === 'freefall') resetFreefall();
-    if (activeTab === 'escape') resetRocket();
-  }
-
-  /* =========================================================================
-     1. LAB 1: CIRCULAR MOTION SIMULATION
-     ========================================================================= */
-  let circAngle = 0;
-  let isStringBroken = false;
-  let brokenVx = 0, brokenVy = 0;
-  let brokenX = 0, brokenY = 0;
-
-  function cutString() {
-    if(!isStringBroken) {
-      isStringBroken = true;
-      const speed = parseFloat(document.getElementById('circular-speed').value) * 1.5;
-      const radius = parseFloat(document.getElementById('circular-radius').value);
-      
-      const cx = 300, cy = 190;
-      brokenX = cx + radius * Math.cos(circAngle);
-      brokenY = cy + radius * Math.sin(circAngle);
-
-      // Tangential velocity vector direction (perpendicular to radial)
-      brokenVx = -Math.sin(circAngle) * speed * 3;
-      brokenVy = Math.cos(circAngle) * speed * 3;
-
-      document.getElementById('string-broken-alert').classList.remove('hidden');
-    }
-  }
-
-  function resetCircular() {
-    isStringBroken = false;
-    document.getElementById('string-broken-alert').classList.add('hidden');
-  }
-
-  function drawCircularLab() {
-    const canvas = document.getElementById('canvas-circular');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-    const cx = width / 2;
-    const cy = height / 2;
-
-    const speed = parseFloat(document.getElementById('circular-speed').value);
-    const radius = parseFloat(document.getElementById('circular-radius').value);
-    const mass = parseFloat(document.getElementById('circular-mass').value);
-
-    document.getElementById('circular-speed-val').innerText = `${speed.toFixed(1)} rad/s`;
-    document.getElementById('circular-radius-val').innerText = `${radius} px`;
-    document.getElementById('circular-mass-val').innerText = `${mass.toFixed(1)} kg`;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw Grid Background
-    drawGrid(ctx, width, height);
-
-    if (!isStringBroken) {
-      circAngle += speed * 0.02;
-
-      // Circular Path Orbit
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.3)';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      const ballX = cx + radius * Math.cos(circAngle);
-      const ballY = cy + radius * Math.sin(circAngle);
-
-      // String line
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(ballX, ballY);
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // Center Pin
-      ctx.beginPath();
-      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#0284c7';
-      ctx.fill();
-
-      // Force Vector (Red arrow pointing to center)
-      drawArrow(ctx, ballX, ballY, cx, cy, '#ef4444', 'Fc (Centripetal)');
-
-      // Tangential Velocity Vector (Green arrow)
-      const tangX = ballX - Math.sin(circAngle) * 50;
-      const tangY = ballY + Math.cos(circAngle) * 50;
-      drawArrow(ctx, ballX, ballY, tangX, tangY, '#22c55e', 'v (Velocity)');
-
-      // Rotating Ball
-      ctx.beginPath();
-      ctx.arc(ballX, ballY, 12 + mass * 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#06b6d4';
-      ctx.shadowColor = '#06b6d4';
-      ctx.shadowBlur = 15;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    } else {
-      // String is broken - move along straight line
-      brokenX += brokenVx;
-      brokenY += brokenVy;
-
-      // Center Pin
-      ctx.beginPath();
-      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#0284c7';
-      ctx.fill();
-
-      // Free flying ball
-      ctx.beginPath();
-      ctx.arc(brokenX, brokenY, 12 + mass * 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#ef4444';
-      ctx.shadowColor = '#ef4444';
-      ctx.shadowBlur = 15;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Velocity vector continuing
-      drawArrow(ctx, brokenX, brokenY, brokenX + brokenVx * 5, brokenY + brokenVy * 5, '#22c55e', 'Inertial Motion');
-    }
-  }
-
-  /* =========================================================================
-     2. LAB 2: KEPLER'S LAWS SIMULATION
-     ========================================================================= */
-  let keplerAngle = 0;
-  let keplerLawMode = 1;
-  let keplerEcc = 0.60;
-  let keplerSweeps = [];
-
-  function setKeplerLaw(mode) {
-    keplerLawMode = mode;
-    document.querySelectorAll('#btn-kepler-1, #btn-kepler-2, #btn-kepler-3').forEach(btn => {
-      btn.classList.remove('bg-cyan-600', 'text-white');
-      btn.classList.add('bg-slate-800', 'text-slate-300');
+    // Update Prediction Question
+    document.getElementById('predict-question').innerText = mod.predictQ;
+    const optContainer = document.getElementById('predict-options-container');
+    optContainer.innerHTML = '';
+    mod.options.forEach((opt, idx) => {
+      const optBtn = document.createElement('button');
+      optBtn.className = "w-full text-left p-2.5 bg-space-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs transition font-medium text-slate-200";
+      optBtn.innerText = `${String.fromCharCode(65+idx)}. ${opt}`;
+      optBtn.onclick = () => checkPrediction(idx, mod.correct, optBtn);
+      optContainer.appendChild(optBtn);
     });
-    document.getElementById(`btn-kepler-${mode}`).classList.remove('bg-slate-800', 'text-slate-300');
-    document.getElementById(`btn-kepler-${mode}`).classList.add('bg-cyan-600', 'text-white');
+    document.getElementById('predict-feedback').classList.add('hidden');
+
+    // Build Control Sliders & Buttons for specific module
+    buildModuleControls(id);
   }
 
-  function drawKeplerLab() {
-    const canvas = document.getElementById('canvas-kepler');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    keplerEcc = parseFloat(document.getElementById('kepler-ecc').value);
-    const speedMult = parseFloat(document.getElementById('kepler-speed').value);
-    document.getElementById('kepler-ecc-val').innerText = keplerEcc.toFixed(2);
-    document.getElementById('kepler-speed-val').innerText = `${speedMult.toFixed(1)}x`;
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    const a = 180; // Semi-major axis
-    const b = a * Math.sqrt(1 - keplerEcc * keplerEcc); // Semi-minor axis
-    const c = a * keplerEcc; // Distance to focus
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const sunX = centerX - c;
-    const sunY = centerY;
-
-    // Draw Elliptical Orbit
-    ctx.beginPath();
-    ctx.ellipse(centerX, centerY, a, b, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Kepler 2nd Law Sector Sweeping
-    if (keplerLawMode === 2) {
-      if (Math.random() < 0.05) {
-        keplerSweeps.push(keplerAngle);
-        if (keplerSweeps.length > 5) keplerSweeps.shift();
-      }
-      for (let i = 0; i < keplerSweeps.length; i++) {
-        let ang = keplerSweeps[i];
-        let px = centerX + a * Math.cos(ang);
-        let py = centerY + b * Math.sin(ang);
-        let px2 = centerX + a * Math.cos(ang + 0.2);
-        let py2 = centerY + b * Math.sin(ang + 0.2);
-
-        ctx.beginPath();
-        ctx.moveTo(sunX, sunY);
-        ctx.lineTo(px, py);
-        ctx.lineTo(px2, py2);
-        ctx.closePath();
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(6, 182, 212, 0.25)' : 'rgba(234, 179, 8, 0.25)';
-        ctx.fill();
-      }
-    }
-
-    // Kepler 1st Law Foci Markers
-    if (keplerLawMode === 1) {
-      // Empty Focus
-      ctx.beginPath();
-      ctx.arc(centerX + c, centerY, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#64748b';
-      ctx.fill();
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '12px Inter';
-      ctx.fillText('Focus 2', centerX + c - 20, centerY + 20);
-    }
-
-    // Sun at Focus 1
-    ctx.beginPath();
-    ctx.arc(sunX, sunY, 16, 0, Math.PI * 2);
-    ctx.fillStyle = '#eab308';
-    ctx.shadowColor = '#eab308';
-    ctx.shadowBlur = 20;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Inter';
-    ctx.fillText('SUN', sunX - 12, sunY - 22);
-
-    // Calculate Planet Position with Variable Speed (Kepler 2nd Law physics)
-    const distToSun = Math.sqrt(Math.pow(centerX + a * Math.cos(keplerAngle) - sunX, 2) + Math.pow(centerY + b * Math.sin(keplerAngle) - sunY, 2));
-    const angularSpeed = (200 / distToSun) * 0.015 * speedMult;
-    keplerAngle += angularSpeed;
-
-    const planetX = centerX + a * Math.cos(keplerAngle);
-    const planetY = centerY + b * Math.sin(keplerAngle);
-
-    // Radius vector from Sun to Planet
-    ctx.beginPath();
-    ctx.moveTo(sunX, sunY);
-    ctx.lineTo(planetX, planetY);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Planet
-    ctx.beginPath();
-    ctx.arc(planetX, planetY, 10, 0, Math.PI * 2);
-    ctx.fillStyle = '#38bdf8';
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 10;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    // Kepler 3rd Law Data Telemetry Overlay
-    if (keplerLawMode === 3) {
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-      ctx.fillRect(15, 15, 200, 70);
-      ctx.strokeStyle = '#06b6d4';
-      ctx.strokeRect(15, 15, 200, 70);
-      ctx.fillStyle = '#06b6d4';
-      ctx.font = 'bold 13px Inter';
-      ctx.fillText(`Semi-major axis (a): ${a.toFixed(0)} AU`, 25, 38);
-      ctx.fillText(`Period T = a^(3/2): ${(Math.pow(a/50, 1.5)).toFixed(1)} yrs`, 25, 58);
-      ctx.fillText(`T²/a³ ratio: 1.00 (Constant)`, 25, 75);
-    }
-  }
-
-  /* =========================================================================
-     3. LAB 3: NEWTON'S UNIVERSAL LAW OF GRAVITATION
-     ========================================================================= */
-  function drawUniversalLab() {
-    const canvas = document.getElementById('canvas-universal');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const m1 = parseFloat(document.getElementById('uni-m1').value);
-    const m2 = parseFloat(document.getElementById('uni-m2').value);
-    const r = parseFloat(document.getElementById('uni-r').value);
-
-    document.getElementById('uni-m1-val').innerText = `${m1} kg`;
-    document.getElementById('uni-m2-val').innerText = `${m2} kg`;
-    document.getElementById('uni-r-val').innerText = `${r} m`;
-
-    // Formula F = G * m1 * m2 / r^2
-    const G = 6.674e-11;
-    const force = (G * m1 * m2) / (r * r);
-    document.getElementById('uni-force-display').innerText = `${force.toExponential(3)} N`;
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    const cy = height / 2;
-    const spacing = r * 14; // visual spacing
-    const x1 = (width / 2) - (spacing / 2);
-    const x2 = (width / 2) + (spacing / 2);
-
-    const r1 = 15 + (m1 / 100) * 5;
-    const r2 = 15 + (m2 / 100) * 5;
-
-    // Distance line
-    ctx.beginPath();
-    ctx.moveTo(x1, cy + 60);
-    ctx.lineTo(x2, cy + 60);
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = 'bold 14px Inter';
-    ctx.fillText(`Distance r = ${r} m`, width / 2 - 45, cy + 80);
-
-    // Force Vectors pointing towards each other
-    const forceArrowLen = Math.min(120, Math.max(25, (force * 1e8) * 15));
-    drawArrow(ctx, x1, cy, x1 + forceArrowLen, cy, '#ef4444', 'F_12');
-    drawArrow(ctx, x2, cy, x2 - forceArrowLen, cy, '#ef4444', 'F_21');
-
-    // Mass 1
-    ctx.beginPath();
-    ctx.arc(x1, cy, r1, 0, Math.PI * 2);
-    ctx.fillStyle = '#06b6d4';
-    ctx.shadowColor = '#06b6d4';
-    ctx.shadowBlur = 15;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px Inter';
-    ctx.fillText(`m₁ (${m1}kg)`, x1 - 25, cy - r1 - 10);
-
-    // Mass 2
-    ctx.beginPath();
-    ctx.arc(x2, cy, r2, 0, Math.PI * 2);
-    ctx.fillStyle = '#38bdf8';
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 15;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px Inter';
-    ctx.fillText(`m₂ (${m2}kg)`, x2 - 25, cy - r2 - 10);
-  }
-
-  /* =========================================================================
-     4. LAB 4: VARIATION IN ACCELERATION DUE TO GRAVITY (g)
-     ========================================================================= */
-  let selectedLatitude = 'equator';
-
-  function setLatitude(lat) {
-    selectedLatitude = lat;
-    if(lat === 'equator') {
-      document.getElementById('btn-equator').className = 'px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm';
-      document.getElementById('btn-pole').className = 'px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-sm';
+  function checkPrediction(selectedIdx, correctIdx, btn) {
+    const feedback = document.getElementById('predict-feedback');
+    feedback.classList.remove('hidden');
+    if (selectedIdx === correctIdx) {
+      btn.className = "w-full text-left p-2.5 bg-emerald-600 text-white border border-emerald-400 rounded-xl text-xs font-bold shadow-lg";
+      feedback.className = "text-xs p-3 rounded-xl border bg-emerald-950/60 border-emerald-500/40 text-emerald-300";
+      feedback.innerText = "✓ Correct Prediction! Now run the experiment below to confirm physics.";
+      addXP(10);
     } else {
-      document.getElementById('btn-pole').className = 'px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm';
-      document.getElementById('btn-equator').className = 'px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-sm';
+      btn.className = "w-full text-left p-2.5 bg-red-600 text-white border border-red-400 rounded-xl text-xs font-bold";
+      feedback.className = "text-xs p-3 rounded-xl border bg-red-950/60 border-red-500/40 text-red-300";
+      feedback.innerText = "✗ Incorrect! Test the variables in the simulator to discover why.";
     }
   }
 
-  function drawVariationLab() {
-    const canvas = document.getElementById('canvas-variation');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const h = parseFloat(document.getElementById('var-h').value);
-    const d = parseFloat(document.getElementById('var-d').value);
-
-    document.getElementById('var-h-val').innerText = `${h} km`;
-    document.getElementById('var-d-val').innerText = `${d} km`;
-
-    // Base surface g calculation
-    const R = 6400; // Earth radius in km
-    let gBase = (selectedLatitude === 'equator') ? 9.78 : 9.83;
-    let gEff = gBase;
-
-    if (h > 0) {
-      // Height variation: g' = g * (R / (R + h))^2
-      gEff = gBase * Math.pow(R / (R + h), 2);
-    } else if (d > 0) {
-      // Depth variation: g' = g * (1 - d / R)
-      gEff = gBase * (1 - (d / R));
-    }
-
-    document.getElementById('var-g-display').innerText = `${gEff.toFixed(2)} m/s²`;
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    const cx = width / 2;
-    const cy = height / 2;
-    const earthR = 120;
-
-    // Outer Space Orbit ring if height
-    if(h > 0) {
-      const probeR = earthR + (h / 6400) * 80;
-      ctx.beginPath();
-      ctx.arc(cx, cy, probeR, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
-      ctx.setLineDash([4, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Probe Dot
-      ctx.beginPath();
-      ctx.arc(cx, cy - probeR, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#ef4444';
-      ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '12px Inter';
-      ctx.fillText(`Probe (h = ${h} km)`, cx + 12, cy - probeR + 4);
-    }
-
-    // Depth Shaft if depth
-    if(d > 0) {
-      const depthR = earthR - (d / 6400) * earthR;
-      ctx.beginPath();
-      ctx.arc(cx, cy, depthR, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(234, 179, 8, 0.5)';
-      ctx.setLineDash([3, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Deep Probe
-      ctx.beginPath();
-      ctx.arc(cx, cy - depthR, 7, 0, Math.PI * 2);
-      ctx.fillStyle = '#eab308';
-      ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '12px Inter';
-      ctx.fillText(`Core Shaft (d = ${d} km)`, cx + 12, cy - depthR + 4);
-    }
-
-    // Earth Sphere
-    ctx.beginPath();
-    if(selectedLatitude === 'equator') {
-      ctx.ellipse(cx, cy, earthR + 6, earthR - 4, 0, 0, Math.PI * 2);
-    } else {
-      ctx.ellipse(cx, cy, earthR - 4, earthR + 6, 0, 0, Math.PI * 2);
-    }
-    ctx.fillStyle = '#0e7490';
-    ctx.shadowColor = '#06b6d4';
-    ctx.shadowBlur = 20;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    // Earth Core Center Dot
-    ctx.beginPath();
-    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-    ctx.fillStyle = '#ef4444';
-    ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px Inter';
-    ctx.fillText('Center (g = 0)', cx - 35, cy + 20);
+  function verifyMissionObjective() {
+    document.getElementById('mission-status-badge').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+    document.getElementById('mission-status-badge').innerText = "Mission Accomplished!";
+    addXP(25);
   }
 
-  /* =========================================================================
-     5. LAB 5: MASS VS WEIGHT SIMULATION
-     ========================================================================= */
-  function updateMassWeight() {
-    const mass = parseFloat(document.getElementById('mw-mass').value);
-    const g = parseFloat(document.getElementById('mw-planet').value);
-
-    document.getElementById('mw-mass-val').innerText = `${mass} kg`;
-    document.getElementById('mw-mass-disp').innerText = `${mass.toFixed(1)} kg`;
-
-    const weight = mass * g;
-    document.getElementById('mw-weight-disp').innerText = `${weight.toFixed(1)} N`;
+  function addXP(pts) {
+    userXP += pts;
+    document.getElementById('user-xp').innerText = userXP;
   }
 
-  function drawMassWeightLab() {
-    const canvas = document.getElementById('canvas-mass-weight');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+  // Dynamic Slider Generation Logic
+  let simParams = { mass1: 500, mass2: 500, radius: 100, speed: 3.0, height: 0, depth: 0, planetG: 9.81, vacuum: true };
 
-    updateMassWeight();
+  function buildModuleControls(id) {
+    const sliderBox = document.getElementById('control-sliders-container');
+    const buttonBox = document.getElementById('action-buttons-container');
+    sliderBox.innerHTML = '';
+    buttonBox.innerHTML = '';
 
-    const mass = parseFloat(document.getElementById('mw-mass').value);
-    const g = parseFloat(document.getElementById('mw-planet').value);
-    const weight = mass * g;
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    const cx = width / 2;
-
-    // Spring Hook
-    ctx.beginPath();
-    ctx.moveTo(cx, 20);
-    ctx.lineTo(cx, 60);
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // Spring Coil (Stretches proportional to Weight!)
-    const stretch = Math.min(120, (weight / 5000) * 100);
-    const springStartY = 60;
-    const springEndY = 140 + stretch;
-
-    ctx.beginPath();
-    ctx.moveTo(cx, springStartY);
-    let currY = springStartY;
-    let toggle = true;
-    while(currY < springEndY) {
-      currY += 8;
-      let offsetX = toggle ? 15 : -15;
-      ctx.lineTo(cx + offsetX, currY);
-      toggle = !toggle;
-    }
-    ctx.lineTo(cx, springEndY);
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Hanging Mass Block
-    const blockWidth = 70 + (mass / 200) * 40;
-    const blockHeight = 50;
-    ctx.fillStyle = '#1e293b';
-    ctx.strokeStyle = '#0891b2';
-    ctx.lineWidth = 3;
-    ctx.fillRect(cx - blockWidth / 2, springEndY, blockWidth, blockHeight);
-    ctx.strokeRect(cx - blockWidth / 2, springEndY, blockWidth, blockHeight);
-
-    ctx.fillStyle = '#38bdf8';
-    ctx.font = 'bold 16px Inter';
-    ctx.fillText(`${mass} kg`, cx - 20, springEndY + 30);
-
-    // Gravity Force Vector Arrow
-    if(g > 0) {
-      const arrowLen = Math.min(100, Math.max(20, weight / 20));
-      drawArrow(ctx, cx, springEndY + blockHeight, cx, springEndY + blockHeight + arrowLen, '#ef4444', `W = ${weight.toFixed(0)} N`);
+    if (id <= 4) { // Circular motion hub
+      sliderBox.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Angular Speed (ω):</span><span id="v-speed" class="text-cyan-400 font-mono">3.0 rad/s</span></div>
+          <input type="range" min="1" max="8" step="0.5" value="${simParams.speed}" oninput="simParams.speed=parseFloat(this.value); document.getElementById('v-speed').innerText=this.value+' rad/s';" class="w-full mt-1">
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Radius (r):</span><span id="v-rad" class="text-cyan-400 font-mono">100 px</span></div>
+          <input type="range" min="50" max="150" step="5" value="${simParams.radius}" oninput="simParams.radius=parseFloat(this.value); document.getElementById('v-rad').innerText=this.value+' px';" class="w-full mt-1">
+        </div>
+      `;
+      buttonBox.innerHTML = `
+        <button onclick="cutStringAction()" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1"><i class="fa-solid fa-scissors"></i> Cut String (Snap)</button>
+        <button onclick="resetStringAction()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2.5 rounded-xl text-xs transition">Reset String</button>
+      `;
+    } else if (id >= 5 && id <= 7 || id === 28) { // Kepler & Tides hub
+      sliderBox.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Orbit Eccentricity (e):</span><span id="v-ecc" class="text-cyan-400 font-mono">0.60</span></div>
+          <input type="range" min="0.1" max="0.85" step="0.05" value="0.60" oninput="simParams.ecc=parseFloat(this.value); document.getElementById('v-ecc').innerText=this.value;" class="w-full mt-1">
+        </div>
+      `;
+    } else if (id >= 8 && id <= 14) { // Gravitation & g variations
+      sliderBox.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Altitude Height (h):</span><span id="v-h" class="text-cyan-400 font-mono">${simParams.height} km</span></div>
+          <input type="range" min="0" max="6400" step="200" value="${simParams.height}" oninput="simParams.height=parseFloat(this.value); document.getElementById('v-h').innerText=this.value+' km';" class="w-full mt-1">
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Depth (d):</span><span id="v-d" class="text-cyan-400 font-mono">${simParams.depth} km</span></div>
+          <input type="range" min="0" max="6400" step="200" value="${simParams.depth}" oninput="simParams.depth=parseFloat(this.value); document.getElementById('v-d').innerText=this.value+' km';" class="w-full mt-1">
+        </div>
+      `;
+    } else if (id >= 15 && id <= 19) { // Mass vs weight & PE
+      sliderBox.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Mass (m):</span><span id="v-m" class="text-cyan-400 font-mono">50 kg</span></div>
+          <input type="range" min="10" max="200" step="5" value="50" oninput="simParams.mass1=parseFloat(this.value); document.getElementById('v-m').innerText=this.value+' kg';" class="w-full mt-1">
+        </div>
+      `;
+    } else { // Freefall & Satellites & Waves
+      sliderBox.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-300"><span>Launch Speed / Time:</span><span id="v-v" class="text-cyan-400 font-mono">${simParams.speed}</span></div>
+          <input type="range" min="1" max="15" step="0.5" value="${simParams.speed}" oninput="simParams.speed=parseFloat(this.value); document.getElementById('v-v').innerText=this.value;" class="w-full mt-1">
+        </div>
+      `;
+      buttonBox.innerHTML = `
+        <button onclick="triggerSpecialAction()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1"><i class="fa-solid fa-play"></i> Trigger Launch / Drop</button>
+      `;
     }
   }
 
   /* =========================================================================
-     6. LAB 6: FREEFALL & MOTION EQUATIONS
+     60 FPS CANVAS PHYSICS ENGINE RENDERER
      ========================================================================= */
-  let isVacuum = true;
-  let isDropping = false;
-  let ballY = 40, featherY = 40;
-  let dropTime = 0;
+  let animAngle = 0;
+  let isSnapped = false;
+  let snapX = 0, snapY = 0, snapVx = 0, snapVy = 0;
 
-  function toggleVacuum() {
-    isVacuum = !isVacuum;
-    document.getElementById('btn-vacuum').innerText = isVacuum ? "ON (No Air)" : "OFF (Air Resistance)";
-    document.getElementById('btn-vacuum').className = isVacuum ? "px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold text-xs" : "px-3 py-1 bg-red-600 text-white rounded-lg font-bold text-xs";
-  }
-
-  function dropObjects() {
-    if(!isDropping) {
-      isDropping = true;
-      ballY = 40;
-      featherY = 40;
-      dropTime = 0;
+  function cutStringAction() {
+    if (!isSnapped) {
+      isSnapped = true;
+      const canvas = document.getElementById('main-canvas');
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      snapX = cx + simParams.radius * Math.cos(animAngle);
+      snapY = cy + simParams.radius * Math.sin(animAngle);
+      snapVx = -Math.sin(animAngle) * simParams.speed * 3;
+      snapVy = Math.cos(animAngle) * simParams.speed * 3;
+      document.getElementById('canvas-alert-msg').innerText = "String Snapped! Tangential Inertial Motion!";
+      document.getElementById('canvas-alert').classList.remove('hidden');
     }
   }
 
-  function resetFreefall() {
-    isDropping = false;
-    ballY = 40;
-    featherY = 40;
-    dropTime = 0;
-    document.getElementById('ff-t-disp').innerText = "0.00 s";
-    document.getElementById('ff-v-disp').innerText = "0.0 m/s";
+  function resetStringAction() {
+    isSnapped = false;
+    document.getElementById('canvas-alert').classList.add('hidden');
   }
 
-  function drawFreefallLab() {
-    const canvas = document.getElementById('canvas-freefall');
-    if(!canvas) return;
+  function triggerSpecialAction() {
+    isSnapped = !isSnapped;
+  }
+
+  function startMasterAnimationLoop() {
+    function loop() {
+      if (!isPaused) {
+        renderCanvasPhysics();
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  function renderCanvasPhysics() {
+    const canvas = document.getElementById('main-canvas');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
 
-    const maxY = height - 50;
+    ctx.clearRect(0, 0, w, h);
 
-    if (isDropping) {
-      dropTime += 0.02;
-      const g = 9.81;
-
-      // Ball distance: h = 1/2 * g * t^2
-      ballY = 40 + 0.5 * g * Math.pow(dropTime * 4, 2);
-
-      // Feather distance: depends on air resistance
-      if (isVacuum) {
-        featherY = ballY; // Drops together!
-      } else {
-        // Air resistance slows feather
-        featherY = 40 + 0.5 * (g * 0.2) * Math.pow(dropTime * 4, 2);
-      }
-
-      if (ballY >= maxY) {
-        ballY = maxY;
-      }
-      if (featherY >= maxY) {
-        featherY = maxY;
-      }
-
-      const vel = g * (dropTime * 2);
-      document.getElementById('ff-t-disp').innerText = `${dropTime.toFixed(2)} s`;
-      document.getElementById('ff-v-disp').innerText = `${vel.toFixed(1)} m/s`;
-    }
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    // Drop Chamber Tubes
-    const tube1X = width / 3;
-    const tube2X = (2 * width) / 3;
-
-    // Ground line
-    ctx.beginPath();
-    ctx.moveTo(50, maxY + 20);
-    ctx.lineTo(width - 50, maxY + 20);
-    ctx.strokeStyle = '#64748b';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // Bowling Ball
-    ctx.beginPath();
-    ctx.arc(tube1X, ballY, 18, 0, Math.PI * 2);
-    ctx.fillStyle = '#06b6d4';
-    ctx.shadowColor = '#06b6d4';
-    ctx.shadowBlur = 10;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Inter';
-    ctx.fillText('Bowling Ball', tube1X - 35, ballY - 25);
-
-    // Feather (Emoji / Visual)
-    ctx.font = '32px serif';
-    ctx.fillText('🪶', tube2X - 16, featherY + 10);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Inter';
-    ctx.fillText('Feather', tube2X - 22, featherY - 25);
-  }
-
-  /* =========================================================================
-     7. LAB 7: ESCAPE VELOCITY SIMULATION
-     ========================================================================= */
-  let rocketY = 0;
-  let isRocketLaunched = false;
-
-  function launchRocket() {
-    isRocketLaunched = true;
-  }
-
-  function resetRocket() {
-    isRocketLaunched = false;
-    rocketY = 0;
-  }
-
-  function drawEscapeLab() {
-    const canvas = document.getElementById('canvas-escape');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const launchV = parseFloat(document.getElementById('rocket-v').value);
-    document.getElementById('rocket-v-val').innerText = `${launchV.toFixed(1)} km/s`;
-
-    if (isRocketLaunched) {
-      if (launchV >= 11.2) {
-        // Escapes into space!
-        rocketY += launchV * 1.2;
-      } else {
-        // Sub-orbital: goes up then falls back
-        rocketY += (launchV - 6.0) * 0.8;
-      }
-    }
-
-    ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
-
-    const cx = width / 2;
-    const groundY = height - 60;
-
-    // Earth Curve
-    ctx.beginPath();
-    ctx.arc(cx, groundY + 400, 420, 0, Math.PI * 2);
-    ctx.fillStyle = '#0e7490';
-    ctx.fill();
-
-    // Rocket position
-    const currentY = groundY - rocketY;
-
-    if (currentY > -100) {
-      ctx.font = '36px serif';
-      ctx.fillText('🚀', cx - 18, currentY);
-    } else {
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 20px Inter';
-      ctx.fillText('✨ ESCAPED EARTH GRAVITY! ✨', cx - 140, 100);
-    }
-  }
-
-  /* =========================================================================
-     8. LAB 8: GRAVITATIONAL WAVES SIMULATION
-     ========================================================================= */
-  let wavePhase = 0;
-
-  function drawWavesLab() {
-    const canvas = document.getElementById('canvas-waves');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const freq = parseFloat(document.getElementById('wave-freq').value);
-    const amp = parseFloat(document.getElementById('wave-amp').value);
-
-    document.getElementById('wave-freq-val').innerText = `${freq.toFixed(1)} Hz`;
-
-    ctx.clearRect(0, 0, width, height);
-
-    wavePhase += freq * 0.05;
-    const cx = width / 2;
-    const cy = height / 2;
-
-    // Draw Expanding Concentric Gravitational Wave Ripples
-    for (let r = 10; r < 300; r += 20) {
-      const alpha = Math.max(0, 1 - r / 300);
-      const radius = (r + (wavePhase * 20) % 20);
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(6, 182, 212, ${alpha * 0.7})`;
-      ctx.lineWidth = 2 + (amp / 10);
-      ctx.stroke();
-    }
-
-    // Binary Black Holes at Center Orbiting
-    const orbitR = 25;
-    const bh1X = cx + orbitR * Math.cos(wavePhase * 2);
-    const bh1Y = cy + orbitR * Math.sin(wavePhase * 2);
-    const bh2X = cx - orbitR * Math.cos(wavePhase * 2);
-    const bh2Y = cy - orbitR * Math.sin(wavePhase * 2);
-
-    ctx.beginPath();
-    ctx.arc(bh1X, bh1Y, 12, 0, Math.PI * 2);
-    ctx.fillStyle = '#000000';
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 3;
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(bh2X, bh2Y, 12, 0, Math.PI * 2);
-    ctx.fillStyle = '#000000';
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 3;
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  /* Helper Utility Functions */
-  function drawGrid(ctx, w, h) {
-    ctx.strokeStyle = 'rgba(51, 65, 85, 0.25)';
+    // Grid Background
+    ctx.strokeStyle = 'rgba(31, 41, 55, 0.4)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 30) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 30) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
+    for (let x = 0; x < w; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // RENDER BASED ON ACTIVE HUB
+    if (activeModuleId <= 4) { // Hub 1: Circular Motion
+      if (!isSnapped) {
+        animAngle += simParams.speed * 0.015;
+        const bx = cx + simParams.radius * Math.cos(animAngle);
+        const by = cy + simParams.radius * Math.sin(animAngle);
+
+        // Orbit Circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, simParams.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.3)';
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Tether String
+        ctx.beginPath();
+        ctx.moveTo(cx, cy); ctx.lineTo(bx, by);
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.stroke();
+
+        // Center Pin
+        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fillStyle = '#0284c7'; ctx.fill();
+
+        // Centripetal Force Vector (Red arrow pointing to center)
+        drawVectorArrow(ctx, bx, by, cx, cy, '#ef4444', 'Fc');
+
+        // Tangential Velocity Vector (Green arrow)
+        const tangX = bx - Math.sin(animAngle) * 45;
+        const tangY = by + Math.cos(animAngle) * 45;
+        drawVectorArrow(ctx, bx, by, tangX, tangY, '#10b981', 'v');
+
+        // Rotating Ball
+        ctx.beginPath(); ctx.arc(bx, by, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#06b6d4'; ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+
+        // Telemetry
+        const fc = (2.0 * Math.pow(simParams.speed, 2)) / (simParams.radius / 50);
+        document.getElementById('tele-force').innerText = `${fc.toFixed(1)} N`;
+        document.getElementById('tele-velocity').innerText = `${(simParams.speed * 2.5).toFixed(1)} m/s`;
+        document.getElementById('tele-accel').innerText = `${(fc / 2.0).toFixed(1)} m/s²`;
+      } else {
+        snapX += snapVx;
+        snapY += snapVy;
+        ctx.beginPath(); ctx.arc(snapX, snapY, 14, 0, Math.PI * 2); ctx.fillStyle = '#ef4444'; ctx.fill();
+        drawVectorArrow(ctx, snapX, snapY, snapX + snapVx * 4, snapY + snapVy * 4, '#10b981', 'Inertial v');
+      }
+    } else if (activeModuleId >= 5 && activeModuleId <= 7 || activeModuleId === 28) { // Hub 2: Kepler & Ellipses
+      animAngle += 0.02;
+      const a = 160;
+      const ecc = simParams.ecc || 0.6;
+      const b = a * Math.sqrt(1 - ecc * ecc);
+      const c = a * ecc;
+      const sunX = cx - c;
+
+      // Orbit Ellipse
+      ctx.beginPath(); ctx.ellipse(cx, cy, a, b, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 2; ctx.stroke();
+
+      // Sun Focus
+      ctx.beginPath(); ctx.arc(sunX, cy, 18, 0, Math.PI * 2); ctx.fillStyle = '#f59e0b'; ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 20; ctx.fill(); ctx.shadowBlur = 0;
+
+      // Planet
+      const px = cx + a * Math.cos(animAngle);
+      const py = cy + b * Math.sin(animAngle);
+      ctx.beginPath(); ctx.moveTo(sunX, cy); ctx.lineTo(px, py); ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(px, py, 10, 0, Math.PI * 2); ctx.fillStyle = '#3b82f6'; ctx.fill();
+
+      document.getElementById('tele-force').innerText = "Keplerian";
+      document.getElementById('tele-velocity').innerText = `${(180 / Math.sqrt(Math.pow(px-sunX,2)+Math.pow(py-cy,2))).toFixed(1)} AU/yr`;
+    } else if (activeModuleId >= 8 && activeModuleId <= 14) { // Hub 3: g Variations
+      const R = 6400;
+      const h = simParams.height || 0;
+      const d = simParams.depth || 0;
+      let gEff = 9.81;
+      if (h > 0) gEff = 9.81 * Math.pow(R / (R + h), 2);
+      else if (d > 0) gEff = 9.81 * (1 - d / R);
+
+      // Render Earth Sphere
+      ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.fillStyle = '#0e7490'; ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 20; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fillStyle = '#ef4444'; ctx.fill(); // Core
+
+      if (h > 0) {
+        const pr = 100 + (h / 6400) * 70;
+        ctx.beginPath(); ctx.arc(cx, cy - pr, 8, 0, Math.PI * 2); ctx.fillStyle = '#f59e0b'; ctx.fill();
+      }
+
+      document.getElementById('tele-accel').innerText = `${gEff.toFixed(2)} m/s²`;
+      document.getElementById('tele-force').innerText = `${(70 * gEff).toFixed(1)} N`;
+    } else { // Generic Physics Simulation Visualizer
+      animAngle += 0.03;
+      ctx.beginPath(); ctx.arc(cx + Math.cos(animAngle)*60, cy + Math.sin(animAngle)*40, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#8b5cf6'; ctx.shadowColor = '#8b5cf6'; ctx.shadowBlur = 15; ctx.fill(); ctx.shadowBlur = 0;
     }
   }
 
-  function drawArrow(ctx, fromx, fromy, tox, toy, color, label) {
-    const headlen = 10;
+  function drawVectorArrow(ctx, fromx, fromy, tox, toy, color, label) {
+    const headlen = 8;
     const dx = tox - fromx;
     const dy = toy - fromy;
     const angle = Math.atan2(dy, dx);
-
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = 3;
-
-    ctx.beginPath();
-    ctx.moveTo(fromx, fromy);
-    ctx.lineTo(tox, toy);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(tox, toy);
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(fromx, fromy); ctx.lineTo(tox, toy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(tox, toy);
     ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
     ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-    ctx.closePath();
-    ctx.fill();
-
-    if (label) {
-      ctx.font = 'bold 12px Inter';
-      ctx.fillText(label, tox + 8, toy + 4);
-    }
+    ctx.closePath(); ctx.fill();
+    if (label) { ctx.font = 'bold 11px Inter'; ctx.fillText(label, tox + 6, toy + 4); }
   }
 
-  /* Assessment Logic */
-  function checkAnswer(qNum, optIdx, isCorrect, btnElement) {
-    if (answeredQuestions[qNum]) return; // prevent duplicate clicks
-    answeredQuestions[qNum] = true;
+  /* =========================================================================
+     DYNAMIC CHART.JS GRAPH ENGINE
+     ========================================================================= */
+  function initPhysicsGraph() {
+    const ctx = document.getElementById('physics-graph-canvas').getContext('2d');
+    activeChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['0s', '1s', '2s', '3s', '4s', '5s', '6s'],
+        datasets: [{
+          label: 'Physics Telemetry',
+          data: [0, 9.8, 19.6, 29.4, 39.2, 49.0, 58.8],
+          borderColor: '#06b6d4',
+          backgroundColor: 'rgba(6, 182, 212, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+        }
+      }
+    });
+  }
 
-    const options = document.querySelectorAll(`.q${qNum}-opt`);
-    options.forEach(opt => opt.disabled = true);
+  /* =========================================================================
+     25-MCQ ASSESSMENT ENGINE
+     ========================================================================= */
+  let userQuizScore = 0;
+  let answeredQuizList = {};
 
-    if (isCorrect) {
-      btnElement.classList.remove('bg-slate-900', 'border-slate-700');
-      btnElement.classList.add('bg-emerald-600', 'text-white', 'border-emerald-400', 'shadow-lg');
-      btnElement.innerHTML += ' <i class="fa-solid fa-circle-check ml-2"></i> Correct!';
-      score += 1;
-      document.getElementById('quiz-score').innerText = score;
+  function renderQuizQuestions() {
+    const grid = document.getElementById('quiz-questions-grid');
+    grid.innerHTML = '';
+    quizDatabase.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = "bg-space-950 border border-slate-800 rounded-xl p-4 space-y-3";
+      card.id = `quiz-card-${idx}`;
+      card.innerHTML = `
+        <div class="flex items-start gap-2">
+          <span class="bg-cyan-600/30 text-cyan-300 font-mono font-bold text-xs px-2 py-0.5 rounded-md border border-cyan-500/30">Q${idx+1}</span>
+          <h4 class="text-sm font-semibold text-slate-200">${q.q}</h4>
+        </div>
+        <div class="grid grid-cols-1 gap-2 pt-1">
+          ${q.opts.map((opt, oIdx) => `
+            <button onclick="handleQuizAnswer(${idx}, ${oIdx}, ${q.correct}, this)" class="q-opt-${idx} text-left p-2.5 bg-space-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-xs transition font-medium text-slate-300">
+              ${String.fromCharCode(65+oIdx)}. ${opt}
+            </button>
+          `).join('')}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function handleQuizAnswer(qIdx, selectedIdx, correctIdx, btn) {
+    if (answeredQuizList[qIdx]) return;
+    answeredQuizList[qIdx] = true;
+
+    document.querySelectorAll(`.q-opt-${qIdx}`).forEach(b => b.disabled = true);
+
+    if (selectedIdx === correctIdx) {
+      btn.className = "text-left p-2.5 bg-emerald-600 text-white border border-emerald-400 rounded-xl text-xs font-bold shadow-lg";
+      btn.innerHTML += ' <i class="fa-solid fa-circle-check ml-1"></i> Correct!';
+      userQuizScore++;
+      document.getElementById('quiz-score-num').innerText = userQuizScore;
+      addXP(15);
     } else {
-      btnElement.classList.remove('bg-slate-900', 'border-slate-700');
-      btnElement.classList.add('bg-red-600', 'text-white', 'border-red-400');
-      btnElement.innerHTML += ' <i class="fa-solid fa-circle-xmark ml-2"></i> Incorrect!';
+      btn.className = "text-left p-2.5 bg-red-600 text-white border border-red-400 rounded-xl text-xs font-bold";
+      btn.innerHTML += ' <i class="fa-solid fa-circle-xmark ml-1"></i> Incorrect!';
     }
   }
 
-  /* Main Master Animation Loop */
-  function mainLoop() {
-    if (activeTab === 'circular') drawCircularLab();
-    else if (activeTab === 'kepler') drawKeplerLab();
-    else if (activeTab === 'universal') drawUniversalLab();
-    else if (activeTab === 'variation') drawVariationLab();
-    else if (activeTab === 'mass-weight') drawMassWeightLab();
-    else if (activeTab === 'freefall') drawFreefallLab();
-    else if (activeTab === 'escape') drawEscapeLab();
-    else if (activeTab === 'waves') drawWavesLab();
-
-    requestAnimationFrame(mainLoop);
+  /* =========================================================================
+     MODAL & UTILITY FUNCTIONS
+     ========================================================================= */
+  function toggleCompareModal() {
+    document.getElementById('modal-compare').classList.toggle('hidden');
+    updateCompareData();
   }
 
-  window.onload = function() {
-    mainLoop();
-  };
+  function updateCompareData() {
+    const sel = document.getElementById('compare-planet-select').value;
+    const stats = document.getElementById('compare-target-stats');
+    const weight = document.getElementById('compare-target-weight');
+    if (sel === 'moon') {
+      stats.innerHTML = '<div>Acceleration g: 1.62 m/s²</div><div>Mass M: 7.34 × 10²² kg</div><div>Radius R: 1,737 km</div>';
+      weight.innerText = 'Weight of 70kg Person: 113.4 N (1/6th of Earth!)';
+    } else if (sel === 'mars') {
+      stats.innerHTML = '<div>Acceleration g: 3.71 m/s²</div><div>Mass M: 6.41 × 10²³ kg</div><div>Radius R: 3,389 km</div>';
+      weight.innerText = 'Weight of 70kg Person: 259.7 N';
+    } else if (sel === 'jupiter') {
+      stats.innerHTML = '<div>Acceleration g: 24.79 m/s²</div><div>Mass M: 1.89 × 10²⁷ kg</div><div>Radius R: 69,911 km</div>';
+      weight.innerText = 'Weight of 70kg Person: 1735.3 N (2.5x Earth!)';
+    } else {
+      stats.innerHTML = '<div>Acceleration g: 274.0 m/s²</div><div>Mass M: 1.98 × 10³⁰ kg</div><div>Radius R: 696,340 km</div>';
+      weight.innerText = 'Weight of 70kg Person: 19,180 N';
+    }
+  }
+
+  function toggleFormulaModal() {
+    document.getElementById('modal-formula').classList.toggle('hidden');
+  }
+
+  function togglePlayPause() {
+    isPaused = !isPaused;
+    document.getElementById('btn-playpause').innerHTML = isPaused ? '<i class="fa-solid fa-play"></i> Play' : '<i class="fa-solid fa-pause"></i> Pause';
+  }
+
+  function toggleLanguage() {
+    isUrdu = !isUrdu;
+    document.getElementById('lang-label').innerText = isUrdu ? "English" : "Urdu / اردو";
+  }
+
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => console.log(err));
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+
+  function triggerAiHint() {
+    alert("IQRA AI Mentor Hint: Adjust the slider variables on the left panel to observe live changes in the physics engine vectors!");
+  }
+
+  function resetActiveSimulation() {
+    simParams = { mass1: 500, mass2: 500, radius: 100, speed: 3.0, height: 0, depth: 0, planetG: 9.81, vacuum: true };
+    resetStringAction();
+    switchModule(activeModuleId);
+  }
 </script>
 </body>
 </html>
