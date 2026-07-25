@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<script>
+if(window.top===window.self){
+document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IQRA Virtual Lab - Gravitational Force</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Base IQRA Design System */
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #020617;
+    color: #f8fafc;
+    overflow-x: hidden;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  /* RTL Styling Adjustments for Urdu with Noto Nastaliq Urdu / Jameel Noori Nastaliq */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  [dir="rtl"] {
+    font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaliq', serif !important;
+    line-height: 2.2 !important;
+  }
+
+  /* Glassmorphism Classes */
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Pulse Glow Effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+  }
+  .glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  .glow-green {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+  }
+
+  /* Canvas styling */
+  canvas {
+    touch-action: none;
+  }
+
+  /* Custom Slider Styling */
+  input[type=range] {
+    -webkit-appearance: none;
+    background: #334155;
+    border-radius: 8px;
+    height: 8px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00f3ff;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00f3ff;
+    transition: transform 0.1s ease;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+  }
+
+  .formula-font {
+    font-family: 'Fira Code', monospace;
+  }
+
+  /* Intro Animation CSS */
+  @keyframes introZoom {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-intro {
+    animation: introZoom 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+  <!-- ==================== OPENING INTRO ANIMATION ==================== -->
+  <div id="intro-screen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-4 transition-opacity duration-700">
+    <div class="text-center animate-intro space-y-4 max-w-lg">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 glow-cyan mb-2">
+        <i class="fa-solid fa-atom text-4xl animate-spin" style="animation-duration: 8s;"></i>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400">
+        IQRA VIRTUAL LAB
+      </h1>
+      <p id="intro-topic" class="text-lg md:text-xl text-slate-300 font-medium tracking-wide border-t border-b border-slate-800 py-2">
+        GRAVITATIONAL FORCE SIMULATION
+      </p>
+      <div class="flex items-center justify-center gap-2 text-cyan-400 text-sm">
+        <i class="fa-solid fa-circle-notch animate-spin"></i>
+        <span>Loading Interactive Engine...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN HEADER ==================== -->
+  <header class="glass-panel sticky top-0 z-40 px-4 py-3 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 glow-cyan">
+          <i class="fa-solid fa-globe text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base md:text-lg text-white leading-tight flex items-center gap-2">
+            IQRA <span class="text-cyan-400 font-normal">VIRTUAL LAB</span>
+          </h1>
+          <p id="hdr-subtitle" class="text-xs text-slate-400">Gravitational Force Between Two Objects</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-sm font-medium">
+        <button onclick="switchTab('sim')" id="tab-btn-sim" class="px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 bg-cyan-500 text-slate-950 font-semibold shadow-md">
+          <i class="fa-solid fa-flask"></i>
+          <span data-key="tabSim">Simulation</span>
+        </button>
+        <button onclick="switchTab('learn')" id="tab-btn-learn" class="px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-book-open"></i>
+          <span data-key="tabLearn">Learn</span>
+        </button>
+        <button onclick="switchTab('obs')" id="tab-btn-obs" class="px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-calculator"></i>
+          <span data-key="tabObs">Steps & Data</span>
+        </button>
+        <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span data-key="tabQuiz">Quiz</span>
+        </button>
+      </nav>
+
+      <!-- Language Switcher -->
+      <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-cyan-400/50 text-cyan-300 text-sm font-semibold transition flex items-center gap-2">
+        <i class="fa-solid fa-language text-lg"></i>
+        <span id="lang-btn-text">🌐 English | اردو</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== CONTENT BODY ==================== -->
+  <main class="max-w-7xl mx-auto w-full p-3 md:p-6 flex-grow">
+
+    <!-- ==================== TAB 1: SIMULATION ==================== -->
+    <div id="view-sim" class="space-y-6">
+      
+      <!-- Top Control Bar / Presets -->
+      <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-semibold text-slate-300" data-key="presetLabel">Presets:</span>
+          <select id="preset-select" onchange="applyPreset(this.value)" class="bg-slate-900 text-cyan-300 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-400">
+            <option value="custom" data-key="presetCustom">🧪 Custom Lab Objects</option>
+            <option value="earthMoon" data-key="presetEarthMoon">🌍 Earth & Moon</option>
+            <option value="apples" data-key="presetApples">🍎 Two Apples</option>
+            <option value="leadSpheres" data-key="presetLead">⚪ Two Lead Spheres</option>
+          </select>
+        </div>
+
+        <!-- Mode Toggle: Real G vs Educational Scaled G -->
+        <div class="flex items-center gap-3 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs">
+          <span class="text-slate-400 pl-2" data-key="gModeLabel">G Constant Mode:</span>
+          <button id="gmode-real" onclick="setGMode('real')" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-medium">
+            Real G (6.674×10⁻¹¹)
+          </button>
+          <button id="gmode-scaled" onclick="setGMode('scaled')" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200">
+            Scaled (Visual 1:1)
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Interactive Grid: Simulation Canvas & Slider Controls -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left Column: Controls (4 cols) -->
+        <div class="lg:col-span-4 space-y-4">
+          
+          <!-- Mass 1 Control Card -->
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-l-cyan-400 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-cyan-300 flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#00f3ff]"></span>
+                <span data-key="m1Label">Mass 1 (m₁)</span>
+              </label>
+              <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-700">
+                <input type="number" id="num-m1" min="1" max="10000" class="w-16 bg-transparent text-right text-cyan-300 font-bold focus:outline-none formula-font text-sm">
+                <span class="text-xs text-slate-400 font-semibold" id="unit-m1">kg</span>
+              </div>
+            </div>
+            <input type="range" id="slider-m1" min="1" max="5000" step="1" value="1000" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span>1 kg</span>
+              <span>2500 kg</span>
+              <span>5000 kg</span>
+            </div>
+          </div>
+
+          <!-- Mass 2 Control Card -->
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-l-rose-500 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-rose-400 flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block shadow-[0_0_8px_#ef4444]"></span>
+                <span data-key="m2Label">Mass 2 (m₂)</span>
+              </label>
+              <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-700">
+                <input type="number" id="num-m2" min="1" max="10000" class="w-16 bg-transparent text-right text-rose-400 font-bold focus:outline-none formula-font text-sm">
+                <span class="text-xs text-slate-400 font-semibold" id="unit-m2">kg</span>
+              </div>
+            </div>
+            <input type="range" id="slider-m2" min="1" max="5000" step="1" value="1000" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span>1 kg</span>
+              <span>2500 kg</span>
+              <span>5000 kg</span>
+            </div>
+          </div>
+
+          <!-- Distance (r) Control Card -->
+          <div class="glass-card p-4 rounded-2xl border-l-4 border-l-amber-400 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-amber-300 flex items-center gap-2">
+                <i class="fa-solid fa-ruler-horizontal text-amber-400"></i>
+                <span data-key="rLabel">Distance (r)</span>
+              </label>
+              <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-700">
+                <input type="number" id="num-r" min="1" max="100" class="w-16 bg-transparent text-right text-amber-300 font-bold focus:outline-none formula-font text-sm">
+                <span class="text-xs text-slate-400 font-semibold" id="unit-r">m</span>
+              </div>
+            </div>
+            <input type="range" id="slider-r" min="2" max="50" step="0.5" value="10" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span>2 m</span>
+              <span>25 m</span>
+              <span>50 m</span>
+            </div>
+          </div>
+
+          <!-- Force Output Display Gauge -->
+          <div class="glass-panel p-4 rounded-2xl border border-cyan-500/30 text-center space-y-1 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <p class="text-xs text-slate-400 uppercase tracking-widest font-bold" data-key="forceResultLabel">Calculated Gravitational Force (F)</p>
+            <div id="sim-force-display" class="text-2xl md:text-3xl font-extrabold text-cyan-300 formula-font py-1 glow-cyan rounded-xl bg-slate-950/60 my-2">
+              6.674 × 10⁻⁷ N
+            </div>
+            <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1">
+              <i class="fa-solid fa-circle-info text-cyan-400"></i>
+              <span data-key="forceEqualThirdLaw">F₁ = F₂ (Newton's 3rd Law in action)</span>
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Interactive HTML5 Canvas Visualizer (8 cols) -->
+        <div class="lg:col-span-8 space-y-3">
+          <div class="glass-panel rounded-2xl border border-slate-800 p-2 relative overflow-hidden">
+            
+            <!-- Floating Zoom & Control Overlay -->
+            <div class="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-700 shadow-xl">
+              <button onclick="zoomCanvas(1.1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition" title="Zoom In">
+                <i class="fa-solid fa-plus text-xs"></i>
+              </button>
+              <button onclick="zoomCanvas(0.9)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition" title="Zoom Out">
+                <i class="fa-solid fa-minus text-xs"></i>
+              </button>
+              <button onclick="resetCanvasView()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center transition" title="Reset View">
+                <i class="fa-solid fa-rotate-right text-xs"></i>
+              </button>
+              <div class="h-4 w-px bg-slate-700 mx-1"></div>
+              <button id="btn-grid-toggle" onclick="toggleGrid()" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-medium border border-cyan-400/30">
+                <i class="fa-solid fa-border-top-left text-xs"></i> <span data-key="gridBtn">Grid</span>
+              </button>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="w-full h-[380px] md:h-[440px] rounded-xl bg-slate-950/80 relative flex items-center justify-center cursor-grab active:cursor-grabbing" id="canvas-wrapper">
+              <canvas id="simCanvas" class="w-full h-full block rounded-xl"></canvas>
+            </div>
+
+            <!-- Bottom Drag Hint -->
+            <div class="p-2 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-hand-pointer text-cyan-400 animate-bounce"></i>
+              <span data-key="dragInstruction">Drag objects directly on the canvas to change distance (r)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live 4-Step Interactive Formula Calculation Structure (Required by Prompt) -->
+      <div class="glass-panel p-5 rounded-2xl border border-cyan-500/20 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-square-root-variable text-cyan-400"></i>
+            <span data-key="stepHeaderTitle">Live 4-Step Gravitational Formula Calculation</span>
+          </h3>
+          <span class="text-xs bg-cyan-500/10 text-cyan-300 px-2.5 py-1 rounded-full border border-cyan-400/20 formula-font">
+            F = G · (m₁ · m₂) / r²
+          </span>
+        </div>
+
+        <!-- 4 Calculation Steps Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Step 1: Given Variables -->
+          <div class="glass-card p-3.5 rounded-xl border-t-2 border-t-cyan-400 space-y-1.5">
+            <p class="text-xs text-cyan-400 font-bold uppercase tracking-wider" data-key="step1">Step 1: Given Values</p>
+            <div class="text-xs text-slate-300 space-y-1 formula-font bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+              <div>m₁ = <span id="calc-step-m1" class="text-cyan-300 font-bold">1000</span> kg</div>
+              <div>m₂ = <span id="calc-step-m2" class="text-rose-400 font-bold">1000</span> kg</div>
+              <div>r = <span id="calc-step-r" class="text-amber-300 font-bold">10</span> m</div>
+              <div>G = <span id="calc-step-g" class="text-slate-400">6.674×10⁻¹¹</span></div>
+            </div>
+          </div>
+
+          <!-- Step 2: Multiply Masses -->
+          <div class="glass-card p-3.5 rounded-xl border-t-2 border-t-purple-400 space-y-1.5">
+            <p class="text-xs text-purple-400 font-bold uppercase tracking-wider" data-key="step2">Step 2: Multiply Masses (m₁ × m₂)</p>
+            <div class="text-xs text-slate-300 space-y-1 formula-font bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+              <p class="text-slate-400 text-[11px]" data-key="massProductLabel">Product of Masses:</p>
+              <div class="text-purple-300 font-bold text-sm py-1" id="calc-step-mproduct">
+                1,000,000 kg²
+              </div>
+              <p class="text-[10px] text-slate-500" data-key="step2Hint">Heavy masses = Stronger pull</p>
+            </div>
+          </div>
+
+          <!-- Step 3: Square Distance -->
+          <div class="glass-card p-3.5 rounded-xl border-t-2 border-t-amber-400 space-y-1.5">
+            <p class="text-xs text-amber-400 font-bold uppercase tracking-wider" data-key="step3">Step 3: Square Distance (r²)</p>
+            <div class="text-xs text-slate-300 space-y-1 formula-font bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+              <p class="text-slate-400 text-[11px]" data-key="distSquareLabel">Distance Squared (r²):</p>
+              <div class="text-amber-300 font-bold text-sm py-1" id="calc-step-rsquare">
+                100 m²
+              </div>
+              <p class="text-[10px] text-slate-500" data-key="step3Hint">Double distance = 4x weaker force</p>
+            </div>
+          </div>
+
+          <!-- Step 4: Final Substitution -->
+          <div class="glass-card p-3.5 rounded-xl border-t-2 border-t-emerald-400 space-y-1.5 glow-green">
+            <p class="text-xs text-emerald-400 font-bold uppercase tracking-wider" data-key="step4">Step 4: Final Force Answer</p>
+            <div class="text-xs text-slate-300 space-y-1 formula-font bg-slate-950/80 p-2.5 rounded-lg border border-emerald-500/30">
+              <p class="text-[10px] text-slate-400">F = G × (m₁·m₂ / r²)</p>
+              <div class="text-emerald-300 font-bold text-base py-0.5" id="calc-step-final">
+                6.674 × 10⁻⁷ N
+              </div>
+              <p class="text-[10px] text-emerald-400/80 font-sans" data-key="resultSuccess">✓ Exact Newton Result Calculated</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 2: LEARN CONCEPT ==================== -->
+    <div id="view-learn" class="hidden space-y-6">
+      
+      <!-- Learn Header Banner -->
+      <div class="glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+        <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-300" data-key="learnMainTitle">
+          Understanding Newton's Law of Universal Gravitation
+        </h2>
+        <p class="text-slate-300 text-sm max-w-2xl mx-auto" data-key="learnSubTitle">
+          Every object in the universe attracts every other object with a force that depends on their masses and the distance between them.
+        </p>
+      </div>
+
+      <!-- Core Visual Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Concept Card 1: Mass Effect -->
+        <div class="glass-card p-5 rounded-2xl space-y-3 border-t-4 border-t-cyan-400">
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl glow-cyan">
+            <i class="fa-solid fa-weight-hanging"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-key="learnC1Title">1. Mass Direct Proportionality</h3>
+          <p class="text-slate-300 text-xs md:text-sm leading-relaxed" data-key="learnC1Desc">
+            Gravitational force is directly proportional to the product of both masses ($F \propto m_1 \cdot m_2$). If you double either mass, the gravitational pull doubles!
+          </p>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-cyan-300 formula-font text-xs text-center">
+            m ↑ ⟹ F ↑ (Direct Relationship)
+          </div>
+        </div>
+
+        <!-- Concept Card 2: Inverse Square Law -->
+        <div class="glass-card p-5 rounded-2xl space-y-3 border-t-4 border-t-amber-400">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-arrows-left-right-to-line"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-key="learnC2Title">2. Inverse Square Distance Law</h3>
+          <p class="text-slate-300 text-xs md:text-sm leading-relaxed" data-key="learnC2Desc">
+            Force decreases rapidly with distance — proportional to $1/r^2$. Moving 2x further away makes the attraction 4 times weaker ($2^2 = 4$).
+          </p>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-amber-300 formula-font text-xs text-center">
+            r × 2 ⟹ F ÷ 4 (Inverse-Square)
+          </div>
+        </div>
+
+        <!-- Concept Card 3: Universal Constant G -->
+        <div class="glass-card p-5 rounded-2xl space-y-3 border-t-4 border-t-indigo-400">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-infinity"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-key="learnC3Title">3. Gravitational Constant (G)</h3>
+          <p class="text-slate-300 text-xs md:text-sm leading-relaxed" data-key="learnC3Desc">
+            The constant $G = 6.674 \times 10^{-11} \text{ N}\cdot\text{m}^2/\text{kg}^2$ represents the fundamental strength of gravity in our universe. Because $G$ is extremely small, gravity is only noticeable with massive objects like planets.
+          </p>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-indigo-300 formula-font text-xs text-center">
+            G = 6.674 × 10⁻¹¹ N·m²/kg²
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Newton's 3rd Law Card -->
+      <div class="glass-panel p-5 rounded-2xl border border-cyan-500/30 flex flex-col md:flex-row items-center gap-5">
+        <div class="text-cyan-400 text-4xl p-4 bg-cyan-500/10 rounded-2xl border border-cyan-400/20">
+          <i class="fa-solid fa-handshake-angle"></i>
+        </div>
+        <div class="space-y-1 text-center md:text-left">
+          <h4 class="text-base font-bold text-white" data-key="learnThirdLawTitle">Newton's Third Law in Gravitation</h4>
+          <p class="text-slate-300 text-xs md:text-sm" data-key="learnThirdLawDesc">
+            The force object 1 exerts on object 2 is ALWAYS equal in magnitude and opposite in direction to the force object 2 exerts on object 1 ($F_{12} = -F_{21}$). An apple pulls Earth with the exact same force Earth pulls the apple!
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 3: OBSERVATION & CALCULATIONS ==================== -->
+    <div id="view-obs" class="hidden space-y-6">
+      
+      <!-- Table Header & Action Buttons -->
+      <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-white" data-key="obsHeaderTitle">Experimental Data Log</h3>
+          <p class="text-xs text-slate-400" data-key="obsHeaderSub">Record trials from your simulation experiments to observe mathematical trends.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="recordDataPoint()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-cyan-500/20">
+            <i class="fa-solid fa-plus"></i>
+            <span data-key="btnRecord">Record Current Trial</span>
+          </button>
+          <button onclick="clearDataLog()" class="px-3 py-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 rounded-xl text-xs transition border border-slate-700">
+            <i class="fa-solid fa-trash"></i>
+            <span data-key="btnClear">Clear Log</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="glass-panel rounded-2xl border border-slate-800 overflow-x-auto">
+        <table class="w-full text-left text-xs md:text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-900/90 text-slate-300 border-b border-slate-800">
+              <th class="p-3.5 font-semibold">#</th>
+              <th class="p-3.5 font-semibold" data-key="thM1">Mass 1 (m₁)</th>
+              <th class="p-3.5 font-semibold" data-key="thM2">Mass 2 (m₂)</th>
+              <th class="p-3.5 font-semibold" data-key="thR">Distance (r)</th>
+              <th class="p-3.5 font-semibold" data-key="thR2">Distance² (r²)</th>
+              <th class="p-3.5 font-semibold text-cyan-300" data-key="thForce">Gravitational Force (F)</th>
+            </tr>
+          </thead>
+          <tbody id="obs-table-body" class="divide-y divide-slate-800/60 text-slate-300 formula-font">
+            <!-- Dynamic rows inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 4: QUIZ (5 MCQs ONLY) ==================== -->
+    <div id="view-quiz" class="hidden max-w-3xl mx-auto space-y-6">
+      
+      <!-- Quiz Progress Bar -->
+      <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-bold text-white" data-key="quizTitle">Gravitation Concept Mastery</h3>
+          <p class="text-xs text-slate-400"><span data-key="qNumLabel">Question</span> <span id="quiz-q-num">1</span> / 5</p>
+        </div>
+        <div class="w-32 bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
+          <div id="quiz-progress" class="bg-cyan-400 h-full w-1/5 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- Question Card Container -->
+      <div id="quiz-card-container" class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-5">
+        <h4 id="quiz-question-text" class="text-base md:text-lg font-semibold text-white leading-relaxed">
+          <!-- Question text inserted dynamically -->
+        </h4>
+
+        <!-- Options Container -->
+        <div id="quiz-options-container" class="space-y-3">
+          <!-- Option buttons inserted dynamically -->
+        </div>
+
+        <!-- Explanation Feedback Box -->
+        <div id="quiz-explanation-box" class="hidden p-4 rounded-xl text-xs md:text-sm space-y-1">
+          <p id="quiz-feedback-title" class="font-bold flex items-center gap-2"></p>
+          <p id="quiz-feedback-desc" class="text-slate-300"></p>
+        </div>
+
+        <!-- Next / Submit Button -->
+        <div class="flex justify-end pt-2">
+          <button id="btn-quiz-next" onclick="nextQuizQuestion()" disabled class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs transition flex items-center gap-2">
+            <span data-key="btnNext">Next Question</span>
+            <i class="fa-solid fa-arrow-right rtl-flip"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Score Summary Screen (Hidden by default) -->
+      <div id="quiz-score-card" class="hidden glass-panel p-8 rounded-2xl border border-cyan-500/40 text-center space-y-5">
+        <div class="w-20 h-20 rounded-full bg-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center text-3xl glow-cyan">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-white" data-key="quizCompleted">Quiz Completed!</h3>
+          <p class="text-slate-400 text-sm mt-1" data-key="quizScoreMsg">Here is your performance summary:</p>
+        </div>
+        <div class="text-4xl font-extrabold text-cyan-300 formula-font py-2">
+          <span id="quiz-final-score">0</span> / 5
+        </div>
+        <p id="quiz-feedback-eval" class="text-sm font-medium text-slate-300"></p>
+        <button onclick="restartQuiz()" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-rotate-right mr-1"></i>
+          <span data-key="btnRestart">Restart Quiz</span>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="glass-panel border-t border-slate-800 py-3 px-4 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© IQRA VIRTUAL LABS — Interactive STEM Physics Engine</p>
+      <p class="text-cyan-400/80">F = G · (m₁ · m₂) / r²</p>
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    /* ================= TRANSLATION DICTIONARY (ENGLISH & URDU) ================= */
+    const LANG = {
+      en: {
+        tabSim: "Simulation",
+        tabLearn: "Learn",
+        tabObs: "Steps & Data",
+        tabQuiz: "Quiz",
+        presetLabel: "Presets:",
+        presetCustom: "🧪 Custom Lab Objects",
+        presetEarthMoon: "🌍 Earth & Moon",
+        presetApples: "🍎 Two Apples",
+        presetLead: "⚪ Two Lead Spheres",
+        gModeLabel: "G Constant Mode:",
+        m1Label: "Mass 1 (m₁)",
+        m2Label: "Mass 2 (m₂)",
+        rLabel: "Distance (r)",
+        forceResultLabel: "Calculated Gravitational Force (F)",
+        forceEqualThirdLaw: "F₁ = F₂ (Newton's 3rd Law in action)",
+        gridBtn: "Grid",
+        dragInstruction: "Drag objects directly on the canvas to change distance (r)",
+        stepHeaderTitle: "Live 4-Step Gravitational Formula Calculation",
+        step1: "Step 1: Given Values",
+        step2: "Step 2: Multiply Masses (m₁ × m₂)",
+        massProductLabel: "Product of Masses:",
+        step2Hint: "Heavy masses = Stronger pull",
+        step3: "Step 3: Square Distance (r²)",
+        distSquareLabel: "Distance Squared (r²):",
+        step3Hint: "Double distance = 4x weaker force",
+        step4: "Step 4: Final Force Answer",
+        resultSuccess: "✓ Exact Newton Result Calculated",
+        learnMainTitle: "Understanding Newton's Law of Universal Gravitation",
+        learnSubTitle: "Every object in the universe attracts every other object with a force that depends on their masses and the distance between them.",
+        learnC1Title: "1. Mass Direct Proportionality",
+        learnC1Desc: "Gravitational force is directly proportional to the product of both masses (F ∝ m₁ · m₂). If you double either mass, the gravitational pull doubles!",
+        learnC2Title: "2. Inverse Square Distance Law",
+        learnC2Desc: "Force decreases rapidly with distance — proportional to 1/r². Moving 2x further away makes the attraction 4 times weaker (2² = 4).",
+        learnC3Title: "3. Gravitational Constant (G)",
+        learnC3Desc: "The constant G = 6.674 × 10⁻¹¹ N·m²/kg² represents the fundamental strength of gravity. Because G is tiny, gravity is only noticeable with huge celestial objects.",
+        learnThirdLawTitle: "Newton's Third Law in Gravitation",
+        learnThirdLawDesc: "The force object 1 exerts on object 2 is ALWAYS equal in magnitude and opposite in direction to the force object 2 exerts on object 1 (F₁₂ = -F₂₁).",
+        obsHeaderTitle: "Experimental Data Log",
+        obsHeaderSub: "Record trials from your simulation experiments to observe mathematical trends.",
+        btnRecord: "Record Current Trial",
+        btnClear: "Clear Log",
+        thM1: "Mass 1 (m₁)",
+        thM2: "Mass 2 (m₂)",
+        thR: "Distance (r)",
+        thR2: "Distance² (r²)",
+        thForce: "Gravitational Force (F)",
+        quizTitle: "Gravitation Concept Mastery",
+        qNumLabel: "Question",
+        btnNext: "Next Question",
+        quizCompleted: "Quiz Completed!",
+        quizScoreMsg: "Here is your performance summary:",
+        btnRestart: "Restart Quiz"
+      },
+      ur: {
+        tabSim: "سمیولیشن",
+        tabLearn: "تصور سیکھیں",
+        tabObs: "مراحل اور ڈیٹا",
+        tabQuiz: "کوئز",
+        presetLabel: "پیش سیٹ:",
+        presetCustom: "🧪 لیب کی اشیاء (کسٹم)",
+        presetEarthMoon: "🌍 زمین اور چاند",
+        presetApples: "🍎 دو سیب",
+        presetLead: "⚪ لید کے دو کرے۔",
+        gModeLabel: "G کا موڈ:",
+        m1Label: "کمیت 1 (m₁)",
+        m2Label: "کمیت 2 (m₂)",
+        rLabel: "فاصلہ (r)",
+        forceResultLabel: "حساب شدہ کشش ثقل کی قوت (F)",
+        forceEqualThirdLaw: "F₁ = F₂ (نیوٹن کا تیسرا قانون)",
+        gridBtn: "گرڈ",
+        dragInstruction: "فاصلہ (r) تبدیل کرنے کے لیے کینوس پر موجود اشیاء کو کھینچیں",
+        stepHeaderTitle: "فارمولا حساب کے 4 لائیو مراحل",
+        step1: "مرحلہ 1: دی گئی قیمتیں",
+        step2: "مرحلہ 2: کمیت کی ضرب (m₁ × m₂)",
+        massProductLabel: "کمیتوں کا حاصل ضرب:",
+        step2Hint: "زیادہ کمیت = زیادہ کشش",
+        step3: "مرحلہ 3: فاصلے کا مربع (r²)",
+        distSquareLabel: "فاصلے کا مربع (r²):",
+        step3Hint: "دوگنا فاصلہ = 4 گنا کم قوت",
+        step4: "مرحلہ 4: حتمی جواب (قوت)",
+        resultSuccess: "✓ بالکل درست نیوٹن قوت حساب ہو گئی",
+        learnMainTitle: "نیوٹن کا قانون کشش ثقل",
+        learnSubTitle: "کائنات کی ہر شے دوسری شے کو اپنی طرف کھینچتی ہے جس کی قوت ان کی کمیتوں اور درمیانی فاصلے پر منحصر ہے۔",
+        learnC1Title: "1. کمیت کا براہ راست تعلق",
+        learnC1Desc: "کشش ثقل کی قوت دونوں کمیتوں کے حاصل ضرب کے راست متناسب ہوتی ہے (F ∝ m₁ · m₂)۔ اگر کمیت دوگنی کی جائے تو قوت بھی دوگنی ہو جاتی ہے۔",
+        learnC2Title: "2. فاصلے کا معکوس مربع قانون",
+        learnC2Desc: "فاصلہ بڑھنے سے قوت تیزی سے کم ہوتی ہے (1/r²)۔ فاصلہ 2 گنا بڑھانے سے کشش کی قوت 4 گنا کم ہو جاتی ہے۔",
+        learnC3Title: "3. کشش ثقل کا مستقل (G)",
+        learnC3Desc: "مستقل G = 6.674 × 10⁻¹¹ N·m²/kg² کائنات میں کشش کی بنیادی طاقت کی نمائندگی کرتا ہے۔ یہ بہت چھوٹا ہوتا ہے۔",
+        learnThirdLawTitle: "کشش ثقل میں نیوٹن کا تیسرا قانون",
+        learnThirdLawDesc: "پہلی شے دوسری شے پر جو قوت لگاتی ہے وہ دوسری شے کی پہلی شے پر لگائی گئی قوت کے بالکل برابر اور مخالف سمت میں ہوتی ہے۔",
+        obsHeaderTitle: "تجرباتی ڈیٹا لاگ",
+        obsHeaderSub: "ریاضیاتی رجحانات کا مشاہدہ کرنے کے لیے اپنے سمیولیشن تجربات سے لاگ محفوظ کریں۔",
+        btnRecord: "موجودہ ڈیٹا محفوظ کریں",
+        btnClear: "لاگ صاف کریں",
+        thM1: "کمیت 1 (m₁)",
+        thM2: "کمیت 2 (m₂)",
+        thR: "فاصلہ (r)",
+        thR2: "فاصلہ² (r²)",
+        thForce: "کشش ثقل کی قوت (F)",
+        quizTitle: "کشش ثقل کوئز",
+        qNumLabel: "سوال",
+        btnNext: "اگلا سوال",
+        quizCompleted: "کوئز مکمل ہو گیا!",
+        quizScoreMsg: "آپ کا حتمی اسکور:",
+        btnRestart: "دوبارہ شروع کریں"
+      }
+    };
+
+    /* ================= QUIZ DATA (EXACTLY 5 MCQs) ================= */
+    const QUIZ_DATA = [
+      {
+        questionEn: "If you double Mass 1 (m₁) while keeping distance and Mass 2 constant, what happens to the gravitational force?",
+        questionUr: "اگر آپ فاصلے اور کمیت 2 کو تبدیل کیے بغیر کمیت 1 (m₁) کو دوگنا کر دیں، تو کشش ثقل کی قوت پر کیا اثر پڑے گا؟",
+        optionsEn: ["The force doubles", "The force quadruples", "The force is halved", "The force becomes zero"],
+        optionsUr: ["قوت دوگنی ہو جائے گی", "قوت چار گنا ہو جائے گی", "قوت آدھی ہو جائے گی", "قوت صفر ہو جائے گی"],
+        correct: 0,
+        expEn: "Gravitational force is directly proportional to mass (F ∝ m). Doubling mass doubles the force.",
+        expUr: "کشش ثقل کی قوت کمیت کے راست متناسب ہوتی ہے (F ∝ m)۔ کمیت دوگنی کرنے سے قوت دوگنی ہو جاتی ہے۔"
+      },
+      {
+        questionEn: "If the distance (r) between two objects is doubled, how does the gravitational force change?",
+        questionUr: "اگر دو اشیاء کے درمیان فاصلہ (r) دوگنا کر دیا جائے، تو کشش ثقل کی قوت میں کیا تبدیلی آئے گی؟",
+        optionsEn: ["Reduces to 1/4th of original", "Doubles", "Reduces to 1/2 of original", "Increases by 4 times"],
+        optionsUr: ["اصل کا 1/4 رہ جائے گی", "دوگنی ہو جائے گی", "اصل کا 1/2 رہ جائے گی", "4 گنا بڑھ جائے گی"],
+        correct: 0,
+        expEn: "Force follows Inverse Square Law (F ∝ 1/r²). Doubling r reduces force to 1/(2²) = 1/4th.",
+        expUr: "قوت معکوس مربع قانون پر عمل کرتی ہے (F ∝ 1/r²)۔ فاصلہ دوگنا کرنے سے قوت 1/(2²) = 1/4 رہ جاتی ہے۔"
+      },
+      {
+        questionEn: "According to Newton's Third Law, if Earth pulls an apple with force F, with what force does the apple pull Earth?",
+        questionUr: "نیوٹن کے تیسرے قانون کے مطابق، اگر زمین سیب کو F قوت سے کھینچتی ہے، تو سیب زمین کو کس قوت سے کھینچتا ہے؟",
+        optionsEn: ["With the exact same force F", "With zero force", "With much smaller force", "With much larger force"],
+        optionsUr: ["بالکل اسی F قوت سے", "صفر قوت سے", "بہت کم قوت سے", "بہت زیادہ قوت سے"],
+        correct: 0,
+        expEn: "Gravitational forces are action-reaction pairs (F₁₂ = -F₂₁). Both exert equal & opposite forces.",
+        expUr: "کشش ثقل کی قوتیں عمل اور ردِ عمل کا جوڑا ہوتی ہیں۔ دونوں ایک دوسرے پر مساوی قوت لگاتی ہیں۔"
+      },
+      {
+        questionEn: "What is the accepted value of the Universal Gravitational Constant (G)?",
+        questionUr: "کشش ثقل کے عالمی مستقل (G) کی مانیس ہوئی قیمت کیا ہے؟",
+        optionsEn: ["6.674 × 10⁻¹¹ N·m²/kg²", "9.8 m/s²", "3.0 × 10⁸ m/s", "1.6 × 10⁻¹⁹ C"],
+        optionsUr: ["6.674 × 10⁻¹¹ N·m²/kg²", "9.8 m/s²", "3.0 × 10⁸ m/s", "1.6 × 10⁻¹⁹ C"],
+        correct: 0,
+        expEn: "G = 6.674 × 10⁻¹¹ N·m²/kg² is the fundamental universal gravitational constant.",
+        expUr: "G = 6.674 × 10⁻¹¹ N·m²/kg² کشش ثقل کا بنیادی عالمی مستقل ہے۔"
+      },
+      {
+        questionEn: "Which combination will yield the HIGHEST gravitational attraction force?",
+        questionUr: "ان میں سے کون سا امتزاج سب سے زیادہ کشش ثقل کی قوت پیدا کرے گا؟",
+        optionsEn: ["Large masses and small distance", "Small masses and large distance", "Small masses and small distance", "Large masses and large distance"],
+        optionsUr: ["بڑی کمیتیں اور چھوٹا فاصلہ", "چھوٹی کمیتیں اور بڑا فاصلہ", "چھوٹی کمیتیں اور چھوٹا فاصلہ", "بڑی کمیتیں اور بڑا فاصلہ"],
+        correct: 0,
+        expEn: "Maximum force requires large numerator (m₁ · m₂) and minimum denominator (r²).",
+        expUr: "زیادہ سے زیادہ قوت کے لیے بڑی کمیتیں اور کم سے کم فاصلہ ضروری ہے۔"
+      }
+    ];
+
+    /* ================= STATE MANAGEMENT ================= */
+    let currentLang = 'en';
+    let gMode = 'real'; // 'real' or 'scaled'
+    let state = {
+      m1: 1000,
+      m2: 1000,
+      r: 10,
+      unitM: 'kg',
+      unitR: 'm'
+    };
+
+    // Canvas Transformation State
+    let canvasScale = 1;
+    let canvasPanX = 0;
+    let canvasPanY = 0;
+    let showGrid = true;
+    let isDraggingSphere = null; // 'm1' or 'm2'
+    let dragStartX = 0;
+
+    // Data Log State
+    let obsHistory = [];
+
+    // Quiz State
+    let currentQ = 0;
+    let quizScore = 0;
+    let selectedOption = null;
+
+    /* ================= INIT & INTRO ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Saved language preference
+      const savedLang = localStorage.getItem('iqra_lang');
+      if (savedLang) currentLang = savedLang;
+
+      applyLanguageUI();
+      setupCanvasEvents();
+      syncInputs();
+      updateCalculationAndVisuals();
+      loadQuizQuestion();
+
+      // Intro animation timeout (2 seconds)
+      setTimeout(() => {
+        const intro = document.getElementById('intro-screen');
+        intro.style.opacity = '0';
+        setTimeout(() => intro.remove(), 700);
+      }, 2000);
+    });
+
+    /* ================= LANGUAGE SYSTEM ================= */
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ur' : 'en';
+      localStorage.setItem('iqra_lang', currentLang);
+      applyLanguageUI();
+      drawCanvas();
+      loadQuizQuestion();
+    }
+
+    function applyLanguageUI() {
+      const isUrdu = currentLang === 'ur';
+      document.documentElement.dir = isUrdu ? 'rtl' : 'ltr';
+      document.documentElement.lang = currentLang;
+
+      // Update static data-key elements
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (LANG[currentLang] && LANG[currentLang][key]) {
+          el.textContent = LANG[currentLang][key];
+        }
+      });
+
+      // Update Language Switcher text
+      document.getElementById('lang-btn-text').textContent = isUrdu ? '🌐 English | اردو' : '🌐 English | اردو';
+
+      // Re-render calculations and Quiz
+      updateCalculationAndVisuals();
+    }
+
+    /* ================= TAB NAVIGATION ================= */
+    function switchTab(tabId) {
+      const tabs = ['sim', 'learn', 'obs', 'quiz'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          btn.className = "px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 bg-cyan-500 text-slate-950 font-semibold shadow-md";
+        } else {
+          view.classList.add('hidden');
+          btn.className = "px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60";
+        }
+      });
+
+      if (tabId === 'sim') {
+        setTimeout(resizeCanvas, 50);
+      }
+    }
+
+    /* ================= PRESETS & INPUT HANDLERS ================= */
+    function applyPreset(presetKey) {
+      if (presetKey === 'earthMoon') {
+        state.m1 = 5972; // Representative scaled Earth
+        state.m2 = 73;   // Representative scaled Moon
+        state.r = 38;
+      } else if (presetKey === 'apples') {
+        state.m1 = 1;
+        state.m2 = 1;
+        state.r = 2;
+      } else if (presetKey === 'leadSpheres') {
+        state.m1 = 500;
+        state.m2 = 500;
+        state.r = 5;
+      } else {
+        state.m1 = 1000;
+        state.m2 = 1000;
+        state.r = 10;
+      }
+      syncInputs();
+      updateCalculationAndVisuals();
+    }
+
+    function setGMode(mode) {
+      gMode = mode;
+      document.getElementById('gmode-real').className = mode === 'real' 
+        ? "px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-medium" 
+        : "px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200";
+      document.getElementById('gmode-scaled').className = mode === 'scaled' 
+        ? "px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-medium" 
+        : "px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200";
+      
+      updateCalculationAndVisuals();
+    }
+
+    const sliderM1 = document.getElementById('slider-m1');
+    const numM1 = document.getElementById('num-m1');
+    const sliderM2 = document.getElementById('slider-m2');
+    const numM2 = document.getElementById('num-m2');
+    const sliderR = document.getElementById('slider-r');
+    const numR = document.getElementById('num-r');
+
+    function syncInputs() {
+      sliderM1.value = state.m1;
+      numM1.value = state.m1;
+      sliderM2.value = state.m2;
+      numM2.value = state.m2;
+      sliderR.value = state.r;
+      numR.value = state.r;
+    }
+
+    sliderM1.addEventListener('input', (e) => { state.m1 = parseFloat(e.target.value); numM1.value = state.m1; updateCalculationAndVisuals(); });
+    numM1.addEventListener('input', (e) => { state.m1 = Math.max(1, parseFloat(e.target.value) || 1); sliderM1.value = state.m1; updateCalculationAndVisuals(); });
+
+    sliderM2.addEventListener('input', (e) => { state.m2 = parseFloat(e.target.value); numM2.value = state.m2; updateCalculationAndVisuals(); });
+    numM2.addEventListener('input', (e) => { state.m2 = Math.max(1, parseFloat(e.target.value) || 1); sliderM2.value = state.m2; updateCalculationAndVisuals(); });
+
+    sliderR.addEventListener('input', (e) => { state.r = parseFloat(e.target.value); numR.value = state.r; updateCalculationAndVisuals(); });
+    numR.addEventListener('input', (e) => { state.r = Math.max(0.5, parseFloat(e.target.value) || 1); sliderR.value = state.r; updateCalculationAndVisuals(); });
+
+    /* ================= MATHEMATICAL CALCULATIONS ================= */
+    const REAL_G = 6.67430e-11;
+    const SCALED_G = 1.0;
+
+    function computeForce() {
+      const G = (gMode === 'real') ? REAL_G : SCALED_G;
+      const force = G * (state.m1 * state.m2) / (state.r * state.r);
+      return force;
+    }
+
+    function formatScientific(val) {
+      if (gMode === 'scaled') return val.toFixed(2) + " N";
+      if (val === 0) return "0 N";
+      return val.toExponential(3).replace('e', ' × 10^').replace('^', '') + ' N';
+    }
+
+    function updateCalculationAndVisuals() {
+      const force = computeForce();
+      const formattedForce = formatScientific(force);
+
+      // Display Main Gauge
+      document.getElementById('sim-force-display').textContent = formattedForce;
+
+      // 4-Step Interactive Calculation Card
+      document.getElementById('calc-step-m1').textContent = state.m1.toLocaleString();
+      document.getElementById('calc-step-m2').textContent = state.m2.toLocaleString();
+      document.getElementById('calc-step-r').textContent = state.r;
+      document.getElementById('calc-step-g').textContent = (gMode === 'real') ? "6.674×10⁻¹¹" : "1.0";
+
+      const massProd = state.m1 * state.m2;
+      document.getElementById('calc-step-mproduct').textContent = massProd.toLocaleString() + " kg²";
+
+      const rSq = (state.r * state.r);
+      document.getElementById('calc-step-rsquare').textContent = rSq.toLocaleString() + " m²";
+
+      document.getElementById('calc-step-final').textContent = formattedForce;
+
+      drawCanvas();
+    }
+
+    /* ================= CANVAS RENDERING ENGINE ================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const wrapper = document.getElementById('canvas-wrapper');
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      drawCanvas();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function zoomCanvas(factor) {
+      canvasScale *= factor;
+      canvasScale = Math.max(0.5, Math.min(3.0, canvasScale));
+      drawCanvas();
+    }
+
+    function resetCanvasView() {
+      canvasScale = 1.0;
+      canvasPanX = 0;
+      canvasPanY = 0;
+      drawCanvas();
+    }
+
+    function toggleGrid() {
+      showGrid = !showGrid;
+      document.getElementById('btn-grid-toggle').className = showGrid 
+        ? "px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-medium border border-cyan-400/30"
+        : "px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 text-xs font-medium border border-slate-700";
+      drawCanvas();
+    }
+
+    function drawCanvas() {
+      if (!canvas.width || !canvas.height) resizeCanvas();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      // Apply Pan & Zoom transformations
+      ctx.translate(canvas.width / 2 + canvasPanX, canvas.height / 2 + canvasPanY);
+      ctx.scale(canvasScale, canvasScale);
+
+      // 1. Draw Grid Lines
+      if (showGrid) {
+        ctx.strokeStyle = "rgba(51, 65, 85, 0.3)";
+        ctx.lineWidth = 1;
+        const gridSize = 40;
+        const widthHalf = canvas.width / canvasScale;
+        const heightHalf = canvas.height / canvasScale;
+
+        for (let x = -widthHalf; x < widthHalf; x += gridSize) {
+          ctx.beginPath(); ctx.moveTo(x, -heightHalf); ctx.lineTo(x, heightHalf); ctx.stroke();
+        }
+        for (let y = -heightHalf; y < heightHalf; y += gridSize) {
+          ctx.beginPath(); ctx.moveTo(-widthHalf, y); ctx.lineTo(widthHalf, y); ctx.stroke();
+        }
+      }
+
+      // 2. Positions of Masses
+      const centerGap = state.r * 6; // Visual scaling factor for distance
+      const x1 = -centerGap / 2;
+      const x2 = centerGap / 2;
+      const y = 0;
+
+      // Radius scales with cube root of mass for clean visual proportion
+      const r1 = Math.max(16, Math.min(45, Math.cbrt(state.m1) * 3.2));
+      const r2 = Math.max(16, Math.min(45, Math.cbrt(state.m2) * 3.2));
+
+      // 3. Distance Ruler & Dimension Line
+      ctx.strokeStyle = "#fbbf24";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x1, y + 60);
+      ctx.lineTo(x2, y + 60);
+      ctx.stroke();
+
+      // Ruler ticks
+      ctx.beginPath();
+      ctx.moveTo(x1, y + 50); ctx.lineTo(x1, y + 70);
+      ctx.moveTo(x2, y + 50); ctx.lineTo(x2, y + 70);
+      ctx.stroke();
+
+      // Distance Label
+      ctx.fillStyle = "#fef08a";
+      ctx.font = "bold 13px 'Fira Code', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(`r = ${state.r} m`, 0, y + 80);
+
+      // 4. Force Vectors (Inward Attracting Arrows)
+      const forceVal = computeForce();
+      // Vector length scaled logarithmically or linearly for readable presentation
+      const arrowLen = Math.min(80, Math.max(25, Math.log10(forceVal + 1) * 15 + 30));
+
+      // Force Arrow on Object 1 (pointing right)
+      drawArrow(ctx, x1 + r1 + 5, y, x1 + r1 + 5 + arrowLen, y, "#00f3ff", "F₁");
+      // Force Arrow on Object 2 (pointing left)
+      drawArrow(ctx, x2 - r2 - 5, y, x2 - r2 - 5 - arrowLen, y, "#ef4444", "F₂");
+
+      // 5. Sphere 1 (Mass 1 - Cyan Glow)
+      ctx.shadowColor = "#00f3ff";
+      ctx.shadowBlur = 20;
+      const grad1 = ctx.createRadialGradient(x1 - r1/3, y - r1/3, r1/6, x1, y, r1);
+      grad1.addColorStop(0, '#67e8f9');
+      grad1.addColorStop(1, '#0284c7');
+      ctx.fillStyle = grad1;
+      ctx.beginPath();
+      ctx.arc(x1, y, r1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset
+
+      // Mass 1 Label
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 12px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`m₁ = ${state.m1}kg`, x1, y - r1 - 12);
+
+      // 6. Sphere 2 (Mass 2 - Rose Glow)
+      ctx.shadowColor = "#ef4444";
+      ctx.shadowBlur = 20;
+      const grad2 = ctx.createRadialGradient(x2 - r2/3, y - r2/3, r2/6, x2, y, r2);
+      grad2.addColorStop(0, '#fca5a5');
+      grad2.addColorStop(1, '#e11d48');
+      ctx.fillStyle = grad2;
+      ctx.beginPath();
+      ctx.arc(x2, y, r2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Mass 2 Label
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 12px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`m₂ = ${state.m2}kg`, x2, y - r2 - 12);
+
+      ctx.restore();
+    }
+
+    function drawArrow(context, fromx, fromy, tox, toy, color, label) {
+      const headlen = 10;
+      const dx = tox - fromx;
+      const dy = toy - fromy;
+      const angle = Math.atan2(dy, dx);
+
+      context.strokeStyle = color;
+      context.fillStyle = color;
+      context.lineWidth = 3;
+
+      context.beginPath();
+      context.moveTo(fromx, fromy);
+      context.lineTo(tox, toy);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(tox, toy);
+      context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+      context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+      context.closePath();
+      context.fill();
+
+      // Label above arrow
+      context.font = "bold 12px 'Fira Code', monospace";
+      context.fillText(label, (fromx + tox) / 2, fromy - 10);
+    }
+
+    /* ================= CANVAS INTERACTION (DRAGGING OBJECTS) ================= */
+    function setupCanvasEvents() {
+      let isPanning = false;
+      let startPanX = 0, startPanY = 0;
+
+      canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left - canvas.width / 2 - canvasPanX) / canvasScale;
+        const my = (e.clientY - rect.top - canvas.height / 2 - canvasPanY) / canvasScale;
+
+        const centerGap = state.r * 6;
+        const x1 = -centerGap / 2;
+        const x2 = centerGap / 2;
+
+        if (Math.hypot(mx - x1, my) < 40) {
+          isDraggingSphere = 'm1';
+        } else if (Math.hypot(mx - x2, my) < 40) {
+          isDraggingSphere = 'm2';
+        } else {
+          isPanning = true;
+          startPanX = e.clientX - canvasPanX;
+          startPanY = e.clientY - canvasPanY;
+        }
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (isDraggingSphere) {
+          const rect = canvas.getBoundingClientRect();
+          const mx = (e.clientX - rect.left - canvas.width / 2 - canvasPanX) / canvasScale;
+          // Calculate new r based on mouse distance from center
+          let newR = Math.abs(mx) * 2 / 6;
+          newR = Math.max(2, Math.min(50, Math.round(newR * 2) / 2));
+          state.r = newR;
+          syncInputs();
+          updateCalculationAndVisuals();
+        } else if (isPanning) {
+          canvasPanX = e.clientX - startPanX;
+          canvasPanY = e.clientY - startPanY;
+          drawCanvas();
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDraggingSphere = null;
+        isPanning = false;
+      });
+
+      // Touch Screen Support
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          const touch = e.touches[0];
+          const rect = canvas.getBoundingClientRect();
+          const mx = (touch.clientX - rect.left - canvas.width / 2 - canvasPanX) / canvasScale;
+          const my = (touch.clientY - rect.top - canvas.height / 2 - canvasPanY) / canvasScale;
+
+          const centerGap = state.r * 6;
+          if (Math.hypot(mx - (-centerGap / 2), my) < 40 || Math.hypot(mx - (centerGap / 2), my) < 40) {
+            isDraggingSphere = 'm1';
+          }
+        }
+      });
+
+      canvas.addEventListener('touchmove', (e) => {
+        if (isDraggingSphere && e.touches.length === 1) {
+          const touch = e.touches[0];
+          const rect = canvas.getBoundingClientRect();
+          const mx = (touch.clientX - rect.left - canvas.width / 2 - canvasPanX) / canvasScale;
+          let newR = Math.abs(mx) * 2 / 6;
+          newR = Math.max(2, Math.min(50, Math.round(newR * 2) / 2));
+          state.r = newR;
+          syncInputs();
+          updateCalculationAndVisuals();
+        }
+      });
+
+      canvas.addEventListener('touchend', () => { isDraggingSphere = null; });
+    }
+
+    /* ================= OBSERVATION TABLE DATA LOG ================= */
+    function recordDataPoint() {
+      const force = computeForce();
+      const trial = {
+        id: obsHistory.length + 1,
+        m1: state.m1,
+        m2: state.m2,
+        r: state.r,
+        r2: (state.r * state.r),
+        forceFormatted: formatScientific(force)
+      };
+      obsHistory.push(trial);
+
+      const tbody = document.getElementById('obs-table-body');
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-slate-800/40 transition border-b border-slate-800/60";
+      tr.innerHTML = `
+        <td class="p-3.5 text-slate-400 font-bold">${trial.id}</td>
+        <td class="p-3.5 text-cyan-300">${trial.m1.toLocaleString()} kg</td>
+        <td class="p-3.5 text-rose-400">${trial.m2.toLocaleString()} kg</td>
+        <td class="p-3.5 text-amber-300">${trial.r} m</td>
+        <td class="p-3.5 text-amber-400/80">${trial.r2} m²</td>
+        <td class="p-3.5 text-emerald-300 font-bold">${trial.forceFormatted}</td>
+      `;
+      tbody.prepend(tr);
+    }
+
+    function clearDataLog() {
+      obsHistory = [];
+      document.getElementById('obs-table-body').innerHTML = '';
+    }
+
+    /* ================= QUIZ ENGINE (5 MCQs) ================= */
+    function loadQuizQuestion() {
+      const q = QUIZ_DATA[currentQ];
+      document.getElementById('quiz-q-num').textContent = currentQ + 1;
+      document.getElementById('quiz-progress').style.width = `${((currentQ + 1) / 5) * 100}%`;
+
+      document.getElementById('quiz-question-text').textContent = (currentLang === 'ur') ? q.questionUr : q.questionEn;
+
+      const optsContainer = document.getElementById('quiz-options-container');
+      optsContainer.innerHTML = '';
+
+      const opts = (currentLang === 'ur') ? q.optionsUr : q.optionsEn;
+      selectedOption = null;
+
+      // Hide Feedback box and disable Next button
+      document.getElementById('quiz-explanation-box').className = "hidden p-4 rounded-xl text-xs md:text-sm space-y-1";
+      const btnNext = document.getElementById('btn-quiz-next');
+      btnNext.disabled = true;
+      btnNext.className = "px-5 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs transition flex items-center gap-2 cursor-not-allowed";
+
+      opts.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs md:text-sm font-medium transition flex items-center justify-between group";
+        btn.innerHTML = `
+          <span>${optText}</span>
+          <i class="fa-regular fa-circle text-slate-600 group-hover:text-cyan-400"></i>
+        `;
+        btn.onclick = () => selectQuizOption(idx, btn);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function selectQuizOption(index, btnElement) {
+      if (selectedOption !== null) return; // Prevent changing choice
+      selectedOption = index;
+
+      const q = QUIZ_DATA[currentQ];
+      const isCorrect = index === q.correct;
+
+      if (isCorrect) quizScore++;
+
+      const optsContainer = document.getElementById('quiz-options-container');
+      const allButtons = optsContainer.children;
+
+      // Highlight correct/wrong
+      allButtons[index].className = isCorrect 
+        ? "w-full text-left p-3.5 rounded-xl bg-emerald-500/20 border-2 border-emerald-500 text-emerald-300 font-bold text-xs md:text-sm transition flex items-center justify-between glow-green"
+        : "w-full text-left p-3.5 rounded-xl bg-rose-500/20 border-2 border-rose-500 text-rose-300 font-bold text-xs md:text-sm transition flex items-center justify-between glow-red";
+
+      allButtons[index].querySelector('i').className = isCorrect ? "fa-solid fa-circle-check text-emerald-400" : "fa-solid fa-circle-xmark text-rose-400";
+
+      if (!isCorrect) {
+        allButtons[q.correct].className = "w-full text-left p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/50 text-emerald-300 text-xs md:text-sm font-medium transition flex items-center justify-between";
+        allButtons[q.correct].querySelector('i').className = "fa-solid fa-circle-check text-emerald-400";
+      }
+
+      // Show Explanation Box
+      const expBox = document.getElementById('quiz-explanation-box');
+      const feedbackTitle = document.getElementById('quiz-feedback-title');
+      const feedbackDesc = document.getElementById('quiz-feedback-desc');
+
+      expBox.classList.remove('hidden');
+      if (isCorrect) {
+        expBox.className = "p-4 rounded-xl text-xs md:text-sm bg-emerald-500/10 border border-emerald-500/30 text-emerald-300";
+        feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${currentLang === 'ur' ? 'بالکل درست!' : 'Correct Answer!'}`;
+      } else {
+        expBox.className = "p-4 rounded-xl text-xs md:text-sm bg-rose-500/10 border border-rose-500/30 text-rose-300";
+        feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${currentLang === 'ur' ? 'غلط جواب' : 'Incorrect Answer'}`;
+      }
+      feedbackDesc.textContent = (currentLang === 'ur') ? q.expUr : q.expEn;
+
+      // Enable Next Button
+      const btnNext = document.getElementById('btn-quiz-next');
+      btnNext.disabled = false;
+      btnNext.className = "px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/20";
+    }
+
+    function nextQuizQuestion() {
+      if (currentQ < 4) {
+        currentQ++;
+        loadQuizQuestion();
+      } else {
+        // Show Final Score
+        document.getElementById('quiz-card-container').classList.add('hidden');
+        const scoreCard = document.getElementById('quiz-score-card');
+        scoreCard.classList.remove('hidden');
+
+        document.getElementById('quiz-final-score').textContent = quizScore;
+        const evalEl = document.getElementById('quiz-feedback-eval');
+
+        if (quizScore === 5) {
+          evalEl.textContent = currentLang === 'ur' ? "شاندار! آپ کا مفہوم مکمل طور پر واضح ہے۔" : "Outstanding! You have mastered Gravitational Force!";
+          evalEl.className = "text-sm font-bold text-emerald-400";
+        } else if (quizScore >= 3) {
+          evalEl.textContent = currentLang === 'ur' ? "بہت خوب! مزید مشق کے لیے سمیولیشن دوبارہ دیکھیں۔" : "Good Job! Review the simulation to get a perfect score.";
+          evalEl.className = "text-sm font-bold text-cyan-300";
+        } else {
+          evalEl.textContent = currentLang === 'ur' ? "دوبارہ کوشش کریں اور فارمولا کے مراحل غور سے پڑھیں۔" : "Keep learning! Re-read the step-by-step formula and try again.";
+          evalEl.className = "text-sm font-bold text-amber-300";
+        }
+      }
+    }
+
+    function restartQuiz() {
+      currentQ = 0;
+      quizScore = 0;
+      document.getElementById('quiz-score-card').classList.add('hidden');
+      document.getElementById('quiz-card-container').classList.remove('hidden');
+      loadQuizQuestion();
+    }
+  </script>
+</body>
+</html>
