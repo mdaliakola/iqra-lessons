@@ -64,7 +64,6 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   }
   input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-  /* ============ Extended design language (same system) ============ */
   body {
     font-family: 'Manrope', sans-serif;
     background: #0f172a;
@@ -121,7 +120,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
     50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
   }
 
-  /* Tabs */
+  /* Tabs & Buttons */
   .tab-btn {
     position: relative; transition: color .25s ease, background-color .25s ease;
     border-radius: 12px;
@@ -130,7 +129,6 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   .view { animation: viewIn .35s ease both; }
   @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Mode pills */
   .mode-btn {
     transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
     border: 1px solid rgba(255,255,255,.1);
@@ -140,25 +138,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
     background: rgba(0,243,255,.12); color: #00f3ff;
     border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
   }
-
-  /* Segmented (eye defect) */
   .seg-btn.active { background: rgba(0,243,255,.14); color:#00f3ff; border-color: rgba(0,243,255,.5); }
-
-  /* Toggle switch */
-  .switch { position: relative; width: 58px; height: 30px; flex: none; }
-  .switch input { display:none; }
-  .switch .track {
-    position:absolute; inset:0; border-radius:999px; background:#334155;
-    transition: background-color .25s ease; cursor:pointer;
-  }
-  .switch .track::after {
-    content:''; position:absolute; top:3px; left:3px; width:24px; height:24px;
-    border-radius:50%; background:#94a3b8; transition: transform .25s ease, background-color .25s ease;
-  }
-  .switch input:checked + .track { background: rgba(34,197,94,.5); }
-  .switch input:checked + .track::after { transform: translateX(28px); background:#22c55e; box-shadow:0 0 12px rgba(34,197,94,.8); }
-  [dir="rtl"] .switch .track::after { left:auto; right:3px; }
-  [dir="rtl"] .switch input:checked + .track::after { transform: translateX(-28px); }
 
   /* Quiz options */
   .opt-btn {
@@ -190,19 +170,15 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 </head>
 <body class="bg-grid">
 
-<!-- ===================== INTRO ===================== -->
 <div id="intro">
   <div class="intro-ring"><i class="fa-solid fa-magnifying-glass text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
   <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
   <div class="intro-topic text-base md:text-lg mt-5 font-bold uppercase" id="intro-topic">LENSES</div>
 </div>
 
-<!-- ===================== APP ===================== -->
 <div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
 
-  <!-- HEADER -->
   <header class="glass-panel flex items-center justify-between px-4 md:px-6 py-3 z-30">
-    <!-- TOP LEFT: BRAND -->
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center">
         <i class="fa-solid fa-flask text-cyan-400"></i>
@@ -213,71 +189,57 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
       </div>
     </div>
 
-    <!-- CENTER: TABS -->
     <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5">
-      <button id="tab-sim" data-testid="tab-simulation" onclick="switchTab('sim')" class="tab-btn active px-4 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-4 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
         <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
       </button>
-      <button id="tab-quiz" data-testid="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
         <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
       </button>
     </nav>
 
-    <!-- TOP RIGHT: LANGUAGE DROPDOWN & FULLSCREEN -->
     <div class="flex items-center gap-3">
       <div class="relative">
-        <select id="lang-select" data-testid="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold">
           <option value="en">🌐 English</option>
           <option value="ur">🌐 اردو</option>
-          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
-          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
-          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
         </select>
       </div>
-      <button data-testid="fullscreen-btn" onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
         <i class="fa-solid fa-expand"></i>
       </button>
     </div>
   </header>
 
-  <!-- ===================== SIMULATION VIEW ===================== -->
   <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
-
-    <!-- CANVAS AREA -->
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
-      <!-- Mode selector -->
       <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
-        <button id="mode-convex" data-testid="mode-convex" onclick="setMode('convex')" class="mode-btn active flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
+        <button id="mode-convex" onclick="setMode('convex')" class="mode-btn active flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
           <i class="fa-solid fa-circle-half-stroke"></i><span data-i18n="mode_convex"></span>
         </button>
-        <button id="mode-concave" data-testid="mode-concave" onclick="setMode('concave')" class="mode-btn flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
+        <button id="mode-concave" onclick="setMode('concave')" class="mode-btn flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
           <i class="fa-regular fa-hourglass"></i><span data-i18n="mode_concave"></span>
         </button>
-        <button id="mode-eye" data-testid="mode-eye" onclick="setMode('eye')" class="mode-btn flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
+        <button id="mode-eye" onclick="setMode('eye')" class="mode-btn flex-1 min-w-[130px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
           <i class="fa-regular fa-eye"></i><span data-i18n="mode_eye"></span>
         </button>
       </div>
 
-      <!-- Canvas -->
       <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[320px] overflow-hidden">
-        <canvas id="sim-canvas" data-testid="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
-        <!-- zoom controls -->
+        <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <div class="absolute bottom-3 flex flex-col gap-2 z-10" style="inset-inline-end:12px" dir="ltr">
-          <button class="zoom-btn" data-testid="zoom-in-btn" onclick="zoomBy(1.2)" id="zi-btn"><i class="fa-solid fa-plus"></i></button>
-          <button class="zoom-btn" data-testid="zoom-out-btn" onclick="zoomBy(1/1.2)" id="zo-btn"><i class="fa-solid fa-minus"></i></button>
-          <button class="zoom-btn" data-testid="zoom-reset-btn" onclick="resetView()" id="zr-btn"><i class="fa-solid fa-crosshairs"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
         </div>
-        <!-- drag hint -->
         <div id="drag-hint" class="absolute top-3 glass-panel rounded-xl px-4 py-2 text-xs md:text-sm text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
           <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="drag_hint"></span>
         </div>
       </div>
     </section>
 
-    <!-- SIDE PANEL -->
     <aside class="w-full lg:w-[340px] xl:w-[380px] flex flex-col gap-4 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
-
-      <!-- CONTROLS: LENS -->
+      <!-- Lens controls -->
       <div id="panel-lens" class="glass-card rounded-2xl p-5 space-y-6">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
@@ -287,50 +249,65 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
             <label class="text-sm font-bold text-slate-300" data-i18n="obj_dist"></label>
             <span class="stat-val text-sm num" id="val-do">30.0 cm</span>
           </div>
-          <input type="range" data-testid="slider-object-distance" id="sl-do" class="w-full" min="4" max="70" step="0.5" value="30" oninput="onSlider()">
+          <input type="range" id="sl-do" class="w-full" min="4" max="70" step="0.5" value="30" oninput="onSlider()">
         </div>
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="focal_len"></label>
             <span class="stat-val text-sm num" id="val-f">12.0 cm</span>
           </div>
-          <input type="range" data-testid="slider-focal-length" id="sl-f" class="w-full" min="6" max="24" step="0.5" value="12" oninput="onSlider()">
+          <input type="range" id="sl-f" class="w-full" min="6" max="24" step="0.5" value="12" oninput="onSlider()">
         </div>
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="obj_height"></label>
             <span class="stat-val text-sm num" id="val-ho">5.0 cm</span>
           </div>
-          <input type="range" data-testid="slider-object-height" id="sl-ho" class="w-full" min="2" max="8" step="0.5" value="5" oninput="onSlider()">
+          <input type="range" id="sl-ho" class="w-full" min="2" max="8" step="0.5" value="5" oninput="onSlider()">
         </div>
       </div>
 
-      <!-- CONTROLS: EYE -->
-      <div id="panel-eye" class="glass-card rounded-2xl p-5 space-y-6 hidden">
+      <!-- Eye controls -->
+      <div id="panel-eye" class="glass-card rounded-2xl p-5 space-y-5 hidden">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-regular fa-eye"></i><span data-i18n="eye_ctrl_title"></span>
         </h2>
+        
         <div class="grid grid-cols-2 gap-2">
-          <button id="seg-myopia" data-testid="btn-myopia" onclick="setDefect('myopia')" class="seg-btn mode-btn active px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="myopia"></button>
-          <button id="seg-hyper" data-testid="btn-hyper" onclick="setDefect('hyper')" class="seg-btn mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="hyper"></button>
+          <button id="seg-myopia" onclick="setDefect('myopia')" class="seg-btn mode-btn active px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="myopia"></button>
+          <button id="seg-hyper" onclick="setDefect('hyper')" class="seg-btn mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="hyper"></button>
         </div>
+
+        <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-bold text-slate-300" data-i18n="obj_dist_eye"></span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="seg-dist-obj" onclick="setEyeObj('distant')" class="seg-btn mode-btn active px-2 py-2 rounded-xl font-bold text-sm text-slate-300" data-i18n="dist_obj"></button>
+              <button id="seg-near-obj" onclick="setEyeObj('near')" class="seg-btn mode-btn px-2 py-2 rounded-xl font-bold text-sm text-slate-300" data-i18n="near_obj"></button>
+            </div>
+        </div>
+
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="severity"></label>
             <span class="stat-val text-sm num" id="val-sev">50%</span>
           </div>
-          <input type="range" data-testid="slider-severity" id="sl-sev" class="w-full" min="10" max="100" step="5" value="50" oninput="onSlider()">
+          <input type="range" id="sl-sev" class="w-full" min="10" max="100" step="5" value="50" oninput="onSlider()">
         </div>
-        <div class="flex items-center justify-between gap-3 glass-panel rounded-xl px-4 py-3">
-          <span class="text-sm font-bold text-slate-200" data-i18n="apply_correction"></span>
-          <label class="switch" data-testid="toggle-correction">
-            <input type="checkbox" id="chk-correct" onchange="onSlider()">
-            <span class="track"></span>
-          </label>
+
+        <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-bold text-slate-300" data-i18n="select_lens"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button id="corr-none" onclick="setCorrection('none')" class="seg-btn mode-btn active px-1 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-300" data-i18n="corr_none"></button>
+              <button id="corr-concave" onclick="setCorrection('concave')" class="seg-btn mode-btn px-1 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-300" data-i18n="corr_concave"></button>
+              <button id="corr-convex" onclick="setCorrection('convex')" class="seg-btn mode-btn px-1 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-300" data-i18n="corr_convex"></button>
+            </div>
         </div>
       </div>
 
-      <!-- OBSERVATIONS -->
       <div class="glass-card rounded-2xl p-5 space-y-4">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span>
@@ -338,11 +315,11 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
         <div id="obs-lens" class="space-y-3">
           <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
             <span class="text-sm text-slate-400" data-i18n="obj_pos"></span>
-            <span class="text-sm font-bold text-slate-100 text-end" id="obs-objpos" data-testid="obs-object-position"></span>
+            <span class="text-sm font-bold text-slate-100 text-end" id="obs-objpos"></span>
           </div>
           <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
             <span class="text-sm text-slate-400" data-i18n="img_dist"></span>
-            <span class="stat-val text-sm num" id="obs-v" data-testid="obs-image-distance"></span>
+            <span class="stat-val text-sm num" id="obs-v"></span>
           </div>
           <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
             <span class="text-sm text-slate-400" data-i18n="img_size"></span>
@@ -352,14 +329,13 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
             <span class="text-sm text-slate-400" data-i18n="magnif"></span>
             <span class="stat-val text-sm num" id="obs-m"></span>
           </div>
-          <div class="glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center" id="obs-nature" data-testid="obs-nature"></div>
+          <div class="glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center" id="obs-nature"></div>
         </div>
         <div id="obs-eye" class="space-y-3 hidden">
-          <div class="glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed" id="eye-status" data-testid="eye-status"></div>
+          <div class="glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed" id="eye-status"></div>
         </div>
       </div>
 
-      <!-- CONCEPT TIP -->
       <div class="glass-card rounded-2xl p-5">
         <h2 class="font-display font-bold text-base text-green-400 flex items-center gap-2 mb-2">
           <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
@@ -369,7 +345,6 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
     </aside>
   </main>
 
-  <!-- ===================== QUIZ VIEW ===================== -->
   <main id="view-quiz" class="view flex-1 min-h-0 overflow-y-auto p-4 hidden">
     <div class="max-w-3xl mx-auto">
       <div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div>
@@ -381,11 +356,9 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 if (window.top === window.self) {
   window.__denied = true;
   document.documentElement.innerHTML = "<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
-  throw new Error('Access denied: top-level load blocked');
+  throw new Error('Access denied');
 }
-/* ============================================================
-   TRANSLATION DICTIONARY
-============================================================ */
+
 const LANG = {
 en: {
   topic: "Lenses — Interactive Optics Lab",
@@ -402,8 +375,14 @@ en: {
   eye_ctrl_title: "Eye Defect Controls",
   myopia: "Nearsightedness (Myopia)",
   hyper: "Farsightedness (Hypermetropia)",
+  obj_dist_eye: "Object Distance",
+  dist_obj: "Distant Object",
+  near_obj: "Near Object",
   severity: "Defect Severity",
-  apply_correction: "Apply Correction Lens",
+  select_lens: "Correction Lens",
+  corr_none: "None",
+  corr_concave: "Concave",
+  corr_convex: "Convex",
   obs_title: "Observations",
   obj_pos: "Position of Object",
   img_dist: "Image Distance (v)",
@@ -411,62 +390,37 @@ en: {
   magnif: "Magnification (m)",
   tip_title: "Concept Tip",
   drag_hint: "Drag the glowing object arrow, or use the sliders",
-  // canvas labels
   lbl_object: "Object", lbl_image: "Image", lbl_virtual_image: "Virtual Image",
   lbl_lens_convex: "Convex Lens", lbl_lens_concave: "Concave Lens",
   lbl_axis: "Principal Axis", lbl_retina: "Retina", lbl_eye_lens: "Eye Lens",
   lbl_correction_concave: "Concave Correction Lens", lbl_correction_convex: "Convex Correction Lens",
-  lbl_parallel_rays: "Parallel rays from a distant object",
+  lbl_parallel_rays: "Rays from a distant object", lbl_near_obj: "Near Object",
   lbl_focus_point: "Focal point", lbl_blur: "Blurred!", lbl_sharp: "Sharp image",
   img_at_infinity: "Image forms at infinity",
-  // object positions
   pos_beyond2F: "Beyond 2F₁", pos_at2F: "At 2F₁", pos_between: "Between F₁ and 2F₁",
   pos_atF: "At focus F₁", pos_inside: "Between F₁ and O", pos_any: "Between O and infinity",
-  // image positions / nature
-  ipos_between: "Between F₂ and 2F₂", ipos_at2F: "At 2F₂", ipos_beyond2F: "Beyond 2F₂",
-  ipos_inf: "At infinity", ipos_same: "Same side as the object", ipos_insideF: "Between O and F₁",
-  sz_point: "Point image", sz_smaller: "Smaller", sz_same: "Same size", sz_larger: "Larger",
-  sz_vlarge: "Very large", sz_vsmall: "Very small",
+  sz_point: "Point image", sz_smaller: "Smaller", sz_same: "Same size", sz_larger: "Larger", sz_vlarge: "Very large", sz_vsmall: "Very small",
   nat_real_inv: "Real & Inverted", nat_virt_erect: "Virtual & Erect",
-  // eye status
-  eye_myopia_bad: "Myopic eye: the eyeball is too long / lens too strong. Parallel rays from distant objects focus IN FRONT of the retina — distant objects look blurred.",
-  eye_myopia_ok: "Corrected! The concave lens diverges the rays first, so the eye lens now focuses them exactly ON the retina. Distant objects are sharp again.",
-  eye_hyper_bad: "Hypermetropic eye: the eyeball is too short / lens too weak. Rays from near objects would focus BEHIND the retina — near objects look blurred.",
-  eye_hyper_ok: "Corrected! The convex lens converges the rays first, so the eye lens now focuses them exactly ON the retina. Near objects are sharp again.",
-  // tips
-  tip_convex: "A convex lens converges light. Move the object across F₁ and 2F₁ and watch how the image flips between real–inverted and virtual–erect. When the object is inside F₁, the lens works as a magnifying glass!",
+  ctx_myopia: "Myopia (Nearsightedness): The eyeball is too long or the lens is too strong.",
+  ctx_hyper: "Hypermetropia (Farsightedness): The eyeball is too short or the lens is too weak.",
+  stat_sharp: "Rays focus exactly ON the retina. The image is clear and sharp!",
+  stat_front: "Rays focus IN FRONT of the retina. The image appears blurred.",
+  stat_behind: "Rays focus BEHIND the retina. The image appears blurred.",
+  tip_convex: "A convex lens converges light. Move the object across F₁ and 2F₁ and watch how the image flips between real–inverted and virtual–erect.",
   tip_convex_atF: "The object is exactly at the focus F₁ — refracted rays emerge parallel, so the image forms at infinity and is very large.",
-  tip_concave: "A concave lens diverges light. No matter where you place the object, the image is ALWAYS virtual, erect and smaller, formed between O and F₁ on the same side as the object.",
-  tip_eye_myopia: "The focal length of the correcting concave lens is chosen so that distant rays appear to come from the eye's far point. Toggle the correction lens to compare.",
-  tip_eye_hyper: "A convex spectacle lens adds converging power to the weak eye lens, shifting the focus forward onto the retina. Toggle the correction lens to compare.",
-  // quiz
+  tip_concave: "A concave lens diverges light. No matter where you place the object, the image is ALWAYS virtual, erect and smaller.",
+  tip_eye_myopia: "In Myopia, distant objects appear blurry, but near objects are sharp. Apply a Concave lens to diverge incoming rays and fix distant vision.",
+  tip_eye_hyper: "In Hypermetropia, near objects appear blurry, but distant objects are sharp. Apply a Convex lens to converge incoming rays and fix near vision.",
   quiz_title: "Concept Quiz — Lenses",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
-  correct_fb: "Correct!",
-  wrong_fb: "Incorrect!",
-  next_q: "Next Question",
-  see_result: "See Result",
-  final_score: "Final Score",
-  restart: "Restart Quiz",
-  score_msg_great: "Outstanding! You have mastered lenses.",
-  score_msg_good: "Good work! Review the simulation once more.",
-  score_msg_low: "Keep experimenting in the simulation and try again!",
+  correct_fb: "Correct!", wrong_fb: "Incorrect!", next_q: "Next Question", see_result: "See Result", final_score: "Final Score", restart: "Restart Quiz",
+  score_msg_great: "Outstanding! You have mastered lenses.", score_msg_good: "Good work! Review the simulation once more.", score_msg_low: "Keep experimenting and try again!",
   quiz: [
-    { q:"An object is placed at 2F₁ of a convex lens. Where is the image formed?",
-      opts:["At focus F₂","At 2F₂","Beyond 2F₂","At infinity"], a:1,
-      ex:"At 2F₁ the image forms at 2F₂ — real, inverted and the SAME size as the object." },
-    { q:"An object is placed between F₁ and the optical centre O of a convex lens. The image is:",
-      opts:["Real, inverted and smaller","Real, inverted and larger","Virtual, erect and larger","Virtual, erect and smaller"], a:2,
-      ex:"Inside F₁ the rays diverge after refraction; a virtual, erect, magnified image forms on the same side — this is how a magnifying glass works." },
-    { q:"A concave lens ALWAYS forms an image that is:",
-      opts:["Real, inverted and larger","Virtual, erect and smaller","Real, inverted and smaller","Virtual, erect and larger"], a:1,
-      ex:"A concave lens diverges rays, so for every object position the image is virtual, erect, smaller and between O and F₁." },
-    { q:"Nearsightedness (myopia) is corrected by using spectacles with a:",
-      opts:["Convex lens","Plane glass","Concave lens","Cylindrical lens"], a:2,
-      ex:"In myopia the image forms in front of the retina. A concave lens of proper focal length diverges the rays so the eye focuses them on the retina." },
-    { q:"An object is at infinity in front of a convex lens. The image is:",
-      opts:["At 2F₂, same size","At focus F₂, point-sized, real and inverted","Between F₂ and 2F₂, larger","Virtual and erect at F₁"], a:1,
-      ex:"Parallel rays from infinity converge at the principal focus F₂, giving a real, inverted point image." }
+    { q:"An object is placed at 2F₁ of a convex lens. Where is the image formed?", opts:["At focus F₂","At 2F₂","Beyond 2F₂","At infinity"], a:1, ex:"At 2F₁ the image forms at 2F₂ — real, inverted and the SAME size as the object." },
+    { q:"An object is placed between F₁ and the optical centre O of a convex lens. The image is:", opts:["Real, inverted and smaller","Real, inverted and larger","Virtual, erect and larger","Virtual, erect and smaller"], a:2, ex:"Inside F₁ the rays diverge; a virtual, erect, magnified image forms on the same side." },
+    { q:"A concave lens ALWAYS forms an image that is:", opts:["Real, inverted and larger","Virtual, erect and smaller","Real, inverted and smaller","Virtual, erect and larger"], a:1, ex:"A concave lens diverges rays, so the image is virtual, erect, smaller and between O and F₁." },
+    { q:"Nearsightedness (myopia) is corrected by using spectacles with a:", opts:["Convex lens","Plane glass","Concave lens","Cylindrical lens"], a:2, ex:"In myopia the image forms in front of the retina. A concave lens diverges the rays so the eye focuses them on the retina." },
+    { q:"An object is at infinity in front of a convex lens. The image is:", opts:["At 2F₂, same size","At focus F₂, point-sized, real and inverted","Between F₂ and 2F₂, larger","Virtual and erect at F₁"], a:1, ex:"Parallel rays from infinity converge at the principal focus F₂, giving a real, inverted point image." }
   ]
 },
 ur: {
@@ -484,8 +438,14 @@ ur: {
   eye_ctrl_title: "بصری نقص کے کنٹرولز",
   myopia: "قریب نظری",
   hyper: "بعید نظری",
+  obj_dist_eye: "جسم کا مقام",
+  dist_obj: "دور کا جسم",
+  near_obj: "قریب کا جسم",
   severity: "نقص کی شدت",
-  apply_correction: "تصحیحی عدسہ لگائیں",
+  select_lens: "تصحیحی عدسہ",
+  corr_none: "کوئی نہیں",
+  corr_concave: "مقعر (Concave)",
+  corr_convex: "محدب (Convex)",
   obs_title: "مشاہدات",
   obj_pos: "جسم کا مقام",
   img_dist: "عکس کا فاصلہ (v)",
@@ -497,89 +457,55 @@ ur: {
   lbl_lens_convex: "محدب عدسہ", lbl_lens_concave: "مقعر عدسہ",
   lbl_axis: "اصل محور", lbl_retina: "پردۂ شبکیہ", lbl_eye_lens: "آنکھ کا عدسہ",
   lbl_correction_concave: "تصحیحی مقعر عدسہ", lbl_correction_convex: "تصحیحی محدب عدسہ",
-  lbl_parallel_rays: "دور کی شے سے آنے والی متوازی شعاعیں",
+  lbl_parallel_rays: "دور کی شے سے آنے والی شعاعیں", lbl_near_obj: "قریبی جسم",
   lbl_focus_point: "ماسکہ", lbl_blur: "دھندلا!", lbl_sharp: "صاف عکس",
   img_at_infinity: "عکس لامحدود فاصلے پر بنتا ہے",
   pos_beyond2F: "‏2F₁ سے پرے", pos_at2F: "‏2F₁ پر", pos_between: "‏F₁ اور 2F₁ کے درمیان",
   pos_atF: "ماسکہ F₁ پر", pos_inside: "‏F₁ اور O کے درمیان", pos_any: "نوری مرکز O اور لامحدود کے درمیان",
-  ipos_between: "‏F₂ اور 2F₂ کے درمیان", ipos_at2F: "‏2F₂ پر", ipos_beyond2F: "‏2F₂ سے پرے",
-  ipos_inf: "لامحدود فاصلے پر", ipos_same: "جسم کی جانب اسی طرف", ipos_insideF: "‏O اور F₁ کے درمیان",
-  sz_point: "نقطہ نما (بہت چھوٹا)", sz_smaller: "چھوٹا", sz_same: "مساوی جسامت", sz_larger: "بڑا",
-  sz_vlarge: "بہت بڑا", sz_vsmall: "بہت چھوٹا",
+  sz_point: "نقطہ نما (بہت چھوٹا)", sz_smaller: "چھوٹا", sz_same: "مساوی جسامت", sz_larger: "بڑا", sz_vlarge: "بہت بڑا", sz_vsmall: "بہت چھوٹا",
   nat_real_inv: "حقیقی اور الٹا", nat_virt_erect: "مجازی اور سیدھا",
-  eye_myopia_bad: "قریب نظری میں آنکھ کا ڈیلا لمبا یا عدسہ زیادہ طاقتور ہوتا ہے۔ دور کی شے سے آنے والی متوازی شعاعیں پردۂ شبکیہ سے پہلے مرکوز ہو جاتی ہیں — اس لیے دور کی شے صاف نظر نہیں آتی۔",
-  eye_myopia_ok: "تدارک ہو گیا! مقعر عدسہ پہلے شعاعوں کو منتشر کرتا ہے، پھر آنکھ کا عدسہ انہیں بالکل پردۂ شبکیہ پر مرکوز کر دیتا ہے۔ اب دور کی شے صاف نظر آتی ہے۔",
-  eye_hyper_bad: "بعید نظری میں آنکھ کا ڈیلا چھوٹا یا عدسہ کمزور ہوتا ہے۔ قریب کی شے کی شعاعیں پردۂ شبکیہ کے پیچھے مرکوز ہوتی ہیں — اس لیے قریب کی شے صاف نظر نہیں آتی۔",
-  eye_hyper_ok: "تدارک ہو گیا! محدب عدسہ پہلے شعاعوں کو مرتکز کرتا ہے، پھر آنکھ کا عدسہ انہیں بالکل پردۂ شبکیہ پر مرکوز کر دیتا ہے۔ اب قریب کی شے صاف نظر آتی ہے۔",
-  tip_convex: "محدب عدسہ روشنی کو مرتکز کرتا ہے۔ جسم کو F₁ اور 2F₁ کے آر پار حرکت دیں اور دیکھیں کہ عکس کیسے حقیقی الٹے اور مجازی سیدھے کے درمیان بدلتا ہے۔ جب جسم F₁ کے اندر ہو تو عدسہ محدب شیشے (مکبر) کا کام کرتا ہے!",
-  tip_convex_atF: "جسم بالکل ماسکہ F₁ پر ہے — انعطاف کے بعد شعاعیں متوازی نکلتی ہیں، اس لیے عکس لامحدود فاصلے پر اور بہت بڑا بنتا ہے۔",
-  tip_concave: "مقعر عدسہ روشنی کو منتشر کرتا ہے۔ جسم کہیں بھی رکھیں، عکس ہمیشہ مجازی، سیدھا اور چھوٹا بنتا ہے، اور جسم کی جانب O اور F₁ کے درمیان بنتا ہے۔",
-  tip_eye_myopia: "تصحیحی مقعر عدسے کا ماسکی فاصلہ ایسا چنا جاتا ہے کہ دور کی شعاعیں آنکھ کے بعید نقطے سے آتی محسوس ہوں۔ موازنہ کرنے کے لیے تصحیحی عدسہ آن/آف کریں۔",
-  tip_eye_hyper: "محدب عینک کا عدسہ کمزور آنکھ کے عدسے کی طاقت بڑھا دیتا ہے جس سے ماسکہ آگے کھسک کر پردۂ شبکیہ پر آ جاتا ہے۔ موازنہ کرنے کے لیے تصحیحی عدسہ آن/آف کریں۔",
-  quiz_title: "تصوراتی کوئز — عدسے",
-  quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
-  correct_fb: "درست جواب!",
-  wrong_fb: "غلط جواب!",
-  next_q: "اگلا سوال",
-  see_result: "نتیجہ دیکھیں",
-  final_score: "حتمی اسکور",
-  restart: "کوئز دوبارہ شروع کریں",
-  score_msg_great: "شاندار! آپ نے عدسوں کا تصور مکمل سمجھ لیا ہے۔",
-  score_msg_good: "اچھی کوشش! سمولیشن کا ایک بار پھر مشاہدہ کریں۔",
-  score_msg_low: "سمولیشن میں مزید تجربہ کریں اور دوبارہ کوشش کریں!",
+  ctx_myopia: "قریب نظری: آنکھ کا ڈیلا لمبا یا عدسہ زیادہ طاقتور ہوتا ہے۔",
+  ctx_hyper: "بعید نظری: آنکھ کا ڈیلا چھوٹا یا عدسہ کمزور ہوتا ہے۔",
+  stat_sharp: "شعاعیں بالکل پردۂ شبکیہ پر مرکوز ہوتی ہیں۔ عکس صاف اور واضح ہے!",
+  stat_front: "شعاعیں پردۂ شبکیہ سے پہلے مرکوز ہو جاتی ہیں۔ عکس دھندلا نظر آتا ہے۔",
+  stat_behind: "شعاعیں پردۂ شبکیہ کے پیچھے مرکوز ہوتی ہیں۔ عکس دھندلا نظر آتا ہے۔",
+  tip_convex: "محدب عدسہ روشنی کو مرتکز کرتا ہے۔ جسم کو F₁ اور 2F₁ کے آر پار حرکت دیں اور دیکھیں کہ عکس کیسے بدلتا ہے۔",
+  tip_convex_atF: "جسم بالکل ماسکہ F₁ پر ہے — شعاعیں متوازی نکلتی ہیں، عکس لامحدود فاصلے پر بنتا ہے۔",
+  tip_concave: "مقعر عدسہ روشنی کو منتشر کرتا ہے۔ عکس ہمیشہ مجازی، سیدھا اور چھوٹا بنتا ہے۔",
+  tip_eye_myopia: "قریب نظری میں دور کی اشیاء دھندلی لیکن قریب کی صاف نظر آتی ہیں۔ دور کی بصارت کے لیے مقعر (Concave) عدسہ لگائیں۔",
+  tip_eye_hyper: "بعید نظری میں قریب کی اشیاء دھندلی لیکن دور کی صاف نظر آتی ہیں۔ قریب کی بصارت کے لیے محدب (Convex) عدسہ لگائیں۔",
+  quiz_title: "تصوراتی کوئز — عدسے", quiz_progress: (i,n)=>`سوال ${i} از ${n}`, correct_fb: "درست جواب!", wrong_fb: "غلط جواب!", next_q: "اگلا سوال", see_result: "نتیجہ دیکھیں", final_score: "حتمی اسکور", restart: "کوئز دوبارہ شروع کریں",
+  score_msg_great: "شاندار! آپ نے عدسوں کا تصور مکمل سمجھ لیا ہے۔", score_msg_good: "اچھی کوشش! سمولیشن کا ایک بار پھر مشاہدہ کریں۔", score_msg_low: "سمولیشن میں مزید تجربہ کریں اور دوبارہ کوشش کریں!",
   quiz: [
-    { q:"ایک جسم محدب عدسے کے 2F₁ پر رکھا گیا ہے۔ عکس کہاں بنے گا؟",
-      opts:["ماسکہ F₂ پر","‏2F₂ پر","‏2F₂ سے پرے","لامحدود فاصلے پر"], a:1,
-      ex:"‏2F₁ پر رکھے جسم کا عکس 2F₂ پر بنتا ہے — حقیقی، الٹا اور جسم کے مساوی جسامت کا۔" },
-    { q:"ایک جسم محدب عدسے کے F₁ اور نوری مرکز O کے درمیان رکھا گیا ہے۔ عکس ہوگا:",
-      opts:["حقیقی، الٹا اور چھوٹا","حقیقی، الٹا اور بڑا","مجازی، سیدھا اور بڑا","مجازی، سیدھا اور چھوٹا"], a:2,
-      ex:"‏F₁ کے اندر شعاعیں انعطاف کے بعد منتشر ہو جاتی ہیں؛ مجازی، سیدھا اور بڑا عکس اسی جانب بنتا ہے — یہی مکبر شیشے (Magnifying Glass) کا اصول ہے۔" },
-    { q:"مقعر عدسہ ہمیشہ ایسا عکس بناتا ہے جو ہو:",
-      opts:["حقیقی، الٹا اور بڑا","مجازی، سیدھا اور چھوٹا","حقیقی، الٹا اور چھوٹا","مجازی، سیدھا اور بڑا"], a:1,
-      ex:"مقعر عدسہ شعاعوں کو منتشر کرتا ہے، اس لیے جسم کے ہر مقام کے لیے عکس مجازی، سیدھا، چھوٹا اور O اور F₁ کے درمیان بنتا ہے۔" },
-    { q:"قریب نظری کا تدارک کس عدسے کی عینک سے کیا جاتا ہے؟",
-      opts:["محدب عدسہ","سادہ شیشہ","مقعر عدسہ","استوانی عدسہ"], a:2,
-      ex:"قریب نظری میں عکس پردۂ شبکیہ سے پہلے بنتا ہے۔ مناسب ماسکی فاصلے کا مقعر عدسہ شعاعوں کو منتشر کرتا ہے تاکہ آنکھ انہیں پردۂ شبکیہ پر مرکوز کر سکے۔" },
-    { q:"ایک جسم محدب عدسے کے سامنے لامحدود فاصلے پر ہے۔ عکس ہوگا:",
-      opts:["‏2F₂ پر، مساوی جسامت","ماسکہ F₂ پر، نقطہ نما، حقیقی اور الٹا","‏F₂ اور 2F₂ کے درمیان، بڑا","‏F₁ پر مجازی اور سیدھا"], a:1,
-      ex:"لامحدود فاصلے سے آنے والی متوازی شعاعیں اصل ماسکہ F₂ پر مرتکز ہوتی ہیں، جس سے حقیقی، الٹا اور نقطہ نما عکس بنتا ہے۔" }
+    { q:"ایک جسم محدب عدسے کے 2F₁ پر رکھا گیا ہے۔ عکس کہاں بنے گا؟", opts:["ماسکہ F₂ پر","‏2F₂ پر","‏2F₂ سے پرے","لامحدود فاصلے پر"], a:1, ex:"‏2F₁ پر رکھے جسم کا عکس 2F₂ پر بنتا ہے — حقیقی، الٹا اور جسم کے مساوی جسامت کا۔" },
+    { q:"ایک جسم محدب عدسے کے F₁ اور نوری مرکز O کے درمیان رکھا گیا ہے۔ عکس ہوگا:", opts:["حقیقی، الٹا اور چھوٹا","حقیقی، الٹا اور بڑا","مجازی، سیدھا اور بڑا","مجازی، سیدھا اور چھوٹا"], a:2, ex:"‏F₁ کے اندر شعاعیں انعطاف کے بعد منتشر ہو جاتی ہیں؛ مجازی، سیدھا اور بڑا عکس اسی جانب بنتا ہے۔" },
+    { q:"مقعر عدسہ ہمیشہ ایسا عکس بناتا ہے جو ہو:", opts:["حقیقی، الٹا اور بڑا","مجازی، سیدھا اور چھوٹا","حقیقی، الٹا اور چھوٹا","مجازی، سیدھا اور بڑا"], a:1, ex:"مقعر عدسہ شعاعوں کو منتشر کرتا ہے، اس لیے عکس مجازی، سیدھا اور چھوٹا بنتا ہے۔" },
+    { q:"قریب نظری کا تدارک کس عدسے کی عینک سے کیا جاتا ہے؟", opts:["محدب عدسہ","سادہ شیشہ","مقعر عدسہ","استوانی عدسہ"], a:2, ex:"قریب نظری میں مقعر عدسہ شعاعوں کو منتشر کرتا ہے تاکہ آنکھ انہیں پردۂ شبکیہ پر مرکوز کر سکے۔" },
+    { q:"ایک جسم محدب عدسے کے سامنے لامحدود فاصلے پر ہے۔ عکس ہوگا:", opts:["‏2F₂ پر، مساوی جسامت","ماسکہ F₂ پر، نقطہ نما، حقیقی اور الٹا","‏F₂ اور 2F₂ کے درمیان، بڑا","‏F₁ پر مجازی اور سیدھا"], a:1, ex:"لامحدود فاصلے سے آنے والی شعاعیں اصل ماسکہ F₂ پر مرتکز ہوتی ہیں، جس سے نقطہ نما عکس بنتا ہے۔" }
   ]
 }
 };
 
-/* ============================================================
-   GLOBAL STATE
-============================================================ */
 let cur = localStorage.getItem('iqra_lang') || 'en';
 const state = {
-  mode: 'convex',           // convex | concave | eye
+  mode: 'convex',
   dObj: 30, f: 12, hObj: 5,
-  defect: 'myopia', severity: 50, corrected: false,
+  defect: 'myopia', eyeObj: 'distant', correction: 'none', severity: 50,
   zoom: 1, panX: 0, panY: 0
 };
 const T = k => LANG[cur][k];
 
-/* ============================================================
-   LANGUAGE SYSTEM
-============================================================ */
 function changeLanguage(l) {
-  cur = l;
-  localStorage.setItem('iqra_lang', l);
+  cur = l; localStorage.setItem('iqra_lang', l);
   document.documentElement.setAttribute('dir', l === 'ur' ? 'rtl' : 'ltr');
   document.documentElement.setAttribute('lang', l);
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
-  updateReadouts();
-  renderQuiz();
-  requestAnimationFrame(draw);
+  updateReadouts(); renderQuiz(); requestAnimationFrame(draw);
 }
 function toggleFullScreen() {
   if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
   else document.exitFullscreen();
 }
-
-/* ============================================================
-   TABS
-============================================================ */
 function switchTab(t) {
   document.getElementById('view-sim').classList.toggle('hidden', t !== 'sim');
   document.getElementById('view-quiz').classList.toggle('hidden', t !== 'quiz');
@@ -588,9 +514,6 @@ function switchTab(t) {
   if (t === 'sim') { fitCanvas(); requestAnimationFrame(draw); }
 }
 
-/* ============================================================
-   MODES & CONTROLS
-============================================================ */
 function setMode(m) {
   state.mode = m;
   ['convex','concave','eye'].forEach(x =>
@@ -600,9 +523,7 @@ function setMode(m) {
   document.getElementById('obs-lens').classList.toggle('hidden', m === 'eye');
   document.getElementById('obs-eye').classList.toggle('hidden', m !== 'eye');
   document.getElementById('drag-hint').style.display = (m === 'eye') ? 'none' : '';
-  resetView(false);
-  updateReadouts();
-  requestAnimationFrame(draw);
+  resetView(false); updateReadouts(); requestAnimationFrame(draw);
 }
 function setDefect(d) {
   state.defect = d;
@@ -610,24 +531,33 @@ function setDefect(d) {
   document.getElementById('seg-hyper').classList.toggle('active', d === 'hyper');
   updateReadouts(); requestAnimationFrame(draw);
 }
+function setEyeObj(o) {
+  state.eyeObj = o;
+  document.getElementById('seg-dist-obj').classList.toggle('active', o === 'distant');
+  document.getElementById('seg-near-obj').classList.toggle('active', o === 'near');
+  updateReadouts(); requestAnimationFrame(draw);
+}
+function setCorrection(c) {
+  state.correction = c;
+  ['none','concave','convex'].forEach(x => {
+    document.getElementById('corr-'+x).classList.toggle('active', x === c);
+  });
+  updateReadouts(); requestAnimationFrame(draw);
+}
 function onSlider() {
   state.dObj = +document.getElementById('sl-do').value;
   state.f = +document.getElementById('sl-f').value;
   state.hObj = +document.getElementById('sl-ho').value;
   state.severity = +document.getElementById('sl-sev').value;
-  state.corrected = document.getElementById('chk-correct').checked;
   updateReadouts(); requestAnimationFrame(draw);
 }
 
-/* ============================================================
-   OPTICS PHYSICS  (1/v - 1/u = 1/f, real-is-positive layout)
-============================================================ */
 function computeLens() {
   const f = state.mode === 'convex' ? state.f : -state.f;
   const u = state.dObj;
   if (Math.abs(u - f) < 0.25 && f > 0) return { infinity: true };
-  const v = (f * u) / (u - f);          // v>0 : real image right side
-  const m = -v / u;                     // m<0 inverted
+  const v = (f * u) / (u - f);
+  const m = -v / u;
   return { infinity: false, v, m, hi: m * state.hObj };
 }
 function classifyConvex() {
@@ -638,6 +568,34 @@ function classifyConvex() {
   if (u > f) return 'between';
   return 'inside';
 }
+
+function getFxOffset(corr) {
+  const sev = state.severity / 100;
+  const base = 10 * sev;
+  if (state.defect === 'myopia') {
+      if (state.eyeObj === 'distant') {
+          if (corr === 'none') return -base;
+          if (corr === 'concave') return 0;
+          if (corr === 'convex') return -base * 1.5;
+      } else { // near
+          if (corr === 'none') return 0;
+          if (corr === 'concave') return base;
+          if (corr === 'convex') return -base;
+      }
+  } else { // hyper
+      if (state.eyeObj === 'near') {
+          if (corr === 'none') return base;
+          if (corr === 'convex') return 0;
+          if (corr === 'concave') return base * 1.5;
+      } else { // distant
+          if (corr === 'none') return 0;
+          if (corr === 'convex') return -base;
+          if (corr === 'concave') return base;
+      }
+  }
+  return 0;
+}
+
 function updateReadouts() {
   const el = id => document.getElementById(id);
   el('val-do').textContent = state.dObj.toFixed(1) + ' cm';
@@ -647,50 +605,49 @@ function updateReadouts() {
   el('sl-do').value = state.dObj;
 
   if (state.mode === 'eye') {
-    const key = 'eye_' + (state.defect === 'myopia' ? 'myopia' : 'hyper') + (state.corrected ? '_ok' : '_bad');
+    const offset = getFxOffset(state.correction);
     const st = el('eye-status');
-    st.textContent = T(key);
-    st.className = 'glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed ' + (state.corrected ? 'text-green-300 glow-green' : 'text-red-300 glow-red');
+    let txt = state.defect === 'myopia' ? T('ctx_myopia') : T('ctx_hyper');
+
+    let isSharp = (offset === 0);
+    if (isSharp) txt += ' ' + T('stat_sharp');
+    else if (offset < 0) txt += ' ' + T('stat_front');
+    else txt += ' ' + T('stat_behind');
+
+    st.textContent = txt;
+    st.className = 'glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed ' +
+                   (isSharp ? 'text-green-300 glow-green' : 'text-red-300 glow-red');
     el('tip-text').textContent = T(state.defect === 'myopia' ? 'tip_eye_myopia' : 'tip_eye_hyper');
     return;
   }
 
   const r = computeLens();
-  let posKey, iposKey, szKey, natKey, tip;
+  let posKey, szKey, natKey, tip;
   if (state.mode === 'convex') {
     posKey = { beyond2F:'pos_beyond2F', at2F:'pos_at2F', between:'pos_between', atF:'pos_atF', inside:'pos_inside' }[classifyConvex()];
     tip = classifyConvex() === 'atF' ? 'tip_convex_atF' : 'tip_convex';
   } else { posKey = 'pos_any'; tip = 'tip_concave'; }
 
   if (r.infinity) {
-    el('obs-v').textContent = '∞';
-    el('obs-size').textContent = T('sz_vlarge');
-    el('obs-m').textContent = '∞';
-    el('obs-nature').textContent = T('img_at_infinity');
+    el('obs-v').textContent = '∞'; el('obs-size').textContent = T('sz_vlarge');
+    el('obs-m').textContent = '∞'; el('obs-nature').textContent = T('img_at_infinity');
     el('obs-nature').className = 'glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center text-amber-300';
   } else {
     const am = Math.abs(r.m);
     if (state.mode === 'concave') szKey = am < 0.35 ? 'sz_vsmall' : 'sz_smaller';
-    else if (am > 3) szKey = 'sz_vlarge';
-    else if (am > 1.05) szKey = 'sz_larger';
-    else if (am >= 0.95) szKey = 'sz_same';
-    else szKey = am < 0.2 ? 'sz_point' : 'sz_smaller';
+    else if (am > 3) szKey = 'sz_vlarge'; else if (am > 1.05) szKey = 'sz_larger';
+    else if (am >= 0.95) szKey = 'sz_same'; else szKey = am < 0.2 ? 'sz_point' : 'sz_smaller';
     natKey = r.v > 0 ? 'nat_real_inv' : 'nat_virt_erect';
+    
     el('obs-v').textContent = Math.abs(r.v).toFixed(1) + ' cm';
-    el('obs-size').textContent = T(szKey);
-    el('obs-m').textContent = r.m.toFixed(2) + '×';
+    el('obs-size').textContent = T(szKey); el('obs-m').textContent = r.m.toFixed(2) + '×';
     el('obs-nature').textContent = T(natKey);
     el('obs-nature').className = 'glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center ' + (r.v > 0 ? 'text-red-300' : 'text-green-300');
   }
-  el('obs-objpos').textContent = T(posKey);
-  el('tip-text').textContent = T(tip);
+  el('obs-objpos').textContent = T(posKey); el('tip-text').textContent = T(tip);
 }
 
-/* ============================================================
-   CANVAS + ZOOM/PAN
-============================================================ */
-const canvas = document.getElementById('sim-canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('sim-canvas'), ctx = canvas.getContext('2d');
 let W = 0, H = 0, baseScale = 8;
 
 function fitCanvas() {
@@ -705,10 +662,8 @@ function S() { return baseScale * state.zoom; }
 function X(wx) { return W/2 + wx * S() + state.panX; }
 function Y(wy) { return H/2 - wy * S() + state.panY; }
 function zoomBy(k, cx, cy) {
-  const old = state.zoom;
-  state.zoom = Math.min(4, Math.max(0.4, state.zoom * k));
-  const r = state.zoom / old;
-  cx = cx ?? W/2; cy = cy ?? H/2;
+  const old = state.zoom; state.zoom = Math.min(4, Math.max(0.4, state.zoom * k));
+  const r = state.zoom / old; cx = cx ?? W/2; cy = cy ?? H/2;
   state.panX = (state.panX + W/2 - cx) * r + cx - W/2;
   state.panY = (state.panY + H/2 - cy) * r + cy - H/2;
   requestAnimationFrame(draw);
@@ -718,8 +673,8 @@ function resetView(redraw = true) {
   if (redraw) requestAnimationFrame(draw);
 }
 
-/* ---------- pointer interaction: drag object / pan / pinch ---------- */
 let dragging = null, lastP = null, pinch = null;
+const pinchPts = new Map();
 canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
   const p = { x: e.offsetX, y: e.offsetY, id: e.pointerId };
@@ -733,11 +688,9 @@ canvas.addEventListener('pointerdown', e => {
   }
   dragging = 'pan'; lastP = p; canvas.style.cursor = 'grabbing';
 });
-const pinchPts = new Map();
 function startPinch() {
   const pts = [...pinchPts.values()];
-  pinch = { d: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), z: state.zoom };
-  dragging = null;
+  pinch = { d: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), z: state.zoom }; dragging = null;
 }
 canvas.addEventListener('pointermove', e => {
   const p = { x: e.offsetX, y: e.offsetY };
@@ -745,9 +698,7 @@ canvas.addEventListener('pointermove', e => {
   if (pinch && pinchPts.size >= 2) {
     const pts = [...pinchPts.values()];
     const d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
-    const target = pinch.z * d / pinch.d;
-    zoomBy(target / state.zoom, (pts[0].x+pts[1].x)/2, (pts[0].y+pts[1].y)/2);
-    return;
+    zoomBy((pinch.z * d / pinch.d) / state.zoom, (pts[0].x+pts[1].x)/2, (pts[0].y+pts[1].y)/2); return;
   }
   if (dragging === 'object') {
     const wx = (p.x - W/2 - state.panX) / S();
@@ -760,20 +711,15 @@ canvas.addEventListener('pointermove', e => {
   }
 });
 function endPointer(e) {
-  pinchPts.delete(e.pointerId);
-  if (pinchPts.size < 2) pinch = null;
+  pinchPts.delete(e.pointerId); if (pinchPts.size < 2) pinch = null;
   dragging = null; lastP = null; canvas.style.cursor = 'grab';
 }
 canvas.addEventListener('pointerup', endPointer);
 canvas.addEventListener('pointercancel', endPointer);
 canvas.addEventListener('wheel', e => {
-  e.preventDefault();
-  zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1, e.offsetX, e.offsetY);
+  e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1, e.offsetX, e.offsetY);
 }, { passive: false });
 
-/* ============================================================
-   DRAWING HELPERS
-============================================================ */
 function urFont(sz) { return `600 ${sz}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`; }
 function enFont(sz) { return `700 ${sz}px 'Oxanium',sans-serif`; }
 function labelFont(sz) { return cur === 'ur' ? urFont(sz + 2) : enFont(sz); }
@@ -804,236 +750,208 @@ function drawArrowObj(x, yBase, yTip, color, glow, dashed = false) {
 }
 
 function drawLensShape(x, halfH, type, color = '#7dd3fc') {
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,243,255,.6)'; ctx.shadowBlur = 16;
-  ctx.strokeStyle = color; ctx.lineWidth = 2.5;
-  ctx.fillStyle = 'rgba(125,211,252,.12)';
+  ctx.save(); ctx.shadowColor = 'rgba(0,243,255,.6)'; ctx.shadowBlur = 16;
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.fillStyle = 'rgba(125,211,252,.12)';
   const w = Math.max(10, halfH * 0.30);
   ctx.beginPath();
   if (type === 'convex') {
-    ctx.moveTo(x, -halfH);
-    ctx.quadraticCurveTo(x + w, 0, x, halfH);
-    ctx.quadraticCurveTo(x - w, 0, x, -halfH);
+    ctx.moveTo(x, -halfH); ctx.quadraticCurveTo(x + w, 0, x, halfH); ctx.quadraticCurveTo(x - w, 0, x, -halfH);
   } else {
     const e = w * 0.75;
-    ctx.moveTo(x - e, -halfH); ctx.lineTo(x + e, -halfH);
-    ctx.quadraticCurveTo(x + e - w, 0, x + e, halfH);
-    ctx.lineTo(x - e, halfH);
-    ctx.quadraticCurveTo(x - e + w, 0, x - e, -halfH);
+    ctx.moveTo(x - e, -halfH); ctx.lineTo(x + e, -halfH); ctx.quadraticCurveTo(x + e - w, 0, x + e, halfH);
+    ctx.lineTo(x - e, halfH); ctx.quadraticCurveTo(x - e + w, 0, x - e, -halfH);
   }
-  ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.restore();
+  ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
 }
 
-/* ============================================================
-   MAIN DRAW
-============================================================ */
 function draw() {
   ctx.clearRect(0, 0, W, H);
   if (state.mode === 'eye') drawEye(); else drawLensSim();
+}
+function norm(dx, dy) { const L = Math.hypot(dx, dy) || 1; return { x: dx / L, y: dy / L }; }
+function extendPast(x1, y1, x2, y2, color) {
+  const d = norm(x2 - x1, y2 - y1); ray(x1, y1, x2, y2, color);
+  line(x2, y2, x2 + d.x * 24 * S(), y2 + d.y * 24 * S(), color, 2);
 }
 
 function drawLensSim() {
   const isConvex = state.mode === 'convex';
   const f = state.f, u = state.dObj, ho = state.hObj;
-  const r = computeLens();
-  const axisY = Y(0);
+  const r = computeLens(); const axisY = Y(0);
 
-  // principal axis
   line(X(-78), axisY, X(78), axisY, 'rgba(148,163,184,.5)', 1.5, [8,6]);
   text(T('lbl_axis'), X(70), axisY - 10, 'rgba(148,163,184,.7)', 11);
 
-  // focus marks
-  const marks = isConvex
-    ? [[-f,'F₁'],[f,'F₂'],[-2*f,'2F₁'],[2*f,'2F₂']]
-    : [[-f,'F₁'],[f,'F₂']];
+  const marks = isConvex ? [[-f,'F₁'],[f,'F₂'],[-2*f,'2F₁'],[2*f,'2F₂']] : [[-f,'F₁'],[f,'F₂']];
   marks.forEach(([wx, lb]) => {
     line(X(wx), axisY - 7, X(wx), axisY + 7, '#fbbf24', 2.5);
-    ctx.font = enFont(12); ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'center';
-    ctx.fillText(lb, X(wx), axisY + 24);
+    ctx.font = enFont(12); ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'center'; ctx.fillText(lb, X(wx), axisY + 24);
   });
 
-  // lens
   const halfH = 14 * S();
-  ctx.save(); ctx.translate(X(0), axisY);
-  drawLensShape(0, halfH, isConvex ? 'convex' : 'concave');
-  ctx.restore();
+  ctx.save(); ctx.translate(X(0), axisY); drawLensShape(0, halfH, isConvex ? 'convex' : 'concave'); ctx.restore();
   text(T(isConvex ? 'lbl_lens_convex' : 'lbl_lens_concave'), X(0), Y(15.5) - 6, '#7dd3fc', 13);
 
-  // object
   const ox = X(-u), oy = Y(ho);
   drawArrowObj(ox, axisY, oy, '#00f3ff', true);
   text(T('lbl_object'), ox, oy - 12, '#00f3ff', 13);
 
-  // ==== rays ====
   const lx = X(0), lyTop = Y(ho);
-  const yellow = 'rgba(250,204,21,.95)', mag = '#f472b6', grn = '#4ade80';
-  const ext = 55 * S();
+  const yellow = 'rgba(250,204,21,.95)', mag = '#f472b6', grn = '#4ade80'; const ext = 55 * S();
 
-  // Ray 1: object top -> lens (parallel to axis)
   ray(ox, oy, lx, lyTop, yellow);
 
   if (r.infinity) {
-    // exits toward F2 direction; centre ray parallel to it
-    let d = norm(X(f) - lx, axisY - lyTop);
-    ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
-    d = norm(lx - ox, axisY - oy);
-    ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
-    ctx.save();
-    ctx.font = labelFont(15); ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'center';
-    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 10;
-    ctx.fillText(T('img_at_infinity'), X(28), Y(12));
-    ctx.restore();
+    let d = norm(X(f) - lx, axisY - lyTop); ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
+    d = norm(lx - ox, axisY - oy); ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
+    ctx.save(); ctx.font = labelFont(15); ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'center';
+    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 10; ctx.fillText(T('img_at_infinity'), X(28), Y(12)); ctx.restore();
   } else if (isConvex && r.v > 0) {
     const ix = X(r.v), iy = Y(r.hi);
-    extendPast(lx, lyTop, ix, iy, yellow);            // refracted through F2 to image
-    extendPast(ox, oy, ix, iy, mag);                  // centre ray
-    ray(ox, oy, lx, iy, grn);                         // through F1, exits parallel
-    extendPast(lx, iy, ix, iy, grn);
+    extendPast(lx, lyTop, ix, iy, yellow); extendPast(ox, oy, ix, iy, mag);
+    ray(ox, oy, lx, iy, grn); extendPast(lx, iy, ix, iy, grn);
     drawArrowObj(ix, axisY, iy, '#ef4444', true);
     text(T('lbl_image'), ix, iy + (r.hi < 0 ? 24 : -12), '#ef4444', 13);
   } else if (isConvex) {
-    // object inside F1 -> virtual, erect, magnified
     const ix = X(r.v), iy = Y(r.hi);
-    let d = norm(X(f) - lx, axisY - lyTop);
-    ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
+    let d = norm(X(f) - lx, axisY - lyTop); ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
     line(lx, lyTop, ix, iy, 'rgba(250,204,21,.5)', 1.5, [6,5]);
-    d = norm(lx - ox, axisY - oy);
-    ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
+    d = norm(lx - ox, axisY - oy); ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
     line(ox, oy, ix, iy, 'rgba(244,114,182,.5)', 1.5, [6,5]);
-    drawArrowObj(ix, axisY, iy, '#4ade80', true, true);
-    text(T('lbl_virtual_image'), ix, iy - 12, '#4ade80', 13);
+    drawArrowObj(ix, axisY, iy, '#4ade80', true, true); text(T('lbl_virtual_image'), ix, iy - 12, '#4ade80', 13);
   } else {
-    // concave -> always virtual, erect, smaller (between O and F1)
     const ix = X(r.v), iy = Y(r.hi);
-    let d = norm(lx - X(-f), lyTop - axisY);
-    ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
+    let d = norm(lx - X(-f), lyTop - axisY); ray(lx, lyTop, lx + d.x * ext, lyTop + d.y * ext, yellow);
     line(X(-f), axisY, lx, lyTop, 'rgba(250,204,21,.45)', 1.5, [6,5]);
-    d = norm(lx - ox, axisY - oy);
-    ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
-    drawArrowObj(ix, axisY, iy, '#4ade80', true, true);
-    text(T('lbl_virtual_image'), ix, iy - 12, '#4ade80', 13);
+    d = norm(lx - ox, axisY - oy); ray(ox, oy, lx + d.x * ext, axisY + d.y * ext, mag);
+    drawArrowObj(ix, axisY, iy, '#4ade80', true, true); text(T('lbl_virtual_image'), ix, iy - 12, '#4ade80', 13);
   }
 }
-function norm(dx, dy) { const L = Math.hypot(dx, dy) || 1; return { x: dx / L, y: dy / L }; }
-function extendPast(x1, y1, x2, y2, color) {
-  const d = norm(x2 - x1, y2 - y1);
-  ray(x1, y1, x2, y2, color);
-  line(x2, y2, x2 + d.x * 24 * S(), y2 + d.y * 24 * S(), color, 2);
+
+function drawEyeRayInside(x1, y1, fx, color, dash, isDashed, retinaX) {
+    const dy = 0 - y1;
+    const dx = fx - x1;
+    const tRet = (retinaX - x1) / dx;
+    const hRet = y1 + dy * tRet;
+
+    const drawLine = (startx, starty, endx, endy, col, w, d) => {
+        ctx.beginPath(); ctx.setLineDash(d); ctx.strokeStyle = col; ctx.lineWidth = w;
+        ctx.moveTo(X(startx), Y(starty)); ctx.lineTo(X(endx), Y(endy)); ctx.stroke(); ctx.setLineDash([]);
+    };
+
+    if (fx <= retinaX + 0.1) {
+        drawLine(x1, y1, fx, 0, color, isDashed ? 1.5 : 2, dash);
+        if (retinaX - fx > 0.1) drawLine(fx, 0, retinaX, hRet, color, isDashed ? 1.5 : 2, dash);
+    } else {
+        drawLine(x1, y1, retinaX, hRet, color, isDashed ? 1.5 : 2, dash);
+        drawLine(retinaX, hRet, fx, 0, color, 1.5, [4,4]);
+    }
 }
 
-/* ---------------- EYE DEFECTS ---------------- */
 function drawEye() {
-  const sev = state.severity / 100;
-  const myo = state.defect === 'myopia';
-  const R = 13;                        // eye radius (world cm)
-  const ecx = 26;                      // eye centre x
-  const lensX = ecx - R;               // eye lens position
-  const retinaX = ecx + R;
-  const fNormal = 2 * R;
-  const fEye = myo ? fNormal * (1 - 0.30 * sev) : fNormal * (1 + 0.42 * sev);
+  const R = 13, ecx = 26;
+  const lensX = ecx - R, retinaX = ecx + R;
   const specX = lensX - 9;
-
   const axisY = Y(0);
+
   line(X(-72), axisY, X(retinaX + 6), axisY, 'rgba(148,163,184,.35)', 1, [8,6]);
 
-  // eyeball
+  // Eyeball & Retina
   ctx.save();
   ctx.beginPath(); ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(0,243,255,.4)'; ctx.shadowBlur = 12;
-  ctx.fillStyle = 'rgba(30,41,59,.55)';
-  ctx.ellipse(X(ecx), axisY, R * S(), R * S() * 0.92, 0, 0, Math.PI * 2);
-  ctx.fill(); ctx.stroke();
+  ctx.shadowColor = 'rgba(0,243,255,.4)'; ctx.shadowBlur = 12; ctx.fillStyle = 'rgba(30,41,59,.55)';
+  ctx.ellipse(X(ecx), axisY, R * S(), R * S() * 0.92, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
   ctx.restore();
-  // retina arc
+
   ctx.beginPath(); ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 4;
-  ctx.arc(X(ecx), axisY, R * S() * 0.97, -0.62, 0.62);
-  ctx.stroke();
+  ctx.arc(X(ecx), axisY, R * S() * 0.97, -0.62, 0.62); ctx.stroke();
   text(T('lbl_retina'), X(retinaX + 2), Y(9), '#f472b6', 13, cur === 'ur' ? 'right' : 'left');
 
-  // eye lens
-  ctx.save(); ctx.translate(X(lensX), axisY);
-  drawLensShape(0, 6.5 * S(), 'convex');
-  ctx.restore();
+  // Eye Lens
+  ctx.save(); ctx.translate(X(lensX), axisY); drawLensShape(0, 6.5 * S(), 'convex'); ctx.restore();
   text(T('lbl_eye_lens'), X(lensX), Y(10.5), '#7dd3fc', 12);
 
-  // spectacle lens if corrected
-  if (state.corrected) {
+  // Correction Lens
+  if (state.correction !== 'none') {
     ctx.save(); ctx.translate(X(specX), axisY);
-    drawLensShape(0, 7.5 * S(), myo ? 'concave' : 'convex', '#4ade80');
+    drawLensShape(0, 7.5 * S(), state.correction, '#4ade80');
     ctx.restore();
-    text(T(myo ? 'lbl_correction_concave' : 'lbl_correction_convex'), X(specX), Y(-11.5), '#4ade80', 12);
+    text(T(state.correction === 'concave' ? 'lbl_correction_concave' : 'lbl_correction_convex'), X(specX), Y(-11.5), '#4ade80', 12);
   }
 
-  // rays
+  const fNormal = 2 * R;
+  const isNear = state.eyeObj === 'near';
+  const startX = -70, ox = -38;
   const heights = [4.2, 2.1, -2.1, -4.2];
-  const startX = -70;
-  const fEff = state.corrected ? fNormal : fEye;
   const rayColor = 'rgba(250,204,21,.95)';
 
+  if (isNear) {
+      ctx.beginPath(); ctx.fillStyle = '#00f3ff'; ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 12;
+      ctx.arc(X(ox), Y(0), 4, 0, 2*Math.PI); ctx.fill(); ctx.shadowBlur = 0;
+      text(T('lbl_near_obj'), X(ox), Y(12), '#00f3ff', 12);
+  } else {
+      text(T('lbl_parallel_rays'), X(-44), Y(7.5), 'rgba(250,204,21,.9)', 13);
+  }
+
+  // 1. Draw dashed uncorrected lines FIRST (Underneath)
+  if (state.correction !== 'none') {
+      const fxUncOffset = getFxOffset('none');
+      const fxUnc = lensX + fNormal + fxUncOffset;
+      heights.forEach(h0 => {
+          if (isNear) line(X(ox), Y(0), X(lensX), Y(h0), 'rgba(250,204,21,.25)', 1.5, [5,4]);
+          else line(X(startX), Y(h0), X(lensX), Y(h0), 'rgba(250,204,21,.25)', 1.5, [5,4]);
+          drawEyeRayInside(lensX, h0, fxUnc, 'rgba(250,204,21,.25)', [5,4], true, retinaX);
+      });
+      // Uncorrected virtual focus point
+      ctx.beginPath(); ctx.fillStyle = 'rgba(239,68,68,.3)'; ctx.arc(X(fxUnc), axisY, 4, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 2. Draw Solid Actual Lines
+  const fxActualOffset = getFxOffset(state.correction);
+  const fxActual = lensX + fNormal + fxActualOffset;
+
   heights.forEach(h0 => {
-    let h = h0;
-    if (state.corrected) {
-      // parallel to spectacle
-      ray(X(startX), Y(h), X(specX), Y(h), rayColor, [], h0 > 0);
-      // small bend between spectacle and eye lens (illustrative)
-      h = h0 * (myo ? 1.12 : 0.85);
-      line(X(specX), Y(h0), X(lensX), Y(h), rayColor, 2);
-    } else {
-      ray(X(startX), Y(h), X(lensX), Y(h), rayColor, [], h0 > 0);
-    }
-    // refract toward focus at lensX + fEff
-    const fx = lensX + fEff, fy = 0;
-    const dx = fx - lensX, dy = fy - h;      // world direction
-    // find intersection with retina sphere (approx: draw to retinaX)
-    const tRet = (retinaX - lensX) / dx;
-    const hRet = h + dy * tRet;
-    if (fEff <= (retinaX - lensX) + 0.01) {
-      // crosses focus inside eye then continues to retina
-      line(X(lensX), Y(h), X(fx), Y(0), rayColor, 2);
-      if (Math.abs(fx - retinaX) > 0.3) line(X(fx), Y(0), X(retinaX), Y(hRet), rayColor, 2);
-    } else {
-      // focus behind retina: solid to retina, dashed to focus
-      line(X(lensX), Y(h), X(retinaX), Y(hRet), rayColor, 2);
-      line(X(retinaX), Y(hRet), X(fx), Y(0), 'rgba(250,204,21,.45)', 1.5, [6,5]);
-    }
+      let hLens = h0;
+      let hSpec = isNear ? h0 * (specX - ox)/(lensX - ox) : h0;
+
+      if (state.correction !== 'none') {
+          if (isNear) ray(X(ox), Y(0), X(specX), Y(hSpec), rayColor, [], h0>0);
+          else ray(X(startX), Y(h0), X(specX), Y(h0), rayColor, [], h0>0);
+
+          // Apply visual refraction at correction lens
+          if (state.correction === 'concave') hLens = hSpec * 1.18;
+          else if (state.correction === 'convex') hLens = hSpec * 0.82;
+
+          line(X(specX), Y(hSpec), X(lensX), Y(hLens), rayColor, 2);
+      } else {
+          if (isNear) ray(X(ox), Y(0), X(lensX), Y(h0), rayColor, [], h0>0);
+          else ray(X(startX), Y(h0), X(lensX), Y(h0), rayColor, [], h0>0);
+      }
+      
+      drawEyeRayInside(lensX, hLens, fxActual, rayColor, [], false, retinaX);
   });
 
-  // focal point marker + status
-  const fx = lensX + fEff;
-  ctx.save();
-  ctx.beginPath();
-  ctx.fillStyle = state.corrected ? '#22c55e' : '#ef4444';
+  // 3. Draw Actual focus point and label
+  const isSharp = (fxActualOffset === 0);
+  ctx.beginPath(); ctx.fillStyle = isSharp ? '#22c55e' : '#ef4444';
   ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 16;
-  ctx.arc(X(fx), axisY, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-  text(T('lbl_focus_point'), X(fx), axisY + 26, state.corrected ? '#22c55e' : '#ef4444', 12);
+  ctx.arc(X(fxActual), axisY, 6, 0, Math.PI * 2); ctx.fill();
+  text(T('lbl_focus_point'), X(fxActual), axisY + 26, isSharp ? '#22c55e' : '#ef4444', 12);
 
-  text(T('lbl_parallel_rays'), X(-44), Y(7.5), 'rgba(250,204,21,.9)', 13);
-
-  ctx.save();
-  ctx.font = labelFont(16);
-  ctx.fillStyle = state.corrected ? '#22c55e' : '#ef4444';
-  ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
-  ctx.textAlign = 'center';
-  ctx.fillText(state.corrected ? T('lbl_sharp') : T('lbl_blur'), X(ecx), Y(-17));
+  ctx.save(); ctx.font = labelFont(16); ctx.fillStyle = isSharp ? '#22c55e' : '#ef4444';
+  ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12; ctx.textAlign = 'center';
+  ctx.fillText(isSharp ? T('lbl_sharp') : T('lbl_blur'), X(ecx), Y(-17));
   ctx.restore();
 }
 
-/* ============================================================
-   QUIZ
-============================================================ */
 const quiz = { i: 0, answers: Array(5).fill(null), done: false };
 function restartQuiz() { quiz.i = 0; quiz.answers = Array(5).fill(null); quiz.done = false; renderQuiz(); }
 function answer(oi) {
   if (quiz.answers[quiz.i] !== null) return;
-  quiz.answers[quiz.i] = oi;
-  renderQuiz();
+  quiz.answers[quiz.i] = oi; renderQuiz();
 }
-function nextQ() {
-  if (quiz.i < 4) quiz.i++; else quiz.done = true;
-  renderQuiz();
-}
+function nextQ() { if (quiz.i < 4) quiz.i++; else quiz.done = true; renderQuiz(); }
+
 function renderQuiz() {
   const box = document.getElementById('quiz-box');
   const Q = LANG[cur].quiz;
@@ -1043,7 +961,7 @@ function renderQuiz() {
     const msg = pct >= 80 ? T('score_msg_great') : pct >= 60 ? T('score_msg_good') : T('score_msg_low');
     const circ = 2 * Math.PI * 54;
     box.innerHTML = `
-      <div class="fade-in text-center py-6" data-testid="quiz-result">
+      <div class="fade-in text-center py-6">
         <h2 class="font-display text-lg font-bold text-cyan-400 mb-6">${T('final_score')}</h2>
         <div class="relative inline-block score-ring">
           <svg width="140" height="140" viewBox="0 0 140 140">
@@ -1052,12 +970,12 @@ function renderQuiz() {
               stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - pct/100)}" transform="rotate(-90 70 70)"/>
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span class="num text-3xl font-extrabold text-cyan-300" data-testid="quiz-score">${score}/5</span>
+            <span class="num text-3xl font-extrabold text-cyan-300">${score}/5</span>
             <span class="num text-sm text-slate-400">${pct}%</span>
           </div>
         </div>
         <p class="mt-6 text-base text-slate-300">${msg}</p>
-        <button data-testid="quiz-restart-btn" onclick="restartQuiz()" class="mt-8 px-8 py-3.5 rounded-xl bg-cyan-500/15 border border-cyan-400/50 text-cyan-300 font-bold glow-cyan hover:bg-cyan-500/25 transition">
+        <button onclick="restartQuiz()" class="mt-8 px-8 py-3.5 rounded-xl bg-cyan-500/15 border border-cyan-400/50 text-cyan-300 font-bold glow-cyan hover:bg-cyan-500/25 transition">
           <i class="fa-solid fa-rotate-right"></i> ${T('restart')}
         </button>
       </div>`;
@@ -1066,53 +984,40 @@ function renderQuiz() {
   const q = Q[quiz.i], picked = quiz.answers[quiz.i];
   const opts = q.opts.map((o, oi) => {
     let cls = 'opt-btn';
-    if (picked !== null) {
-      cls += ' locked';
-      if (oi === q.a) cls += ' correct';
-      else if (oi === picked) cls += ' wrong';
-    }
-    return `<button data-testid="quiz-option-${oi}" onclick="answer(${oi})" class="${cls} w-full text-start px-5 py-4 rounded-xl glass-panel text-sm md:text-base font-bold text-slate-200 flex items-center gap-3">
-      <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center text-cyan-400 num shrink-0">${String.fromCharCode(65+oi)}</span>
-      <span>${o}</span>
+    if (picked !== null) { cls += ' locked'; if (oi === q.a) cls += ' correct'; else if (oi === picked) cls += ' wrong'; }
+    return `<button onclick="answer(${oi})" class="${cls} w-full text-start px-5 py-4 rounded-xl glass-panel text-sm md:text-base font-bold text-slate-200 flex items-center gap-3">
+      <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center text-cyan-400 num shrink-0">${String.fromCharCode(65+oi)}</span><span>${o}</span>
     </button>`;
   }).join('');
   const fb = picked === null ? '' : `
     <div class="fade-in mt-5 rounded-xl px-5 py-4 ${picked === q.a ? 'bg-green-500/10 border border-green-500/40 glow-green' : 'bg-red-500/10 border border-red-500/40 glow-red'}">
-      <div class="font-bold ${picked === q.a ? 'text-green-400' : 'text-red-400'} mb-1" data-testid="quiz-feedback">
+      <div class="font-bold ${picked === q.a ? 'text-green-400' : 'text-red-400'} mb-1">
         <i class="fa-solid ${picked === q.a ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${picked === q.a ? T('correct_fb') : T('wrong_fb')}
       </div>
       <p class="text-sm text-slate-300 leading-relaxed">${q.ex}</p>
     </div>
-    <button data-testid="quiz-next-btn" onclick="nextQ()" class="mt-5 w-full px-6 py-3.5 rounded-xl bg-cyan-500/15 border border-cyan-400/50 text-cyan-300 font-bold hover:bg-cyan-500/25 transition">
+    <button onclick="nextQ()" class="mt-5 w-full px-6 py-3.5 rounded-xl bg-cyan-500/15 border border-cyan-400/50 text-cyan-300 font-bold hover:bg-cyan-500/25 transition">
       ${quiz.i < 4 ? T('next_q') : T('see_result')} <i class="fa-solid fa-arrow-right rtl-flip"></i>
     </button>`;
   box.innerHTML = `
     <div class="fade-in">
       <div class="flex items-center justify-between mb-5">
         <h2 class="font-display text-lg font-bold text-cyan-400">${T('quiz_title')}</h2>
-        <span class="text-sm text-slate-400 font-bold" data-testid="quiz-progress">${T('quiz_progress')(quiz.i+1,5)}</span>
+        <span class="text-sm text-slate-400 font-bold">${T('quiz_progress')(quiz.i+1,5)}</span>
       </div>
-      <div class="flex gap-1.5 mb-6">${[0,1,2,3,4].map(i =>
-        `<div class="h-1.5 flex-1 rounded-full ${i < quiz.i || quiz.answers[i] !== null ? 'bg-cyan-400' : i === quiz.i ? 'bg-cyan-700' : 'bg-slate-700'}"></div>`).join('')}
-      </div>
-      <p class="text-base md:text-lg font-bold text-slate-100 mb-6 leading-relaxed" data-testid="quiz-question">${q.q}</p>
-      <div class="space-y-3">${opts}</div>
-      ${fb}
+      <div class="flex gap-1.5 mb-6">${[0,1,2,3,4].map(i => `<div class="h-1.5 flex-1 rounded-full ${i < quiz.i || quiz.answers[i] !== null ? 'bg-cyan-400' : i === quiz.i ? 'bg-cyan-700' : 'bg-slate-700'}"></div>`).join('')}</div>
+      <p class="text-base md:text-lg font-bold text-slate-100 mb-6 leading-relaxed">${q.q}</p>
+      <div class="space-y-3">${opts}</div>${fb}
     </div>`;
 }
 
-/* ============================================================
-   INIT
-============================================================ */
 window.addEventListener('resize', () => { fitCanvas(); requestAnimationFrame(draw); });
-document.getElementById('lang-select').value = cur;
-changeLanguage(cur);
+document.getElementById('lang-select').value = cur; changeLanguage(cur);
 document.getElementById('intro-topic').textContent = T('intro_topic');
 setTimeout(() => {
   const intro = document.getElementById('intro'), app = document.getElementById('app');
   if (window.__denied || !intro || !app) return;
-  intro.style.opacity = '0';
-  app.style.opacity = '1';
+  intro.style.opacity = '0'; app.style.opacity = '1';
   setTimeout(() => intro.remove(), 750);
   fitCanvas(); requestAnimationFrame(draw);
 }, 2100);
