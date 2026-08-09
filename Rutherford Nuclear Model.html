@@ -17,20 +17,15 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 <link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <style>
-/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #0f172a; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
 [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
 [dir="rtl"] {
   font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
   line-height: 2.3 !important;
 }
-
-/* Glassmorphism Classes */
 .glass-panel {
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(16px);
@@ -42,16 +37,10 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
-/* Pulse Glow Effects */
 .glow-cyan { box-shadow: 0 0 20px rgba(0, 243, 255, 0.35); }
 .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
 .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.35); }
-
-/* Canvas styling */
 canvas { touch-action: none; }
-
-/* Custom Slider Styling */
 input[type=range] {
   -webkit-appearance: none;
   background: #334155;
@@ -66,8 +55,6 @@ input[type=range]::-webkit-slider-thumb {
   transition: transform 0.1s ease;
 }
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-/* ============ Extended design language ============ */
 html, body { height: 100%; margin: 0; }
 body {
   font-family: 'Manrope', sans-serif;
@@ -78,14 +65,12 @@ body {
 .font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
 [dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
 [dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
-
 .bg-grid {
   background-image:
     linear-gradient(rgba(0,243,255,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0,243,255,0.04) 1px, transparent 1px);
   background-size: 44px 44px;
 }
-
 #intro {
   position: fixed; inset: 0; z-index: 100;
   background: radial-gradient(ellipse at center, #10233f 0%, #0f172a 65%);
@@ -126,7 +111,6 @@ body {
   50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
 }
 @keyframes shimmer { 0%{ background-position:0% 0; } 100%{ background-position:200% 0; } }
-
 .tab-btn {
   position: relative; transition: color .25s ease, background-color .25s ease;
   border-radius: 12px;
@@ -137,7 +121,6 @@ body {
 }
 .view { animation: viewIn .35s ease both; }
 @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
 .mode-btn {
   transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
   border: 1px solid rgba(255,255,255,.1);
@@ -147,7 +130,6 @@ body {
   background: rgba(0,243,255,.12); color: #00f3ff;
   border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
 }
-
 .opt-btn {
   transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
   border: 1px solid rgba(255,255,255,.1);
@@ -156,7 +138,6 @@ body {
 .opt-btn:not(.locked):active { transform: scale(.98); }
 .opt-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; box-shadow: 0 0 18px rgba(34,197,94,.3); }
 .opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
-
 .zoom-btn {
   width: 42px; height: 42px; border-radius: 12px;
   background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
@@ -166,15 +147,11 @@ body {
 }
 .zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
 .zoom-btn:active { transform: scale(.92); }
-
 .stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
 [dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
 .num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
-
 .fade-in { animation: viewIn .4s ease both; }
 .score-ring { filter: drop-shadow(0 0 14px rgba(0,243,255,.5)); }
-
-/* Fabric overlay */
 #fabricLayer, .canvas-container {
   position: absolute !important;
   inset: 0 !important;
@@ -184,16 +161,12 @@ body {
   pointer-events: none;
 }
 .canvas-container canvas { position: absolute !important; left: 0 !important; top: 0 !important; }
-
-/* Floating annotation card (minimizable) */
 #anno-float {
   position: absolute; z-index: 30; left: 12px; top: 56px;
   transition: all .3s ease;
   cursor: grab;
 }
 #anno-float.minimized .anno-float-body { display: none; }
-#anno-float.minimized { width: auto; }
-
 .chip {
   display:inline-flex; align-items:center; gap:.35rem;
   padding:.2rem .55rem; border-radius:999px; font-size:.72rem; font-weight:600;
@@ -214,7 +187,6 @@ body {
 
 <div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
 
-  <!-- HEADER -->
   <header class="glass-panel flex items-center justify-between px-4 md:px-6 py-3 z-30 shrink-0">
     <div class="flex items-center gap-3 min-w-0">
       <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
@@ -236,20 +208,15 @@ body {
     </nav>
 
     <div class="flex items-center gap-3">
-      <!-- Annotation Toolbar (Hidden by default) -->
       <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
         <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
         <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
         <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
         <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
       </div>
-
-      <!-- Annotation Toggle Button -->
       <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
         <i class="fa-solid fa-pen-nib"></i>
       </button>
-
-      <!-- Language Selector -->
       <div class="relative">
         <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
           <option value="en">🌐 English</option>
@@ -259,19 +226,14 @@ body {
           <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
         </select>
       </div>
-
-      <!-- Fullscreen Button -->
       <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
         <i class="fa-solid fa-expand" id="fs-icon"></i>
       </button>
     </div>
   </header>
 
-  <!-- ===================== SIMULATION VIEW ===================== -->
   <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
-
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
-      <!-- Mode selector -->
       <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
         <button id="mode-macro" onclick="setMode('macro')" class="mode-btn active flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
           <i class="fa-solid fa-flask-vial"></i><span data-i18n="mode_macro"></span>
@@ -281,17 +243,15 @@ body {
         </button>
       </div>
 
-      <!-- Canvas viewport -->
-      <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[340px] overflow-hidden">
+      <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[360px] overflow-hidden">
         <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <canvas id="fabricLayer"></canvas>
 
-        <!-- Floating annotation controls card -->
         <div id="anno-float" class="glass-panel rounded-xl shadow-xl minimized hidden">
           <div class="flex items-center gap-2 px-3 py-2 border-b border-white/5">
             <i class="fa-solid fa-pen-ruler text-cyan-400 text-sm"></i>
             <span class="text-xs font-bold text-cyan-300" data-i18n="anno_title">Annotate</span>
-            <button onclick="toggleAnnoFloat()" class="ml-auto w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-300 flex items-center justify-center" title="Minimize">
+            <button onclick="toggleAnnoFloat()" class="ml-auto w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-300 flex items-center justify-center">
               <i class="fa-solid fa-minus" id="anno-float-icon"></i>
             </button>
           </div>
@@ -304,9 +264,9 @@ body {
         </div>
 
         <div class="absolute bottom-3 flex flex-col gap-2 z-10" style="inset-inline-end:12px" dir="ltr">
-          <button class="zoom-btn" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
-          <button class="zoom-btn" onclick="zoomBy(1/1.2)" title="-"><i class="fa-solid fa-minus"></i></button>
-          <button class="zoom-btn" onclick="resetView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
         </div>
         <div id="drag-hint" class="absolute top-3 glass-panel rounded-xl px-4 py-2 text-xs md:text-sm text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
           <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="drag_hint"></span>
@@ -314,15 +274,11 @@ body {
       </div>
     </section>
 
-    <!-- SIDE PANEL -->
     <aside class="w-full lg:w-[340px] xl:w-[380px] flex flex-col gap-4 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
-
-      <!-- CONTROLS MACRO -->
       <div id="panel-macro" class="glass-card rounded-2xl p-5 space-y-5">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
         </h2>
-
         <div class="flex gap-2">
           <button id="btn-fire" onclick="toggleBeam()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
             <i class="fa-solid fa-play" id="fire-icon"></i><span data-i18n="btn_fire"></span>
@@ -331,7 +287,6 @@ body {
             <i class="fa-solid fa-rotate-left"></i>
           </button>
         </div>
-
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="beam_rate"></label>
@@ -339,16 +294,14 @@ body {
           </div>
           <input type="range" id="sl-rate" class="w-full" min="5" max="120" step="5" value="40" oninput="onSlider()">
         </div>
-
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="foil_thick"></label>
             <span class="stat-val text-sm num" id="val-thick">1.0×</span>
           </div>
           <input type="range" id="sl-thick" class="w-full" min="0.5" max="4" step="0.1" value="1" oninput="onSlider()">
-          <div class="text-[10px] text-slate-500 mt-1 mono num">~10<sup>−4</sup> mm</div>
+          <div class="text-[10px] text-slate-500 mt-1 num">~10<sup>−4</sup> mm</div>
         </div>
-
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="foil_mat"></label>
@@ -362,12 +315,10 @@ body {
         </div>
       </div>
 
-      <!-- CONTROLS MICRO -->
       <div id="panel-micro" class="glass-card rounded-2xl p-5 space-y-5 hidden">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-sliders"></i><span data-i18n="micro_ctrl"></span>
         </h2>
-
         <div class="flex gap-2">
           <button id="btn-launch" onclick="launchAlpha()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
             <i class="fa-solid fa-bolt"></i><span data-i18n="btn_launch"></span>
@@ -376,7 +327,6 @@ body {
             <i class="fa-solid fa-eraser"></i>
           </button>
         </div>
-
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="impact_b"></label>
@@ -388,7 +338,6 @@ body {
             <span data-i18n="b_far"></span>
           </div>
         </div>
-
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="nucleus_z"></label>
@@ -396,14 +345,12 @@ body {
           </div>
           <input type="range" id="sl-z" class="w-full" min="1" max="92" step="1" value="79" oninput="onSlider()">
         </div>
-
         <label class="flex items-center gap-3 cursor-pointer select-none">
           <input type="checkbox" id="chk-orbits" checked onchange="state.showOrbits=this.checked" class="w-5 h-5 accent-cyan-400">
           <span class="text-sm text-slate-300" data-i18n="show_orbits"></span>
         </label>
       </div>
 
-      <!-- OBSERVATIONS -->
       <div class="glass-card rounded-2xl p-5 space-y-4">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span>
@@ -440,7 +387,6 @@ body {
         </div>
       </div>
 
-      <!-- CONCEPT TIP -->
       <div class="glass-card rounded-2xl p-5">
         <h2 class="font-display font-bold text-base text-green-400 flex items-center gap-2 mb-2">
           <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
@@ -450,7 +396,6 @@ body {
     </aside>
   </main>
 
-  <!-- ===================== QUIZ VIEW ===================== -->
   <main id="view-quiz" class="view flex-1 min-h-0 overflow-y-auto p-4 hidden">
     <div class="max-w-3xl mx-auto">
       <div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div>
@@ -465,71 +410,48 @@ if (window.top === window.self) {
   throw new Error('Access denied: top-level load blocked');
 }
 
-/* ============================================================
-   TRANSLATION DICTIONARY
-============================================================ */
 const LANG = {
 en: {
   topic: "Rutherford’s Nuclear Model of Atom (1911)",
   intro_topic: "Rutherford’s Nuclear Model of Atom",
-  tab_sim: "Simulation",
-  tab_quiz: "Quiz",
-  mode_macro: "Gold Foil Experiment",
-  mode_micro: "Atomic Scale View",
-  ctrl_title: "Experiment Controls",
-  micro_ctrl: "Atomic Controls",
-  btn_fire: "Start Beam",
-  btn_pause: "Pause Beam",
-  btn_launch: "Launch α",
-  beam_rate: "Beam Rate",
-  foil_thick: "Foil Thickness",
-  foil_mat: "Foil Material",
-  impact_b: "Impact Parameter (b)",
-  b_headon: "Head-on",
-  b_far: "Far away",
-  nucleus_z: "Atomic Number (Z)",
-  show_orbits: "Show electron orbits",
+  tab_sim: "Simulation", tab_quiz: "Quiz",
+  mode_macro: "Gold Foil Experiment", mode_micro: "Atomic Scale View",
+  ctrl_title: "Experiment Controls", micro_ctrl: "Atomic Controls",
+  btn_fire: "Start Beam", btn_pause: "Pause Beam", btn_launch: "Launch α",
+  beam_rate: "Beam Rate", foil_thick: "Foil Thickness", foil_mat: "Foil Material",
+  impact_b: "Impact Parameter (b)", b_headon: "Head-on", b_far: "Far away",
+  nucleus_z: "Atomic Number (Z)", show_orbits: "Show electron orbits",
   obs_title: "Live Observations",
-  cnt_total: "α particles fired",
-  cnt_straight: "Went straight (A)",
-  cnt_deflect: "Deflected (B)",
-  cnt_back: "Bounced back (C)",
-  angle_scat: "Scattering angle",
-  path_type: "Path type",
+  cnt_total: "α particles fired", cnt_straight: "Went straight (A)",
+  cnt_deflect: "Deflected (B)", cnt_back: "Bounced back (C)",
+  angle_scat: "Scattering angle", path_type: "Path type",
   tip_title: "Discover",
-  drag_hint: "Scroll to zoom · Drag to pan · Fire α particles and observe",
+  drag_hint: "Scroll to zoom · Drag to pan · Observe paths A, B, C",
   anno_title: "Annotate",
-  ratio_msg: (n)=> n>0 ? `About 1 in ${n} bounced back` : "Fire the beam to collect data",
-  path_straight: "Almost undeflected — atom is mostly empty space",
+  ratio_msg: (n)=> n>0 ? `About 1 in ${n} bounced back` : "Start the beam to collect data",
+  path_straight: "Almost undeflected — most of the atom is empty space",
   path_deflect: "Coulomb repulsion near the nucleus bends the path",
-  path_back: "Near head-on hit — massive positive nucleus!",
-  tip_macro: "Most α particles pass straight through. Only a tiny fraction bounce back — proof of a tiny, dense, positive nucleus.",
-  tip_macro_thick: "Thicker foil means more chance of a close nuclear encounter — watch path C rise slowly.",
-  tip_macro_pb: "Lead (Pb) has a larger nucleus (higher Z). Large-angle scattering becomes more common.",
+  path_back: "Near head-on collision — tiny dense positive nucleus!",
+  tip_macro: "Most α particles pass straight (A). A few deflect (B). Very few rebound (C) — proof of a tiny positive nucleus.",
+  tip_macro_thick: "Thicker foil → more nuclear encounters. Watch path C rise slowly.",
+  tip_macro_pb: "Lead (Pb) has higher Z. Large-angle scattering becomes more likely.",
   tip_macro_al: "Aluminum has a smaller nucleus than gold. Large-angle scattering is rarer.",
-  tip_micro: "Slide the impact parameter. Far paths go straight; close paths curve; b≈0 reverses — Rutherford’s key insight.",
-  tip_micro_z: "Higher Z means stronger positive charge → larger deflection for the same impact parameter.",
-  lbl_source: "Radioactive source",
-  lbl_beam: "Beam of α particles",
-  lbl_foil: "Gold foil",
-  lbl_detector: "Fluorescent screen",
-  lbl_nucleus: "Nucleus",
-  lbl_electron: "Electron",
-  lbl_orbit: "Orbit",
-  lbl_alpha: "α particle",
+  tip_micro: "Change impact parameter b. Far paths go straight; close paths curve; b≈0 reverses.",
+  tip_micro_z: "Higher Z → stronger repulsion → larger deflection for the same b.",
+  lbl_source: "Radioactive source", lbl_beam: "Beam of α particles",
+  lbl_foil: "Gold foil", lbl_detector: "Detector",
+  lbl_nucleus: "Nucleus", lbl_electron: "Electrons", lbl_orbit: "Orbit",
+  lbl_alpha: "α particle", lbl_atomic_model: "ATOMIC MODEL", lbl_slit: "Slit",
   quiz_title: "Concept Quiz — Rutherford Model",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
-  correct_fb: "Correct!",
-  wrong_fb: "Incorrect!",
-  next_q: "Next Question",
-  see_result: "See Result",
-  final_score: "Final Score",
-  restart: "Restart Quiz",
+  correct_fb: "Correct!", wrong_fb: "Incorrect!",
+  next_q: "Next Question", see_result: "See Result",
+  final_score: "Final Score", restart: "Restart Quiz",
   score_msg_great: "Outstanding! You understand Rutherford’s nuclear model.",
   score_msg_good: "Good work! Revisit the simulation and try again.",
   score_msg_low: "Keep experimenting — observe paths A, B and C carefully.",
   quiz: [
-    { q:"In Rutherford’s gold foil experiment, most α particles:", opts:["Were absorbed by the foil","Passed straight through with little deflection","Bounced straight back","Orbit the nucleus"], a:1, ex:"Most atoms are empty space, so nearly all α particles pass through undeflected (path A)." },
+    { q:"In Rutherford’s gold foil experiment, most α particles:", opts:["Were absorbed by the foil","Passed straight through with little deflection","Bounced straight back","Orbit the nucleus"], a:1, ex:"Most of the atom is empty space, so nearly all α particles pass through undeflected (path A)." },
     { q:"About 1 in 20,000 α particles bounced back. This showed that:", opts:["Electrons fill the whole atom","The atom has a tiny, dense, positively charged nucleus","Gold atoms are hollow spheres of positive charge","α particles have no charge"], a:1, ex:"Only a near head-on collision with a massive positive nucleus can reverse an α particle (path C)." },
     { q:"Why was a very thin gold foil (~10⁻⁴ mm) used?", opts:["Gold is radioactive","Gold is highly malleable and can be made extremely thin","Gold has no nucleus","To stop all α particles"], a:1, ex:"Gold’s malleability lets us make an ultra-thin foil so most particles meet only a few atoms." },
     { q:"Deflection of positively charged α particles is caused by:", opts:["Neutral neutrons only","Negatively charged electrons alone","A concentrated positive charge in the nucleus","Gravity inside the atom"], a:2, ex:"Like charges repel. A dense positive nucleus produces Coulomb repulsion that deflects α particles." },
@@ -539,59 +461,39 @@ en: {
 ur: {
   topic: "ردرفورڈ کا جوہری مرکزہ ماڈل (1911)",
   intro_topic: "ردرفورڈ کا جوہری مرکزہ ماڈل",
-  tab_sim: "سمولیشن",
-  tab_quiz: "کوئز",
-  mode_macro: "سونے کے ورق کا تجربہ",
-  mode_micro: "جوہری پیمانہ منظر",
-  ctrl_title: "تجربے کے کنٹرولز",
-  micro_ctrl: "جوہری کنٹرولز",
-  btn_fire: "بیم شروع کریں",
-  btn_pause: "بیم روکیں",
-  btn_launch: "α بھیجیں",
-  beam_rate: "بیم کی شرح",
-  foil_thick: "ورق کی موٹائی",
-  foil_mat: "ورق کا مادہ",
-  impact_b: "اثر پیرامیٹر (b)",
-  b_headon: "سیدھا ٹکراؤ",
-  b_far: "دور",
-  nucleus_z: "جوہری عدد (Z)",
-  show_orbits: "الیکٹران کے مدار دکھائیں",
+  tab_sim: "سمولیشن", tab_quiz: "کوئز",
+  mode_macro: "سونے کے ورق کا تجربہ", mode_micro: "جوہری پیمانہ منظر",
+  ctrl_title: "تجربے کے کنٹرولز", micro_ctrl: "جوہری کنٹرولز",
+  btn_fire: "بیم شروع کریں", btn_pause: "بیم روکیں", btn_launch: "α بھیجیں",
+  beam_rate: "بیم کی شرح", foil_thick: "ورق کی موٹائی", foil_mat: "ورق کا مادہ",
+  impact_b: "اثر پیرامیٹر (b)", b_headon: "سیدھا ٹکراؤ", b_far: "دور",
+  nucleus_z: "جوہری عدد (Z)", show_orbits: "الیکٹران کے مدار دکھائیں",
   obs_title: "براہِ راست مشاہدات",
-  cnt_total: "خارج شدہ α ذرات",
-  cnt_straight: "سیدھے گزرے (A)",
-  cnt_deflect: "منحرف ہوئے (B)",
-  cnt_back: "واپس پلٹے (C)",
-  angle_scat: "انحراف کا زاویہ",
-  path_type: "راستے کی قسم",
+  cnt_total: "خارج شدہ α ذرات", cnt_straight: "سیدھے گزرے (A)",
+  cnt_deflect: "منحرف ہوئے (B)", cnt_back: "واپس پلٹے (C)",
+  angle_scat: "انحراف کا زاویہ", path_type: "راستے کی قسم",
   tip_title: "دریافت کریں",
-  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · α ذرات داغ کر مشاہدہ کریں",
+  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · راستے A، B، C دیکھیں",
   anno_title: "نشان زنی",
   ratio_msg: (n)=> n>0 ? `تقریباً ${n} میں سے 1 واپس پلٹا` : "ڈیٹا کے لیے بیم چلائیں",
   path_straight: "تقریباً بغیر انحراف — جوہر زیادہ تر خالی جگہ ہے",
   path_deflect: "مرکزے کے قریب کولمب دفع سے راستہ مڑتا ہے",
-  path_back: "قریباً سیدھا ٹکراؤ — بھاری مثبت مرکزہ!",
-  tip_macro: "زیادہ تر α ذرات سیدھے گزر جاتے ہیں۔ بہت کم واپس پلٹتے ہیں — یہ چھوٹے، گھنے، مثبت مرکزے کا ثبوت ہے۔",
-  tip_macro_thick: "موٹا ورق قریبی جوہری ٹکراؤ کے امکانات بڑھاتا ہے — راستہ C آہستہ بڑھتا دیکھیں۔",
-  tip_macro_pb: "سیسہ (Pb) کا مرکزہ بڑا ہے (زیادہ Z)۔ بڑے زاویے کا انحراف زیادہ ہوتا ہے۔",
+  path_back: "قریباً سیدھا ٹکراؤ — چھوٹا گھنا مثبت مرکزہ!",
+  tip_macro: "زیادہ تر α ذرات سیدھے گزرتے ہیں (A)۔ کچھ منحرف ہوتے ہیں (B)۔ بہت کم واپس پلٹتے ہیں (C) — چھوٹے مثبت مرکزے کا ثبوت۔",
+  tip_macro_thick: "موٹا ورق → زیادہ جوہری ٹکراؤ۔ راستہ C آہستہ بڑھتا دیکھیں۔",
+  tip_macro_pb: "سیسہ (Pb) کا Z زیادہ ہے۔ بڑے زاویے کا انحراف زیادہ ہوتا ہے۔",
   tip_macro_al: "ایلومینیم کا مرکزہ سونے سے چھوٹا ہے۔ بڑے زاویے کا انحراف کم ہوتا ہے۔",
-  tip_micro: "اثر پیرامیٹر بدلیں۔ دور راستے سیدھے؛ قریب والے مڑتے؛ b≈0 پر الٹ جاتے ہیں — ردرفورڈ کی اہم دریافت۔",
-  tip_micro_z: "زیادہ Z یعنی زیادہ مثبت چارج → ایک ہی اثر پیرامیٹر پر زیادہ انحراف۔",
-  lbl_source: "شعاعی منبع",
-  lbl_beam: "α ذرات کی بیم",
-  lbl_foil: "سونے کا ورق",
-  lbl_detector: "منور پردہ",
-  lbl_nucleus: "مرکزہ",
-  lbl_electron: "الیکٹران",
-  lbl_orbit: "مدار",
-  lbl_alpha: "α ذرہ",
+  tip_micro: "اثر پیرامیٹر b بدلیں۔ دور راستے سیدھے؛ قریب والے مڑتے؛ b≈0 پر الٹ جاتے ہیں۔",
+  tip_micro_z: "زیادہ Z → زیادہ دفع → ایک ہی b پر زیادہ انحراف۔",
+  lbl_source: "شعاعی منبع", lbl_beam: "α ذرات کی بیم",
+  lbl_foil: "سونے کا ورق", lbl_detector: "ڈیٹیکٹر",
+  lbl_nucleus: "مرکزہ", lbl_electron: "الیکٹران", lbl_orbit: "مدار",
+  lbl_alpha: "α ذرہ", lbl_atomic_model: "جوہری ماڈل", lbl_slit: "شگاف",
   quiz_title: "تصوراتی کوئز — ردرفورڈ ماڈل",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
-  correct_fb: "درست جواب!",
-  wrong_fb: "غلط جواب!",
-  next_q: "اگلا سوال",
-  see_result: "نتیجہ دیکھیں",
-  final_score: "حتمی اسکور",
-  restart: "کوئز دوبارہ شروع کریں",
+  correct_fb: "درست جواب!", wrong_fb: "غلط جواب!",
+  next_q: "اگلا سوال", see_result: "نتیجہ دیکھیں",
+  final_score: "حتمی اسکور", restart: "کوئز دوبارہ شروع کریں",
   score_msg_great: "شاندار! آپ نے ردرفورڈ کا مرکزہ ماڈل سمجھ لیا ہے۔",
   score_msg_good: "اچھی کوشش! سمولیشن دیکھ کر دوبارہ کوشش کریں۔",
   score_msg_low: "تجربہ جاری رکھیں — راستے A، B اور C غور سے دیکھیں۔",
@@ -610,41 +512,53 @@ function T(k) {
   return L[k] !== undefined ? L[k] : (LANG.en[k] || k);
 }
 
-/* ============================================================
-   GLOBAL STATE
-============================================================ */
 let cur = localStorage.getItem('iqra_lang') || 'en';
 const MAT = {
   au: { Z: 79, color: '#fbbf24', name: 'Au', scatter: 1.0 },
   al: { Z: 13, color: '#94a3b8', name: 'Al', scatter: 0.28 },
-  pb: { Z: 82, color: '#64748b', name: 'Pb', scatter: 1.15 }
+  pb: { Z: 82, color: '#78716c', name: 'Pb', scatter: 1.15 }
 };
-const state = {
-  mode: 'macro',
-  running: false,
-  rate: 40,
-  thickness: 1,
-  material: 'au',
-  impactB: 40,
-  Z: 79,
-  showOrbits: true,
-  zoom: 1, panX: 0, panY: 0,
-  counts: { total: 0, straight: 0, deflect: 0, back: 0 },
-  lastAngle: null,
-  lastPath: ''
-};
-
-let particles = [];
-let flashes = [];
-let trails = [];
-let microAlphas = [];
-let spawnAcc = 0;
-let W = 800, H = 500;
-let baseScale = 1;
 
 /* ============================================================
-   LANGUAGE
+   DIAGRAM LAYOUT (matches Rutherford gold-foil figure)
+   Source = BOTTOM-RIGHT → beam toward CENTER foil
+   C-shaped detector gap faces the source
 ============================================================ */
+const LAY = {
+  srcAng: -40 * Math.PI / 180, // bottom-right
+  srcR: 248,
+  detR: 188,
+  gap: 0.48,                   // half-opening toward source (rad)
+  foilH: 100
+};
+
+const state = {
+  mode: 'macro', running: false,
+  rate: 40, thickness: 1, material: 'au',
+  impactB: 40, Z: 79, showOrbits: true,
+  zoom: 1, panX: 0, panY: 0,
+  counts: { total: 0, straight: 0, deflect: 0, back: 0 },
+  lastAngle: null, lastPath: ''
+};
+
+let particles = [], flashes = [], hitMarks = [];
+let trails = [], microAlphas = [];
+let spawnAcc = 0, W = 800, H = 500, baseScale = 1;
+let launchFlip = 1;
+
+function srcXY() {
+  return { x: Math.cos(LAY.srcAng) * LAY.srcR, y: Math.sin(LAY.srcAng) * LAY.srcR };
+}
+function dirIn() { // source → foil
+  const s = srcXY();
+  const L = Math.hypot(s.x, s.y) || 1;
+  return { x: -s.x / L, y: -s.y / L };
+}
+function fwdAng() {
+  const d = dirIn();
+  return Math.atan2(d.y, d.x);
+}
+
 function changeLanguage(l) {
   if (l !== 'en' && l !== 'ur') return;
   cur = l;
@@ -658,24 +572,17 @@ function changeLanguage(l) {
   const intro = document.getElementById('intro-topic');
   if (intro) intro.textContent = T('intro_topic');
   document.getElementById('lang-select').value = cur;
-  updateFireBtn();
-  updateObs();
-  updateTip();
-  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) {
-    renderQuiz();
-  }
+  updateFireBtn(); updateObs(); updateTip();
+  if (!document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
 }
 
-/* ============================================================
-   TABS / MODE
-============================================================ */
 function switchTab(tab) {
   document.getElementById('view-sim').classList.toggle('hidden', tab !== 'sim');
   document.getElementById('view-quiz').classList.toggle('hidden', tab !== 'quiz');
   document.getElementById('tab-sim').classList.toggle('active', tab === 'sim');
   document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
   if (tab === 'quiz') renderQuiz();
-  if (tab === 'sim') setTimeout(resizeCanvas, 50);
+  if (tab === 'sim') setTimeout(resizeCanvas, 40);
 }
 
 function setMode(m) {
@@ -687,16 +594,13 @@ function setMode(m) {
   document.getElementById('obs-macro').classList.toggle('hidden', m !== 'macro');
   document.getElementById('obs-micro').classList.toggle('hidden', m !== 'micro');
   particles = []; flashes = [];
-  updateTip();
-  resetView();
+  updateTip(); resetView();
 }
 
 function setMaterial(m) {
   state.material = m;
   state.Z = MAT[m].Z;
-  ['au','al','pb'].forEach(k => {
-    document.getElementById('mat-'+k).classList.toggle('active', k === m);
-  });
+  ['au','al','pb'].forEach(k => document.getElementById('mat-'+k).classList.toggle('active', k === m));
   document.getElementById('val-mat').textContent = MAT[m].name;
   document.getElementById('sl-z').value = state.Z;
   document.getElementById('val-z').textContent = state.Z;
@@ -716,9 +620,8 @@ function onSlider() {
 }
 
 function updateFireBtn() {
-  const btn = document.getElementById('btn-fire');
   const icon = document.getElementById('fire-icon');
-  const span = btn.querySelector('[data-i18n]') || btn.querySelector('span');
+  const span = document.querySelector('#btn-fire [data-i18n], #btn-fire span:last-child');
   if (state.running) {
     icon.className = 'fa-solid fa-pause';
     if (span) span.textContent = T('btn_pause');
@@ -727,73 +630,44 @@ function updateFireBtn() {
     if (span) span.textContent = T('btn_fire');
   }
 }
-
-function toggleBeam() {
-  state.running = !state.running;
-  updateFireBtn();
-}
-
+function toggleBeam() { state.running = !state.running; updateFireBtn(); }
 function resetCounters() {
   state.counts = { total: 0, straight: 0, deflect: 0, back: 0 };
-  particles = []; flashes = [];
+  particles = []; flashes = []; hitMarks = [];
   updateObs();
 }
-
 function clearTrails() {
-  trails = [];
-  microAlphas = [];
-  state.lastAngle = null;
-  updateObs();
+  trails = []; microAlphas = [];
+  state.lastAngle = null; updateObs();
 }
 
-/* ============================================================
-   PHYSICS HELPERS
-============================================================ */
-function scatterDecision() {
-  // Educational probabilities scaled by thickness & material Z
-  const baseBack = (1 / 20000) * state.thickness * MAT[state.material].scatter;
-  const baseDef = 0.04 * state.thickness * Math.sqrt(MAT[state.material].scatter);
+function scatterKind() {
+  const back = (1 / 20000) * state.thickness * MAT[state.material].scatter;
+  const defl = 0.035 * state.thickness * Math.sqrt(MAT[state.material].scatter);
   const r = Math.random();
-  if (r < baseBack) return 'back';
-  if (r < baseBack + baseDef) return 'deflect';
+  if (r < back) return 'back';
+  if (r < back + defl) return 'deflect';
   return 'straight';
 }
 
-function rutherfordAngle(b, Z) {
-  // Soft-core Rutherford-like deflection (degrees), educational
-  const d = 0.5 * Z; // characteristic length in sim units
-  const bb = Math.max(0.5, Math.abs(b));
-  let theta = 2 * Math.atan(d / bb) * (180 / Math.PI);
-  if (b < 2) theta = Math.min(180, 160 + (2 - b) * 10);
-  return Math.min(179, theta) * Math.sign(b === 0 ? 1 : b);
-}
-
-function pathLabel(angleAbs) {
-  if (angleAbs < 8) return 'straight';
-  if (angleAbs < 90) return 'deflect';
-  return 'back';
-}
-
-/* ============================================================
-   MACRO PARTICLES
-============================================================ */
 function spawnParticle() {
-  const kind = scatterDecision();
-  let angle = 0;
-  if (kind === 'straight') angle = (Math.random() - 0.5) * 6 * Math.PI / 180;
+  const kind = scatterKind();
+  const s = srcXY(), d = dirIn(), fwd = fwdAng();
+  const px = -d.y, py = d.x;
+  const j = (Math.random() - 0.5) * 5;
+  let ang = fwd;
+  if (kind === 'straight') ang = fwd + (Math.random() - 0.5) * 0.07;
   else if (kind === 'deflect') {
-    const a = (12 + Math.random() * 70) * Math.PI / 180;
-    angle = Math.random() < 0.5 ? a : -a;
+    const a = (14 + Math.random() * 72) * Math.PI / 180;
+    ang = fwd + (Math.random() < 0.5 ? a : -a);
   } else {
-    angle = Math.PI + (Math.random() - 0.5) * 0.5;
+    ang = fwd + Math.PI + (Math.random() - 0.5) * 0.4;
   }
   particles.push({
-    x: -280, y: (Math.random() - 0.5) * 8,
-    vx: 220, vy: 0,
-    phase: 'approach',
-    kind, angle,
-    life: 1,
-    trail: []
+    x: s.x + d.x * 34 + px * j,
+    y: s.y + d.y * 34 + py * j,
+    vx: d.x * 200, vy: d.y * 200,
+    phase: 'in', kind, ang, life: 1, trail: []
   });
   state.counts.total++;
   if (kind === 'straight') state.counts.straight++;
@@ -806,100 +680,99 @@ function updateMacro(dt) {
     spawnAcc += state.rate * dt;
     while (spawnAcc >= 1) { spawnParticle(); spawnAcc -= 1; }
   }
+  const s = srcXY();
+  const denom = s.x * s.x + s.y * s.y;
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
-    if (p.phase === 'approach') {
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      if (p.x >= 0) {
-        p.phase = 'scatter';
-        const speed = 240;
-        if (p.kind === 'back') {
-          p.vx = Math.cos(p.angle) * speed;
-          p.vy = Math.sin(p.angle) * speed;
-        } else {
-          p.vx = Math.cos(p.angle) * speed;
-          p.vy = Math.sin(p.angle) * speed;
-        }
-        flashes.push({ x: 0, y: p.y, t: 0.35, kind: p.kind });
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.phase === 'in') {
+      const dist = Math.hypot(p.x, p.y);
+      const prog = denom > 0 ? ((s.x - p.x) * s.x + (s.y - p.y) * s.y) / denom : 1;
+      if (dist < 11 || prog >= 0.97) {
+        p.phase = 'out';
+        const sp = 225;
+        p.vx = Math.cos(p.ang) * sp;
+        p.vy = Math.sin(p.ang) * sp;
+        p.x = Math.cos(p.ang) * 8;
+        p.y = Math.sin(p.ang) * 8;
+        flashes.push({ x: 0, y: 0, t: 0.25, kind: p.kind });
       }
     } else {
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      p.life -= dt * 0.15;
+      p.life -= dt * 0.12;
     }
     p.trail.push({ x: p.x, y: p.y });
-    if (p.trail.length > 18) p.trail.shift();
+    if (p.trail.length > 20) p.trail.shift();
 
-    // Hit detector ring (~radius 240)
     const r = Math.hypot(p.x, p.y);
-    if (r > 245 || p.life <= 0 || p.x < -320) {
-      if (r > 230 && r < 260) flashes.push({ x: p.x, y: p.y, t: 0.45, kind: 'hit' });
+    const a = Math.atan2(p.y, p.x);
+    let da = a - LAY.srcAng;
+    while (da > Math.PI) da -= 2 * Math.PI;
+    while (da < -Math.PI) da += 2 * Math.PI;
+    const inGap = Math.abs(da) < LAY.gap;
+
+    if (r > LAY.detR - 3 && r < LAY.detR + 16 && !inGap) {
+      hitMarks.push({ ang: a, t: 1.4, kind: p.kind });
+      if (hitMarks.length > 90) hitMarks.shift();
+      flashes.push({ x: Math.cos(a) * LAY.detR, y: Math.sin(a) * LAY.detR, t: 0.45, kind: 'hit' });
       particles.splice(i, 1);
+      continue;
     }
+    if (r > LAY.detR + 50 || p.life <= 0) particles.splice(i, 1);
   }
   for (let i = flashes.length - 1; i >= 0; i--) {
     flashes[i].t -= dt;
     if (flashes[i].t <= 0) flashes.splice(i, 1);
   }
+  for (let i = hitMarks.length - 1; i >= 0; i--) {
+    hitMarks[i].t -= dt * 0.18;
+    if (hitMarks[i].t <= 0) hitMarks.splice(i, 1);
+  }
   updateObs();
 }
 
-/* ============================================================
-   MICRO ALPHAS
-============================================================ */
+function rutherfordDeg(b, Z) {
+  const d = 0.55 * Z;
+  const bb = Math.max(0.6, Math.abs(b));
+  let th = 2 * Math.atan(d / bb) * 180 / Math.PI;
+  if (Math.abs(b) < 2) th = Math.min(180, 155 + (2 - Math.abs(b)) * 12);
+  return Math.min(179, th);
+}
+function pathOf(absAng) {
+  if (absAng < 8) return 'straight';
+  if (absAng < 90) return 'deflect';
+  return 'back';
+}
+
 function launchAlpha() {
-  // Alternate side each launch so students explore both halves
-  if (!launchAlpha._flip) launchAlpha._flip = 1;
-  const sb = state.impactB === 0 ? 0 : state.impactB * launchAlpha._flip;
-  if (state.impactB > 0) launchAlpha._flip *= -1;
-
-  const ang = Math.abs(rutherfordAngle(sb || 0.8, state.Z));
-  const kind = pathLabel(ang);
-  state.lastAngle = ang;
-  state.lastPath = kind;
-
-  microAlphas.push({
-    x: -220, y: sb,
-    vx: 180, vy: 0,
-    b: sb,
-    phase: 'in',
-    ang,
-    kind,
-    trail: []
-  });
+  const sb = state.impactB === 0 ? 0 : state.impactB * launchFlip;
+  if (state.impactB > 0) launchFlip *= -1;
+  const ang = rutherfordDeg(sb || 0.8, state.Z);
+  const kind = pathOf(ang);
+  state.lastAngle = ang; state.lastPath = kind;
+  microAlphas.push({ x: -220, y: sb, vx: 175, vy: 0, kind, trail: [] });
   updateObs();
 }
 
 function updateMicro(dt) {
   for (let i = microAlphas.length - 1; i >= 0; i--) {
     const p = microAlphas[i];
-    if (p.phase === 'in') {
-      // Coulomb repulsion from nucleus at origin (educational soft-core)
-      const rx = p.x, ry = p.y;
-      const rr = Math.max(8, Math.hypot(rx, ry));
-      const F = (1400 * state.Z) / (rr * rr);
-      p.vx += (rx / rr) * F * dt;
-      p.vy += (ry / rr) * F * dt;
-      // soft speed cap for stable trails
-      const spd = Math.hypot(p.vx, p.vy);
-      if (spd > 420) { p.vx *= 420/spd; p.vy *= 420/spd; }
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      p.trail.push({ x: p.x, y: p.y });
-      if (p.trail.length > 220) p.trail.shift();
-      if (Math.hypot(p.x, p.y) > 290 || p.x < -300) {
-        trails.push({ pts: p.trail.slice(), kind: p.kind });
-        if (trails.length > 8) trails.shift();
-        microAlphas.splice(i, 1);
-      }
+    const rr = Math.max(8, Math.hypot(p.x, p.y));
+    const F = (1450 * state.Z) / (rr * rr);
+    p.vx += (p.x / rr) * F * dt;
+    p.vy += (p.y / rr) * F * dt;
+    const spd = Math.hypot(p.vx, p.vy);
+    if (spd > 430) { p.vx *= 430 / spd; p.vy *= 430 / spd; }
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.trail.push({ x: p.x, y: p.y });
+    if (p.trail.length > 220) p.trail.shift();
+    if (Math.hypot(p.x, p.y) > 295 || p.x < -305) {
+      trails.push({ pts: p.trail.slice(), kind: p.kind });
+      if (trails.length > 8) trails.shift();
+      microAlphas.splice(i, 1);
     }
   }
 }
 
-/* ============================================================
-   OBS / TIP
-============================================================ */
 function updateObs() {
   if (state.mode === 'macro') {
     document.getElementById('obs-total').textContent = state.counts.total;
@@ -909,8 +782,7 @@ function updateObs() {
     const n = state.counts.back > 0 ? Math.round(state.counts.total / state.counts.back) : 0;
     document.getElementById('obs-ratio').textContent = T('ratio_msg')(n);
   } else {
-    const a = state.lastAngle;
-    document.getElementById('obs-angle').textContent = a == null ? '—' : (a.toFixed(0) + '°');
+    document.getElementById('obs-angle').textContent = state.lastAngle == null ? '—' : state.lastAngle.toFixed(0) + '°';
     const pk = state.lastPath;
     document.getElementById('obs-path').textContent = pk === 'straight' ? 'A' : pk === 'deflect' ? 'B' : pk === 'back' ? 'C' : '—';
     let msg = T('tip_micro');
@@ -923,243 +795,366 @@ function updateObs() {
 
 function updateTip() {
   let tip = T('tip_macro');
-  if (state.mode === 'micro') tip = T('tip_micro');
+  if (state.mode === 'micro') tip = state.Z !== 79 ? T('tip_micro_z') : T('tip_micro');
   else if (state.thickness > 2.2) tip = T('tip_macro_thick');
   else if (state.material === 'pb') tip = T('tip_macro_pb');
   else if (state.material === 'al') tip = T('tip_macro_al');
-  if (state.mode === 'micro' && state.Z !== 79) tip = T('tip_micro_z');
   document.getElementById('tip-text').textContent = tip;
 }
 
-/* ============================================================
-   DRAW
-============================================================ */
+/* ===================== DRAW ===================== */
 const canvas = document.getElementById('sim-canvas');
 const ctx = canvas.getContext('2d');
-
 function S() { return baseScale * state.zoom; }
-function X(wx) { return W/2 + wx * S() + state.panX; }
-function Y(wy) { return H/2 - wy * S() + state.panY; }
+function X(wx) { return W / 2 + wx * S() + state.panX; }
+function Y(wy) { return H / 2 - wy * S() + state.panY; }
 
-function drawLabel(text, x, y, color='#94a3b8') {
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function fontUI(sz) {
+  return cur === 'ur'
+    ? `600 ${sz}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
+    : `600 ${sz}px Manrope,sans-serif`;
+}
+
+function leader(text, lx, ly, tx, ty, color) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(244,114,182,0.6)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(X(tx), Y(ty));
+  ctx.lineTo(X(lx), Y(ly));
+  ctx.stroke();
+  ctx.font = fontUI(11);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const tw = ctx.measureText(text).width;
+  ctx.fillStyle = 'rgba(15,23,42,0.82)';
+  roundRect(X(lx) - tw / 2 - 7, Y(ly) - 11, tw + 14, 22, 7);
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fillText(text, X(lx), Y(ly));
+  ctx.restore();
+}
+
+function starburst(wx, wy, r, color) {
   ctx.save();
   ctx.fillStyle = color;
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    ctx.lineTo(X(wx) + Math.cos(a) * r * S(), Y(wy) - Math.sin(a) * r * S());
+    ctx.lineTo(X(wx) + Math.cos(a + Math.PI / 8) * r * 0.4 * S(), Y(wy) - Math.sin(a + Math.PI / 8) * r * 0.4 * S());
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function badge(wx, wy, letter, fill) {
+  const bx = X(wx), by = Y(wy);
+  ctx.beginPath(); ctx.arc(bx, by, 12, 0, Math.PI * 2);
+  ctx.fillStyle = fill; ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px Oxanium,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(letter, bx, by + 1);
+}
+
+function drawCDetector() {
+  const R = LAY.detR;
+  const start = LAY.srcAng + LAY.gap;
+  const span = 2 * Math.PI - 2 * LAY.gap;
+  const steps = 100;
+  // outer magenta/pink
+  ctx.save();
+  ctx.lineCap = 'butt';
+  ctx.lineWidth = 18 * S();
+  ctx.strokeStyle = '#be185d';
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const a = start + span * i / steps;
+    const px = X(Math.cos(a) * R), py = Y(Math.sin(a) * R);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  // inner grey face
+  ctx.lineWidth = 11 * S();
+  ctx.strokeStyle = '#6b7280';
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const a = start + span * i / steps;
+    const rr = R - 9;
+    const px = X(Math.cos(a) * rr), py = Y(Math.sin(a) * rr);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.restore();
+  const la = LAY.srcAng + Math.PI;
+  leader(T('lbl_detector'), Math.cos(la) * (R + 36), Math.sin(la) * (R + 36),
+    Math.cos(la) * R, Math.sin(la) * R, '#f9a8d4');
+}
+
+function drawFoil() {
+  const tw = Math.max(6, 6 * state.thickness);
+  const fh = LAY.foilH;
+  ctx.save();
+  // yellow glow
+  const g = ctx.createRadialGradient(X(0), Y(0), 2, X(0), Y(0), fh * 0.65 * S());
+  g.addColorStop(0, 'rgba(250,204,21,0.45)');
+  g.addColorStop(1, 'rgba(250,204,21,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(X(0), Y(0), fh * 0.7 * S(), 0, Math.PI * 2); ctx.fill();
+
+  ctx.shadowColor = 'rgba(250,204,21,0.95)';
+  ctx.shadowBlur = 18 * S();
+  ctx.fillStyle = 'rgba(253,224,71,0.55)';
+  ctx.fillRect(X(-tw / 2), Y(fh / 2), tw * S(), fh * S());
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(X(-tw / 2), Y(fh / 2), tw * S(), fh * S());
+  ctx.strokeStyle = '#fef9c3';
+  ctx.lineWidth = 2 * S();
+  ctx.beginPath(); ctx.moveTo(X(0), Y(fh / 2)); ctx.lineTo(X(0), Y(-fh / 2)); ctx.stroke();
+  ctx.restore();
+  leader(T('lbl_foil'), -70, 78, 0, 28, '#fde68a');
+}
+
+function drawSource() {
+  const s = srcXY(), d = dirIn();
+  const cx = X(s.x), cy = Y(s.y), sc = S();
+  ctx.save();
+  // lead box body
+  ctx.fillStyle = '#708090';
+  roundRect(cx - 30 * sc, cy - 26 * sc, 60 * sc, 52 * sc, 6);
+  ctx.fill();
+  // top face (3D)
+  ctx.fillStyle = '#9aa5b1';
+  ctx.beginPath();
+  ctx.moveTo(cx - 30 * sc, cy - 26 * sc);
+  ctx.lineTo(cx - 18 * sc, cy - 40 * sc);
+  ctx.lineTo(cx + 42 * sc, cy - 40 * sc);
+  ctx.lineTo(cx + 30 * sc, cy - 26 * sc);
+  ctx.closePath(); ctx.fill();
+  // side face
+  ctx.fillStyle = '#5b6773';
+  ctx.beginPath();
+  ctx.moveTo(cx + 30 * sc, cy - 26 * sc);
+  ctx.lineTo(cx + 42 * sc, cy - 40 * sc);
+  ctx.lineTo(cx + 42 * sc, cy + 12 * sc);
+  ctx.lineTo(cx + 30 * sc, cy + 26 * sc);
+  ctx.closePath(); ctx.fill();
+  // radiation trefoil on top
+  const rx = cx + 6 * sc, ry = cy - 33 * sc;
+  ctx.fillStyle = '#facc15';
+  for (let i = 0; i < 3; i++) {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / 3;
+    ctx.beginPath(); ctx.moveTo(rx, ry);
+    ctx.arc(rx, ry, 9 * sc, a - 0.42, a + 0.42); ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = '#111827';
+  ctx.beginPath(); ctx.arc(rx, ry, 2.4 * sc, 0, Math.PI * 2); ctx.fill();
+  // slit + glowing source
+  ctx.fillStyle = '#f97316';
+  ctx.shadowColor = '#fb923c'; ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.arc(X(s.x + d.x * 28), Y(s.y + d.y * 28), 7 * sc, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // dashed beam guide
+  ctx.strokeStyle = 'rgba(250,204,21,0.45)';
+  ctx.setLineDash([6, 5]); ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(X(s.x + d.x * 34), Y(s.y + d.y * 34));
+  ctx.lineTo(X(d.x * 16), Y(d.y * 16));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  leader(T('lbl_source'), s.x + 70, s.y - 55, s.x + 22, s.y - 8, '#e2e8f0');
+  leader(T('lbl_slit'), s.x - 55, s.y + 50, s.x + d.x * 28, s.y + d.y * 28, '#94a3b8');
+  const mid = { x: s.x * 0.55, y: s.y * 0.55 };
+  leader(T('lbl_beam'), mid.x + 55, mid.y + 42, mid.x, mid.y, '#fdba74');
+}
+
+function drawPathBadges() {
+  const fwd = fwdAng(), R = LAY.detR - 28;
+  // A straight
+  const ax = Math.cos(fwd) * R, ay = Math.sin(fwd) * R;
+  ctx.strokeStyle = 'rgba(134,239,172,0.7)'; ctx.lineWidth = 2.5 * S();
+  ctx.beginPath(); ctx.moveTo(X(Math.cos(fwd)*16), Y(Math.sin(fwd)*16)); ctx.lineTo(X(ax), Y(ay)); ctx.stroke();
+  badge(ax * 0.72, ay * 0.72, 'A', '#7c3aed');
+  // B deflect
+  const bAng = fwd + 0.9;
+  const bx = Math.cos(bAng) * (R - 10), by = Math.sin(bAng) * (R - 10);
+  ctx.strokeStyle = 'rgba(251,191,36,0.75)';
+  ctx.beginPath(); ctx.moveTo(X(Math.cos(bAng)*16), Y(Math.sin(bAng)*16)); ctx.lineTo(X(bx), Y(by)); ctx.stroke();
+  badge(bx * 0.7, by * 0.7, 'B', '#7c3aed');
+  // C rebound toward source
+  const cAng = fwd + Math.PI;
+  const cx = Math.cos(cAng) * 95, cy = Math.sin(cAng) * 95;
+  ctx.strokeStyle = 'rgba(248,113,113,0.85)';
+  ctx.beginPath(); ctx.moveTo(X(Math.cos(cAng)*14), Y(Math.sin(cAng)*14)); ctx.lineTo(X(cx), Y(cy)); ctx.stroke();
+  badge(cx * 0.65, cy * 0.65, 'C', '#7c3aed');
+}
+
+function drawAtomicInset() {
+  // Fixed to bottom-left of viewport (diagram style)
+  const ix = 90, iy = H - 95;
+  const sc = Math.min(1, Math.max(0.75, S()));
+  ctx.save();
+  ctx.fillStyle = 'rgba(15,23,42,0.88)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+  roundRect(ix - 72 * sc, iy - 72 * sc, 148 * sc, 148 * sc, 14);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#94a3b8';
   ctx.font = cur === 'ur'
-    ? `600 13px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
-    : `600 12px Manrope,sans-serif`;
+    ? `700 11px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
+    : `700 10px Oxanium,sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText(text, x, y);
+  ctx.fillText(T('lbl_atomic_model'), ix, iy - 56 * sc);
+
+  ctx.setLineDash([3, 3]);
+  ctx.strokeStyle = 'rgba(148,163,184,0.5)';
+  ctx.beginPath(); ctx.arc(ix, iy - 4, 40 * sc, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ix, iy - 4, 26 * sc, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#ef4444';
+  ctx.shadowColor = 'rgba(239,68,68,0.5)'; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(ix, iy - 4, 8 * sc, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#3b82f6';
+  [[26, 0.4], [40, 1.7], [26, 3.4], [40, 4.9]].forEach(([r, a]) => {
+    ctx.beginPath();
+    ctx.arc(ix + Math.cos(a) * r * sc, iy - 4 + Math.sin(a) * r * sc, 3.2 * sc, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = '#fca5a5'; ctx.font = '600 9px Manrope';
+  ctx.fillText(T('lbl_nucleus'), ix, iy + 52 * sc);
+  ctx.fillStyle = '#93c5fd';
+  ctx.fillText(T('lbl_electron'), ix, iy + 64 * sc);
   ctx.restore();
 }
 
 function drawMacro() {
-  // Detector ring
-  const R = 240 * S();
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(X(0), Y(0), R, 0.15*Math.PI, 1.85*Math.PI);
-  ctx.lineWidth = 18 * S();
-  ctx.strokeStyle = '#7c3aed';
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(X(0), Y(0), R - 6*S(), 0.15*Math.PI, 1.85*Math.PI);
-  ctx.lineWidth = 10 * S();
-  ctx.strokeStyle = '#334155';
-  ctx.stroke();
-  ctx.restore();
-  drawLabel(T('lbl_detector'), X(0), Y(0) - R - 18);
-
-  // Source lead box
-  const sx = X(-280), sy = Y(0);
-  ctx.fillStyle = '#475569';
-  roundRect(sx - 36*S(), sy - 28*S(), 52*S(), 56*S(), 6);
-  ctx.fill();
-  ctx.fillStyle = '#facc15';
-  ctx.beginPath();
-  ctx.moveTo(sx - 18*S(), sy - 18*S());
-  ctx.lineTo(sx - 6*S(), sy - 18*S());
-  ctx.lineTo(sx - 12*S(), sy - 6*S());
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#f97316';
-  ctx.beginPath(); ctx.arc(sx - 12*S(), sy, 8*S(), 0, Math.PI*2); ctx.fill();
-  drawLabel(T('lbl_source'), sx, sy + 48*S());
-
-  // Beam guide
-  ctx.strokeStyle = 'rgba(251,146,60,0.35)';
-  ctx.setLineDash([6, 6]);
-  ctx.beginPath(); ctx.moveTo(sx + 16*S(), sy); ctx.lineTo(X(-8), Y(0)); ctx.stroke();
-  ctx.setLineDash([]);
-  drawLabel(T('lbl_beam'), X(-150), Y(28));
-
-  // Gold foil
-  const fc = MAT[state.material].color;
-  ctx.fillStyle = fc;
-  ctx.globalAlpha = 0.55;
-  const tw = Math.max(4, 4 * state.thickness) * S();
-  ctx.fillRect(X(0) - tw/2, Y(90), tw, 180 * S());
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = fc;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(X(0) - tw/2, Y(90), tw, 180 * S());
-  drawLabel(T('lbl_foil') + ' (' + MAT[state.material].name + ')', X(0), Y(-110));
-
-  // Path legend
-  ctx.save();
-  const lx = X(-260), ly = Y(-160);
-  [['#86efac','A'],['#fbbf24','B'],['#f87171','C']].forEach((c,i)=>{
-    ctx.fillStyle = c[0];
-    ctx.beginPath(); ctx.arc(lx, ly + i*22, 5, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = '600 12px Manrope';
-    ctx.textAlign = 'left';
-    ctx.fillText(c[1], lx + 12, ly + i*22 + 4);
+  drawCDetector();
+  hitMarks.forEach(h => {
+    const a = Math.max(0, Math.min(1, h.t));
+    starburst(Math.cos(h.ang) * (LAY.detR - 5), Math.sin(h.ang) * (LAY.detR - 5),
+      6 + 5 * a, `rgba(250,204,21,${0.3 + 0.6 * a})`);
   });
-  ctx.restore();
+  drawFoil();
+  drawSource();
+  drawPathBadges();
 
-  // Particles
   particles.forEach(p => {
-    ctx.strokeStyle = p.kind === 'back' ? 'rgba(248,113,113,0.5)' : p.kind === 'deflect' ? 'rgba(251,191,36,0.45)' : 'rgba(134,239,172,0.4)';
+    ctx.strokeStyle = p.kind === 'back' ? 'rgba(248,113,113,0.5)'
+      : p.kind === 'deflect' ? 'rgba(251,191,36,0.45)' : 'rgba(253,186,116,0.5)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    p.trail.forEach((t,i)=>{ const fn = i?ctx.lineTo:ctx.moveTo; fn.call(ctx, X(t.x), Y(t.y)); });
+    p.trail.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
     ctx.stroke();
-    ctx.fillStyle = p.kind === 'back' ? '#f87171' : p.kind === 'deflect' ? '#fbbf24' : '#fdba74';
-    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 3.5*S(), 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = p.kind === 'back' ? '#f87171' : p.kind === 'deflect' ? '#fbbf24' : '#facc15';
+    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 3.4 * S(), 0, Math.PI * 2); ctx.fill();
   });
-
   flashes.forEach(f => {
     const a = Math.max(0, f.t / 0.45);
-    ctx.fillStyle = f.kind === 'hit' ? `rgba(250,204,21,${a})` : `rgba(255,255,255,${a})`;
-    const spikes = 8;
-    ctx.beginPath();
-    for (let i=0;i<spikes;i++){
-      const ang = (i/spikes)*Math.PI*2;
-      const r1 = 10*S()*a, r2 = 4*S()*a;
-      ctx.lineTo(X(f.x)+Math.cos(ang)*r1, Y(f.y)-Math.sin(ang)*r1);
-      ctx.lineTo(X(f.x)+Math.cos(ang+Math.PI/spikes)*r2, Y(f.y)-Math.sin(ang+Math.PI/spikes)*r2);
-    }
-    ctx.closePath(); ctx.fill();
+    starburst(f.x, f.y, 8 + 5 * a, f.kind === 'hit' ? `rgba(250,204,21,${a})` : `rgba(255,255,255,${a * 0.75})`);
   });
+  drawAtomicInset();
 }
 
 function drawMicro() {
-  // Atom boundary
   ctx.save();
-  ctx.setLineDash([4, 6]);
-  ctx.strokeStyle = 'rgba(148,163,184,0.45)';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(X(0), Y(0), 160*S(), 0, Math.PI*2); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
+  ctx.setLineDash([5, 6]);
+  ctx.strokeStyle = 'rgba(148,163,184,0.5)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(X(0), Y(0), 155 * S(), 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
 
   if (state.showOrbits) {
-    [60, 100, 140].forEach((r, i) => {
-      ctx.strokeStyle = `rgba(56,189,248,${0.15 + i*0.05})`;
-      ctx.beginPath(); ctx.arc(X(0), Y(0), r*S(), 0, Math.PI*2); ctx.stroke();
-      const t = performance.now()/1000;
-      const ex = Math.cos(t*(0.6+i*0.25)+i)*r;
-      const ey = Math.sin(t*(0.6+i*0.25)+i)*r;
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath(); ctx.arc(X(ex), Y(ey), 5*S(), 0, Math.PI*2); ctx.fill();
+    [55, 95, 135].forEach((r, i) => {
+      ctx.strokeStyle = `rgba(59,130,246,${0.12 + i * 0.05})`;
+      ctx.beginPath(); ctx.arc(X(0), Y(0), r * S(), 0, Math.PI * 2); ctx.stroke();
+      const t = performance.now() / 1000;
+      const ex = Math.cos(t * (0.55 + i * 0.2) + i) * r;
+      const ey = Math.sin(t * (0.55 + i * 0.2) + i) * r;
+      ctx.fillStyle = '#3b82f6';
+      ctx.beginPath(); ctx.arc(X(ex), Y(ey), 5 * S(), 0, Math.PI * 2); ctx.fill();
     });
-    drawLabel(T('lbl_electron'), X(110), Y(150), '#7dd3fc');
+    ctx.fillStyle = '#93c5fd'; ctx.font = fontUI(12); ctx.textAlign = 'center';
+    ctx.fillText(T('lbl_electron'), X(120), Y(148));
   }
 
-  // Nucleus — size scales mildly with Z
-  const nr = (10 + Math.sqrt(state.Z) * 1.2) * S();
-  const g = ctx.createRadialGradient(X(0), Y(0), 0, X(0), Y(0), nr);
-  g.addColorStop(0, '#fecaca'); g.addColorStop(1, '#ef4444');
-  ctx.fillStyle = g;
-  ctx.shadowColor = 'rgba(239,68,68,0.6)';
-  ctx.shadowBlur = 18;
-  ctx.beginPath(); ctx.arc(X(0), Y(0), nr, 0, Math.PI*2); ctx.fill();
+  const nr = (12 + Math.sqrt(state.Z) * 1.1) * S();
+  ctx.fillStyle = '#dc2626';
+  ctx.shadowColor = 'rgba(220,38,38,0.55)'; ctx.shadowBlur = 16;
+  ctx.beginPath(); ctx.arc(X(0), Y(0), nr, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
-  drawLabel(T('lbl_nucleus') + ' (Z=' + state.Z + ')', X(0), Y(0) + nr/S() + 22, '#fca5a5');
+  ctx.fillStyle = '#f87171'; ctx.font = fontUI(12); ctx.textAlign = 'center';
+  ctx.fillText(T('lbl_nucleus') + ' (Z=' + state.Z + ')', X(0), Y(0) + nr / S() + 22);
 
-  // Impact parameter guide
-  ctx.strokeStyle = 'rgba(0,243,255,0.35)';
-  ctx.setLineDash([4,4]);
-  ctx.beginPath();
-  ctx.moveTo(X(-220), Y(state.impactB));
-  ctx.lineTo(X(-40), Y(state.impactB));
-  ctx.stroke();
+  ctx.strokeStyle = 'rgba(0,243,255,0.35)'; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(X(-230), Y(state.impactB)); ctx.lineTo(X(-45), Y(state.impactB)); ctx.stroke();
   ctx.setLineDash([]);
-  drawLabel('b = ' + state.impactB, X(-140), Y(state.impactB) - 12, '#67e8f9');
+  ctx.fillStyle = '#67e8f9'; ctx.font = fontUI(11);
+  ctx.fillText('b = ' + state.impactB, X(-145), Y(state.impactB) - 12);
 
-  // Past trails
+  if (!microAlphas.length && !trails.length) {
+    ctx.strokeStyle = 'rgba(226,232,240,0.3)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(X(-220), Y(95)); ctx.lineTo(X(220), Y(95)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-220), Y(30)); ctx.quadraticCurveTo(X(10), Y(42), X(180), Y(115)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-220), Y(0)); ctx.lineTo(X(-20), Y(0)); ctx.lineTo(X(-150), Y(-45)); ctx.stroke();
+  }
   trails.forEach(tr => {
-    ctx.strokeStyle = tr.kind === 'back' ? 'rgba(248,113,113,0.35)' : tr.kind === 'deflect' ? 'rgba(251,191,36,0.35)' : 'rgba(134,239,172,0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    tr.pts.forEach((t,i)=>{ (i?ctx.lineTo:ctx.moveTo).call(ctx, X(t.x), Y(t.y)); });
+    ctx.strokeStyle = tr.kind === 'back' ? 'rgba(248,113,113,0.4)' : tr.kind === 'deflect' ? 'rgba(251,191,36,0.4)' : 'rgba(134,239,172,0.35)';
+    ctx.lineWidth = 2.5; ctx.beginPath();
+    tr.pts.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
     ctx.stroke();
   });
-
-  // Active alphas
   microAlphas.forEach(p => {
-    ctx.strokeStyle = 'rgba(251,146,60,0.7)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    p.trail.forEach((t,i)=>{ (i?ctx.lineTo:ctx.moveTo).call(ctx, X(t.x), Y(t.y)); });
+    ctx.strokeStyle = 'rgba(251,146,60,0.75)'; ctx.lineWidth = 2.5; ctx.beginPath();
+    p.trail.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
     ctx.stroke();
     ctx.fillStyle = '#fb923c';
-    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 6*S(), 0, Math.PI*2); ctx.fill();
-    drawLabel(T('lbl_alpha'), X(p.x), Y(p.y) - 14, '#fdba74');
+    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 6 * S(), 0, Math.PI * 2); ctx.fill();
   });
-}
-
-function roundRect(x,y,w,h,r) {
-  ctx.beginPath();
-  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
 }
 
 function render() {
-  ctx.clearRect(0,0,W,H);
-  // vignette bg
-  const bg = ctx.createRadialGradient(W/2,H/2,40,W/2,H/2,Math.max(W,H)*0.7);
-  bg.addColorStop(0, '#132033'); bg.addColorStop(1, '#0b1220');
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-
-  if (state.mode === 'macro') drawMacro();
-  else drawMicro();
+  ctx.clearRect(0, 0, W, H);
+  const bg = ctx.createRadialGradient(W/2, H/2, 30, W/2, H/2, Math.max(W, H) * 0.7);
+  bg.addColorStop(0, '#152238'); bg.addColorStop(1, '#0b1220');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  if (state.mode === 'macro') drawMacro(); else drawMicro();
 }
 
-/* ============================================================
-   ZOOM / PAN
-============================================================ */
-function zoomBy(f) {
-  state.zoom = Math.min(3.5, Math.max(0.45, state.zoom * f));
-}
-function resetView() {
-  state.zoom = 1; state.panX = 0; state.panY = 0;
-  fitView();
-}
-function fitView() {
-  baseScale = Math.min(W, H) / 560;
-}
+function zoomBy(f) { state.zoom = Math.min(3.5, Math.max(0.45, state.zoom * f)); }
+function resetView() { state.zoom = 1; state.panX = 0; state.panY = 0; fitView(); }
+function fitView() { baseScale = Math.min(W, H) / 640; }
 
-let dragging = false, lastPX=0, lastPY=0;
+let dragging = false, lastPX = 0, lastPY = 0;
 canvas.addEventListener('pointerdown', e => {
   if (isAnnoActive) return;
   dragging = true; canvas.setPointerCapture(e.pointerId);
-  lastPX = e.clientX; lastPY = e.clientY;
-  canvas.style.cursor = 'grabbing';
+  lastPX = e.clientX; lastPY = e.clientY; canvas.style.cursor = 'grabbing';
 });
 canvas.addEventListener('pointermove', e => {
   if (!dragging || isAnnoActive) return;
-  state.panX += e.clientX - lastPX;
-  state.panY += e.clientY - lastPY;
+  state.panX += e.clientX - lastPX; state.panY += e.clientY - lastPY;
   lastPX = e.clientX; lastPY = e.clientY;
 });
 canvas.addEventListener('pointerup', () => { dragging = false; canvas.style.cursor = 'grab'; });
-canvas.addEventListener('wheel', e => {
-  e.preventDefault();
-  zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1);
-}, { passive: false });
-
-// Pinch zoom
+canvas.addEventListener('wheel', e => { e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1); }, { passive: false });
 let pinchDist = null;
 canvas.addEventListener('touchstart', e => {
   if (e.touches.length === 2) {
@@ -1174,57 +1169,36 @@ canvas.addEventListener('touchmove', e => {
     const dx = e.touches[0].clientX - e.touches[1].clientX;
     const dy = e.touches[0].clientY - e.touches[1].clientY;
     const d = Math.hypot(dx, dy);
-    zoomBy(d / pinchDist);
-    pinchDist = d;
+    zoomBy(d / pinchDist); pinchDist = d;
   }
 }, { passive: false });
 canvas.addEventListener('touchend', () => { pinchDist = null; });
 
-/* ============================================================
-   ANNOTATION (Fabric.js) — exact logic
-============================================================ */
-let fCanvas;
-let isAnnoActive = false;
-
+/* Annotation — exact required logic */
+let fCanvas, isAnnoActive = false;
 function initAnnotationCanvas(w, h) {
-  if (fCanvas) {
-    fCanvas.setWidth(w);
-    fCanvas.setHeight(h);
-    fCanvas.calcOffset();
-    return;
-  }
-  fCanvas = new fabric.Canvas('fabricLayer', {
-    isDrawingMode: false,
-    width: w,
-    height: h
-  });
+  if (fCanvas) { fCanvas.setWidth(w); fCanvas.setHeight(h); fCanvas.calcOffset(); return; }
+  fCanvas = new fabric.Canvas('fabricLayer', { isDrawingMode: false, width: w, height: h });
   fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
   fCanvas.freeDrawingBrush.width = 4;
-
   fCanvas.on('mouse:down', function(options) {
-    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
-      fCanvas.remove(options.target);
-    }
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) fCanvas.remove(options.target);
   });
-
   const fabricContainer = document.querySelector('.canvas-container');
   if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
 }
-
 function toggleAnnotationMode() {
   isAnnoActive = !isAnnoActive;
   const btn = document.getElementById('btn-anno-toggle');
   const toolbar = document.getElementById('anno-toolbar');
   const fabricContainer = document.querySelector('.canvas-container');
   const floatCard = document.getElementById('anno-float');
-
   if (isAnnoActive) {
     btn.classList.replace('text-slate-400', 'text-cyan-400');
     toolbar.classList.remove('max-w-0', 'opacity-0');
     toolbar.classList.add('max-w-xs', 'opacity-100');
     if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
-    floatCard.classList.remove('hidden');
-    floatCard.classList.remove('minimized');
+    floatCard.classList.remove('hidden'); floatCard.classList.remove('minimized');
     setAnnoMode('pen');
   } else {
     btn.classList.replace('text-cyan-400', 'text-slate-400');
@@ -1235,11 +1209,9 @@ function toggleAnnotationMode() {
     if (fCanvas) fCanvas.isDrawingMode = false;
   }
 }
-
 function setAnnoMode(mode) {
   document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
   document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
-
   if (mode === 'pen') {
     document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
     if (fCanvas) fCanvas.isDrawingMode = true;
@@ -1248,7 +1220,6 @@ function setAnnoMode(mode) {
     if (fCanvas) fCanvas.isDrawingMode = false;
   }
 }
-
 function changeAnnoColor(color) {
   if (fCanvas) fCanvas.freeDrawingBrush.color = color;
   document.getElementById('anno-color-float').value = color;
@@ -1258,20 +1229,16 @@ function syncAnnoColor(color) {
   document.getElementById('anno-color').value = color;
   changeAnnoColor(color);
 }
-function clearAnnotations() {
-  if (fCanvas) fCanvas.clear();
-}
+function clearAnnotations() { if (fCanvas) fCanvas.clear(); }
 function toggleAnnoFloat() {
   const el = document.getElementById('anno-float');
   el.classList.toggle('minimized');
-  const icon = document.getElementById('anno-float-icon');
-  icon.className = el.classList.contains('minimized') ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
+  document.getElementById('anno-float-icon').className =
+    el.classList.contains('minimized') ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
 }
-
-// Drag floating anno card
-(function(){
+(function () {
   const el = document.getElementById('anno-float');
-  let dx=0, dy=0, on=false;
+  let dx = 0, dy = 0, on = false;
   el.addEventListener('pointerdown', e => {
     if (e.target.closest('button') || e.target.tagName === 'INPUT') return;
     on = true; dx = e.clientX - el.offsetLeft; dy = e.clientY - el.offsetTop;
@@ -1283,16 +1250,12 @@ function toggleAnnoFloat() {
     el.style.left = Math.max(0, Math.min(wrap.width - 40, e.clientX - wrap.left - dx)) + 'px';
     el.style.top = Math.max(0, Math.min(wrap.height - 40, e.clientY - wrap.top - dy)) + 'px';
   });
-  el.addEventListener('pointerup', () => on=false);
+  el.addEventListener('pointerup', () => on = false);
 })();
 
-/* ============================================================
-   FULLSCREEN
-============================================================ */
 function toggleFullScreen() {
-  const el = document.documentElement;
   if (!document.fullscreenElement) {
-    el.requestFullscreen?.();
+    document.documentElement.requestFullscreen?.();
     document.getElementById('fs-icon').className = 'fa-solid fa-compress';
   } else {
     document.exitFullscreen?.();
@@ -1300,11 +1263,7 @@ function toggleFullScreen() {
   }
 }
 
-/* ============================================================
-   QUIZ
-============================================================ */
 let quizIdx = 0, quizScore = 0, quizAnswered = false;
-
 function renderQuiz() {
   const box = document.getElementById('quiz-box');
   const quiz = LANG[cur].quiz;
@@ -1313,51 +1272,45 @@ function renderQuiz() {
     let msg = T('score_msg_low');
     if (pct >= 80) msg = T('score_msg_great');
     else if (pct >= 50) msg = T('score_msg_good');
-    box.innerHTML = `
-      <div class="text-center fade-in space-y-6">
-        <div class="text-cyan-400 font-display font-bold text-xl" data-i18n="final_score">${T('final_score')}</div>
-        <div class="relative inline-flex items-center justify-center">
-          <svg class="score-ring" width="140" height="140" viewBox="0 0 140 140">
-            <circle cx="70" cy="70" r="58" fill="none" stroke="#1e293b" stroke-width="12"/>
-            <circle cx="70" cy="70" r="58" fill="none" stroke="#00f3ff" stroke-width="12"
-              stroke-dasharray="${2*Math.PI*58}" stroke-dashoffset="${2*Math.PI*58*(1-pct/100)}"
-              stroke-linecap="round" transform="rotate(-90 70 70)"/>
-          </svg>
-          <div class="absolute text-3xl font-black text-cyan-300 num">${pct}%</div>
-        </div>
-        <div class="text-2xl font-bold">${quizScore} / ${quiz.length}</div>
-        <p class="text-slate-300">${msg}</p>
-        <button onclick="restartQuiz()" class="mode-btn active px-6 py-3 rounded-xl font-bold">${T('restart')}</button>
-      </div>`;
+    box.innerHTML = `<div class="text-center fade-in space-y-6">
+      <div class="text-cyan-400 font-display font-bold text-xl">${T('final_score')}</div>
+      <div class="relative inline-flex items-center justify-center">
+        <svg class="score-ring" width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" fill="none" stroke="#1e293b" stroke-width="12"/>
+          <circle cx="70" cy="70" r="58" fill="none" stroke="#00f3ff" stroke-width="12"
+            stroke-dasharray="${2*Math.PI*58}" stroke-dashoffset="${2*Math.PI*58*(1-pct/100)}"
+            stroke-linecap="round" transform="rotate(-90 70 70)"/>
+        </svg>
+        <div class="absolute text-3xl font-black text-cyan-300 num">${pct}%</div>
+      </div>
+      <div class="text-2xl font-bold">${quizScore} / ${quiz.length}</div>
+      <p class="text-slate-300">${msg}</p>
+      <button onclick="restartQuiz()" class="mode-btn active px-6 py-3 rounded-xl font-bold">${T('restart')}</button>
+    </div>`;
     return;
   }
   const q = quiz[quizIdx];
-  box.innerHTML = `
-    <div class="fade-in">
-      <div class="flex items-center justify-between mb-4 gap-3">
-        <h2 class="font-display font-bold text-lg text-cyan-400">${T('quiz_title')}</h2>
-        <span class="chip">${T('quiz_progress')(quizIdx+1, quiz.length)}</span>
-      </div>
-      <p class="text-lg md:text-xl font-bold mb-5 leading-relaxed">${q.q}</p>
-      <div class="space-y-3" id="quiz-opts">
-        ${q.opts.map((o,i)=>`
-          <button class="opt-btn w-full text-start px-4 py-3.5 rounded-xl font-semibold text-slate-200"
-            onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div id="quiz-fb" class="mt-4 hidden"></div>
-      <div class="mt-5 flex justify-end">
-        <button id="quiz-next" class="mode-btn active px-5 py-2.5 rounded-xl font-bold hidden" onclick="nextQuiz()"></button>
-      </div>
-    </div>`;
+  box.innerHTML = `<div class="fade-in">
+    <div class="flex items-center justify-between mb-4 gap-3">
+      <h2 class="font-display font-bold text-lg text-cyan-400">${T('quiz_title')}</h2>
+      <span class="chip">${T('quiz_progress')(quizIdx+1, quiz.length)}</span>
+    </div>
+    <p class="text-lg md:text-xl font-bold mb-5 leading-relaxed">${q.q}</p>
+    <div class="space-y-3" id="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="opt-btn w-full text-start px-4 py-3.5 rounded-xl font-semibold text-slate-200" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>
+    <div id="quiz-fb" class="mt-4 hidden"></div>
+    <div class="mt-5 flex justify-end">
+      <button id="quiz-next" class="mode-btn active px-5 py-2.5 rounded-xl font-bold hidden" onclick="nextQuiz()"></button>
+    </div>
+  </div>`;
   quizAnswered = false;
 }
-
 function answerQuiz(i) {
   if (quizAnswered) return;
   quizAnswered = true;
   const q = LANG[cur].quiz[quizIdx];
-  const btns = document.querySelectorAll('#quiz-opts .opt-btn');
-  btns.forEach((b, idx) => {
+  document.querySelectorAll('#quiz-opts .opt-btn').forEach((b, idx) => {
     b.classList.add('locked');
     if (idx === q.a) b.classList.add('correct');
     if (idx === i && i !== q.a) b.classList.add('wrong');
@@ -1367,24 +1320,18 @@ function answerQuiz(i) {
   fb.classList.remove('hidden');
   fb.innerHTML = `<div class="glass-panel rounded-xl px-4 py-3 ${i===q.a?'text-green-300 glow-green':'text-red-300 glow-red'}">
     <strong>${i===q.a?T('correct_fb'):T('wrong_fb')}</strong>
-    <p class="mt-1 text-slate-300 text-sm leading-relaxed">${q.ex}</p>
-  </div>`;
+    <p class="mt-1 text-slate-300 text-sm leading-relaxed">${q.ex}</p></div>`;
   const next = document.getElementById('quiz-next');
   next.classList.remove('hidden');
   next.textContent = quizIdx + 1 >= LANG[cur].quiz.length ? T('see_result') : T('next_q');
 }
-
 function nextQuiz() { quizIdx++; renderQuiz(); }
 function restartQuiz() { quizIdx = 0; quizScore = 0; renderQuiz(); }
 
-/* ============================================================
-   RESIZE / LOOP
-============================================================ */
 function resizeCanvas() {
-  const wrap = document.getElementById('canvas-wrap');
-  const rect = wrap.getBoundingClientRect();
+  const rect = document.getElementById('canvas-wrap').getBoundingClientRect();
   W = Math.max(320, Math.floor(rect.width));
-  H = Math.max(280, Math.floor(rect.height));
+  H = Math.max(300, Math.floor(rect.height));
   canvas.width = W; canvas.height = H;
   fitView();
   initAnnotationCanvas(W, H);
@@ -1394,31 +1341,22 @@ let lastT = performance.now();
 function loop(t) {
   const dt = Math.min(0.05, (t - lastT) / 1000);
   lastT = t;
-  if (state.mode === 'macro') updateMacro(dt);
-  else updateMicro(dt);
+  if (state.mode === 'macro') updateMacro(dt); else updateMicro(dt);
   render();
   requestAnimationFrame(loop);
 }
 
-/* ============================================================
-   INTRO + BOOT
-============================================================ */
 function boot() {
   changeLanguage(cur);
   resizeCanvas();
-  updateObs();
-  updateTip();
-  updateFireBtn();
+  updateObs(); updateTip(); updateFireBtn();
   window.addEventListener('resize', resizeCanvas);
   requestAnimationFrame(loop);
-
-  // Auto-start a gentle beam after intro for engagement
   setTimeout(() => {
     if (state.mode === 'macro' && !state.running) {
-      state.running = true;
-      updateFireBtn();
+      state.running = true; updateFireBtn();
     }
-  }, 800);
+  }, 600);
 }
 
 setTimeout(() => {
