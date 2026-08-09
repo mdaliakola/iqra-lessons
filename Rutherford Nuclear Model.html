@@ -319,17 +319,15 @@ const LAY = {
 };
 
 const state={
-  mode:'macro', running:false,
+  running:false,
   rate:50, thickness:1, material:'au',
-  impactB:40, Z:79, showOrbits:true,
+  Z:79,
   zoom:1, panX:0, panY:0,
-  counts:{total:0,straight:0,deflect:0,back:0},
-  lastAngle:null, lastPath:''
+  counts:{total:0,straight:0,deflect:0,back:0}
 };
 
 let particles=[], flashes=[], hitMarks=[];
-let trails=[], microAlphas=[];
-let spawnAcc=0, W=800, H=500, baseScale=1, launchFlip=1;
+let spawnAcc=0, W=800, H=500, baseScale=1;
 
 function inGap(ang){
   let d=ang-LAY.gapCenter;
