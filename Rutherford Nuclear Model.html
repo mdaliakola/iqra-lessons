@@ -119,10 +119,6 @@ body{font-family:Manrope,sans-serif;background:#0f172a;color:#e2e8f0;overflow:hi
 
   <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
-      <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
-        <button id="mode-macro" onclick="setMode('macro')" class="mode-btn active flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2"><i class="fa-solid fa-flask-vial"></i><span data-i18n="mode_macro"></span></button>
-        <button id="mode-micro" onclick="setMode('micro')" class="mode-btn flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2"><i class="fa-solid fa-atom"></i><span data-i18n="mode_micro"></span></button>
-      </div>
       <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[360px] overflow-hidden">
         <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <canvas id="fabricLayer"></canvas>
@@ -176,27 +172,6 @@ body{font-family:Manrope,sans-serif;background:#0f172a;color:#e2e8f0;overflow:hi
         </div>
       </div>
 
-      <div id="panel-micro" class="glass-card rounded-2xl p-5 space-y-5 hidden">
-        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-sliders"></i><span data-i18n="micro_ctrl"></span></h2>
-        <div class="flex gap-2">
-          <button onclick="launchAlpha()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-bolt"></i><span data-i18n="btn_launch"></span></button>
-          <button onclick="clearTrails()" class="px-4 py-3 rounded-xl font-bold text-sm glass-panel text-slate-300 hover:text-cyan-300"><i class="fa-solid fa-eraser"></i></button>
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="impact_b"></label><span class="stat-val text-sm num" id="val-b">40</span></div>
-          <input type="range" id="sl-b" class="w-full" min="0" max="120" step="1" value="40" oninput="onSlider()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span data-i18n="b_headon"></span><span data-i18n="b_far"></span></div>
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="nucleus_z"></label><span class="stat-val text-sm num" id="val-z">79</span></div>
-          <input type="range" id="sl-z" class="w-full" min="1" max="92" step="1" value="79" oninput="onSlider()">
-        </div>
-        <label class="flex items-center gap-3 cursor-pointer select-none">
-          <input type="checkbox" id="chk-orbits" checked onchange="state.showOrbits=this.checked" class="w-5 h-5 accent-cyan-400">
-          <span class="text-sm text-slate-300" data-i18n="show_orbits"></span>
-        </label>
-      </div>
-
       <div class="glass-card rounded-2xl p-5 space-y-4">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span></h2>
         <div id="obs-macro" class="space-y-3">
@@ -205,11 +180,6 @@ body{font-family:Manrope,sans-serif;background:#0f172a;color:#e2e8f0;overflow:hi
           <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip warm">B</span><span data-i18n="cnt_deflect"></span></span><span class="stat-val text-sm num text-amber-300" id="obs-deflect">0</span></div>
           <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip danger">C</span><span data-i18n="cnt_back"></span></span><span class="stat-val text-sm num text-red-400" id="obs-back">0</span></div>
           <div class="glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center text-cyan-200" id="obs-ratio"></div>
-        </div>
-        <div id="obs-micro" class="space-y-3 hidden">
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400" data-i18n="angle_scat"></span><span class="stat-val text-sm num" id="obs-angle">—</span></div>
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400" data-i18n="path_type"></span><span class="text-sm font-bold text-slate-100 text-end" id="obs-path"></span></div>
-          <div class="glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed text-slate-300" id="micro-status"></div>
         </div>
       </div>
       <div class="glass-card rounded-2xl p-5">
@@ -387,34 +357,17 @@ function switchTab(tab){
   if(tab==='quiz')renderQuiz();
   if(tab==='sim')setTimeout(resizeCanvas,40);
 }
-function setMode(m){
-  state.mode=m;
-  document.getElementById('mode-macro').classList.toggle('active',m==='macro');
-  document.getElementById('mode-micro').classList.toggle('active',m==='micro');
-  document.getElementById('panel-macro').classList.toggle('hidden',m!=='macro');
-  document.getElementById('panel-micro').classList.toggle('hidden',m!=='micro');
-  document.getElementById('obs-macro').classList.toggle('hidden',m!=='macro');
-  document.getElementById('obs-micro').classList.toggle('hidden',m!=='micro');
-  particles=[]; flashes=[];
-  updateTip(); resetView();
-}
 function setMaterial(m){
   state.material=m; state.Z=MAT[m].Z;
   ['au','al','pb'].forEach(k=>document.getElementById('mat-'+k).classList.toggle('active',k===m));
   document.getElementById('val-mat').textContent=MAT[m].name;
-  document.getElementById('sl-z').value=state.Z;
-  document.getElementById('val-z').textContent=state.Z;
   updateTip();
 }
 function onSlider(){
   state.rate=+document.getElementById('sl-rate').value;
   state.thickness=+document.getElementById('sl-thick').value;
-  state.impactB=+document.getElementById('sl-b').value;
-  state.Z=+document.getElementById('sl-z').value;
   document.getElementById('val-rate').textContent=state.rate+' /s';
   document.getElementById('val-thick').textContent=state.thickness.toFixed(1)+'×';
-  document.getElementById('val-b').textContent=state.impactB;
-  document.getElementById('val-z').textContent=state.Z;
   updateTip();
 }
 function updateFireBtn(){
@@ -425,7 +378,6 @@ function updateFireBtn(){
 }
 function toggleBeam(){state.running=!state.running; updateFireBtn()}
 function resetCounters(){state.counts={total:0,straight:0,deflect:0,back:0}; particles=[]; flashes=[]; hitMarks=[]; updateObs()}
-function clearTrails(){trails=[]; microAlphas=[]; state.lastAngle=null; updateObs()}
 
 function scatterKind(){
   const back=(1/20000)*state.thickness*MAT[state.material].s;
@@ -500,63 +452,17 @@ function updateMacro(dt){
   updateObs();
 }
 
-function rutherfordDeg(b,Z){
-  const d=0.55*Z, bb=Math.max(0.6,Math.abs(b));
-  let th=2*Math.atan(d/bb)*180/Math.PI;
-  if(Math.abs(b)<2)th=Math.min(180,155+(2-Math.abs(b))*12);
-  return Math.min(179,th);
-}
-function pathOf(a){if(a<8)return 'straight'; if(a<90)return 'deflect'; return 'back'}
-
-function launchAlpha(){
-  const sb=state.impactB===0?0:state.impactB*launchFlip;
-  if(state.impactB>0)launchFlip*=-1;
-  const ang=rutherfordDeg(sb||0.8,state.Z);
-  const kind=pathOf(ang);
-  state.lastAngle=ang; state.lastPath=kind;
-  microAlphas.push({x:-220,y:sb,vx:175,vy:0,kind,trail:[]});
-  updateObs();
-}
-function updateMicro(dt){
-  for(let i=microAlphas.length-1;i>=0;i--){
-    const p=microAlphas[i];
-    const rr=Math.max(8,Math.hypot(p.x,p.y));
-    const F=(1450*state.Z)/(rr*rr);
-    p.vx+=(p.x/rr)*F*dt; p.vy+=(p.y/rr)*F*dt;
-    const spd=Math.hypot(p.vx,p.vy); if(spd>430){p.vx*=430/spd;p.vy*=430/spd}
-    p.x+=p.vx*dt; p.y+=p.vy*dt;
-    p.trail.push({x:p.x,y:p.y}); if(p.trail.length>220)p.trail.shift();
-    if(Math.hypot(p.x,p.y)>295||p.x<-305){
-      trails.push({pts:p.trail.slice(),kind:p.kind});
-      if(trails.length>8)trails.shift();
-      microAlphas.splice(i,1);
-    }
-  }
-}
-
 function updateObs(){
-  if(state.mode==='macro'){
-    document.getElementById('obs-total').textContent=state.counts.total;
-    document.getElementById('obs-straight').textContent=state.counts.straight;
-    document.getElementById('obs-deflect').textContent=state.counts.deflect;
-    document.getElementById('obs-back').textContent=state.counts.back;
-    const n=state.counts.back>0?Math.round(state.counts.total/state.counts.back):0;
-    document.getElementById('obs-ratio').textContent=T('ratio_msg')(n);
-  } else {
-    document.getElementById('obs-angle').textContent=state.lastAngle==null?'—':state.lastAngle.toFixed(0)+'°';
-    const pk=state.lastPath;
-    document.getElementById('obs-path').textContent=pk==='straight'?'A':pk==='deflect'?'B':pk==='back'?'C':'—';
-    let msg=T('tip_micro');
-    if(pk==='straight')msg=T('path_straight');
-    else if(pk==='deflect')msg=T('path_deflect');
-    else if(pk==='back')msg=T('path_back');
-    document.getElementById('micro-status').textContent=msg;
-  }
+  document.getElementById('obs-total').textContent=state.counts.total;
+  document.getElementById('obs-straight').textContent=state.counts.straight;
+  document.getElementById('obs-deflect').textContent=state.counts.deflect;
+  document.getElementById('obs-back').textContent=state.counts.back;
+  const n=state.counts.back>0?Math.round(state.counts.total/state.counts.back):0;
+  document.getElementById('obs-ratio').textContent=T('ratio_msg')(n);
 }
 function updateTip(){
   let tip=T('tip_macro');
-  if(state.mode==='micro') tip=state.Z!==79?T('tip_micro_z'):T('tip_micro');
-  else if(state.thickness>2.2) tip=T('tip_macro_thick');
+  if(state.thickness>2.2) tip=T('tip_macro_thick');
   else if(state.material==='pb') tip=T('tip_macro_pb');
   else if(state.material==='al') tip=T('tip_macro_al');
   document.getElementById('tip-text').textContent=tip;
@@ -760,53 +666,12 @@ function drawMacro(){
   drawAtomicInset();
 }
 
-function drawMicro(){
-  ctx.save(); ctx.setLineDash([5,6]); ctx.strokeStyle='rgba(148,163,184,.5)'; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(X(0),Y(0),155*S(),0,Math.PI*2); ctx.stroke();
-  ctx.setLineDash([]); ctx.restore();
-  if(state.showOrbits){
-    [55,95,135].forEach((r,i)=>{
-      ctx.strokeStyle=`rgba(59,130,246,${.12+i*.05})`;
-      ctx.beginPath(); ctx.arc(X(0),Y(0),r*S(),0,Math.PI*2); ctx.stroke();
-      const t=performance.now()/1000;
-      ctx.fillStyle='#3b82f6';
-      ctx.beginPath(); ctx.arc(X(Math.cos(t*(.55+i*.2)+i)*r),Y(Math.sin(t*(.55+i*.2)+i)*r),5*S(),0,Math.PI*2); ctx.fill();
-    });
-  }
-  const nr=(12+Math.sqrt(state.Z)*1.1)*S();
-  ctx.fillStyle='#dc2626'; ctx.shadowColor='rgba(220,38,38,.55)'; ctx.shadowBlur=16;
-  ctx.beginPath(); ctx.arc(X(0),Y(0),nr,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-  ctx.fillStyle='#f87171'; ctx.font=fontUI(12); ctx.textAlign='center';
-  ctx.fillText(T('lbl_nucleus')+' (Z='+state.Z+')', X(0), Y(0)+nr/S()+22);
-  ctx.strokeStyle='rgba(0,243,255,.35)'; ctx.setLineDash([4,4]);
-  ctx.beginPath(); ctx.moveTo(X(-230),Y(state.impactB)); ctx.lineTo(X(-45),Y(state.impactB)); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle='#67e8f9'; ctx.font=fontUI(11);
-  ctx.fillText('b = '+state.impactB, X(-145), Y(state.impactB)-12);
-  if(!microAlphas.length&&!trails.length){
-    ctx.strokeStyle='rgba(226,232,240,.3)'; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(X(-220),Y(95)); ctx.lineTo(X(220),Y(95)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(X(-220),Y(30)); ctx.quadraticCurveTo(X(10),Y(42),X(180),Y(115)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(X(-220),Y(0)); ctx.lineTo(X(-20),Y(0)); ctx.lineTo(X(-150),Y(-45)); ctx.stroke();
-  }
-  trails.forEach(tr=>{
-    ctx.strokeStyle=tr.kind==='back'?'rgba(248,113,113,.4)':tr.kind==='deflect'?'rgba(251,191,36,.4)':'rgba(134,239,172,.35)';
-    ctx.lineWidth=2.5; ctx.beginPath();
-    tr.pts.forEach((t,i)=>(i?ctx.lineTo:ctx.moveTo).call(ctx,X(t.x),Y(t.y))); ctx.stroke();
-  });
-  microAlphas.forEach(p=>{
-    ctx.strokeStyle='rgba(251,146,60,.75)'; ctx.lineWidth=2.5; ctx.beginPath();
-    p.trail.forEach((t,i)=>(i?ctx.lineTo:ctx.moveTo).call(ctx,X(t.x),Y(t.y))); ctx.stroke();
-    ctx.fillStyle='#fb923c'; ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),6*S(),0,Math.PI*2); ctx.fill();
-  });
-}
-
 function render(){
   ctx.clearRect(0,0,W,H);
   const bg=ctx.createRadialGradient(W/2,H/2,30,W/2,H/2,Math.max(W,H)*.7);
   bg.addColorStop(0,'#152238'); bg.addColorStop(1,'#0b1220');
   ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
-  if(state.mode==='macro')drawMacro(); else drawMicro();
+  drawMacro();
 }
 
 function zoomBy(f){state.zoom=Math.min(3.5,Math.max(.45,state.zoom*f))}
@@ -911,13 +776,13 @@ function resizeCanvas(){
 let lastT=performance.now();
 function loop(t){
   const dt=Math.min(.05,(t-lastT)/1000); lastT=t;
-  if(state.mode==='macro')updateMacro(dt); else updateMicro(dt);
+  updateMacro(dt);
   render(); requestAnimationFrame(loop);
 }
 function boot(){
   changeLanguage(cur); resizeCanvas(); updateObs(); updateTip(); updateFireBtn();
   window.addEventListener('resize',resizeCanvas); requestAnimationFrame(loop);
-  setTimeout(()=>{if(state.mode==='macro'&&!state.running){state.running=true; updateFireBtn()}},500);
+  setTimeout(()=>{if(!state.running){state.running=true; updateFireBtn()}},500);
 }
 setTimeout(()=>{
   const intro=document.getElementById('intro'); intro.style.opacity='0';
