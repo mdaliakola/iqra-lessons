@@ -1,0 +1,11 @@
+{
+  "name": "IQRA Virtual Lab Lessons",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "lesson-server",
+      "command": "python3 -m http.server 8080 --bind 0.0.0.0 --directory ."
+    }
+  ],
+  "ports": [8080]
+}

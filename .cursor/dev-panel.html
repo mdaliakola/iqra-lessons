@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IQRA Lessons — Local Dev Panel</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1rem 1.5rem;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+    header h1 { margin: 0 0 0.25rem; font-size: 1.25rem; }
+    header p { margin: 0; color: #94a3b8; font-size: 0.875rem; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+    nav button {
+      background: #334155;
+      color: #e2e8f0;
+      border: 1px solid #475569;
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    nav button:hover, nav button.active {
+      background: #0ea5e9;
+      border-color: #38bdf8;
+      color: #0f172a;
+    }
+    main { flex: 1; display: flex; min-height: 0; }
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: #020617;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IQRA Virtual Lab — Local Dev Panel</h1>
+    <p>Lessons load inside an iframe to satisfy Smart Panel embedding requirements.</p>
+  </header>
+  <nav id="lesson-nav"></nav>
+  <main>
+    <iframe id="lesson-frame" title="IQRA lesson" src="about:blank"></iframe>
+  </main>
+  <script>
+    const lessons = [
+      { label: "Gravity", file: "/Gravity.html" },
+      { label: "Human Eye", file: "/Human eye.html" },
+      { label: "Lenses", file: "/Lenses.html" },
+      { label: "Newton's Laws", file: "/Newtonlaws" },
+      { label: "Universal Gravitation", file: "/Newtonsuniversal.html" },
+      { label: "Rutherford Nuclear Model", file: "/Rutherford Nuclear Model.html" }
+    ];
+
+    const nav = document.getElementById("lesson-nav");
+    const frame = document.getElementById("lesson-frame");
+
+    function loadLesson(lesson, button) {
+      frame.src = lesson.file.split("/").map(encodeURIComponent).join("/").replace(/^%2F/, "/");
+      nav.querySelectorAll("button").forEach((el) => el.classList.remove("active"));
+      button.classList.add("active");
+    }
+
+    lessons.forEach((lesson, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = lesson.label;
+      button.addEventListener("click", () => loadLesson(lesson, button));
+      nav.appendChild(button);
+      if (index === 0) {
+        loadLesson(lesson, button);
+      }
+    });
+  </script>
+</body>
+</html>
