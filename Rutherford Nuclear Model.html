@@ -17,168 +17,66 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 <link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <style>
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0f172a; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #475569; }
-[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
-[dir="rtl"] {
-  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
-  line-height: 2.3 !important;
-}
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-.glow-cyan { box-shadow: 0 0 20px rgba(0, 243, 255, 0.35); }
-.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
-.glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.35); }
-canvas { touch-action: none; }
-input[type=range] {
-  -webkit-appearance: none;
-  background: #334155;
-  border-radius: 8px;
-  height: 8px;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 20px; width: 20px; border-radius: 50%;
-  background: #00f3ff; cursor: pointer;
-  box-shadow: 0 0 10px #00f3ff;
-  transition: transform 0.1s ease;
-}
-input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-html, body { height: 100%; margin: 0; }
-body {
-  font-family: 'Manrope', sans-serif;
-  background: #0f172a;
-  color: #e2e8f0;
-  overflow: hidden;
-}
-.font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
-[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
-[dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(0,243,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,243,255,0.04) 1px, transparent 1px);
-  background-size: 44px 44px;
-}
-#intro {
-  position: fixed; inset: 0; z-index: 100;
-  background: radial-gradient(ellipse at center, #10233f 0%, #0f172a 65%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity .7s ease;
-}
-.intro-title {
-  font-family: 'Oxanium', sans-serif;
-  font-weight: 800; letter-spacing: .14em;
-  background: linear-gradient(92deg, #00f3ff, #7dd3fc, #fbbf24, #00f3ff);
-  background-size: 200% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: introZoom 1.6s cubic-bezier(.2,.8,.2,1) both, glowPulse 2s ease-in-out infinite, shimmer 3s linear infinite;
-}
-.intro-topic {
-  color: #94a3b8; letter-spacing: .18em;
-  animation: introFade 1.4s .35s ease both;
-  text-align: center; max-width: 90vw;
-}
-.intro-ring {
-  width: 160px; height: 160px; border-radius: 50%;
-  border: 2px solid rgba(0,243,255,.35);
-  box-shadow: 0 0 60px rgba(0,243,255,.25), inset 0 0 40px rgba(0,243,255,.12);
-  display:flex; align-items:center; justify-content:center;
-  animation: ringSpin 2.4s linear infinite, introZoom 1.2s ease both;
-  margin-bottom: 28px; position: relative;
-}
-.intro-ring::before {
-  content:''; position:absolute; inset:-10px; border-radius:50%;
-  border-top: 2px solid #00f3ff; border-right: 2px solid transparent;
-  border-bottom: 2px solid transparent; border-left: 2px solid transparent;
-}
-@keyframes ringSpin { to { transform: rotate(360deg); } }
-@keyframes introZoom { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
-@keyframes introFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes glowPulse {
-  0%,100% { text-shadow: 0 0 24px rgba(0,243,255,.55); }
-  50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
-}
-@keyframes shimmer { 0%{ background-position:0% 0; } 100%{ background-position:200% 0; } }
-.tab-btn {
-  position: relative; transition: color .25s ease, background-color .25s ease;
-  border-radius: 12px;
-}
-.tab-btn.active {
-  color: #00f3ff; background: rgba(0,243,255,.08);
-  box-shadow: inset 0 0 0 1px rgba(0,243,255,.35), 0 0 18px rgba(0,243,255,.15);
-}
-.view { animation: viewIn .35s ease both; }
-@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.mode-btn {
-  transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
-  border: 1px solid rgba(255,255,255,.1);
-}
-.mode-btn:active { transform: scale(.96); }
-.mode-btn.active {
-  background: rgba(0,243,255,.12); color: #00f3ff;
-  border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
-}
-.opt-btn {
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
-  border: 1px solid rgba(255,255,255,.1);
-}
-.opt-btn:not(.locked):hover { border-color: rgba(0,243,255,.45); background: rgba(0,243,255,.06); }
-.opt-btn:not(.locked):active { transform: scale(.98); }
-.opt-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; box-shadow: 0 0 18px rgba(34,197,94,.3); }
-.opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
-.zoom-btn {
-  width: 42px; height: 42px; border-radius: 12px;
-  background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
-  color:#00f3ff; display:flex; align-items:center; justify-content:center;
-  backdrop-filter: blur(8px); cursor:pointer;
-  transition: background-color .2s ease, box-shadow .2s ease, transform .12s ease;
-}
-.zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
-.zoom-btn:active { transform: scale(.92); }
-.stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
-[dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
-.num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
-.fade-in { animation: viewIn .4s ease both; }
-.score-ring { filter: drop-shadow(0 0 14px rgba(0,243,255,.5)); }
-#fabricLayer, .canvas-container {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 20;
-  pointer-events: none;
-}
-.canvas-container canvas { position: absolute !important; left: 0 !important; top: 0 !important; }
-#anno-float {
-  position: absolute; z-index: 30; left: 12px; top: 56px;
-  transition: all .3s ease;
-  cursor: grab;
-}
-#anno-float.minimized .anno-float-body { display: none; }
-.chip {
-  display:inline-flex; align-items:center; gap:.35rem;
-  padding:.2rem .55rem; border-radius:999px; font-size:.72rem; font-weight:600;
-  background:rgba(0,243,255,0.10); color:#7dd3fc; border:1px solid rgba(0,243,255,0.25);
-}
-.chip.warm { background:rgba(245,158,11,0.12); color:#fbbf24; border-color:rgba(245,158,11,0.35); }
-.chip.danger { background:rgba(239,68,68,0.12); color:#fca5a5; border-color:rgba(239,68,68,0.35); }
-.chip.ok { background:rgba(34,197,94,0.12); color:#86efac; border-color:rgba(34,197,94,0.35); }
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#0f172a}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#475569}
+[dir="rtl"] .rtl-flip{transform:scaleX(-1)}
+[dir="rtl"]{font-family:'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif!important;line-height:2.3!important}
+.glass-panel{background:rgba(15,23,42,.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1)}
+.glass-card{background:rgba(30,41,59,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08)}
+.glow-cyan{box-shadow:0 0 20px rgba(0,243,255,.35)}
+.glow-red{box-shadow:0 0 20px rgba(239,68,68,.4)}
+.glow-green{box-shadow:0 0 20px rgba(34,197,94,.35)}
+canvas{touch-action:none}
+input[type=range]{-webkit-appearance:none;background:#334155;border-radius:8px;height:8px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:20px;width:20px;border-radius:50%;background:#00f3ff;cursor:pointer;box-shadow:0 0 10px #00f3ff;transition:transform .1s ease}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+html,body{height:100%;margin:0}
+body{font-family:Manrope,sans-serif;background:#0f172a;color:#e2e8f0;overflow:hidden}
+.font-display{font-family:Oxanium,Manrope,sans-serif}
+[dir="rtl"] .font-display{font-family:'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif}
+[dir="rtl"] body,[dir="rtl"]{font-size:1.08em}
+.bg-grid{background-image:linear-gradient(rgba(0,243,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.04) 1px,transparent 1px);background-size:44px 44px}
+#intro{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at center,#10233f 0%,#0f172a 65%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .7s ease}
+.intro-title{font-family:Oxanium,sans-serif;font-weight:800;letter-spacing:.14em;background:linear-gradient(92deg,#00f3ff,#7dd3fc,#fbbf24,#00f3ff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:introZoom 1.6s cubic-bezier(.2,.8,.2,1) both,glowPulse 2s ease-in-out infinite,shimmer 3s linear infinite}
+.intro-topic{color:#94a3b8;letter-spacing:.18em;animation:introFade 1.4s .35s ease both;text-align:center;max-width:90vw}
+.intro-ring{width:160px;height:160px;border-radius:50%;border:2px solid rgba(0,243,255,.35);box-shadow:0 0 60px rgba(0,243,255,.25),inset 0 0 40px rgba(0,243,255,.12);display:flex;align-items:center;justify-content:center;animation:ringSpin 2.4s linear infinite,introZoom 1.2s ease both;margin-bottom:28px;position:relative}
+.intro-ring::before{content:'';position:absolute;inset:-10px;border-radius:50%;border-top:2px solid #00f3ff;border-right:2px solid transparent;border-bottom:2px solid transparent;border-left:2px solid transparent}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+@keyframes introZoom{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes introFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 24px rgba(0,243,255,.55)}50%{text-shadow:0 0 54px rgba(0,243,255,.9)}}
+@keyframes shimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
+.tab-btn{position:relative;transition:color .25s,background-color .25s;border-radius:12px}
+.tab-btn.active{color:#00f3ff;background:rgba(0,243,255,.08);box-shadow:inset 0 0 0 1px rgba(0,243,255,.35),0 0 18px rgba(0,243,255,.15)}
+.view{animation:viewIn .35s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.mode-btn{transition:background-color .25s,color .25s,box-shadow .25s,transform .15s;border:1px solid rgba(255,255,255,.1)}
+.mode-btn:active{transform:scale(.96)}
+.mode-btn.active{background:rgba(0,243,255,.12);color:#00f3ff;border-color:rgba(0,243,255,.5);box-shadow:0 0 16px rgba(0,243,255,.25)}
+.opt-btn{transition:background-color .2s,border-color .2s,box-shadow .2s,transform .12s;border:1px solid rgba(255,255,255,.1)}
+.opt-btn:not(.locked):hover{border-color:rgba(0,243,255,.45);background:rgba(0,243,255,.06)}
+.opt-btn.correct{background:rgba(34,197,94,.16);border-color:#22c55e;box-shadow:0 0 18px rgba(34,197,94,.3)}
+.opt-btn.wrong{background:rgba(239,68,68,.14);border-color:#ef4444;box-shadow:0 0 18px rgba(239,68,68,.3)}
+.zoom-btn{width:42px;height:42px;border-radius:12px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.12);color:#00f3ff;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);cursor:pointer}
+.zoom-btn:hover{background:rgba(0,243,255,.12);box-shadow:0 0 14px rgba(0,243,255,.25)}
+.stat-val{font-family:Oxanium,monospace;color:#00f3ff}
+[dir="rtl"] .stat-val{font-family:Oxanium,monospace!important;line-height:1.4!important}
+.num{font-family:Oxanium,monospace!important;line-height:1.4!important;direction:ltr;unicode-bidi:embed}
+.fade-in{animation:viewIn .4s ease both}
+.score-ring{filter:drop-shadow(0 0 14px rgba(0,243,255,.5))}
+#fabricLayer,.canvas-container{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:20;pointer-events:none}
+.canvas-container canvas{position:absolute!important;left:0!important;top:0!important}
+#anno-float{position:absolute;z-index:30;left:12px;top:56px;transition:all .3s;cursor:grab}
+#anno-float.minimized .anno-float-body{display:none}
+.chip{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .55rem;border-radius:999px;font-size:.72rem;font-weight:600;background:rgba(0,243,255,.1);color:#7dd3fc;border:1px solid rgba(0,243,255,.25)}
+.chip.warm{background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.35)}
+.chip.danger{background:rgba(239,68,68,.12);color:#fca5a5;border-color:rgba(239,68,68,.35)}
+.chip.ok{background:rgba(34,197,94,.12);color:#86efac;border-color:rgba(34,197,94,.35)}
 </style>
 </head>
 <body class="bg-grid">
-
 <div id="intro">
   <div class="intro-ring"><i class="fa-solid fa-atom text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
   <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
@@ -186,27 +84,18 @@ body {
 </div>
 
 <div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
-
   <header class="glass-panel flex items-center justify-between px-4 md:px-6 py-3 z-30 shrink-0">
     <div class="flex items-center gap-3 min-w-0">
-      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-flask text-cyan-400"></i>
-      </div>
+      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0"><i class="fa-solid fa-flask text-cyan-400"></i></div>
       <div class="min-w-0">
-        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base" style="font-family:Oxanium,sans-serif!important">IQRA VIRTUAL LAB</div>
         <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
       </div>
     </div>
-
     <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5">
-      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
-        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
-      </button>
-      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
-        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
-      </button>
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2"><i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span></button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2"><i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span></button>
     </nav>
-
     <div class="flex items-center gap-3">
       <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
         <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
@@ -214,9 +103,7 @@ body {
         <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
         <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
       </div>
-      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
-        <i class="fa-solid fa-pen-nib"></i>
-      </button>
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation"><i class="fa-solid fa-pen-nib"></i></button>
       <div class="relative">
         <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
           <option value="en">🌐 English</option>
@@ -226,34 +113,24 @@ body {
           <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
         </select>
       </div>
-      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
-        <i class="fa-solid fa-expand" id="fs-icon"></i>
-      </button>
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen"><i class="fa-solid fa-expand" id="fs-icon"></i></button>
     </div>
   </header>
 
   <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
       <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
-        <button id="mode-macro" onclick="setMode('macro')" class="mode-btn active flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-flask-vial"></i><span data-i18n="mode_macro"></span>
-        </button>
-        <button id="mode-micro" onclick="setMode('micro')" class="mode-btn flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-atom"></i><span data-i18n="mode_micro"></span>
-        </button>
+        <button id="mode-macro" onclick="setMode('macro')" class="mode-btn active flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2"><i class="fa-solid fa-flask-vial"></i><span data-i18n="mode_macro"></span></button>
+        <button id="mode-micro" onclick="setMode('micro')" class="mode-btn flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-sm md:text-base text-slate-300 flex items-center justify-center gap-2"><i class="fa-solid fa-atom"></i><span data-i18n="mode_micro"></span></button>
       </div>
-
       <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[360px] overflow-hidden">
         <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <canvas id="fabricLayer"></canvas>
-
         <div id="anno-float" class="glass-panel rounded-xl shadow-xl minimized hidden">
           <div class="flex items-center gap-2 px-3 py-2 border-b border-white/5">
             <i class="fa-solid fa-pen-ruler text-cyan-400 text-sm"></i>
             <span class="text-xs font-bold text-cyan-300" data-i18n="anno_title">Annotate</span>
-            <button onclick="toggleAnnoFloat()" class="ml-auto w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-300 flex items-center justify-center">
-              <i class="fa-solid fa-minus" id="anno-float-icon"></i>
-            </button>
+            <button onclick="toggleAnnoFloat()" class="ml-auto w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-300 flex items-center justify-center"><i class="fa-solid fa-minus" id="anno-float-icon"></i></button>
           </div>
           <div class="anno-float-body flex items-center gap-2 px-3 py-2">
             <input type="color" id="anno-color-float" value="#00f3ff" onchange="syncAnnoColor(this.value)" class="w-7 h-7 cursor-pointer bg-transparent border-0 p-0">
@@ -262,13 +139,12 @@ body {
             <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-trash-can"></i></button>
           </div>
         </div>
-
         <div class="absolute bottom-3 flex flex-col gap-2 z-10" style="inset-inline-end:12px" dir="ltr">
           <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
           <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
           <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
         </div>
-        <div id="drag-hint" class="absolute top-3 glass-panel rounded-xl px-4 py-2 text-xs md:text-sm text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
+        <div class="absolute top-3 glass-panel rounded-xl px-4 py-2 text-xs md:text-sm text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
           <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="drag_hint"></span>
         </div>
       </div>
@@ -276,37 +152,22 @@ body {
 
     <aside class="w-full lg:w-[340px] xl:w-[380px] flex flex-col gap-4 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
       <div id="panel-macro" class="glass-card rounded-2xl p-5 space-y-5">
-        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
-        </h2>
+        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span></h2>
         <div class="flex gap-2">
-          <button id="btn-fire" onclick="toggleBeam()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
-            <i class="fa-solid fa-play" id="fire-icon"></i><span data-i18n="btn_fire"></span>
-          </button>
-          <button onclick="resetCounters()" class="px-4 py-3 rounded-xl font-bold text-sm glass-panel text-slate-300 hover:text-cyan-300">
-            <i class="fa-solid fa-rotate-left"></i>
-          </button>
+          <button id="btn-fire" onclick="toggleBeam()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-play" id="fire-icon"></i><span data-i18n="btn_fire"></span></button>
+          <button onclick="resetCounters()" class="px-4 py-3 rounded-xl font-bold text-sm glass-panel text-slate-300 hover:text-cyan-300"><i class="fa-solid fa-rotate-left"></i></button>
         </div>
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="beam_rate"></label>
-            <span class="stat-val text-sm num" id="val-rate">40 /s</span>
-          </div>
-          <input type="range" id="sl-rate" class="w-full" min="5" max="120" step="5" value="40" oninput="onSlider()">
+          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="beam_rate"></label><span class="stat-val text-sm num" id="val-rate">50 /s</span></div>
+          <input type="range" id="sl-rate" class="w-full" min="5" max="120" step="5" value="50" oninput="onSlider()">
         </div>
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="foil_thick"></label>
-            <span class="stat-val text-sm num" id="val-thick">1.0×</span>
-          </div>
+          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="foil_thick"></label><span class="stat-val text-sm num" id="val-thick">1.0×</span></div>
           <input type="range" id="sl-thick" class="w-full" min="0.5" max="4" step="0.1" value="1" oninput="onSlider()">
           <div class="text-[10px] text-slate-500 mt-1 num">~10<sup>−4</sup> mm</div>
         </div>
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="foil_mat"></label>
-            <span class="stat-val text-sm" id="val-mat">Au</span>
-          </div>
+          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="foil_mat"></label><span class="stat-val text-sm" id="val-mat">Au</span></div>
           <div class="grid grid-cols-3 gap-2">
             <button id="mat-au" onclick="setMaterial('au')" class="mode-btn active px-2 py-2.5 rounded-xl font-bold text-xs">Au</button>
             <button id="mat-al" onclick="setMaterial('al')" class="mode-btn px-2 py-2.5 rounded-xl font-bold text-xs">Al</button>
@@ -316,33 +177,18 @@ body {
       </div>
 
       <div id="panel-micro" class="glass-card rounded-2xl p-5 space-y-5 hidden">
-        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-sliders"></i><span data-i18n="micro_ctrl"></span>
-        </h2>
+        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-sliders"></i><span data-i18n="micro_ctrl"></span></h2>
         <div class="flex gap-2">
-          <button id="btn-launch" onclick="launchAlpha()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
-            <i class="fa-solid fa-bolt"></i><span data-i18n="btn_launch"></span>
-          </button>
-          <button onclick="clearTrails()" class="px-4 py-3 rounded-xl font-bold text-sm glass-panel text-slate-300 hover:text-cyan-300">
-            <i class="fa-solid fa-eraser"></i>
-          </button>
+          <button onclick="launchAlpha()" class="flex-1 mode-btn active px-3 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-bolt"></i><span data-i18n="btn_launch"></span></button>
+          <button onclick="clearTrails()" class="px-4 py-3 rounded-xl font-bold text-sm glass-panel text-slate-300 hover:text-cyan-300"><i class="fa-solid fa-eraser"></i></button>
         </div>
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="impact_b"></label>
-            <span class="stat-val text-sm num" id="val-b">40</span>
-          </div>
+          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="impact_b"></label><span class="stat-val text-sm num" id="val-b">40</span></div>
           <input type="range" id="sl-b" class="w-full" min="0" max="120" step="1" value="40" oninput="onSlider()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-            <span data-i18n="b_headon"></span>
-            <span data-i18n="b_far"></span>
-          </div>
+          <div class="flex justify-between text-[10px] text-slate-500 mt-1"><span data-i18n="b_headon"></span><span data-i18n="b_far"></span></div>
         </div>
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="nucleus_z"></label>
-            <span class="stat-val text-sm num" id="val-z">79</span>
-          </div>
+          <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-300" data-i18n="nucleus_z"></label><span class="stat-val text-sm num" id="val-z">79</span></div>
           <input type="range" id="sl-z" class="w-full" min="1" max="92" step="1" value="79" oninput="onSlider()">
         </div>
         <label class="flex items-center gap-3 cursor-pointer select-none">
@@ -352,1024 +198,731 @@ body {
       </div>
 
       <div class="glass-card rounded-2xl p-5 space-y-4">
-        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span>
-        </h2>
+        <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span></h2>
         <div id="obs-macro" class="space-y-3">
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400" data-i18n="cnt_total"></span>
-            <span class="stat-val text-sm num" id="obs-total">0</span>
-          </div>
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip ok">A</span><span data-i18n="cnt_straight"></span></span>
-            <span class="stat-val text-sm num text-green-400" id="obs-straight">0</span>
-          </div>
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip warm">B</span><span data-i18n="cnt_deflect"></span></span>
-            <span class="stat-val text-sm num text-amber-300" id="obs-deflect">0</span>
-          </div>
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip danger">C</span><span data-i18n="cnt_back"></span></span>
-            <span class="stat-val text-sm num text-red-400" id="obs-back">0</span>
-          </div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400" data-i18n="cnt_total"></span><span class="stat-val text-sm num" id="obs-total">0</span></div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip ok">A</span><span data-i18n="cnt_straight"></span></span><span class="stat-val text-sm num text-green-400" id="obs-straight">0</span></div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip warm">B</span><span data-i18n="cnt_deflect"></span></span><span class="stat-val text-sm num text-amber-300" id="obs-deflect">0</span></div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400 flex items-center gap-2"><span class="chip danger">C</span><span data-i18n="cnt_back"></span></span><span class="stat-val text-sm num text-red-400" id="obs-back">0</span></div>
           <div class="glass-panel rounded-xl px-4 py-3 text-sm font-bold text-center text-cyan-200" id="obs-ratio"></div>
         </div>
         <div id="obs-micro" class="space-y-3 hidden">
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400" data-i18n="angle_scat"></span>
-            <span class="stat-val text-sm num" id="obs-angle">—</span>
-          </div>
-          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-            <span class="text-sm text-slate-400" data-i18n="path_type"></span>
-            <span class="text-sm font-bold text-slate-100 text-end" id="obs-path"></span>
-          </div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400" data-i18n="angle_scat"></span><span class="stat-val text-sm num" id="obs-angle">—</span></div>
+          <div class="flex justify-between items-center border-b border-slate-700/60 pb-2"><span class="text-sm text-slate-400" data-i18n="path_type"></span><span class="text-sm font-bold text-slate-100 text-end" id="obs-path"></span></div>
           <div class="glass-panel rounded-xl px-4 py-3 text-sm leading-relaxed text-slate-300" id="micro-status"></div>
         </div>
       </div>
-
       <div class="glass-card rounded-2xl p-5">
-        <h2 class="font-display font-bold text-base text-green-400 flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
-        </h2>
+        <h2 class="font-display font-bold text-base text-green-400 flex items-center gap-2 mb-2"><i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span></h2>
         <p class="text-sm text-slate-300 leading-relaxed" id="tip-text"></p>
       </div>
     </aside>
   </main>
 
   <main id="view-quiz" class="view flex-1 min-h-0 overflow-y-auto p-4 hidden">
-    <div class="max-w-3xl mx-auto">
-      <div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div>
-    </div>
+    <div class="max-w-3xl mx-auto"><div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div></div>
   </main>
 </div>
 
 <script>
 if (window.top === window.self) {
-  window.__denied = true;
   document.documentElement.innerHTML = "<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
-  throw new Error('Access denied: top-level load blocked');
+  throw new Error('Access denied');
 }
 
 const LANG = {
-en: {
-  topic: "Rutherford’s Nuclear Model of Atom (1911)",
-  intro_topic: "Rutherford’s Nuclear Model of Atom",
-  tab_sim: "Simulation", tab_quiz: "Quiz",
-  mode_macro: "Gold Foil Experiment", mode_micro: "Atomic Scale View",
-  ctrl_title: "Experiment Controls", micro_ctrl: "Atomic Controls",
-  btn_fire: "Start Beam", btn_pause: "Pause Beam", btn_launch: "Launch α",
-  beam_rate: "Beam Rate", foil_thick: "Foil Thickness", foil_mat: "Foil Material",
-  impact_b: "Impact Parameter (b)", b_headon: "Head-on", b_far: "Far away",
-  nucleus_z: "Atomic Number (Z)", show_orbits: "Show electron orbits",
-  obs_title: "Live Observations",
-  cnt_total: "α particles fired", cnt_straight: "Went straight (A)",
-  cnt_deflect: "Deflected (B)", cnt_back: "Bounced back (C)",
-  angle_scat: "Scattering angle", path_type: "Path type",
-  tip_title: "Discover",
-  drag_hint: "Scroll to zoom · Drag to pan · Observe paths A, B, C",
-  anno_title: "Annotate",
-  ratio_msg: (n)=> n>0 ? `About 1 in ${n} bounced back` : "Start the beam to collect data",
-  path_straight: "Almost undeflected — most of the atom is empty space",
-  path_deflect: "Coulomb repulsion near the nucleus bends the path",
-  path_back: "Near head-on collision — tiny dense positive nucleus!",
-  tip_macro: "Most α particles pass straight (A). A few deflect (B). Very few rebound (C) — proof of a tiny positive nucleus.",
-  tip_macro_thick: "Thicker foil → more nuclear encounters. Watch path C rise slowly.",
-  tip_macro_pb: "Lead (Pb) has higher Z. Large-angle scattering becomes more likely.",
-  tip_macro_al: "Aluminum has a smaller nucleus than gold. Large-angle scattering is rarer.",
-  tip_micro: "Change impact parameter b. Far paths go straight; close paths curve; b≈0 reverses.",
-  tip_micro_z: "Higher Z → stronger repulsion → larger deflection for the same b.",
-  lbl_source: "Radioactive source", lbl_beam: "Beam of α particles",
-  lbl_foil: "Gold foil", lbl_detector: "Detector",
-  lbl_nucleus: "Nucleus", lbl_electron: "Electrons", lbl_orbit: "Orbit",
-  lbl_alpha: "α particle", lbl_atomic_model: "ATOMIC MODEL", lbl_slit: "Slit",
-  quiz_title: "Concept Quiz — Rutherford Model",
-  quiz_progress: (i,n)=>`Question ${i} of ${n}`,
-  correct_fb: "Correct!", wrong_fb: "Incorrect!",
-  next_q: "Next Question", see_result: "See Result",
-  final_score: "Final Score", restart: "Restart Quiz",
-  score_msg_great: "Outstanding! You understand Rutherford’s nuclear model.",
-  score_msg_good: "Good work! Revisit the simulation and try again.",
-  score_msg_low: "Keep experimenting — observe paths A, B and C carefully.",
-  quiz: [
-    { q:"In Rutherford’s gold foil experiment, most α particles:", opts:["Were absorbed by the foil","Passed straight through with little deflection","Bounced straight back","Orbit the nucleus"], a:1, ex:"Most of the atom is empty space, so nearly all α particles pass through undeflected (path A)." },
-    { q:"About 1 in 20,000 α particles bounced back. This showed that:", opts:["Electrons fill the whole atom","The atom has a tiny, dense, positively charged nucleus","Gold atoms are hollow spheres of positive charge","α particles have no charge"], a:1, ex:"Only a near head-on collision with a massive positive nucleus can reverse an α particle (path C)." },
-    { q:"Why was a very thin gold foil (~10⁻⁴ mm) used?", opts:["Gold is radioactive","Gold is highly malleable and can be made extremely thin","Gold has no nucleus","To stop all α particles"], a:1, ex:"Gold’s malleability lets us make an ultra-thin foil so most particles meet only a few atoms." },
-    { q:"Deflection of positively charged α particles is caused by:", opts:["Neutral neutrons only","Negatively charged electrons alone","A concentrated positive charge in the nucleus","Gravity inside the atom"], a:2, ex:"Like charges repel. A dense positive nucleus produces Coulomb repulsion that deflects α particles." },
-    { q:"Rutherford’s model concluded that most of the atom is:", opts:["Filled with positive pudding","Solid matter","Empty space","A cloud of neutrons"], a:2, ex:"Because most α particles go straight through, most of the atom’s volume must be empty space." }
+en:{
+  topic:"Rutherford’s Nuclear Model of Atom (1911)",
+  intro_topic:"Rutherford’s Nuclear Model of Atom",
+  tab_sim:"Simulation", tab_quiz:"Quiz",
+  mode_macro:"Gold Foil Experiment", mode_micro:"Atomic Scale View",
+  ctrl_title:"Experiment Controls", micro_ctrl:"Atomic Controls",
+  btn_fire:"Start Beam", btn_pause:"Pause Beam", btn_launch:"Launch α",
+  beam_rate:"Beam Rate", foil_thick:"Foil Thickness", foil_mat:"Foil Material",
+  impact_b:"Impact Parameter (b)", b_headon:"Head-on", b_far:"Far away",
+  nucleus_z:"Atomic Number (Z)", show_orbits:"Show electrons",
+  obs_title:"Live Observations",
+  cnt_total:"α particles fired", cnt_straight:"Went straight (A)",
+  cnt_deflect:"Deflected (B)", cnt_back:"Bounced back (C)",
+  angle_scat:"Scattering angle", path_type:"Path type", tip_title:"Discover",
+  drag_hint:"Beam enters through C-gap → hits foil → A / B / C",
+  anno_title:"Annotate",
+  ratio_msg:n=>n>0?`About 1 in ${n} bounced back`:"Start the beam — watch entry through the open C-gap",
+  path_straight:"Undeflected — atom is mostly empty space",
+  path_deflect:"Deflected by positive nucleus (Coulomb repulsion)",
+  path_back:"Head-on hit — dense positive nucleus!",
+  tip_macro:"Beam enters the OPEN gap of the C-shaped detector, hits the gold foil, then: most go straight (A), some divert (B), very few rebound (C).",
+  tip_macro_thick:"Thicker foil → more nuclear encounters → more B and C.",
+  tip_macro_pb:"Lead (Pb) has higher Z → more large-angle scattering.",
+  tip_macro_al:"Aluminum has smaller Z → fewer large-angle events.",
+  tip_micro:"Change b. Far paths go straight; near paths curve; b≈0 rebounds.",
+  tip_micro_z:"Higher Z → stronger repulsion → larger deflection.",
+  lbl_source:"Radioactive source", lbl_beam:"Beam of α particles",
+  lbl_foil:"Gold foil", lbl_detector:"Detector", lbl_screen:"Fluorescent screen",
+  lbl_slit:"Slit (C-gap)", lbl_nucleus:"Nucleus", lbl_electron:"Electrons",
+  lbl_orbit:"Orbit", lbl_alpha:"α particle", lbl_atomic_model:"ATOMIC MODEL",
+  quiz_title:"Concept Quiz — Rutherford Model",
+  quiz_progress:(i,n)=>`Question ${i} of ${n}`,
+  correct_fb:"Correct!", wrong_fb:"Incorrect!", next_q:"Next Question",
+  see_result:"See Result", final_score:"Final Score", restart:"Restart Quiz",
+  score_msg_great:"Outstanding! You understand Rutherford’s model.",
+  score_msg_good:"Good work! Revisit the simulation once more.",
+  score_msg_low:"Keep watching paths A, B and C carefully.",
+  quiz:[
+    {q:"Most α particles in the gold foil experiment:",opts:["Were absorbed","Passed straight through","All bounced back","Stuck in the foil"],a:1,ex:"Most of the atom is empty space, so nearly all α particles pass straight (path A)."},
+    {q:"About 1 in 20,000 α particles bounced back because:",opts:["Electrons fill the atom","There is a tiny dense positive nucleus","Gold has no empty space","α particles are negative"],a:1,ex:"Only a near head-on collision with the massive positive nucleus reverses an α particle (path C)."},
+    {q:"The beam enters the apparatus through:",opts:["The closed back of the detector","The open gap (slit) of the C-shaped screen","The top of the foil","A hole in the nucleus"],a:1,ex:"The fluorescent screen is C-shaped. The open gap (slit) lets the α beam enter and hit the foil."},
+    {q:"Deflection of α particles is caused by:",opts:["Neutrons only","Electrons only","Concentrated positive charge in the nucleus","Gravity"],a:2,ex:"Like charges repel. The dense positive nucleus produces Coulomb repulsion."},
+    {q:"Rutherford concluded that most of the atom is:",opts:["Solid pudding","Filled with neutrons","Empty space","A cloud of protons only"],a:2,ex:"Because most α particles go straight through, most of the atom’s volume is empty space."}
   ]
 },
-ur: {
-  topic: "ردرفورڈ کا جوہری مرکزہ ماڈل (1911)",
-  intro_topic: "ردرفورڈ کا جوہری مرکزہ ماڈل",
-  tab_sim: "سمولیشن", tab_quiz: "کوئز",
-  mode_macro: "سونے کے ورق کا تجربہ", mode_micro: "جوہری پیمانہ منظر",
-  ctrl_title: "تجربے کے کنٹرولز", micro_ctrl: "جوہری کنٹرولز",
-  btn_fire: "بیم شروع کریں", btn_pause: "بیم روکیں", btn_launch: "α بھیجیں",
-  beam_rate: "بیم کی شرح", foil_thick: "ورق کی موٹائی", foil_mat: "ورق کا مادہ",
-  impact_b: "اثر پیرامیٹر (b)", b_headon: "سیدھا ٹکراؤ", b_far: "دور",
-  nucleus_z: "جوہری عدد (Z)", show_orbits: "الیکٹران کے مدار دکھائیں",
-  obs_title: "براہِ راست مشاہدات",
-  cnt_total: "خارج شدہ α ذرات", cnt_straight: "سیدھے گزرے (A)",
-  cnt_deflect: "منحرف ہوئے (B)", cnt_back: "واپس پلٹے (C)",
-  angle_scat: "انحراف کا زاویہ", path_type: "راستے کی قسم",
-  tip_title: "دریافت کریں",
-  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · راستے A، B، C دیکھیں",
-  anno_title: "نشان زنی",
-  ratio_msg: (n)=> n>0 ? `تقریباً ${n} میں سے 1 واپس پلٹا` : "ڈیٹا کے لیے بیم چلائیں",
-  path_straight: "تقریباً بغیر انحراف — جوہر زیادہ تر خالی جگہ ہے",
-  path_deflect: "مرکزے کے قریب کولمب دفع سے راستہ مڑتا ہے",
-  path_back: "قریباً سیدھا ٹکراؤ — چھوٹا گھنا مثبت مرکزہ!",
-  tip_macro: "زیادہ تر α ذرات سیدھے گزرتے ہیں (A)۔ کچھ منحرف ہوتے ہیں (B)۔ بہت کم واپس پلٹتے ہیں (C) — چھوٹے مثبت مرکزے کا ثبوت۔",
-  tip_macro_thick: "موٹا ورق → زیادہ جوہری ٹکراؤ۔ راستہ C آہستہ بڑھتا دیکھیں۔",
-  tip_macro_pb: "سیسہ (Pb) کا Z زیادہ ہے۔ بڑے زاویے کا انحراف زیادہ ہوتا ہے۔",
-  tip_macro_al: "ایلومینیم کا مرکزہ سونے سے چھوٹا ہے۔ بڑے زاویے کا انحراف کم ہوتا ہے۔",
-  tip_micro: "اثر پیرامیٹر b بدلیں۔ دور راستے سیدھے؛ قریب والے مڑتے؛ b≈0 پر الٹ جاتے ہیں۔",
-  tip_micro_z: "زیادہ Z → زیادہ دفع → ایک ہی b پر زیادہ انحراف۔",
-  lbl_source: "شعاعی منبع", lbl_beam: "α ذرات کی بیم",
-  lbl_foil: "سونے کا ورق", lbl_detector: "ڈیٹیکٹر",
-  lbl_nucleus: "مرکزہ", lbl_electron: "الیکٹران", lbl_orbit: "مدار",
-  lbl_alpha: "α ذرہ", lbl_atomic_model: "جوہری ماڈل", lbl_slit: "شگاف",
-  quiz_title: "تصوراتی کوئز — ردرفورڈ ماڈل",
-  quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
-  correct_fb: "درست جواب!", wrong_fb: "غلط جواب!",
-  next_q: "اگلا سوال", see_result: "نتیجہ دیکھیں",
-  final_score: "حتمی اسکور", restart: "کوئز دوبارہ شروع کریں",
-  score_msg_great: "شاندار! آپ نے ردرفورڈ کا مرکزہ ماڈل سمجھ لیا ہے۔",
-  score_msg_good: "اچھی کوشش! سمولیشن دیکھ کر دوبارہ کوشش کریں۔",
-  score_msg_low: "تجربہ جاری رکھیں — راستے A، B اور C غور سے دیکھیں۔",
-  quiz: [
-    { q:"ردرفورڈ کے سونے کے ورق والے تجربے میں زیادہ تر α ذرات:", opts:["ورق میں جذب ہو گئے","بغیر خاص انحراف کے سیدھے گزر گئے","سیدھے واپس پلٹ آئے","مرکزے کے گرد گھومنے لگے"], a:1, ex:"جوہر زیادہ تر خالی جگہ ہے، اس لیے تقریباً تمام α ذرات بغیر انحراف کے گزر جاتے ہیں (راستہ A)۔" },
-    { q:"تقریباً 20,000 میں سے 1 α ذرہ واپس پلٹا۔ اس سے ثابت ہوا کہ:", opts:["الیکٹران پورا جوہر بھرتے ہیں","جوہر میں چھوٹا، گھنا، مثبت چارج والا مرکزہ ہے","سونے کے جوہر مثبت چارج کے کھوکھلے گولے ہیں","α ذرات بے چارج ہوتے ہیں"], a:1, ex:"صرف بھاری مثبت مرکزے سے قریباً سیدھا ٹکراؤ ہی α ذرے کو الٹ سکتا ہے (راستہ C)۔" },
-    { q:"بہت پتلا سونے کا ورق (~10⁻⁴ mm) کیوں استعمال کیا گیا؟", opts:["سونا شعاعی ہے","سونا انتہائی نرم ہے اور بہت پتلا بنایا جا سکتا ہے","سونے کا کوئی مرکزہ نہیں","تاکہ تمام α ذرات رک جائیں"], a:1, ex:"سونے کی نرمی سے انتہائی پتلا ورق بنتا ہے تاکہ زیادہ تر ذرات چند ہی جوہروں سے ملیں۔" },
-    { q:"مثبت چارج والے α ذرات کا انحراف کس وجہ سے ہوتا ہے؟", opts:["صرف غیر جانبدار نیوٹرون","صرف منفی الیکٹران","مرکزے میں مرتکز مثبت چارج","جوہر کے اندر کششِ ثقل"], a:2, ex:"ہم نام چارج ایک دوسرے کو دفع کرتے ہیں۔ گھنا مثبت مرکزہ کولمب دفع پیدا کر کے α ذرات کو منحرف کرتا ہے۔" },
-    { q:"ردرفورڈ کے ماڈل کے مطابق جوہر کا زیادہ تر حصہ:", opts:["مثبت پڈنگ سے بھرا ہے","ٹھوس مادہ ہے","خالی جگہ ہے","نیوٹرونوں کا بادل ہے"], a:2, ex:"چونکہ زیادہ تر α ذرات سیدھے گزر جاتے ہیں، اس لیے جوہر کا زیادہ تر حجم خالی جگہ ہے۔" }
+ur:{
+  topic:"ردرفورڈ کا جوہری مرکزہ ماڈل (1911)",
+  intro_topic:"ردرفورڈ کا جوہری مرکزہ ماڈل",
+  tab_sim:"سمولیشن", tab_quiz:"کوئز",
+  mode_macro:"سونے کے ورق کا تجربہ", mode_micro:"جوہری پیمانہ منظر",
+  ctrl_title:"تجربے کے کنٹرولز", micro_ctrl:"جوہری کنٹرولز",
+  btn_fire:"بیم شروع کریں", btn_pause:"بیم روکیں", btn_launch:"α بھیجیں",
+  beam_rate:"بیم کی شرح", foil_thick:"ورق کی موٹائی", foil_mat:"ورق کا مادہ",
+  impact_b:"اثر پیرامیٹر (b)", b_headon:"سیدھا ٹکراؤ", b_far:"دور",
+  nucleus_z:"جوہری عدد (Z)", show_orbits:"الیکٹران دکھائیں",
+  obs_title:"براہِ راست مشاہدات",
+  cnt_total:"خارج شدہ α ذرات", cnt_straight:"سیدھے گزرے (A)",
+  cnt_deflect:"منحرف ہوئے (B)", cnt_back:"واپس پلٹے (C)",
+  angle_scat:"انحراف کا زاویہ", path_type:"راستے کی قسم", tip_title:"دریافت کریں",
+  drag_hint:"بیم C کے کھلے شگاف سے داخل → ورق سے ٹکراؤ → A / B / C",
+  anno_title:"نشان زنی",
+  ratio_msg:n=>n>0?`تقریباً ${n} میں سے 1 واپس پلٹا`:"بیم چلائیں — C کے کھلے شگاف سے داخل دیکھیں",
+  path_straight:"بغیر انحراف — جوہر زیادہ تر خالی جگہ ہے",
+  path_deflect:"مثبت مرکزے سے کولمب دفع سے انحراف",
+  path_back:"سیدھا ٹکراؤ — گھنا مثبت مرکزہ!",
+  tip_macro:"بیم منور پردے کے C شکل کے کھلے شگاف سے داخل ہو کر سونے کے ورق سے ٹکراتی ہے: زیادہ تر سیدھے (A)، کچھ منحرف (B)، بہت کم واپس (C)۔",
+  tip_macro_thick:"موٹا ورق → زیادہ جوہری ٹکراؤ → زیادہ B اور C۔",
+  tip_macro_pb:"سیسہ (Pb) کا Z زیادہ → بڑے زاویے کا انحراف زیادہ۔",
+  tip_macro_al:"ایلومینیم کا Z کم → بڑے زاویے کے واقعات کم۔",
+  tip_micro:"b بدلیں۔ دور راستے سیدھے؛ قریب والے مڑتے؛ b≈0 پر الٹ جاتے ہیں۔",
+  tip_micro_z:"زیادہ Z → زیادہ دفع → زیادہ انحراف۔",
+  lbl_source:"شعاعی منبع", lbl_beam:"α ذرات کی بیم",
+  lbl_foil:"سونے کا ورق", lbl_detector:"ڈیٹیکٹر", lbl_screen:"منور پردہ",
+  lbl_slit:"شگاف (C کا کھلا حصہ)", lbl_nucleus:"مرکزہ", lbl_electron:"الیکٹران",
+  lbl_orbit:"مدار", lbl_alpha:"α ذرہ", lbl_atomic_model:"جوہری ماڈل",
+  quiz_title:"تصوراتی کوئز — ردرفورڈ ماڈل",
+  quiz_progress:(i,n)=>`سوال ${i} از ${n}`,
+  correct_fb:"درست جواب!", wrong_fb:"غلط جواب!", next_q:"اگلا سوال",
+  see_result:"نتیجہ دیکھیں", final_score:"حتمی اسکور", restart:"کوئز دوبارہ شروع کریں",
+  score_msg_great:"شاندار! آپ نے ردرفورڈ ماڈل سمجھ لیا۔",
+  score_msg_good:"اچھی کوشش! سمولیشن دوبارہ دیکھیں۔",
+  score_msg_low:"راستے A، B اور C غور سے دیکھتے رہیں۔",
+  quiz:[
+    {q:"سونے کے ورق والے تجربے میں زیادہ تر α ذرات:",opts:["جذب ہو گئے","سیدھے گزر گئے","سب واپس پلٹے","ورق میں پھنس گئے"],a:1,ex:"جوہر زیادہ تر خالی جگہ ہے، اس لیے تقریباً تمام α ذرات سیدھے گزر جاتے ہیں (راستہ A)۔"},
+    {q:"تقریباً 20,000 میں سے 1 α ذرہ واپس پلٹا کیونکہ:",opts:["الیکٹران پورا جوہر بھرتے ہیں","چھوٹا گھنا مثبت مرکزہ موجود ہے","سونے میں خالی جگہ نہیں","α ذرات منفی ہیں"],a:1,ex:"صرف بھاری مثبت مرکزے سے سیدھا ٹکراؤ ہی α ذرے کو الٹ سکتا ہے (راستہ C)۔"},
+    {q:"بیم آلے میں کہاں سے داخل ہوتی ہے؟",opts:["ڈیٹیکٹر کی بند پشت سے","C شکل کے منور پردے کے کھلے شگاف سے","ورق کی چوٹی سے","مرکزے کے سوراخ سے"],a:1,ex:"منور پردہ C شکل کا ہے۔ کھلا شگاف α بیم کو اندر آنے دیتا ہے تاکہ وہ ورق سے ٹکرائے۔"},
+    {q:"α ذرات کا انحراف کس وجہ سے ہوتا ہے؟",opts:["صرف نیوٹرون","صرف الیکٹران","مرکزے میں مرتکز مثبت چارج","کششِ ثقل"],a:2,ex:"ہم نام چارج دفع کرتے ہیں۔ گھنا مثبت مرکزہ کولمب دفع پیدا کرتا ہے۔"},
+    {q:"ردرفورڈ کے مطابق جوہر کا زیادہ تر حصہ:",opts:["ٹھوس پڈنگ","نیوٹرون سے بھرا","خالی جگہ","صرف پروٹون کا بادل"],a:2,ex:"چونکہ زیادہ تر α ذرات سیدھے گزر جاتے ہیں، جوہر کا زیادہ تر حجم خالی جگہ ہے۔"}
   ]
 }
 };
+function T(k){const L=LANG[cur]||LANG.en;return L[k]!==undefined?L[k]:(LANG.en[k]||k)}
 
-function T(k) {
-  const L = LANG[cur] || LANG.en;
-  return L[k] !== undefined ? L[k] : (LANG.en[k] || k);
-}
-
-let cur = localStorage.getItem('iqra_lang') || 'en';
-const MAT = {
-  au: { Z: 79, color: '#fbbf24', name: 'Au', scatter: 1.0 },
-  al: { Z: 13, color: '#94a3b8', name: 'Al', scatter: 0.28 },
-  pb: { Z: 82, color: '#78716c', name: 'Pb', scatter: 1.15 }
+let cur=localStorage.getItem('iqra_lang')||'en';
+const MAT={
+  au:{Z:79,color:'#fbbf24',name:'Au',s:1},
+  al:{Z:13,color:'#94a3b8',name:'Al',s:0.28},
+  pb:{Z:82,color:'#78716c',name:'Pb',s:1.15}
 };
 
-/* ============================================================
-   DIAGRAM LAYOUT (matches Rutherford gold-foil figure)
-   Source = BOTTOM-RIGHT → beam toward CENTER foil
-   C-shaped detector gap faces the source
-============================================================ */
+/* =========================================================
+   CORRECT Fig 5.4 GEOMETRY
+   - Source on LEFT
+   - C-shaped fluorescent screen with OPEN GAP on LEFT
+   - Beam ENTERS through that open gap
+   - Hits gold foil at CENTER
+   - Then A (straight right), B (divert), C (back toward source)
+========================================================= */
 const LAY = {
-  srcAng: -40 * Math.PI / 180, // bottom-right
-  srcR: 248,
-  detR: 188,
-  gap: 0.48,                   // half-opening toward source (rad)
-  foilH: 100
+  // Gap centered on LEFT (π rad). Beam comes from left through gap.
+  gapCenter: Math.PI,          // left side
+  gapHalf: 0.55,               // opening size (radians)
+  detR: 175,
+  srcX: -265,                  // lead box left of gap
+  foilH: 92
 };
 
-const state = {
-  mode: 'macro', running: false,
-  rate: 40, thickness: 1, material: 'au',
-  impactB: 40, Z: 79, showOrbits: true,
-  zoom: 1, panX: 0, panY: 0,
-  counts: { total: 0, straight: 0, deflect: 0, back: 0 },
-  lastAngle: null, lastPath: ''
+const state={
+  mode:'macro', running:false,
+  rate:50, thickness:1, material:'au',
+  impactB:40, Z:79, showOrbits:true,
+  zoom:1, panX:0, panY:0,
+  counts:{total:0,straight:0,deflect:0,back:0},
+  lastAngle:null, lastPath:''
 };
 
-let particles = [], flashes = [], hitMarks = [];
-let trails = [], microAlphas = [];
-let spawnAcc = 0, W = 800, H = 500, baseScale = 1;
-let launchFlip = 1;
+let particles=[], flashes=[], hitMarks=[];
+let trails=[], microAlphas=[];
+let spawnAcc=0, W=800, H=500, baseScale=1, launchFlip=1;
 
-function srcXY() {
-  return { x: Math.cos(LAY.srcAng) * LAY.srcR, y: Math.sin(LAY.srcAng) * LAY.srcR };
-}
-function dirIn() { // source → foil
-  const s = srcXY();
-  const L = Math.hypot(s.x, s.y) || 1;
-  return { x: -s.x / L, y: -s.y / L };
-}
-function fwdAng() {
-  const d = dirIn();
-  return Math.atan2(d.y, d.x);
+function inGap(ang){
+  let d=ang-LAY.gapCenter;
+  while(d>Math.PI)d-=2*Math.PI;
+  while(d<-Math.PI)d+=2*Math.PI;
+  return Math.abs(d)<LAY.gapHalf;
 }
 
-function changeLanguage(l) {
-  if (l !== 'en' && l !== 'ur') return;
-  cur = l;
-  localStorage.setItem('iqra_lang', cur);
-  document.documentElement.lang = cur === 'ur' ? 'ur' : 'en';
-  document.documentElement.dir = cur === 'ur' ? 'rtl' : 'ltr';
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const v = T(el.dataset.i18n);
-    if (typeof v === 'string') el.textContent = v;
-  });
-  const intro = document.getElementById('intro-topic');
-  if (intro) intro.textContent = T('intro_topic');
-  document.getElementById('lang-select').value = cur;
+function changeLanguage(l){
+  if(l!=='en'&&l!=='ur')return;
+  cur=l; localStorage.setItem('iqra_lang',cur);
+  document.documentElement.lang=cur==='ur'?'ur':'en';
+  document.documentElement.dir=cur==='ur'?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=T(el.dataset.i18n);if(typeof v==='string')el.textContent=v});
+  const intro=document.getElementById('intro-topic'); if(intro)intro.textContent=T('intro_topic');
+  document.getElementById('lang-select').value=cur;
   updateFireBtn(); updateObs(); updateTip();
-  if (!document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
+  if(!document.getElementById('view-quiz').classList.contains('hidden'))renderQuiz();
 }
-
-function switchTab(tab) {
-  document.getElementById('view-sim').classList.toggle('hidden', tab !== 'sim');
-  document.getElementById('view-quiz').classList.toggle('hidden', tab !== 'quiz');
-  document.getElementById('tab-sim').classList.toggle('active', tab === 'sim');
-  document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
-  if (tab === 'quiz') renderQuiz();
-  if (tab === 'sim') setTimeout(resizeCanvas, 40);
+function switchTab(tab){
+  document.getElementById('view-sim').classList.toggle('hidden',tab!=='sim');
+  document.getElementById('view-quiz').classList.toggle('hidden',tab!=='quiz');
+  document.getElementById('tab-sim').classList.toggle('active',tab==='sim');
+  document.getElementById('tab-quiz').classList.toggle('active',tab==='quiz');
+  if(tab==='quiz')renderQuiz();
+  if(tab==='sim')setTimeout(resizeCanvas,40);
 }
-
-function setMode(m) {
-  state.mode = m;
-  document.getElementById('mode-macro').classList.toggle('active', m === 'macro');
-  document.getElementById('mode-micro').classList.toggle('active', m === 'micro');
-  document.getElementById('panel-macro').classList.toggle('hidden', m !== 'macro');
-  document.getElementById('panel-micro').classList.toggle('hidden', m !== 'micro');
-  document.getElementById('obs-macro').classList.toggle('hidden', m !== 'macro');
-  document.getElementById('obs-micro').classList.toggle('hidden', m !== 'micro');
-  particles = []; flashes = [];
+function setMode(m){
+  state.mode=m;
+  document.getElementById('mode-macro').classList.toggle('active',m==='macro');
+  document.getElementById('mode-micro').classList.toggle('active',m==='micro');
+  document.getElementById('panel-macro').classList.toggle('hidden',m!=='macro');
+  document.getElementById('panel-micro').classList.toggle('hidden',m!=='micro');
+  document.getElementById('obs-macro').classList.toggle('hidden',m!=='macro');
+  document.getElementById('obs-micro').classList.toggle('hidden',m!=='micro');
+  particles=[]; flashes=[];
   updateTip(); resetView();
 }
-
-function setMaterial(m) {
-  state.material = m;
-  state.Z = MAT[m].Z;
-  ['au','al','pb'].forEach(k => document.getElementById('mat-'+k).classList.toggle('active', k === m));
-  document.getElementById('val-mat').textContent = MAT[m].name;
-  document.getElementById('sl-z').value = state.Z;
-  document.getElementById('val-z').textContent = state.Z;
+function setMaterial(m){
+  state.material=m; state.Z=MAT[m].Z;
+  ['au','al','pb'].forEach(k=>document.getElementById('mat-'+k).classList.toggle('active',k===m));
+  document.getElementById('val-mat').textContent=MAT[m].name;
+  document.getElementById('sl-z').value=state.Z;
+  document.getElementById('val-z').textContent=state.Z;
   updateTip();
 }
-
-function onSlider() {
-  state.rate = +document.getElementById('sl-rate').value;
-  state.thickness = +document.getElementById('sl-thick').value;
-  state.impactB = +document.getElementById('sl-b').value;
-  state.Z = +document.getElementById('sl-z').value;
-  document.getElementById('val-rate').textContent = state.rate + ' /s';
-  document.getElementById('val-thick').textContent = state.thickness.toFixed(1) + '×';
-  document.getElementById('val-b').textContent = state.impactB;
-  document.getElementById('val-z').textContent = state.Z;
+function onSlider(){
+  state.rate=+document.getElementById('sl-rate').value;
+  state.thickness=+document.getElementById('sl-thick').value;
+  state.impactB=+document.getElementById('sl-b').value;
+  state.Z=+document.getElementById('sl-z').value;
+  document.getElementById('val-rate').textContent=state.rate+' /s';
+  document.getElementById('val-thick').textContent=state.thickness.toFixed(1)+'×';
+  document.getElementById('val-b').textContent=state.impactB;
+  document.getElementById('val-z').textContent=state.Z;
   updateTip();
 }
+function updateFireBtn(){
+  const icon=document.getElementById('fire-icon');
+  const span=document.querySelector('#btn-fire span');
+  if(state.running){icon.className='fa-solid fa-pause'; if(span)span.textContent=T('btn_pause')}
+  else{icon.className='fa-solid fa-play'; if(span)span.textContent=T('btn_fire')}
+}
+function toggleBeam(){state.running=!state.running; updateFireBtn()}
+function resetCounters(){state.counts={total:0,straight:0,deflect:0,back:0}; particles=[]; flashes=[]; hitMarks=[]; updateObs()}
+function clearTrails(){trails=[]; microAlphas=[]; state.lastAngle=null; updateObs()}
 
-function updateFireBtn() {
-  const icon = document.getElementById('fire-icon');
-  const span = document.querySelector('#btn-fire [data-i18n], #btn-fire span:last-child');
-  if (state.running) {
-    icon.className = 'fa-solid fa-pause';
-    if (span) span.textContent = T('btn_pause');
-  } else {
-    icon.className = 'fa-solid fa-play';
-    if (span) span.textContent = T('btn_fire');
-  }
-}
-function toggleBeam() { state.running = !state.running; updateFireBtn(); }
-function resetCounters() {
-  state.counts = { total: 0, straight: 0, deflect: 0, back: 0 };
-  particles = []; flashes = []; hitMarks = [];
-  updateObs();
-}
-function clearTrails() {
-  trails = []; microAlphas = [];
-  state.lastAngle = null; updateObs();
-}
-
-function scatterKind() {
-  const back = (1 / 20000) * state.thickness * MAT[state.material].scatter;
-  const defl = 0.035 * state.thickness * Math.sqrt(MAT[state.material].scatter);
-  const r = Math.random();
-  if (r < back) return 'back';
-  if (r < back + defl) return 'deflect';
+function scatterKind(){
+  const back=(1/20000)*state.thickness*MAT[state.material].s;
+  const defl=0.04*state.thickness*Math.sqrt(MAT[state.material].s);
+  const r=Math.random();
+  if(r<back)return 'back';
+  if(r<back+defl)return 'deflect';
   return 'straight';
 }
 
-function spawnParticle() {
-  const kind = scatterKind();
-  const s = srcXY(), d = dirIn(), fwd = fwdAng();
-  const px = -d.y, py = d.x;
-  const j = (Math.random() - 0.5) * 5;
-  let ang = fwd;
-  if (kind === 'straight') ang = fwd + (Math.random() - 0.5) * 0.07;
-  else if (kind === 'deflect') {
-    const a = (14 + Math.random() * 72) * Math.PI / 180;
-    ang = fwd + (Math.random() < 0.5 ? a : -a);
+/* Spawn at LEFT source → move RIGHT through C-gap → hit foil at x=0 */
+function spawnParticle(){
+  const kind=scatterKind();
+  let outAng=0; // after foil: 0 = straight to the RIGHT
+  if(kind==='straight') outAng=(Math.random()-0.5)*0.08;
+  else if(kind==='deflect'){
+    const a=(15+Math.random()*80)*Math.PI/180;
+    outAng=Math.random()<0.5?a:-a;
   } else {
-    ang = fwd + Math.PI + (Math.random() - 0.5) * 0.4;
+    outAng=Math.PI+(Math.random()-0.5)*0.45; // back toward LEFT / source
   }
   particles.push({
-    x: s.x + d.x * 34 + px * j,
-    y: s.y + d.y * 34 + py * j,
-    vx: d.x * 200, vy: d.y * 200,
-    phase: 'in', kind, ang, life: 1, trail: []
+    x:LAY.srcX+40, y:(Math.random()-0.5)*6,
+    vx:210, vy:0,
+    phase:'approach', kind, outAng, life:1, trail:[]
   });
   state.counts.total++;
-  if (kind === 'straight') state.counts.straight++;
-  else if (kind === 'deflect') state.counts.deflect++;
+  if(kind==='straight')state.counts.straight++;
+  else if(kind==='deflect')state.counts.deflect++;
   else state.counts.back++;
 }
 
-function updateMacro(dt) {
-  if (state.running) {
-    spawnAcc += state.rate * dt;
-    while (spawnAcc >= 1) { spawnParticle(); spawnAcc -= 1; }
+function updateMacro(dt){
+  if(state.running){
+    spawnAcc+=state.rate*dt;
+    while(spawnAcc>=1){spawnParticle(); spawnAcc-=1}
   }
-  const s = srcXY();
-  const denom = s.x * s.x + s.y * s.y;
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.x += p.vx * dt; p.y += p.vy * dt;
-    if (p.phase === 'in') {
-      const dist = Math.hypot(p.x, p.y);
-      const prog = denom > 0 ? ((s.x - p.x) * s.x + (s.y - p.y) * s.y) / denom : 1;
-      if (dist < 11 || prog >= 0.97) {
-        p.phase = 'out';
-        const sp = 225;
-        p.vx = Math.cos(p.ang) * sp;
-        p.vy = Math.sin(p.ang) * sp;
-        p.x = Math.cos(p.ang) * 8;
-        p.y = Math.sin(p.ang) * 8;
-        flashes.push({ x: 0, y: 0, t: 0.25, kind: p.kind });
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    if(p.phase==='approach'){
+      // Entered through C-gap and reached foil (x≈0)
+      if(p.x>=-6){
+        p.phase='scatter';
+        const sp=230;
+        p.vx=Math.cos(p.outAng)*sp;
+        p.vy=Math.sin(p.outAng)*sp;
+        p.x=Math.cos(p.outAng)*6;
+        p.y=Math.sin(p.outAng)*6;
+        flashes.push({x:0,y:0,t:0.22,kind:p.kind});
       }
     } else {
-      p.life -= dt * 0.12;
+      p.life-=dt*0.12;
     }
-    p.trail.push({ x: p.x, y: p.y });
-    if (p.trail.length > 20) p.trail.shift();
+    p.trail.push({x:p.x,y:p.y});
+    if(p.trail.length>22)p.trail.shift();
 
-    const r = Math.hypot(p.x, p.y);
-    const a = Math.atan2(p.y, p.x);
-    let da = a - LAY.srcAng;
-    while (da > Math.PI) da -= 2 * Math.PI;
-    while (da < -Math.PI) da += 2 * Math.PI;
-    const inGap = Math.abs(da) < LAY.gap;
-
-    if (r > LAY.detR - 3 && r < LAY.detR + 16 && !inGap) {
-      hitMarks.push({ ang: a, t: 1.4, kind: p.kind });
-      if (hitMarks.length > 90) hitMarks.shift();
-      flashes.push({ x: Math.cos(a) * LAY.detR, y: Math.sin(a) * LAY.detR, t: 0.45, kind: 'hit' });
-      particles.splice(i, 1);
-      continue;
+    const r=Math.hypot(p.x,p.y);
+    const a=Math.atan2(p.y,p.x);
+    // Hit detector ONLY on the solid C ring — NOT through the open gap
+    if(r>LAY.detR-4 && r<LAY.detR+18 && !inGap(a)){
+      hitMarks.push({ang:a,t:1.5,kind:p.kind});
+      if(hitMarks.length>100)hitMarks.shift();
+      flashes.push({x:Math.cos(a)*LAY.detR,y:Math.sin(a)*LAY.detR,t:0.5,kind:'hit'});
+      particles.splice(i,1); continue;
     }
-    if (r > LAY.detR + 50 || p.life <= 0) particles.splice(i, 1);
+    // Left through gap going back, or went too far
+    if(r>LAY.detR+55 || p.life<=0 || p.x<LAY.srcX-30) particles.splice(i,1);
   }
-  for (let i = flashes.length - 1; i >= 0; i--) {
-    flashes[i].t -= dt;
-    if (flashes[i].t <= 0) flashes.splice(i, 1);
-  }
-  for (let i = hitMarks.length - 1; i >= 0; i--) {
-    hitMarks[i].t -= dt * 0.18;
-    if (hitMarks[i].t <= 0) hitMarks.splice(i, 1);
-  }
+  for(let i=flashes.length-1;i>=0;i--){flashes[i].t-=dt; if(flashes[i].t<=0)flashes.splice(i,1)}
+  for(let i=hitMarks.length-1;i>=0;i--){hitMarks[i].t-=dt*0.16; if(hitMarks[i].t<=0)hitMarks.splice(i,1)}
   updateObs();
 }
 
-function rutherfordDeg(b, Z) {
-  const d = 0.55 * Z;
-  const bb = Math.max(0.6, Math.abs(b));
-  let th = 2 * Math.atan(d / bb) * 180 / Math.PI;
-  if (Math.abs(b) < 2) th = Math.min(180, 155 + (2 - Math.abs(b)) * 12);
-  return Math.min(179, th);
+function rutherfordDeg(b,Z){
+  const d=0.55*Z, bb=Math.max(0.6,Math.abs(b));
+  let th=2*Math.atan(d/bb)*180/Math.PI;
+  if(Math.abs(b)<2)th=Math.min(180,155+(2-Math.abs(b))*12);
+  return Math.min(179,th);
 }
-function pathOf(absAng) {
-  if (absAng < 8) return 'straight';
-  if (absAng < 90) return 'deflect';
-  return 'back';
-}
+function pathOf(a){if(a<8)return 'straight'; if(a<90)return 'deflect'; return 'back'}
 
-function launchAlpha() {
-  const sb = state.impactB === 0 ? 0 : state.impactB * launchFlip;
-  if (state.impactB > 0) launchFlip *= -1;
-  const ang = rutherfordDeg(sb || 0.8, state.Z);
-  const kind = pathOf(ang);
-  state.lastAngle = ang; state.lastPath = kind;
-  microAlphas.push({ x: -220, y: sb, vx: 175, vy: 0, kind, trail: [] });
+function launchAlpha(){
+  const sb=state.impactB===0?0:state.impactB*launchFlip;
+  if(state.impactB>0)launchFlip*=-1;
+  const ang=rutherfordDeg(sb||0.8,state.Z);
+  const kind=pathOf(ang);
+  state.lastAngle=ang; state.lastPath=kind;
+  microAlphas.push({x:-220,y:sb,vx:175,vy:0,kind,trail:[]});
   updateObs();
 }
-
-function updateMicro(dt) {
-  for (let i = microAlphas.length - 1; i >= 0; i--) {
-    const p = microAlphas[i];
-    const rr = Math.max(8, Math.hypot(p.x, p.y));
-    const F = (1450 * state.Z) / (rr * rr);
-    p.vx += (p.x / rr) * F * dt;
-    p.vy += (p.y / rr) * F * dt;
-    const spd = Math.hypot(p.vx, p.vy);
-    if (spd > 430) { p.vx *= 430 / spd; p.vy *= 430 / spd; }
-    p.x += p.vx * dt; p.y += p.vy * dt;
-    p.trail.push({ x: p.x, y: p.y });
-    if (p.trail.length > 220) p.trail.shift();
-    if (Math.hypot(p.x, p.y) > 295 || p.x < -305) {
-      trails.push({ pts: p.trail.slice(), kind: p.kind });
-      if (trails.length > 8) trails.shift();
-      microAlphas.splice(i, 1);
+function updateMicro(dt){
+  for(let i=microAlphas.length-1;i>=0;i--){
+    const p=microAlphas[i];
+    const rr=Math.max(8,Math.hypot(p.x,p.y));
+    const F=(1450*state.Z)/(rr*rr);
+    p.vx+=(p.x/rr)*F*dt; p.vy+=(p.y/rr)*F*dt;
+    const spd=Math.hypot(p.vx,p.vy); if(spd>430){p.vx*=430/spd;p.vy*=430/spd}
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    p.trail.push({x:p.x,y:p.y}); if(p.trail.length>220)p.trail.shift();
+    if(Math.hypot(p.x,p.y)>295||p.x<-305){
+      trails.push({pts:p.trail.slice(),kind:p.kind});
+      if(trails.length>8)trails.shift();
+      microAlphas.splice(i,1);
     }
   }
 }
 
-function updateObs() {
-  if (state.mode === 'macro') {
-    document.getElementById('obs-total').textContent = state.counts.total;
-    document.getElementById('obs-straight').textContent = state.counts.straight;
-    document.getElementById('obs-deflect').textContent = state.counts.deflect;
-    document.getElementById('obs-back').textContent = state.counts.back;
-    const n = state.counts.back > 0 ? Math.round(state.counts.total / state.counts.back) : 0;
-    document.getElementById('obs-ratio').textContent = T('ratio_msg')(n);
+function updateObs(){
+  if(state.mode==='macro'){
+    document.getElementById('obs-total').textContent=state.counts.total;
+    document.getElementById('obs-straight').textContent=state.counts.straight;
+    document.getElementById('obs-deflect').textContent=state.counts.deflect;
+    document.getElementById('obs-back').textContent=state.counts.back;
+    const n=state.counts.back>0?Math.round(state.counts.total/state.counts.back):0;
+    document.getElementById('obs-ratio').textContent=T('ratio_msg')(n);
   } else {
-    document.getElementById('obs-angle').textContent = state.lastAngle == null ? '—' : state.lastAngle.toFixed(0) + '°';
-    const pk = state.lastPath;
-    document.getElementById('obs-path').textContent = pk === 'straight' ? 'A' : pk === 'deflect' ? 'B' : pk === 'back' ? 'C' : '—';
-    let msg = T('tip_micro');
-    if (pk === 'straight') msg = T('path_straight');
-    else if (pk === 'deflect') msg = T('path_deflect');
-    else if (pk === 'back') msg = T('path_back');
-    document.getElementById('micro-status').textContent = msg;
+    document.getElementById('obs-angle').textContent=state.lastAngle==null?'—':state.lastAngle.toFixed(0)+'°';
+    const pk=state.lastPath;
+    document.getElementById('obs-path').textContent=pk==='straight'?'A':pk==='deflect'?'B':pk==='back'?'C':'—';
+    let msg=T('tip_micro');
+    if(pk==='straight')msg=T('path_straight');
+    else if(pk==='deflect')msg=T('path_deflect');
+    else if(pk==='back')msg=T('path_back');
+    document.getElementById('micro-status').textContent=msg;
   }
 }
-
-function updateTip() {
-  let tip = T('tip_macro');
-  if (state.mode === 'micro') tip = state.Z !== 79 ? T('tip_micro_z') : T('tip_micro');
-  else if (state.thickness > 2.2) tip = T('tip_macro_thick');
-  else if (state.material === 'pb') tip = T('tip_macro_pb');
-  else if (state.material === 'al') tip = T('tip_macro_al');
-  document.getElementById('tip-text').textContent = tip;
+function updateTip(){
+  let tip=T('tip_macro');
+  if(state.mode==='micro') tip=state.Z!==79?T('tip_micro_z'):T('tip_micro');
+  else if(state.thickness>2.2) tip=T('tip_macro_thick');
+  else if(state.material==='pb') tip=T('tip_macro_pb');
+  else if(state.material==='al') tip=T('tip_macro_al');
+  document.getElementById('tip-text').textContent=tip;
 }
 
 /* ===================== DRAW ===================== */
-const canvas = document.getElementById('sim-canvas');
-const ctx = canvas.getContext('2d');
-function S() { return baseScale * state.zoom; }
-function X(wx) { return W / 2 + wx * S() + state.panX; }
-function Y(wy) { return H / 2 - wy * S() + state.panY; }
+const canvas=document.getElementById('sim-canvas');
+const ctx=canvas.getContext('2d');
+function S(){return baseScale*state.zoom}
+function X(wx){return W/2+wx*S()+state.panX}
+function Y(wy){return H/2-wy*S()+state.panY}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function fontUI(sz){return cur==='ur'?`600 ${sz}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`:`600 ${sz}px Manrope,sans-serif`}
 
-function roundRect(x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-function fontUI(sz) {
-  return cur === 'ur'
-    ? `600 ${sz}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
-    : `600 ${sz}px Manrope,sans-serif`;
-}
-
-function leader(text, lx, ly, tx, ty, color) {
+function leader(text,lx,ly,tx,ty,color){
   ctx.save();
-  ctx.strokeStyle = 'rgba(244,114,182,0.6)';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(X(tx), Y(ty));
-  ctx.lineTo(X(lx), Y(ly));
-  ctx.stroke();
-  ctx.font = fontUI(11);
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const tw = ctx.measureText(text).width;
-  ctx.fillStyle = 'rgba(15,23,42,0.82)';
-  roundRect(X(lx) - tw / 2 - 7, Y(ly) - 11, tw + 14, 22, 7);
-  ctx.fill();
-  ctx.fillStyle = color;
-  ctx.fillText(text, X(lx), Y(ly));
+  ctx.strokeStyle='rgba(244,114,182,.65)'; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(X(tx),Y(ty)); ctx.lineTo(X(lx),Y(ly)); ctx.stroke();
+  ctx.font=fontUI(11); ctx.textAlign='center'; ctx.textBaseline='middle';
+  const tw=ctx.measureText(text).width;
+  ctx.fillStyle='rgba(15,23,42,.85)';
+  roundRect(X(lx)-tw/2-7,Y(ly)-11,tw+14,22,7); ctx.fill();
+  ctx.fillStyle=color; ctx.fillText(text,X(lx),Y(ly));
   ctx.restore();
 }
-
-function starburst(wx, wy, r, color) {
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2;
-    ctx.lineTo(X(wx) + Math.cos(a) * r * S(), Y(wy) - Math.sin(a) * r * S());
-    ctx.lineTo(X(wx) + Math.cos(a + Math.PI / 8) * r * 0.4 * S(), Y(wy) - Math.sin(a + Math.PI / 8) * r * 0.4 * S());
+function starburst(wx,wy,r,color){
+  ctx.save(); ctx.fillStyle=color; ctx.beginPath();
+  for(let i=0;i<8;i++){
+    const a=(i/8)*Math.PI*2;
+    ctx.lineTo(X(wx)+Math.cos(a)*r*S(), Y(wy)-Math.sin(a)*r*S());
+    ctx.lineTo(X(wx)+Math.cos(a+Math.PI/8)*r*.4*S(), Y(wy)-Math.sin(a+Math.PI/8)*r*.4*S());
   }
-  ctx.closePath(); ctx.fill();
-  ctx.restore();
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function badge(wx,wy,letter){
+  const bx=X(wx),by=Y(wy);
+  ctx.beginPath(); ctx.arc(bx,by,12,0,Math.PI*2);
+  ctx.fillStyle='#7c3aed'; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 12px Oxanium,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(letter,bx,by+1);
 }
 
-function badge(wx, wy, letter, fill) {
-  const bx = X(wx), by = Y(wy);
-  ctx.beginPath(); ctx.arc(bx, by, 12, 0, Math.PI * 2);
-  ctx.fillStyle = fill; ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 12px Oxanium,sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(letter, bx, by + 1);
-}
-
-function drawCDetector() {
-  const R = LAY.detR;
-  const start = LAY.srcAng + LAY.gap;
-  const span = 2 * Math.PI - 2 * LAY.gap;
-  const steps = 100;
-  // outer magenta/pink
-  ctx.save();
-  ctx.lineCap = 'butt';
-  ctx.lineWidth = 18 * S();
-  ctx.strokeStyle = '#be185d';
+/** C-shaped fluorescent screen — OPEN GAP on LEFT for beam entry */
+function drawDetector(){
+  const R=LAY.detR;
+  const start=LAY.gapCenter+LAY.gapHalf; // start just after gap
+  const span=2*Math.PI-2*LAY.gapHalf;
+  const steps=110;
+  ctx.save(); ctx.lineCap='butt';
+  // Outer magenta/purple (textbook fluorescent screen)
+  ctx.lineWidth=20*S(); ctx.strokeStyle='#7e22ce';
   ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const a = start + span * i / steps;
-    const px = X(Math.cos(a) * R), py = Y(Math.sin(a) * R);
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  for(let i=0;i<=steps;i++){
+    const a=start+span*i/steps;
+    const px=X(Math.cos(a)*R), py=Y(Math.sin(a)*R);
+    if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
   }
   ctx.stroke();
-  // inner grey face
-  ctx.lineWidth = 11 * S();
-  ctx.strokeStyle = '#6b7280';
+  // Inner grey face
+  ctx.lineWidth=12*S(); ctx.strokeStyle='#9ca3af';
   ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const a = start + span * i / steps;
-    const rr = R - 9;
-    const px = X(Math.cos(a) * rr), py = Y(Math.sin(a) * rr);
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  for(let i=0;i<=steps;i++){
+    const a=start+span*i/steps;
+    const rr=R-10;
+    const px=X(Math.cos(a)*rr), py=Y(Math.sin(a)*rr);
+    if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
   }
   ctx.stroke();
   ctx.restore();
-  const la = LAY.srcAng + Math.PI;
-  leader(T('lbl_detector'), Math.cos(la) * (R + 36), Math.sin(la) * (R + 36),
-    Math.cos(la) * R, Math.sin(la) * R, '#f9a8d4');
+
+  // Label detector on the RIGHT (back of C)
+  leader(T('lbl_screen'), R+55, 55, R, 20, '#d8b4fe');
+  // Label the OPEN GAP / slit on the LEFT
+  leader(T('lbl_slit'), -R-20, 70, -R+8, 0, '#94a3b8');
 }
 
-function drawFoil() {
-  const tw = Math.max(6, 6 * state.thickness);
-  const fh = LAY.foilH;
+function drawFoil(){
+  const tw=Math.max(6,6*state.thickness), fh=LAY.foilH;
   ctx.save();
-  // yellow glow
-  const g = ctx.createRadialGradient(X(0), Y(0), 2, X(0), Y(0), fh * 0.65 * S());
-  g.addColorStop(0, 'rgba(250,204,21,0.45)');
-  g.addColorStop(1, 'rgba(250,204,21,0)');
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(X(0), Y(0), fh * 0.7 * S(), 0, Math.PI * 2); ctx.fill();
-
-  ctx.shadowColor = 'rgba(250,204,21,0.95)';
-  ctx.shadowBlur = 18 * S();
-  ctx.fillStyle = 'rgba(253,224,71,0.55)';
-  ctx.fillRect(X(-tw / 2), Y(fh / 2), tw * S(), fh * S());
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = '#f59e0b';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(X(-tw / 2), Y(fh / 2), tw * S(), fh * S());
-  ctx.strokeStyle = '#fef9c3';
-  ctx.lineWidth = 2 * S();
-  ctx.beginPath(); ctx.moveTo(X(0), Y(fh / 2)); ctx.lineTo(X(0), Y(-fh / 2)); ctx.stroke();
+  const g=ctx.createRadialGradient(X(0),Y(0),2,X(0),Y(0),fh*.7*S());
+  g.addColorStop(0,'rgba(250,204,21,.5)'); g.addColorStop(1,'rgba(250,204,21,0)');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(X(0),Y(0),fh*.75*S(),0,Math.PI*2); ctx.fill();
+  ctx.shadowColor='rgba(250,204,21,.95)'; ctx.shadowBlur=18*S();
+  ctx.fillStyle='rgba(253,224,71,.6)';
+  ctx.fillRect(X(-tw/2),Y(fh/2),tw*S(),fh*S());
+  ctx.shadowBlur=0;
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.strokeRect(X(-tw/2),Y(fh/2),tw*S(),fh*S());
+  ctx.strokeStyle='#fef9c3'; ctx.lineWidth=2*S();
+  ctx.beginPath(); ctx.moveTo(X(0),Y(fh/2)); ctx.lineTo(X(0),Y(-fh/2)); ctx.stroke();
   ctx.restore();
-  leader(T('lbl_foil'), -70, 78, 0, 28, '#fde68a');
+  leader(T('lbl_foil'), 55, -95, 8, -fh/2, '#fde68a');
 }
 
-function drawSource() {
-  const s = srcXY(), d = dirIn();
-  const cx = X(s.x), cy = Y(s.y), sc = S();
+function drawSource(){
+  const sx=LAY.srcX, sy=0;
+  const cx=X(sx), cy=Y(sy), sc=S();
   ctx.save();
-  // lead box body
-  ctx.fillStyle = '#708090';
-  roundRect(cx - 30 * sc, cy - 26 * sc, 60 * sc, 52 * sc, 6);
-  ctx.fill();
-  // top face (3D)
-  ctx.fillStyle = '#9aa5b1';
+  // Lead box
+  ctx.fillStyle='#4b5563';
+  roundRect(cx-34*sc, cy-30*sc, 68*sc, 60*sc, 6); ctx.fill();
+  // Top face
+  ctx.fillStyle='#6b7280';
   ctx.beginPath();
-  ctx.moveTo(cx - 30 * sc, cy - 26 * sc);
-  ctx.lineTo(cx - 18 * sc, cy - 40 * sc);
-  ctx.lineTo(cx + 42 * sc, cy - 40 * sc);
-  ctx.lineTo(cx + 30 * sc, cy - 26 * sc);
+  ctx.moveTo(cx-34*sc,cy-30*sc); ctx.lineTo(cx-22*sc,cy-44*sc);
+  ctx.lineTo(cx+46*sc,cy-44*sc); ctx.lineTo(cx+34*sc,cy-30*sc);
   ctx.closePath(); ctx.fill();
-  // side face
-  ctx.fillStyle = '#5b6773';
-  ctx.beginPath();
-  ctx.moveTo(cx + 30 * sc, cy - 26 * sc);
-  ctx.lineTo(cx + 42 * sc, cy - 40 * sc);
-  ctx.lineTo(cx + 42 * sc, cy + 12 * sc);
-  ctx.lineTo(cx + 30 * sc, cy + 26 * sc);
-  ctx.closePath(); ctx.fill();
-  // radiation trefoil on top
-  const rx = cx + 6 * sc, ry = cy - 33 * sc;
-  ctx.fillStyle = '#facc15';
-  for (let i = 0; i < 3; i++) {
-    const a = -Math.PI / 2 + i * 2 * Math.PI / 3;
-    ctx.beginPath(); ctx.moveTo(rx, ry);
-    ctx.arc(rx, ry, 9 * sc, a - 0.42, a + 0.42); ctx.closePath(); ctx.fill();
+  // Radiation symbol
+  const rx=cx+4*sc, ry=cy-37*sc;
+  ctx.fillStyle='#facc15';
+  for(let i=0;i<3;i++){
+    const a=-Math.PI/2+i*2*Math.PI/3;
+    ctx.beginPath(); ctx.moveTo(rx,ry); ctx.arc(rx,ry,9*sc,a-.42,a+.42); ctx.closePath(); ctx.fill();
   }
-  ctx.fillStyle = '#111827';
-  ctx.beginPath(); ctx.arc(rx, ry, 2.4 * sc, 0, Math.PI * 2); ctx.fill();
-  // slit + glowing source
-  ctx.fillStyle = '#f97316';
-  ctx.shadowColor = '#fb923c'; ctx.shadowBlur = 14;
+  ctx.fillStyle='#111827'; ctx.beginPath(); ctx.arc(rx,ry,2.4*sc,0,Math.PI*2); ctx.fill();
+  // Orange source + slit opening facing RIGHT (toward C-gap)
+  ctx.fillStyle='#f97316'; ctx.shadowColor='#fb923c'; ctx.shadowBlur=14;
+  ctx.beginPath(); ctx.arc(cx+28*sc, cy, 8*sc, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  // Beam line from source THROUGH the open C-gap toward foil
+  ctx.strokeStyle='rgba(251,146,60,.7)'; ctx.lineWidth=3*S();
+  ctx.setLineDash([7,5]);
   ctx.beginPath();
-  ctx.arc(X(s.x + d.x * 28), Y(s.y + d.y * 28), 7 * sc, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  // dashed beam guide
-  ctx.strokeStyle = 'rgba(250,204,21,0.45)';
-  ctx.setLineDash([6, 5]); ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(X(s.x + d.x * 34), Y(s.y + d.y * 34));
-  ctx.lineTo(X(d.x * 16), Y(d.y * 16));
+  ctx.moveTo(X(sx+38), Y(0));
+  ctx.lineTo(X(-LAY.detR+5), Y(0)); // into the gap
   ctx.stroke();
   ctx.setLineDash([]);
+  // Bright beam core into gap
+  ctx.strokeStyle='rgba(253,186,116,.9)'; ctx.lineWidth=2*S();
+  ctx.beginPath(); ctx.moveTo(X(sx+38),Y(0)); ctx.lineTo(X(-12),Y(0)); ctx.stroke();
   ctx.restore();
 
-  leader(T('lbl_source'), s.x + 70, s.y - 55, s.x + 22, s.y - 8, '#e2e8f0');
-  leader(T('lbl_slit'), s.x - 55, s.y + 50, s.x + d.x * 28, s.y + d.y * 28, '#94a3b8');
-  const mid = { x: s.x * 0.55, y: s.y * 0.55 };
-  leader(T('lbl_beam'), mid.x + 55, mid.y + 42, mid.x, mid.y, '#fdba74');
+  leader(T('lbl_source'), sx-10, -75, sx, -28, '#e2e8f0');
+  leader(T('lbl_beam'), sx+90, 45, sx+70, 0, '#fdba74');
 }
 
-function drawPathBadges() {
-  const fwd = fwdAng(), R = LAY.detR - 28;
-  // A straight
-  const ax = Math.cos(fwd) * R, ay = Math.sin(fwd) * R;
-  ctx.strokeStyle = 'rgba(134,239,172,0.7)'; ctx.lineWidth = 2.5 * S();
-  ctx.beginPath(); ctx.moveTo(X(Math.cos(fwd)*16), Y(Math.sin(fwd)*16)); ctx.lineTo(X(ax), Y(ay)); ctx.stroke();
-  badge(ax * 0.72, ay * 0.72, 'A', '#7c3aed');
-  // B deflect
-  const bAng = fwd + 0.9;
-  const bx = Math.cos(bAng) * (R - 10), by = Math.sin(bAng) * (R - 10);
-  ctx.strokeStyle = 'rgba(251,191,36,0.75)';
-  ctx.beginPath(); ctx.moveTo(X(Math.cos(bAng)*16), Y(Math.sin(bAng)*16)); ctx.lineTo(X(bx), Y(by)); ctx.stroke();
-  badge(bx * 0.7, by * 0.7, 'B', '#7c3aed');
-  // C rebound toward source
-  const cAng = fwd + Math.PI;
-  const cx = Math.cos(cAng) * 95, cy = Math.sin(cAng) * 95;
-  ctx.strokeStyle = 'rgba(248,113,113,0.85)';
-  ctx.beginPath(); ctx.moveTo(X(Math.cos(cAng)*14), Y(Math.sin(cAng)*14)); ctx.lineTo(X(cx), Y(cy)); ctx.stroke();
-  badge(cx * 0.65, cy * 0.65, 'C', '#7c3aed');
+function drawPathBadges(){
+  const R=LAY.detR-30;
+  // A — straight RIGHT (majority)
+  ctx.strokeStyle='rgba(134,239,172,.75)'; ctx.lineWidth=2.5*S();
+  ctx.beginPath(); ctx.moveTo(X(14),Y(0)); ctx.lineTo(X(R),Y(0)); ctx.stroke();
+  badge(R*0.7, 0, 'A');
+  // B — diverted upward
+  const b=0.95;
+  ctx.strokeStyle='rgba(251,191,36,.8)';
+  ctx.beginPath(); ctx.moveTo(X(12),Y(0)); ctx.lineTo(X(Math.cos(b)*R),Y(Math.sin(b)*R)); ctx.stroke();
+  badge(Math.cos(b)*R*0.68, Math.sin(b)*R*0.68, 'B');
+  // C — rebound LEFT toward source (through gap direction)
+  ctx.strokeStyle='rgba(248,113,113,.9)';
+  ctx.beginPath(); ctx.moveTo(X(-12),Y(0)); ctx.lineTo(X(-95),Y(25)); ctx.stroke();
+  badge(-70, 22, 'C');
 }
 
-function drawAtomicInset() {
-  // Fixed to bottom-left of viewport (diagram style)
-  const ix = 90, iy = H - 95;
-  const sc = Math.min(1, Math.max(0.75, S()));
+function drawAtomicInset(){
+  const ix=88, iy=H-98, sc=Math.min(1,Math.max(.75,S()));
   ctx.save();
-  ctx.fillStyle = 'rgba(15,23,42,0.88)';
-  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-  roundRect(ix - 72 * sc, iy - 72 * sc, 148 * sc, 148 * sc, 14);
-  ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#94a3b8';
-  ctx.font = cur === 'ur'
-    ? `700 11px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
-    : `700 10px Oxanium,sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText(T('lbl_atomic_model'), ix, iy - 56 * sc);
-
-  ctx.setLineDash([3, 3]);
-  ctx.strokeStyle = 'rgba(148,163,184,0.5)';
-  ctx.beginPath(); ctx.arc(ix, iy - 4, 40 * sc, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(ix, iy - 4, 26 * sc, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle='rgba(15,23,42,.9)'; ctx.strokeStyle='rgba(255,255,255,.14)';
+  roundRect(ix-72*sc,iy-72*sc,148*sc,148*sc,14); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#94a3b8'; ctx.font=cur==='ur'?`700 11px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`:`700 10px Oxanium,sans-serif`;
+  ctx.textAlign='center'; ctx.fillText(T('lbl_atomic_model'),ix,iy-56*sc);
+  ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(148,163,184,.5)';
+  ctx.beginPath(); ctx.arc(ix,iy-4,40*sc,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ix,iy-4,26*sc,0,Math.PI*2); ctx.stroke();
   ctx.setLineDash([]);
-
-  ctx.fillStyle = '#ef4444';
-  ctx.shadowColor = 'rgba(239,68,68,0.5)'; ctx.shadowBlur = 8;
-  ctx.beginPath(); ctx.arc(ix, iy - 4, 8 * sc, 0, Math.PI * 2); ctx.fill();
-  ctx.shadowBlur = 0;
-
-  ctx.fillStyle = '#3b82f6';
-  [[26, 0.4], [40, 1.7], [26, 3.4], [40, 4.9]].forEach(([r, a]) => {
-    ctx.beginPath();
-    ctx.arc(ix + Math.cos(a) * r * sc, iy - 4 + Math.sin(a) * r * sc, 3.2 * sc, 0, Math.PI * 2);
-    ctx.fill();
+  ctx.fillStyle='#ef4444'; ctx.shadowColor='rgba(239,68,68,.5)'; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.arc(ix,iy-4,8*sc,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+  ctx.fillStyle='#3b82f6';
+  [[26,.4],[40,1.7],[26,3.4],[40,4.9]].forEach(([r,a])=>{
+    ctx.beginPath(); ctx.arc(ix+Math.cos(a)*r*sc,iy-4+Math.sin(a)*r*sc,3.2*sc,0,Math.PI*2); ctx.fill();
   });
-  ctx.fillStyle = '#fca5a5'; ctx.font = '600 9px Manrope';
-  ctx.fillText(T('lbl_nucleus'), ix, iy + 52 * sc);
-  ctx.fillStyle = '#93c5fd';
-  ctx.fillText(T('lbl_electron'), ix, iy + 64 * sc);
+  ctx.fillStyle='#fca5a5'; ctx.font='600 9px Manrope';
+  ctx.fillText(T('lbl_nucleus'),ix,iy+52*sc);
+  ctx.fillStyle='#93c5fd'; ctx.fillText(T('lbl_electron'),ix,iy+64*sc);
   ctx.restore();
 }
 
-function drawMacro() {
-  drawCDetector();
-  hitMarks.forEach(h => {
-    const a = Math.max(0, Math.min(1, h.t));
-    starburst(Math.cos(h.ang) * (LAY.detR - 5), Math.sin(h.ang) * (LAY.detR - 5),
-      6 + 5 * a, `rgba(250,204,21,${0.3 + 0.6 * a})`);
+function drawMacro(){
+  // Order: detector first, then foil, source, particles
+  drawDetector();
+  hitMarks.forEach(h=>{
+    const a=Math.max(0,Math.min(1,h.t));
+    starburst(Math.cos(h.ang)*(LAY.detR-6), Math.sin(h.ang)*(LAY.detR-6), 6+5*a, `rgba(250,204,21,${.25+.65*a})`);
   });
   drawFoil();
   drawSource();
   drawPathBadges();
 
-  particles.forEach(p => {
-    ctx.strokeStyle = p.kind === 'back' ? 'rgba(248,113,113,0.5)'
-      : p.kind === 'deflect' ? 'rgba(251,191,36,0.45)' : 'rgba(253,186,116,0.5)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    p.trail.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
+  particles.forEach(p=>{
+    ctx.strokeStyle=p.kind==='back'?'rgba(248,113,113,.55)':p.kind==='deflect'?'rgba(251,191,36,.5)':'rgba(251,146,60,.55)';
+    ctx.lineWidth=2; ctx.beginPath();
+    p.trail.forEach((t,i)=>(i?ctx.lineTo:ctx.moveTo).call(ctx,X(t.x),Y(t.y)));
     ctx.stroke();
-    ctx.fillStyle = p.kind === 'back' ? '#f87171' : p.kind === 'deflect' ? '#fbbf24' : '#facc15';
-    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 3.4 * S(), 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle=p.kind==='back'?'#f87171':p.kind==='deflect'?'#fbbf24':'#fb923c';
+    ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),3.5*S(),0,Math.PI*2); ctx.fill();
   });
-  flashes.forEach(f => {
-    const a = Math.max(0, f.t / 0.45);
-    starburst(f.x, f.y, 8 + 5 * a, f.kind === 'hit' ? `rgba(250,204,21,${a})` : `rgba(255,255,255,${a * 0.75})`);
+  flashes.forEach(f=>{
+    const a=Math.max(0,f.t/.5);
+    starburst(f.x,f.y,8+5*a, f.kind==='hit'?`rgba(250,204,21,${a})`:`rgba(255,255,255,${a*.7})`);
   });
   drawAtomicInset();
 }
 
-function drawMicro() {
-  ctx.save();
-  ctx.setLineDash([5, 6]);
-  ctx.strokeStyle = 'rgba(148,163,184,0.5)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(X(0), Y(0), 155 * S(), 0, Math.PI * 2); ctx.stroke();
+function drawMicro(){
+  ctx.save(); ctx.setLineDash([5,6]); ctx.strokeStyle='rgba(148,163,184,.5)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(X(0),Y(0),155*S(),0,Math.PI*2); ctx.stroke();
   ctx.setLineDash([]); ctx.restore();
-
-  if (state.showOrbits) {
-    [55, 95, 135].forEach((r, i) => {
-      ctx.strokeStyle = `rgba(59,130,246,${0.12 + i * 0.05})`;
-      ctx.beginPath(); ctx.arc(X(0), Y(0), r * S(), 0, Math.PI * 2); ctx.stroke();
-      const t = performance.now() / 1000;
-      const ex = Math.cos(t * (0.55 + i * 0.2) + i) * r;
-      const ey = Math.sin(t * (0.55 + i * 0.2) + i) * r;
-      ctx.fillStyle = '#3b82f6';
-      ctx.beginPath(); ctx.arc(X(ex), Y(ey), 5 * S(), 0, Math.PI * 2); ctx.fill();
+  if(state.showOrbits){
+    [55,95,135].forEach((r,i)=>{
+      ctx.strokeStyle=`rgba(59,130,246,${.12+i*.05})`;
+      ctx.beginPath(); ctx.arc(X(0),Y(0),r*S(),0,Math.PI*2); ctx.stroke();
+      const t=performance.now()/1000;
+      ctx.fillStyle='#3b82f6';
+      ctx.beginPath(); ctx.arc(X(Math.cos(t*(.55+i*.2)+i)*r),Y(Math.sin(t*(.55+i*.2)+i)*r),5*S(),0,Math.PI*2); ctx.fill();
     });
-    ctx.fillStyle = '#93c5fd'; ctx.font = fontUI(12); ctx.textAlign = 'center';
-    ctx.fillText(T('lbl_electron'), X(120), Y(148));
   }
-
-  const nr = (12 + Math.sqrt(state.Z) * 1.1) * S();
-  ctx.fillStyle = '#dc2626';
-  ctx.shadowColor = 'rgba(220,38,38,0.55)'; ctx.shadowBlur = 16;
-  ctx.beginPath(); ctx.arc(X(0), Y(0), nr, 0, Math.PI * 2); ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#f87171'; ctx.font = fontUI(12); ctx.textAlign = 'center';
-  ctx.fillText(T('lbl_nucleus') + ' (Z=' + state.Z + ')', X(0), Y(0) + nr / S() + 22);
-
-  ctx.strokeStyle = 'rgba(0,243,255,0.35)'; ctx.setLineDash([4, 4]);
-  ctx.beginPath(); ctx.moveTo(X(-230), Y(state.impactB)); ctx.lineTo(X(-45), Y(state.impactB)); ctx.stroke();
+  const nr=(12+Math.sqrt(state.Z)*1.1)*S();
+  ctx.fillStyle='#dc2626'; ctx.shadowColor='rgba(220,38,38,.55)'; ctx.shadowBlur=16;
+  ctx.beginPath(); ctx.arc(X(0),Y(0),nr,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+  ctx.fillStyle='#f87171'; ctx.font=fontUI(12); ctx.textAlign='center';
+  ctx.fillText(T('lbl_nucleus')+' (Z='+state.Z+')', X(0), Y(0)+nr/S()+22);
+  ctx.strokeStyle='rgba(0,243,255,.35)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(X(-230),Y(state.impactB)); ctx.lineTo(X(-45),Y(state.impactB)); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = '#67e8f9'; ctx.font = fontUI(11);
-  ctx.fillText('b = ' + state.impactB, X(-145), Y(state.impactB) - 12);
-
-  if (!microAlphas.length && !trails.length) {
-    ctx.strokeStyle = 'rgba(226,232,240,0.3)'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(X(-220), Y(95)); ctx.lineTo(X(220), Y(95)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(X(-220), Y(30)); ctx.quadraticCurveTo(X(10), Y(42), X(180), Y(115)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(X(-220), Y(0)); ctx.lineTo(X(-20), Y(0)); ctx.lineTo(X(-150), Y(-45)); ctx.stroke();
+  ctx.fillStyle='#67e8f9'; ctx.font=fontUI(11);
+  ctx.fillText('b = '+state.impactB, X(-145), Y(state.impactB)-12);
+  if(!microAlphas.length&&!trails.length){
+    ctx.strokeStyle='rgba(226,232,240,.3)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(X(-220),Y(95)); ctx.lineTo(X(220),Y(95)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-220),Y(30)); ctx.quadraticCurveTo(X(10),Y(42),X(180),Y(115)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-220),Y(0)); ctx.lineTo(X(-20),Y(0)); ctx.lineTo(X(-150),Y(-45)); ctx.stroke();
   }
-  trails.forEach(tr => {
-    ctx.strokeStyle = tr.kind === 'back' ? 'rgba(248,113,113,0.4)' : tr.kind === 'deflect' ? 'rgba(251,191,36,0.4)' : 'rgba(134,239,172,0.35)';
-    ctx.lineWidth = 2.5; ctx.beginPath();
-    tr.pts.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
-    ctx.stroke();
+  trails.forEach(tr=>{
+    ctx.strokeStyle=tr.kind==='back'?'rgba(248,113,113,.4)':tr.kind==='deflect'?'rgba(251,191,36,.4)':'rgba(134,239,172,.35)';
+    ctx.lineWidth=2.5; ctx.beginPath();
+    tr.pts.forEach((t,i)=>(i?ctx.lineTo:ctx.moveTo).call(ctx,X(t.x),Y(t.y))); ctx.stroke();
   });
-  microAlphas.forEach(p => {
-    ctx.strokeStyle = 'rgba(251,146,60,0.75)'; ctx.lineWidth = 2.5; ctx.beginPath();
-    p.trail.forEach((t, i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, X(t.x), Y(t.y)));
-    ctx.stroke();
-    ctx.fillStyle = '#fb923c';
-    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 6 * S(), 0, Math.PI * 2); ctx.fill();
+  microAlphas.forEach(p=>{
+    ctx.strokeStyle='rgba(251,146,60,.75)'; ctx.lineWidth=2.5; ctx.beginPath();
+    p.trail.forEach((t,i)=>(i?ctx.lineTo:ctx.moveTo).call(ctx,X(t.x),Y(t.y))); ctx.stroke();
+    ctx.fillStyle='#fb923c'; ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),6*S(),0,Math.PI*2); ctx.fill();
   });
 }
 
-function render() {
-  ctx.clearRect(0, 0, W, H);
-  const bg = ctx.createRadialGradient(W/2, H/2, 30, W/2, H/2, Math.max(W, H) * 0.7);
-  bg.addColorStop(0, '#152238'); bg.addColorStop(1, '#0b1220');
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-  if (state.mode === 'macro') drawMacro(); else drawMicro();
+function render(){
+  ctx.clearRect(0,0,W,H);
+  const bg=ctx.createRadialGradient(W/2,H/2,30,W/2,H/2,Math.max(W,H)*.7);
+  bg.addColorStop(0,'#152238'); bg.addColorStop(1,'#0b1220');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  if(state.mode==='macro')drawMacro(); else drawMicro();
 }
 
-function zoomBy(f) { state.zoom = Math.min(3.5, Math.max(0.45, state.zoom * f)); }
-function resetView() { state.zoom = 1; state.panX = 0; state.panY = 0; fitView(); }
-function fitView() { baseScale = Math.min(W, H) / 640; }
+function zoomBy(f){state.zoom=Math.min(3.5,Math.max(.45,state.zoom*f))}
+function resetView(){state.zoom=1; state.panX=0; state.panY=0; fitView()}
+function fitView(){baseScale=Math.min(W,H)/620}
 
-let dragging = false, lastPX = 0, lastPY = 0;
-canvas.addEventListener('pointerdown', e => {
-  if (isAnnoActive) return;
-  dragging = true; canvas.setPointerCapture(e.pointerId);
-  lastPX = e.clientX; lastPY = e.clientY; canvas.style.cursor = 'grabbing';
-});
-canvas.addEventListener('pointermove', e => {
-  if (!dragging || isAnnoActive) return;
-  state.panX += e.clientX - lastPX; state.panY += e.clientY - lastPY;
-  lastPX = e.clientX; lastPY = e.clientY;
-});
-canvas.addEventListener('pointerup', () => { dragging = false; canvas.style.cursor = 'grab'; });
-canvas.addEventListener('wheel', e => { e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1); }, { passive: false });
-let pinchDist = null;
-canvas.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    pinchDist = Math.hypot(dx, dy);
-  }
-}, { passive: true });
-canvas.addEventListener('touchmove', e => {
-  if (e.touches.length === 2 && pinchDist) {
-    e.preventDefault();
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    const d = Math.hypot(dx, dy);
-    zoomBy(d / pinchDist); pinchDist = d;
-  }
-}, { passive: false });
-canvas.addEventListener('touchend', () => { pinchDist = null; });
+let dragging=false,lastPX=0,lastPY=0;
+canvas.addEventListener('pointerdown',e=>{if(isAnnoActive)return; dragging=true; canvas.setPointerCapture(e.pointerId); lastPX=e.clientX; lastPY=e.clientY; canvas.style.cursor='grabbing'});
+canvas.addEventListener('pointermove',e=>{if(!dragging||isAnnoActive)return; state.panX+=e.clientX-lastPX; state.panY+=e.clientY-lastPY; lastPX=e.clientX; lastPY=e.clientY});
+canvas.addEventListener('pointerup',()=>{dragging=false; canvas.style.cursor='grab'});
+canvas.addEventListener('wheel',e=>{e.preventDefault(); zoomBy(e.deltaY<0?1.1:1/1.1)},{passive:false});
+let pinchDist=null;
+canvas.addEventListener('touchstart',e=>{if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY; pinchDist=Math.hypot(dx,dy)}},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchDist){e.preventDefault(); const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY; const d=Math.hypot(dx,dy); zoomBy(d/pinchDist); pinchDist=d}},{passive:false});
+canvas.addEventListener('touchend',()=>{pinchDist=null});
 
-/* Annotation — exact required logic */
-let fCanvas, isAnnoActive = false;
-function initAnnotationCanvas(w, h) {
-  if (fCanvas) { fCanvas.setWidth(w); fCanvas.setHeight(h); fCanvas.calcOffset(); return; }
-  fCanvas = new fabric.Canvas('fabricLayer', { isDrawingMode: false, width: w, height: h });
-  fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
-  fCanvas.freeDrawingBrush.width = 4;
-  fCanvas.on('mouse:down', function(options) {
-    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) fCanvas.remove(options.target);
-  });
-  const fabricContainer = document.querySelector('.canvas-container');
-  if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+let fCanvas,isAnnoActive=false;
+function initAnnotationCanvas(w,h){
+  if(fCanvas){fCanvas.setWidth(w);fCanvas.setHeight(h);fCanvas.calcOffset();return}
+  fCanvas=new fabric.Canvas('fabricLayer',{isDrawingMode:false,width:w,height:h});
+  fCanvas.freeDrawingBrush.color=document.getElementById('anno-color').value;
+  fCanvas.freeDrawingBrush.width=4;
+  fCanvas.on('mouse:down',function(options){if(isAnnoActive&&!fCanvas.isDrawingMode&&options.target)fCanvas.remove(options.target)});
+  const c=document.querySelector('.canvas-container'); if(c)c.style.pointerEvents='none';
 }
-function toggleAnnotationMode() {
-  isAnnoActive = !isAnnoActive;
-  const btn = document.getElementById('btn-anno-toggle');
-  const toolbar = document.getElementById('anno-toolbar');
-  const fabricContainer = document.querySelector('.canvas-container');
-  const floatCard = document.getElementById('anno-float');
-  if (isAnnoActive) {
-    btn.classList.replace('text-slate-400', 'text-cyan-400');
-    toolbar.classList.remove('max-w-0', 'opacity-0');
-    toolbar.classList.add('max-w-xs', 'opacity-100');
-    if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
-    floatCard.classList.remove('hidden'); floatCard.classList.remove('minimized');
-    setAnnoMode('pen');
+function toggleAnnotationMode(){
+  isAnnoActive=!isAnnoActive;
+  const btn=document.getElementById('btn-anno-toggle'), toolbar=document.getElementById('anno-toolbar');
+  const fc=document.querySelector('.canvas-container'), floatCard=document.getElementById('anno-float');
+  if(isAnnoActive){
+    btn.classList.replace('text-slate-400','text-cyan-400');
+    toolbar.classList.remove('max-w-0','opacity-0'); toolbar.classList.add('max-w-xs','opacity-100');
+    if(fc)fc.style.pointerEvents='auto'; floatCard.classList.remove('hidden','minimized'); setAnnoMode('pen');
   } else {
-    btn.classList.replace('text-cyan-400', 'text-slate-400');
-    toolbar.classList.remove('max-w-xs', 'opacity-100');
-    toolbar.classList.add('max-w-0', 'opacity-0');
-    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
-    floatCard.classList.add('hidden');
-    if (fCanvas) fCanvas.isDrawingMode = false;
+    btn.classList.replace('text-cyan-400','text-slate-400');
+    toolbar.classList.remove('max-w-xs','opacity-100'); toolbar.classList.add('max-w-0','opacity-0');
+    if(fc)fc.style.pointerEvents='none'; floatCard.classList.add('hidden'); if(fCanvas)fCanvas.isDrawingMode=false;
   }
 }
-function setAnnoMode(mode) {
-  document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
-  document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
-  if (mode === 'pen') {
-    document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
-    if (fCanvas) fCanvas.isDrawingMode = true;
-  } else {
-    document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
-    if (fCanvas) fCanvas.isDrawingMode = false;
-  }
+function setAnnoMode(mode){
+  document.getElementById('anno-pen').classList.replace('text-cyan-400','text-slate-400');
+  document.getElementById('anno-eraser').classList.replace('text-cyan-400','text-slate-400');
+  if(mode==='pen'){document.getElementById('anno-pen').classList.replace('text-slate-400','text-cyan-400'); if(fCanvas)fCanvas.isDrawingMode=true}
+  else{document.getElementById('anno-eraser').classList.replace('text-slate-400','text-cyan-400'); if(fCanvas)fCanvas.isDrawingMode=false}
 }
-function changeAnnoColor(color) {
-  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
-  document.getElementById('anno-color-float').value = color;
-  setAnnoMode('pen');
-}
-function syncAnnoColor(color) {
-  document.getElementById('anno-color').value = color;
-  changeAnnoColor(color);
-}
-function clearAnnotations() { if (fCanvas) fCanvas.clear(); }
-function toggleAnnoFloat() {
-  const el = document.getElementById('anno-float');
-  el.classList.toggle('minimized');
-  document.getElementById('anno-float-icon').className =
-    el.classList.contains('minimized') ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
-}
-(function () {
-  const el = document.getElementById('anno-float');
-  let dx = 0, dy = 0, on = false;
-  el.addEventListener('pointerdown', e => {
-    if (e.target.closest('button') || e.target.tagName === 'INPUT') return;
-    on = true; dx = e.clientX - el.offsetLeft; dy = e.clientY - el.offsetTop;
-    el.setPointerCapture(e.pointerId);
-  });
-  el.addEventListener('pointermove', e => {
-    if (!on) return;
-    const wrap = document.getElementById('canvas-wrap').getBoundingClientRect();
-    el.style.left = Math.max(0, Math.min(wrap.width - 40, e.clientX - wrap.left - dx)) + 'px';
-    el.style.top = Math.max(0, Math.min(wrap.height - 40, e.clientY - wrap.top - dy)) + 'px';
-  });
-  el.addEventListener('pointerup', () => on = false);
+function changeAnnoColor(color){if(fCanvas)fCanvas.freeDrawingBrush.color=color; document.getElementById('anno-color-float').value=color; setAnnoMode('pen')}
+function syncAnnoColor(color){document.getElementById('anno-color').value=color; changeAnnoColor(color)}
+function clearAnnotations(){if(fCanvas)fCanvas.clear()}
+function toggleAnnoFloat(){const el=document.getElementById('anno-float'); el.classList.toggle('minimized'); document.getElementById('anno-float-icon').className=el.classList.contains('minimized')?'fa-solid fa-plus':'fa-solid fa-minus'}
+(function(){const el=document.getElementById('anno-float'); let dx=0,dy=0,on=false;
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.target.tagName==='INPUT')return; on=true; dx=e.clientX-el.offsetLeft; dy=e.clientY-el.offsetTop; el.setPointerCapture(e.pointerId)});
+  el.addEventListener('pointermove',e=>{if(!on)return; const wrap=document.getElementById('canvas-wrap').getBoundingClientRect(); el.style.left=Math.max(0,Math.min(wrap.width-40,e.clientX-wrap.left-dx))+'px'; el.style.top=Math.max(0,Math.min(wrap.height-40,e.clientY-wrap.top-dy))+'px'});
+  el.addEventListener('pointerup',()=>on=false);
 })();
 
-function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen?.();
-    document.getElementById('fs-icon').className = 'fa-solid fa-compress';
-  } else {
-    document.exitFullscreen?.();
-    document.getElementById('fs-icon').className = 'fa-solid fa-expand';
-  }
+function toggleFullScreen(){
+  if(!document.fullscreenElement){document.documentElement.requestFullscreen?.(); document.getElementById('fs-icon').className='fa-solid fa-compress'}
+  else{document.exitFullscreen?.(); document.getElementById('fs-icon').className='fa-solid fa-expand'}
 }
 
-let quizIdx = 0, quizScore = 0, quizAnswered = false;
-function renderQuiz() {
-  const box = document.getElementById('quiz-box');
-  const quiz = LANG[cur].quiz;
-  if (quizIdx >= quiz.length) {
-    const pct = Math.round((quizScore / quiz.length) * 100);
-    let msg = T('score_msg_low');
-    if (pct >= 80) msg = T('score_msg_great');
-    else if (pct >= 50) msg = T('score_msg_good');
-    box.innerHTML = `<div class="text-center fade-in space-y-6">
-      <div class="text-cyan-400 font-display font-bold text-xl">${T('final_score')}</div>
-      <div class="relative inline-flex items-center justify-center">
-        <svg class="score-ring" width="140" height="140" viewBox="0 0 140 140">
-          <circle cx="70" cy="70" r="58" fill="none" stroke="#1e293b" stroke-width="12"/>
-          <circle cx="70" cy="70" r="58" fill="none" stroke="#00f3ff" stroke-width="12"
-            stroke-dasharray="${2*Math.PI*58}" stroke-dashoffset="${2*Math.PI*58*(1-pct/100)}"
-            stroke-linecap="round" transform="rotate(-90 70 70)"/>
-        </svg>
-        <div class="absolute text-3xl font-black text-cyan-300 num">${pct}%</div>
-      </div>
-      <div class="text-2xl font-bold">${quizScore} / ${quiz.length}</div>
-      <p class="text-slate-300">${msg}</p>
-      <button onclick="restartQuiz()" class="mode-btn active px-6 py-3 rounded-xl font-bold">${T('restart')}</button>
-    </div>`;
+let quizIdx=0,quizScore=0,quizAnswered=false;
+function renderQuiz(){
+  const box=document.getElementById('quiz-box'), quiz=LANG[cur].quiz;
+  if(quizIdx>=quiz.length){
+    const pct=Math.round((quizScore/quiz.length)*100);
+    let msg=T('score_msg_low'); if(pct>=80)msg=T('score_msg_great'); else if(pct>=50)msg=T('score_msg_good');
+    box.innerHTML=`<div class="text-center fade-in space-y-6"><div class="text-cyan-400 font-display font-bold text-xl">${T('final_score')}</div>
+      <div class="relative inline-flex items-center justify-center"><svg class="score-ring" width="140" height="140" viewBox="0 0 140 140">
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#1e293b" stroke-width="12"/>
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#00f3ff" stroke-width="12" stroke-dasharray="${2*Math.PI*58}" stroke-dashoffset="${2*Math.PI*58*(1-pct/100)}" stroke-linecap="round" transform="rotate(-90 70 70)"/></svg>
+      <div class="absolute text-3xl font-black text-cyan-300 num">${pct}%</div></div>
+      <div class="text-2xl font-bold">${quizScore} / ${quiz.length}</div><p class="text-slate-300">${msg}</p>
+      <button onclick="restartQuiz()" class="mode-btn active px-6 py-3 rounded-xl font-bold">${T('restart')}</button></div>`;
     return;
   }
-  const q = quiz[quizIdx];
-  box.innerHTML = `<div class="fade-in">
-    <div class="flex items-center justify-between mb-4 gap-3">
-      <h2 class="font-display font-bold text-lg text-cyan-400">${T('quiz_title')}</h2>
-      <span class="chip">${T('quiz_progress')(quizIdx+1, quiz.length)}</span>
-    </div>
+  const q=quiz[quizIdx];
+  box.innerHTML=`<div class="fade-in"><div class="flex items-center justify-between mb-4 gap-3"><h2 class="font-display font-bold text-lg text-cyan-400">${T('quiz_title')}</h2><span class="chip">${T('quiz_progress')(quizIdx+1,quiz.length)}</span></div>
     <p class="text-lg md:text-xl font-bold mb-5 leading-relaxed">${q.q}</p>
-    <div class="space-y-3" id="quiz-opts">
-      ${q.opts.map((o,i)=>`<button class="opt-btn w-full text-start px-4 py-3.5 rounded-xl font-semibold text-slate-200" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-    </div>
+    <div class="space-y-3" id="quiz-opts">${q.opts.map((o,i)=>`<button class="opt-btn w-full text-start px-4 py-3.5 rounded-xl font-semibold text-slate-200" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
     <div id="quiz-fb" class="mt-4 hidden"></div>
-    <div class="mt-5 flex justify-end">
-      <button id="quiz-next" class="mode-btn active px-5 py-2.5 rounded-xl font-bold hidden" onclick="nextQuiz()"></button>
-    </div>
-  </div>`;
-  quizAnswered = false;
+    <div class="mt-5 flex justify-end"><button id="quiz-next" class="mode-btn active px-5 py-2.5 rounded-xl font-bold hidden" onclick="nextQuiz()"></button></div></div>`;
+  quizAnswered=false;
 }
-function answerQuiz(i) {
-  if (quizAnswered) return;
-  quizAnswered = true;
-  const q = LANG[cur].quiz[quizIdx];
-  document.querySelectorAll('#quiz-opts .opt-btn').forEach((b, idx) => {
-    b.classList.add('locked');
-    if (idx === q.a) b.classList.add('correct');
-    if (idx === i && i !== q.a) b.classList.add('wrong');
-  });
-  if (i === q.a) quizScore++;
-  const fb = document.getElementById('quiz-fb');
-  fb.classList.remove('hidden');
-  fb.innerHTML = `<div class="glass-panel rounded-xl px-4 py-3 ${i===q.a?'text-green-300 glow-green':'text-red-300 glow-red'}">
-    <strong>${i===q.a?T('correct_fb'):T('wrong_fb')}</strong>
-    <p class="mt-1 text-slate-300 text-sm leading-relaxed">${q.ex}</p></div>`;
-  const next = document.getElementById('quiz-next');
-  next.classList.remove('hidden');
-  next.textContent = quizIdx + 1 >= LANG[cur].quiz.length ? T('see_result') : T('next_q');
+function answerQuiz(i){
+  if(quizAnswered)return; quizAnswered=true;
+  const q=LANG[cur].quiz[quizIdx];
+  document.querySelectorAll('#quiz-opts .opt-btn').forEach((b,idx)=>{b.classList.add('locked'); if(idx===q.a)b.classList.add('correct'); if(idx===i&&i!==q.a)b.classList.add('wrong')});
+  if(i===q.a)quizScore++;
+  const fb=document.getElementById('quiz-fb'); fb.classList.remove('hidden');
+  fb.innerHTML=`<div class="glass-panel rounded-xl px-4 py-3 ${i===q.a?'text-green-300 glow-green':'text-red-300 glow-red'}"><strong>${i===q.a?T('correct_fb'):T('wrong_fb')}</strong><p class="mt-1 text-slate-300 text-sm leading-relaxed">${q.ex}</p></div>`;
+  const next=document.getElementById('quiz-next'); next.classList.remove('hidden');
+  next.textContent=quizIdx+1>=LANG[cur].quiz.length?T('see_result'):T('next_q');
 }
-function nextQuiz() { quizIdx++; renderQuiz(); }
-function restartQuiz() { quizIdx = 0; quizScore = 0; renderQuiz(); }
+function nextQuiz(){quizIdx++; renderQuiz()}
+function restartQuiz(){quizIdx=0; quizScore=0; renderQuiz()}
 
-function resizeCanvas() {
-  const rect = document.getElementById('canvas-wrap').getBoundingClientRect();
-  W = Math.max(320, Math.floor(rect.width));
-  H = Math.max(300, Math.floor(rect.height));
-  canvas.width = W; canvas.height = H;
-  fitView();
-  initAnnotationCanvas(W, H);
+function resizeCanvas(){
+  const rect=document.getElementById('canvas-wrap').getBoundingClientRect();
+  W=Math.max(320,Math.floor(rect.width)); H=Math.max(300,Math.floor(rect.height));
+  canvas.width=W; canvas.height=H; fitView(); initAnnotationCanvas(W,H);
 }
-
-let lastT = performance.now();
-function loop(t) {
-  const dt = Math.min(0.05, (t - lastT) / 1000);
-  lastT = t;
-  if (state.mode === 'macro') updateMacro(dt); else updateMicro(dt);
-  render();
-  requestAnimationFrame(loop);
+let lastT=performance.now();
+function loop(t){
+  const dt=Math.min(.05,(t-lastT)/1000); lastT=t;
+  if(state.mode==='macro')updateMacro(dt); else updateMicro(dt);
+  render(); requestAnimationFrame(loop);
 }
-
-function boot() {
-  changeLanguage(cur);
-  resizeCanvas();
-  updateObs(); updateTip(); updateFireBtn();
-  window.addEventListener('resize', resizeCanvas);
-  requestAnimationFrame(loop);
-  setTimeout(() => {
-    if (state.mode === 'macro' && !state.running) {
-      state.running = true; updateFireBtn();
-    }
-  }, 600);
+function boot(){
+  changeLanguage(cur); resizeCanvas(); updateObs(); updateTip(); updateFireBtn();
+  window.addEventListener('resize',resizeCanvas); requestAnimationFrame(loop);
+  setTimeout(()=>{if(state.mode==='macro'&&!state.running){state.running=true; updateFireBtn()}},500);
 }
-
-setTimeout(() => {
-  const intro = document.getElementById('intro');
-  intro.style.opacity = '0';
-  setTimeout(() => {
-    intro.style.display = 'none';
-    const app = document.getElementById('app');
-    app.style.display = 'flex';
-    app.classList.remove('opacity-0');
-    boot();
-  }, 700);
-}, 4800);
+setTimeout(()=>{
+  const intro=document.getElementById('intro'); intro.style.opacity='0';
+  setTimeout(()=>{intro.style.display='none'; const app=document.getElementById('app'); app.style.display='flex'; app.classList.remove('opacity-0'); boot()},700);
+},4800);
 </script>
 </body>
 </html>
