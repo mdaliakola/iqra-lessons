@@ -843,6 +843,7 @@ let electrons = [];
 let gasDots = [];
 let screenGlow = 0;
 let lastDefl = 0;
+let impactDots = []; // yellow collision spots on fluorescent screen
 let animId = null;
 let lastTs = 0;
 
@@ -1009,6 +1010,7 @@ function togglePower() {
   } else {
     particles = []; electrons = [];
     screenGlow = 0;
+    impactDots = [];
   }
   updateObservation();
 }
@@ -1119,6 +1121,7 @@ function resetExperiment() {
   state.bOn = false; state.bStr = 40; state.bDir = 1;
   particles = []; electrons = [];
   screenGlow = 0;
+  impactDots = [];
   document.getElementById('power-toggle').classList.remove('on');
   document.getElementById('efield-toggle').classList.remove('on');
   document.getElementById('bfield-toggle').classList.remove('on');
@@ -1430,12 +1433,45 @@ function drawApparatus() {
   ctx.lineWidth = 2;
   roundRectPath(ctx, screenX - 6, tubeY + 20, 14, tubeH - 40, 3);
   ctx.fill(); ctx.stroke();
-  if (sg > 0.1) {
+
+  // Soft green fluorescence halo around recent impact
+  if (sg > 0.05) {
+    ctx.save();
     ctx.shadowColor = '#4ade80';
-    ctx.shadowBlur = 20 * sg;
-    ctx.fillRect(screenX - 4, -20 - lastDefl, 10, 40);
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur = 18 * sg;
+    ctx.fillStyle = `rgba(74, 222, 128, ${0.18 * sg})`;
+    ctx.beginPath();
+    ctx.ellipse(screenX + 1, lastDefl, 10, 16 + 10 * sg, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
+
+  // Yellow collision dots where canal rays strike the screen
+  impactDots.forEach(d => {
+    const a = Math.max(0, d.life);
+    if (a <= 0) return;
+    ctx.save();
+    // Outer glow
+    ctx.shadowColor = '#facc15';
+    ctx.shadowBlur = 16 * a;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.35 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 9 + 4 * (1 - a), 0, Math.PI * 2);
+    ctx.fill();
+    // Bright yellow core
+    ctx.shadowBlur = 8 * a;
+    ctx.fillStyle = `rgba(253, 224, 71, ${0.95 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Hot white center
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.85 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
   if (state.labels) labelText(screenX, tubeY - 18, t.lbl_screen, '#86efac');
 
   // Electric field plates
@@ -1625,6 +1661,10 @@ function drawMiniTube(beamSign, isCanal) {
 function update(dt) {
   if (!state.power) {
     screenGlow *= 0.95;
+    for (let i = impactDots.length - 1; i >= 0; i--) {
+      impactDots[i].life -= dt * 2;
+      if (impactDots[i].life <= 0) impactDots.splice(i, 1);
+    }
     return;
   }
 
@@ -1695,6 +1735,9 @@ function update(dt) {
       hitY += p.y;
       hits++;
       lastDefl = p.y;
+      // Yellow collision spot on fluorescent screen
+      impactDots.push({ y: p.y, life: 1 });
+      if (impactDots.length > 24) impactDots.shift();
       markDiscovery(5);
       if (state.eOn || state.bOn) markDiscovery(6);
       particles.splice(i, 1);
@@ -1719,6 +1762,12 @@ function update(dt) {
   if (electrons.length > 40) electrons.splice(0, electrons.length - 40);
 
   screenGlow *= 0.985;
+
+  // Fade yellow impact dots
+  for (let i = impactDots.length - 1; i >= 0; i--) {
+    impactDots[i].life -= dt * 1.6;
+    if (impactDots[i].life <= 0) impactDots.splice(i, 1);
+  }
 
   // readout
   document.getElementById('read-ion').textContent = GASES[state.gas].ion;
