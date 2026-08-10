@@ -499,7 +499,7 @@ body.urdu-mode {
       <div class="glass-panel rounded-3xl p-5 md:p-8">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl md:text-2xl font-black text-white" data-i18n="quiz_title">Concept Quiz</h2>
-          <span id="quiz-progress" class="text-sm text-cyan-400 font-bold">1 / 5</span>
+          <span id="quiz-progress" class="text-sm text-cyan-400 font-bold" dir="ltr">1 / 5</span>
         </div>
         <div id="quiz-body"></div>
         <div id="quiz-result" class="hidden text-center py-6">
@@ -1816,8 +1816,10 @@ function renderQuiz() {
     result.classList.remove('hidden');
     document.getElementById('quiz-progress').textContent = '5 / 5';
     document.getElementById('quiz-score-text').textContent = quizScore + ' / 5';
+    document.getElementById('quiz-score-text').setAttribute('dir', 'ltr');
     const pct = Math.round((quizScore / 5) * 100);
     document.getElementById('quiz-pct-text').textContent = pct + '%';
+    document.getElementById('quiz-pct-text').setAttribute('dir', 'ltr');
     return;
   }
   body.classList.remove('hidden');
