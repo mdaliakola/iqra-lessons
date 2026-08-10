@@ -72,6 +72,33 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 input[type=range]:disabled::-webkit-slider-thumb { background: #64748b; box-shadow: none; cursor: not-allowed; }
 
+/* Bipolar elevation slider: depth ← 0 → height */
+.elev-track-wrap { position: relative; padding-top: 6px; }
+.elev-track-wrap input[type=range]#sl-elev {
+  background: linear-gradient(90deg,
+    #f97316 0%, #f97316 50%,
+    #00f3ff 50%, #00f3ff 100%);
+  height: 10px;
+}
+.elev-zero {
+  position: absolute; left: 50%; top: -2px; transform: translateX(-50%);
+  width: 2px; height: 22px; background: #f8fafc;
+  box-shadow: 0 0 8px rgba(255,255,255,.6);
+  pointer-events: none; border-radius: 1px;
+}
+.preset-btn {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.preset-btn.active {
+  background: rgba(0,243,255,.14); color: #00f3ff;
+  border-color: rgba(0,243,255,.5); box-shadow: 0 0 14px rgba(0,243,255,.2);
+}
+.preset-btn.depth-tone.active {
+  background: rgba(249,115,22,.14); color: #fb923c;
+  border-color: rgba(249,115,22,.5); box-shadow: 0 0 14px rgba(249,115,22,.2);
+}
+
 /* Extended design language */
 body {
   font-family: 'Manrope', sans-serif;
@@ -284,20 +311,30 @@ body {
 
     <!-- CANVAS -->
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
-      <!-- Location modes -->
-      <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
-        <button id="loc-sea" onclick="setLocation('sea')" class="mode-btn active flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-water"></i><span data-i18n="loc_sea"></span>
-        </button>
-        <button id="loc-mountain" onclick="setLocation('mountain')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-mountain"></i><span data-i18n="loc_mountain"></span>
-        </button>
-        <button id="loc-under" onclick="setLocation('under')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-dungeon"></i><span data-i18n="loc_under"></span>
-        </button>
-        <button id="loc-chamber" onclick="setLocation('chamber')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-flask-vial"></i><span data-i18n="loc_chamber"></span>
-        </button>
+      <!-- Unified elevation: depth ← sea level → mountain -->
+      <div class="glass-card rounded-2xl p-3 md:p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
+            <i class="fa-solid fa-arrows-up-down"></i><span data-i18n="elev_title"></span>
+          </div>
+          <div class="stat-val text-sm num" id="val-elev">0 m · Sea Level</div>
+        </div>
+        <div class="flex flex-wrap gap-2" id="preset-row">
+          <button type="button" class="preset-btn depth-tone flex-1 min-w-[72px] px-2 py-2 rounded-xl font-bold text-xs text-slate-300" data-elev="-2000" onclick="setElevation(-2000)">−2000 m</button>
+          <button type="button" class="preset-btn depth-tone flex-1 min-w-[72px] px-2 py-2 rounded-xl font-bold text-xs text-slate-300" data-elev="-500" onclick="setElevation(-500)">−500 m</button>
+          <button type="button" class="preset-btn active flex-1 min-w-[72px] px-2 py-2 rounded-xl font-bold text-xs text-slate-300" data-elev="0" onclick="setElevation(0)"><span data-i18n="loc_sea">Sea Level</span></button>
+          <button type="button" class="preset-btn flex-1 min-w-[72px] px-2 py-2 rounded-xl font-bold text-xs text-slate-300" data-elev="2500" onclick="setElevation(2500)">+2500 m</button>
+          <button type="button" class="preset-btn flex-1 min-w-[72px] px-2 py-2 rounded-xl font-bold text-xs text-slate-300" data-elev="5000" onclick="setElevation(5000)">+5000 m</button>
+        </div>
+        <div class="elev-track-wrap">
+          <div class="elev-zero"></div>
+          <input type="range" id="sl-elev" class="w-full" min="-5000" max="5000" step="10" value="0" oninput="onElevSlider()">
+          <div class="flex justify-between text-[10px] mt-2 font-bold">
+            <span class="text-orange-400" data-i18n="lbl_depth_side">← Depth (Underground)</span>
+            <span class="text-slate-200" data-i18n="lbl_sea_zero">0 Sea Level</span>
+            <span class="text-cyan-400" data-i18n="lbl_height_side">Height (Mountain) →</span>
+          </div>
+        </div>
       </div>
 
       <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[280px] overflow-hidden">
@@ -334,38 +371,20 @@ body {
     <!-- SIDE PANEL -->
     <aside class="w-full lg:w-[340px] xl:w-[380px] flex flex-col gap-3 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-1">
 
-      <!-- Environment controls -->
+      <!-- Experiment controls -->
       <div class="glass-card rounded-2xl p-4 space-y-4">
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
+          <i class="fa-solid fa-fire-burner"></i><span data-i18n="ctrl_title"></span>
         </h2>
+        <p class="text-xs text-slate-400 leading-relaxed" data-i18n="elev_help"></p>
 
-        <div id="ctrl-altitude">
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="altitude"></label>
-            <span class="stat-val text-sm num" id="val-alt">0 m</span>
-          </div>
-          <input type="range" id="sl-alt" class="w-full" min="0" max="8848" step="10" value="0" oninput="onEnvChange()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1 mono num"><span>0 m</span><span>8848 m</span></div>
+        <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
+          <span class="text-sm text-slate-400" data-i18n="position"></span>
+          <span class="text-sm font-bold text-slate-100 text-end" id="read-pos"></span>
         </div>
-
-        <div id="ctrl-depth" class="hidden">
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="depth"></label>
-            <span class="stat-val text-sm num" id="val-depth">0 m</span>
-          </div>
-          <input type="range" id="sl-depth" class="w-full" min="0" max="2000" step="10" value="200" oninput="onEnvChange()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1 mono num"><span>0 m</span><span>2000 m</span></div>
-          <p class="text-[11px] text-amber-300/80 mt-2" data-i18n="depth_note"></p>
-        </div>
-
-        <div id="ctrl-chamber" class="hidden">
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="ext_pressure"></label>
-            <span class="stat-val text-sm num" id="val-chP">101.3 kPa</span>
-          </div>
-          <input type="range" id="sl-chP" class="w-full" min="2" max="250" step="0.5" value="101.3" oninput="onEnvChange()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1 mono num"><span>2 kPa</span><span>250 kPa</span></div>
+        <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
+          <span class="text-sm text-slate-400" data-i18n="air_col_h"></span>
+          <span class="stat-val text-sm num" id="read-aircol">100%</span>
         </div>
 
         <div>
@@ -469,14 +488,17 @@ en: {
   tab_sim: "Simulation",
   tab_quiz: "Quiz",
   loc_sea: "Sea Level",
-  loc_mountain: "Mountain",
-  loc_under: "Underground",
-  loc_chamber: "Pressure Chamber",
-  ctrl_title: "Experiment Controls",
-  altitude: "Altitude",
-  depth: "Depth Below Surface",
-  depth_note: "Hypothetical sealed-chamber model: air pressure rises with depth for investigation.",
-  ext_pressure: "External Pressure",
+  elev_title: "Elevation (Depth ↔ Height)",
+  elev_help: "One continuous path: slide LEFT below sea level (underground), keep CENTER at sea level, slide RIGHT up the mountain. Boiling point updates at every metre.",
+  lbl_depth_side: "← Depth (Underground)",
+  lbl_sea_zero: "0 Sea Level",
+  lbl_height_side: "Height (Mountain) →",
+  position: "Position",
+  air_col_h: "Air Column Above",
+  pos_sea: "Sea Level",
+  pos_mountain: "Mountain",
+  pos_under: "Underground",
+  ctrl_title: "Water Boiling System",
   heat_power: "Heat Power",
   btn_heat: "Start Heat",
   btn_stop: "Stop Heat",
@@ -492,11 +514,10 @@ en: {
   status_cooled: "Cooling down",
   tip_title: "Discover",
   central_q: "Central question: Does water always boil at 100°C?",
-  tip_sea: "At sea level (~101.3 kPa), water boils near 100°C. Watch vapor pressure climb until it matches external pressure.",
-  tip_mountain: "Higher altitude → thinner air column → lower pressure → water boils BELOW 100°C. Try Everest (~8848 m)!",
-  tip_under: "In a high-pressure underground chamber, boiling point rises ABOVE 100°C. Pressure cooker effect!",
-  tip_chamber: "Directly set external pressure. At very low pressure, water can boil near room temperature.",
-  drag_hint: "Scroll to zoom · Drag to pan · Annotate with the pen tools",
+  tip_sea: "At sea level (0 m) the air column is normal (~101.3 kPa). Water boils near 100°C when vapor pressure matches this pressure.",
+  tip_mountain: "Going UP: less air remains above you → thinner air column → lower pressure → boiling point FALLS below 100°C.",
+  tip_under: "Going DOWN: the underground chamber model raises air pressure → boiling point RISES above 100°C (like a pressure cooker).",
+  drag_hint: "Scroll to zoom · Drag to pan · Use the elevation slider",
   anno_card: "Annotate",
   quiz_title: "Concept Quiz — Atmospheric Pressure",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
@@ -507,16 +528,14 @@ en: {
   final_score: "Final Score",
   restart: "Restart Quiz",
   score_msg_great: "Outstanding! You understand how pressure controls boiling.",
-  score_msg_good: "Good work! Revisit the mountain and chamber experiments.",
-  score_msg_low: "Keep experimenting — change altitude and watch the boiling point!",
+  score_msg_good: "Good work! Move the elevation slider and watch boiling change.",
+  score_msg_low: "Keep experimenting — slide below and above sea level!",
   canvas_sea: "SEA LEVEL",
-  canvas_mountain: "HIGH MOUNTAIN",
-  canvas_under: "UNDERGROUND LAB",
-  canvas_chamber: "PRESSURE CHAMBER",
   canvas_air: "AIR COLUMN",
   canvas_beaker: "BEAKER",
   canvas_heater: "HEATER",
   canvas_thermo: "°C",
+  canvas_lab: "BOILING LAB",
   quiz: [
     { q:"Does water always boil at 100°C?", opts:["Yes, always exactly 100°C","No — it depends on external pressure","Yes, but only on mountains","Only if the beaker is sealed"], a:1, ex:"Boiling begins when the liquid's vapor pressure equals the surrounding (external) pressure. At 101.3 kPa that is ~100°C, but the temperature changes if pressure changes." },
     { q:"Why does atmospheric pressure decrease on a high mountain?", opts:["Gravity becomes zero","There is less air column above you","Mountains produce cold that removes pressure","Oxygen disappears completely"], a:1, ex:"Pressure at a location comes from the weight of the air above it. Higher up, less air remains overhead, so pressure falls." },
@@ -532,14 +551,17 @@ ur: {
   tab_sim: "سمولیشن",
   tab_quiz: "کوئز",
   loc_sea: "سطحِ سمندر",
-  loc_mountain: "پہاڑ",
-  loc_under: "زیرِ زمین",
-  loc_chamber: "دباؤ خانہ",
-  ctrl_title: "تجرباتی کنٹرولز",
-  altitude: "بلندی",
-  depth: "سطح سے نیچے گہرائی",
-  depth_note: "فرضی بند خانے کا ماڈل: تحقیق کے لیے گہرائی کے ساتھ ہوا کا دباؤ بڑھتا ہے۔",
-  ext_pressure: "بیرونی دباؤ",
+  elev_title: "بلندی (گہرائی ↔ اونچائی)",
+  elev_help: "ایک مسلسل راستہ: بائیں سلائیڈ = سطحِ سمندر سے نیچے (زیرِ زمین)، درمیان = سطحِ سمندر، دائیں سلائیڈ = پہاڑ کی طرف۔ ہر میٹر پر نقطۂ کھولاؤ بدلتا ہے۔",
+  lbl_depth_side: "← گہرائی (زیرِ زمین)",
+  lbl_sea_zero: "0 سطحِ سمندر",
+  lbl_height_side: "اونچائی (پہاڑ) →",
+  position: "مقام",
+  air_col_h: "اوپر ہوائی ستون",
+  pos_sea: "سطحِ سمندر",
+  pos_mountain: "پہاڑ",
+  pos_under: "زیرِ زمین",
+  ctrl_title: "پانی کھولانے کا نظام",
   heat_power: "حرارتی طاقت",
   btn_heat: "حرارت شروع",
   btn_stop: "حرارت بند",
@@ -555,11 +577,10 @@ ur: {
   status_cooled: "ٹھنڈا ہو رہا ہے",
   tip_title: "دریافت کریں",
   central_q: "مرکزی سوال: کیا پانی ہمیشہ 100°C پر کھولتا ہے؟",
-  tip_sea: "سطحِ سمندر (~101.3 kPa) پر پانی تقریباً 100°C پر کھولتا ہے۔ بخاراتی دباؤ کو دیکھیں جب تک وہ بیرونی دباؤ کے برابر نہ ہو جائے۔",
-  tip_mountain: "زیادہ بلندی → پتلی ہوائی ستون → کم دباؤ → پانی 100°C سے کم پر کھولتا ہے۔ ایورسٹ (~8848 m) آزمائیں!",
-  tip_under: " زیادہ دباؤ والے زیرِ زمین خانے میں نقطۂ کھولاؤ 100°C سے بڑھ جاتا ہے۔ یہ پریشر ککر کا اثر ہے!",
-  tip_chamber: "براہِ راست بیرونی دباؤ مقرر کریں۔ بہت کم دباؤ پر پانی کمرے کے درجہ حرارت کے قریب بھی کھول سکتا ہے۔",
-  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · قلم سے نوٹ لکھیں",
+  tip_sea: "سطحِ سمندر (0 m) پر ہوائی ستون عام ہے (~101.3 kPa)۔ جب بخاراتی دباؤ برابر ہو تو پانی تقریباً 100°C پر کھولتا ہے۔",
+  tip_mountain: "اوپر جانا: اوپر کم ہوا → پتلا ہوائی ستون → کم دباؤ → نقطۂ کھولاؤ 100°C سے گرتا ہے۔",
+  tip_under: "نیچے جانا: زیرِ زمین خانے کا ماڈل دباؤ بڑھاتا ہے → نقطۂ کھولاؤ 100°C سے اوپر چلا جاتا ہے (پریشر ککر جیسا)۔",
+  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · بلندی سلائیڈر استعمال کریں",
   anno_card: "نوٹ",
   quiz_title: "تصوری کوئز — فضائی دباؤ",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
@@ -570,16 +591,14 @@ ur: {
   final_score: "حتمی اسکور",
   restart: "کوئز دوبارہ شروع",
   score_msg_great: "شاندار! آپ سمجھ گئے کہ دباؤ کھولاؤ کو کنٹرول کرتا ہے۔",
-  score_msg_good: "اچھا کام! پہاڑ اور دباؤ خانے کے تجربے دوبارہ دیکھیں۔",
-  score_msg_low: "تجربہ جاری رکھیں — بلندی تبدیل کریں اور نقطۂ کھولاؤ دیکھیں!",
+  score_msg_good: "اچھا کام! بلندی سلائیڈر حرکت دیں اور کھولاؤ دیکھیں۔",
+  score_msg_low: "تجربہ جاری رکھیں — سطحِ سمندر کے اوپر اور نیچے جائیں!",
   canvas_sea: "سطحِ سمندر",
-  canvas_mountain: "بلند پہاڑ",
-  canvas_under: "زیرِ زمین لیبارٹری",
-  canvas_chamber: "دباؤ خانہ",
   canvas_air: "ہوائی ستون",
   canvas_beaker: "بیکر",
   canvas_heater: "ہیٹر",
   canvas_thermo: "°C",
+  canvas_lab: "کھولاؤ لیبارٹری",
   quiz: [
     { q:"کیا پانی ہمیشہ 100°C پر کھولتا ہے؟", opts:["ہاں، ہمیشہ بالکل 100°C","نہیں — یہ بیرونی دباؤ پر منحصر ہے","ہاں، لیکن صرف پہاڑوں پر","صرف اگر بیکر بند ہو"], a:1, ex:"کھولاؤ اس وقت شروع ہوتا ہے جب مائع کا بخاراتی دباؤ ارد گرد کے (بیرونی) دباؤ کے برابر ہو جائے۔ 101.3 kPa پر یہ تقریباً 100°C ہے، لیکن دباؤ بدلنے سے درجہ حرارت بدلتا ہے۔" },
     { q:"بلند پہاڑ پر فضائی دباؤ کیوں کم ہوتا ہے؟", opts:["کششِ ثقل صفر ہو جاتی ہے","آپ کے اوپر ہوائی ستون کم رہ جاتا ہے","پہاڑ سردی پیدا کر کے دباؤ ختم کر دیتے ہیں","آکسیجن بالکل غائب ہو جاتی ہے"], a:1, ex:"کسی مقام پر دباؤ اس کے اوپر موجود ہوا کے وزن سے آتا ہے۔ جتنا اوپر جائیں، اتنا کم ہوا باقی رہتی ہے، اس لیے دباؤ گرتا ہے۔" },
@@ -597,10 +616,7 @@ let cur = localStorage.getItem('iqra_lang') || 'en';
 const T = k => (typeof LANG[cur][k] === 'function' ? LANG[cur][k] : LANG[cur][k]);
 
 const state = {
-  location: 'sea',
-  altitude: 0,
-  depth: 200,
-  chamberP: 101.3,
+  elev: 0, // metres: negative = underground depth, 0 = sea level, positive = mountain height
   heatPower: 0,
   heating: false,
   waterT: 25,
@@ -613,40 +629,60 @@ const state = {
 let canvas, ctx, baseScale = 1, W = 800, H = 500;
 let pinch = null, dragging = false, lastX = 0, lastY = 0;
 
+const ELEV_MIN = -5000;
+const ELEV_MAX = 5000;
+const SEA_P = 101.325;
+
 /* ============================================================
    PHYSICS
 ============================================================ */
 function pressureAtAltitude(h) {
-  // International Standard Atmosphere (troposphere approx)
   const hClamped = Math.max(0, Math.min(h, 11000));
-  return 101.325 * Math.pow(1 - 2.25577e-5 * hClamped, 5.25588);
+  return SEA_P * Math.pow(1 - 2.25577e-5 * hClamped, 5.25588);
 }
 
 function pressureAtDepth(d) {
-  // Hypothetical sealed / poorly-ventilated chamber model for learning
-  // Mild increase with depth (not rock overburden on the water itself)
-  return 101.325 + d * 0.04; // ~ +40 kPa per 1000 m
+  // Hypothetical sealed / poorly-ventilated underground chamber for learning
+  return SEA_P + d * 0.04; // ~ +40 kPa per 1000 m depth
 }
 
 function getExternalPressure() {
-  if (state.location === 'sea') return 101.325;
-  if (state.location === 'mountain') return pressureAtAltitude(state.altitude);
-  if (state.location === 'under') return pressureAtDepth(state.depth);
-  return state.chamberP;
+  if (state.elev >= 0) return pressureAtAltitude(state.elev);
+  return pressureAtDepth(-state.elev);
+}
+
+/** Relative air-column amount vs sea level (100% at 0 m). */
+function airColumnFraction() {
+  if (state.elev >= 0) {
+    // Remaining atmosphere vs sea-level pressure
+    return getExternalPressure() / SEA_P;
+  }
+  // Underground: show denser / taller pressure column relative to sea level
+  return getExternalPressure() / SEA_P;
+}
+
+function zoneKey() {
+  if (Math.abs(state.elev) < 15) return 'sea';
+  return state.elev > 0 ? 'mountain' : 'under';
+}
+
+function formatElevLabel() {
+  const z = zoneKey();
+  if (z === 'sea') return `0 m · ${T('pos_sea')}`;
+  if (z === 'mountain') return `+${Math.round(state.elev)} m · ${T('pos_mountain')}`;
+  return `−${Math.round(-state.elev)} m · ${T('pos_under')}`;
 }
 
 // Antoine equation (water, P in mmHg, T in °C): log10(P) = A - B/(T+C)
 const ANT = { A: 8.07131, B: 1730.63, C: 233.426 };
 
 function vaporPressure_kPa(T) {
-  // Valid roughly 1–100°C; extrapolate carefully
   const Tc = Math.max(-20, Math.min(T, 374));
   const Pmm = Math.pow(10, ANT.A - ANT.B / (Tc + ANT.C));
-  return Pmm * 0.133322; // mmHg → kPa
+  return Pmm * 0.133322;
 }
 
 function boilingPoint(P_kPa) {
-  // Invert Antoine: T = B/(A - log10(Pmm)) - C
   const Pmm = Math.max(0.5, P_kPa / 0.133322);
   const logP = Math.log10(Pmm);
   if (logP >= ANT.A - 0.01) return 374;
@@ -682,6 +718,7 @@ function changeLanguage(l) {
   updateReadings();
   updateTip();
   updateHeatBtn();
+  document.getElementById('val-elev').textContent = formatElevLabel();
   if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) {
     renderQuiz();
   }
@@ -720,39 +757,31 @@ function toggleFullScreen() {
 }
 
 /* ============================================================
-   LOCATION / CONTROLS
+   ELEVATION / CONTROLS
 ============================================================ */
-function setLocation(loc) {
-  state.location = loc;
-  ['sea','mountain','under','chamber'].forEach(l => {
-    document.getElementById('loc-' + l)?.classList.toggle('active', l === loc);
-  });
-  document.getElementById('ctrl-altitude').classList.toggle('hidden', loc !== 'mountain');
-  document.getElementById('ctrl-depth').classList.toggle('hidden', loc !== 'under');
-  document.getElementById('ctrl-chamber').classList.toggle('hidden', loc !== 'chamber');
-
-  if (loc === 'sea') {
-    state.altitude = 0;
-    document.getElementById('sl-alt').value = 0;
-  } else if (loc === 'mountain') {
-    if (state.altitude < 100) state.altitude = 2500;
-    document.getElementById('sl-alt').value = state.altitude;
+function setElevation(v, fromSlider) {
+  state.elev = Math.max(ELEV_MIN, Math.min(ELEV_MAX, +v));
+  if (!fromSlider) {
+    const sl = document.getElementById('sl-elev');
+    if (sl) sl.value = state.elev;
   }
+  document.getElementById('val-elev').textContent = formatElevLabel();
+
+  // Highlight nearest preset
+  document.querySelectorAll('#preset-row .preset-btn').forEach(btn => {
+    const pe = +btn.dataset.elev;
+    const on = Math.abs(pe - state.elev) < 5;
+    btn.classList.toggle('active', on);
+  });
 
   const bp = boilingPoint(getExternalPressure());
-  if (state.waterT > bp + 5) state.waterT = bp - 5;
+  if (state.waterT > bp + 2) state.waterT = bp;
   updateTip();
-  onEnvChange();
+  updateReadings();
 }
 
-function onEnvChange() {
-  state.altitude = +document.getElementById('sl-alt').value;
-  state.depth = +document.getElementById('sl-depth').value;
-  state.chamberP = +document.getElementById('sl-chP').value;
-  document.getElementById('val-alt').textContent = state.altitude + ' m';
-  document.getElementById('val-depth').textContent = state.depth + ' m';
-  document.getElementById('val-chP').textContent = state.chamberP.toFixed(1) + ' kPa';
-  updateReadings();
+function onElevSlider() {
+  setElevation(+document.getElementById('sl-elev').value, true);
 }
 
 function onHeatChange() {
@@ -801,18 +830,22 @@ function resetExperiment() {
 }
 
 function updateTip() {
-  const map = { sea: 'tip_sea', mountain: 'tip_mountain', under: 'tip_under', chamber: 'tip_chamber' };
-  document.getElementById('tip-text').textContent = T(map[state.location]);
+  const map = { sea: 'tip_sea', mountain: 'tip_mountain', under: 'tip_under' };
+  document.getElementById('tip-text').textContent = T(map[zoneKey()]);
 }
 
 function updateReadings() {
   const P = getExternalPressure();
   const BP = boilingPoint(P);
   const VP = vaporPressure_kPa(state.waterT);
+  const frac = airColumnFraction();
   document.getElementById('read-P').textContent = P.toFixed(1) + ' kPa';
   document.getElementById('read-BP').textContent = BP.toFixed(1) + ' °C';
   document.getElementById('read-T').textContent = state.waterT.toFixed(1) + ' °C';
   document.getElementById('read-VP').textContent = VP.toFixed(1) + ' kPa';
+  document.getElementById('read-pos').textContent = formatElevLabel();
+  document.getElementById('read-aircol').textContent = Math.round(frac * 100) + '%';
+  document.getElementById('val-elev').textContent = formatElevLabel();
 
   const st = document.getElementById('read-status');
   if (isBoiling()) {
@@ -1034,187 +1067,249 @@ function draw() {
 }
 
 function drawScene() {
-  const loc = state.location;
-  // Background by location
-  if (loc === 'sea') drawSeaBG();
-  else if (loc === 'mountain') drawMountainBG();
-  else if (loc === 'under') drawUnderBG();
-  else drawChamberBG();
+  // Continuous vertical world: underground ← sea level → mountain
+  // Keep the boiling lab near mid-view; world scrolls with elevation.
+  const elev = state.elev;
+  const pxPerM = 0.045; // visual metres→pixels
+  const labScreenY = 320; // where lab sits in view coords
+  const seaY = labScreenY + elev * pxPerM; // sea-level line relative to lab
 
-  drawAirColumn();
-  drawLabTable();
-  drawBeaker();
-  drawHeater();
-  drawThermometer();
-  drawHUD();
+  drawWorldCrossSection(seaY, elev);
+  drawElevationScale(seaY, elev);
+  drawAirColumnAboveLab(labScreenY, elev);
+  drawBoilingLab(labScreenY);
+  drawHUD(labScreenY);
 }
 
-function drawSeaBG() {
-  const g = ctx.createLinearGradient(0, 0, 0, 560);
-  g.addColorStop(0, '#0ea5e9'); g.addColorStop(0.45, '#38bdf8'); g.addColorStop(0.55, '#0369a1'); g.addColorStop(1, '#0f172a');
-  ctx.fillStyle = g; ctx.fillRect(-50, -50, 1000, 660);
-  // ocean
-  ctx.fillStyle = '#0284c7';
-  ctx.beginPath(); ctx.moveTo(-50, 380);
-  for (let x = -50; x < 950; x += 20) ctx.lineTo(x, 380 + Math.sin(x * 0.02 + state.t) * 6);
-  ctx.lineTo(950, 600); ctx.lineTo(-50, 600); ctx.fill();
-  // ground
-  ctx.fillStyle = '#334155'; ctx.fillRect(-50, 420, 1000, 200);
-  // sun
-  ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(780, 90, 36, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = 'rgba(253,224,71,0.2)'; ctx.beginPath(); ctx.arc(780, 90, 60, 0, Math.PI * 2); ctx.fill();
-  labelEnv(T('canvas_sea'));
-}
+function drawWorldCrossSection(seaY, elev) {
+  // Sky / atmosphere above sea level
+  const skyTop = Math.min(seaY - 420, -80);
+  const gSky = ctx.createLinearGradient(0, skyTop, 0, seaY);
+  gSky.addColorStop(0, '#0c4a6e');
+  gSky.addColorStop(0.55, '#38bdf8');
+  gSky.addColorStop(1, '#7dd3fc');
+  ctx.fillStyle = gSky;
+  ctx.fillRect(-80, skyTop, 1060, Math.max(20, seaY - skyTop));
 
-function drawMountainBG() {
-  const g = ctx.createLinearGradient(0, 0, 0, 560);
-  g.addColorStop(0, '#1e3a5f'); g.addColorStop(0.5, '#64748b'); g.addColorStop(1, '#0f172a');
-  ctx.fillStyle = g; ctx.fillRect(-50, -50, 1000, 660);
-
-  // distant peaks
-  ctx.fillStyle = '#334155';
-  ctx.beginPath(); ctx.moveTo(-50, 420); ctx.lineTo(120, 180); ctx.lineTo(280, 400); ctx.lineTo(420, 120); ctx.lineTo(580, 380); ctx.lineTo(720, 90); ctx.lineTo(900, 400); ctx.lineTo(950, 420); ctx.fill();
-  // snow caps
-  ctx.fillStyle = '#e2e8f0';
-  ctx.beginPath(); ctx.moveTo(680, 140); ctx.lineTo(720, 90); ctx.lineTo(760, 145); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(390, 170); ctx.lineTo(420, 120); ctx.lineTo(450, 175); ctx.closePath(); ctx.fill();
-  // ground
-  ctx.fillStyle = '#1e293b'; ctx.fillRect(-50, 420, 1000, 200);
-  // clouds
-  ctx.fillStyle = 'rgba(255,255,255,0.25)';
-  roundedCloud(150, 80, 90); roundedCloud(500, 50, 110);
-  labelEnv(T('canvas_mountain') + ' · ' + state.altitude + ' m');
-}
-
-function drawUnderBG() {
-  const g = ctx.createLinearGradient(0, 0, 0, 560);
-  g.addColorStop(0, '#1c1917'); g.addColorStop(0.3, '#44403c'); g.addColorStop(1, '#0c0a09');
-  ctx.fillStyle = g; ctx.fillRect(-50, -50, 1000, 660);
-  // strata
-  const layers = ['#78716c','#57534e','#44403c','#292524','#1c1917'];
-  layers.forEach((c, i) => {
-    ctx.fillStyle = c;
-    ctx.fillRect(-50, 40 + i * 70, 1000, 72);
-    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.strokeRect(-50, 40 + i * 70, 1000, 72);
-  });
-  // chamber cutout
-  ctx.fillStyle = '#0f172a';
-  roundRect(180, 200, 540, 280, 16); ctx.fill();
-  ctx.strokeStyle = 'rgba(0,243,255,0.35)'; ctx.lineWidth = 2; roundRect(180, 200, 540, 280, 16); ctx.stroke();
-  // rock pattern
-  ctx.fillStyle = 'rgba(168,162,158,0.15)';
-  for (let i = 0; i < 18; i++) {
-    ctx.beginPath(); ctx.arc(60 + (i % 6) * 140, 80 + Math.floor(i / 6) * 90, 12 + (i % 3) * 6, 0, Math.PI * 2); ctx.fill();
+  // Sun / clouds when above or near surface
+  if (elev > -800) {
+    ctx.fillStyle = '#fde047';
+    ctx.beginPath(); ctx.arc(780, seaY - 280 - elev * 0.02, 32, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    roundedCloud(160, seaY - 200, 100);
+    roundedCloud(520, seaY - 260, 120);
   }
-  labelEnv(T('canvas_under') + ' · −' + state.depth + ' m');
-}
 
-function drawChamberBG() {
-  const g = ctx.createLinearGradient(0, 0, 0, 560);
-  g.addColorStop(0, '#0f172a'); g.addColorStop(1, '#1e293b');
-  ctx.fillStyle = g; ctx.fillRect(-50, -50, 1000, 660);
-  // chamber walls
-  ctx.strokeStyle = 'rgba(0,243,255,0.4)'; ctx.lineWidth = 4;
-  roundRect(80, 40, 740, 480, 24); ctx.stroke();
-  ctx.fillStyle = 'rgba(0,243,255,0.04)'; roundRect(80, 40, 740, 480, 24); ctx.fill();
-  // rivets
-  ctx.fillStyle = '#64748b';
-  [[100,60],[780,60],[100,480],[780,480]].forEach(([x,y]) => { ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill(); });
-  labelEnv(T('canvas_chamber') + ' · ' + getExternalPressure().toFixed(1) + ' kPa');
-}
-
-function roundedCloud(x, y, w) {
+  // Mountain silhouette above sea level (right side of world)
+  ctx.fillStyle = '#475569';
   ctx.beginPath();
-  ctx.arc(x, y, w * 0.35, 0, Math.PI * 2);
-  ctx.arc(x + w * 0.35, y - 10, w * 0.4, 0, Math.PI * 2);
-  ctx.arc(x + w * 0.7, y, w * 0.32, 0, Math.PI * 2);
-  ctx.fill();
-}
+  ctx.moveTo(500, seaY);
+  ctx.lineTo(580, seaY - 140);
+  ctx.lineTo(660, seaY - 40);
+  ctx.lineTo(740, seaY - 260);
+  ctx.lineTo(820, seaY - 80);
+  ctx.lineTo(900, seaY - 320);
+  ctx.lineTo(980, seaY);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.beginPath(); ctx.moveTo(870, seaY - 250); ctx.lineTo(900, seaY - 320); ctx.lineTo(930, seaY - 245); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(710, seaY - 200); ctx.lineTo(740, seaY - 260); ctx.lineTo(770, seaY - 195); ctx.closePath(); ctx.fill();
 
-function labelEnv(txt) {
+  // Ocean band at sea level
+  ctx.fillStyle = '#0284c7';
+  ctx.beginPath();
+  ctx.moveTo(-80, seaY);
+  for (let x = -80; x < 520; x += 18) {
+    ctx.lineTo(x, seaY + Math.sin(x * 0.03 + state.t) * 4);
+  }
+  ctx.lineTo(520, seaY + 28);
+  ctx.lineTo(-80, seaY + 28);
+  ctx.closePath(); ctx.fill();
+
+  // Ground / coastal strip
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(-80, seaY + 18, 1060, 36);
+
+  // Underground strata below sea level
+  const strata = ['#78716c', '#57534e', '#44403c', '#292524', '#1c1917', '#0c0a09'];
+  strata.forEach((c, i) => {
+    ctx.fillStyle = c;
+    ctx.fillRect(-80, seaY + 54 + i * 70, 1060, 72);
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.strokeRect(-80, seaY + 54 + i * 70, 1060, 72);
+  });
+
+  // Underground chamber outline when below sea level
+  if (elev < -50) {
+    const cy = labScreenYAnchor();
+    ctx.fillStyle = 'rgba(15,23,42,0.85)';
+    roundRect(250, cy - 150, 420, 280, 18); ctx.fill();
+    ctx.strokeStyle = 'rgba(249,115,22,0.45)'; ctx.lineWidth = 2;
+    roundRect(250, cy - 150, 420, 280, 18); ctx.stroke();
+  }
+
+  // SEA LEVEL marker line across scene
   ctx.save();
-  ctx.font = "700 18px Oxanium, sans-serif";
-  ctx.fillStyle = 'rgba(0,243,255,0.9)';
+  ctx.setLineDash([10, 8]);
+  ctx.strokeStyle = 'rgba(248,250,252,0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(120, seaY); ctx.lineTo(900, seaY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = "800 14px Oxanium, sans-serif";
   ctx.textAlign = 'left';
-  ctx.fillText(txt, 30, 36);
+  ctx.fillText(T('canvas_sea') + '  0 m', 130, seaY - 8);
   ctx.restore();
 }
 
-function drawAirColumn() {
-  const P = getExternalPressure();
-  const maxH = 160;
-  const h = Math.max(20, Math.min(maxH, (P / 101.325) * maxH));
-  const x = 70, y = 200;
-  // column body
-  const layers = Math.max(3, Math.round(h / 18));
-  for (let i = 0; i < layers; i++) {
-    const a = 0.12 + (i / layers) * 0.35;
-    ctx.fillStyle = `rgba(125,211,252,${a})`;
-    ctx.fillRect(x, y + maxH - h + i * (h / layers), 70, h / layers - 1);
-  }
-  ctx.strokeStyle = 'rgba(0,243,255,0.5)'; ctx.lineWidth = 1.5;
-  ctx.strokeRect(x, y + maxH - h, 70, h);
-  // arrows
-  ctx.fillStyle = 'rgba(0,243,255,0.7)';
-  for (let i = 0; i < 3; i++) {
-    const ay = y + maxH + 8 + i * 14;
-    ctx.beginPath(); ctx.moveTo(x + 35, ay + 10); ctx.lineTo(x + 25, ay); ctx.lineTo(x + 45, ay); ctx.fill();
-  }
-  ctx.font = "600 12px Oxanium, sans-serif";
-  ctx.fillStyle = '#7dd3fc';
-  ctx.textAlign = 'center';
-  ctx.fillText(T('canvas_air'), x + 35, y + maxH - h - 10);
-  ctx.fillText(P.toFixed(1) + ' kPa', x + 35, y + maxH + 55);
-}
+function labScreenYAnchor() { return 320; }
 
-function drawLabTable() {
-  ctx.fillStyle = '#1e293b';
-  roundRect(220, 430, 460, 28, 4); ctx.fill();
-  ctx.fillStyle = '#0f172a';
-  ctx.fillRect(250, 458, 24, 70); ctx.fillRect(620, 458, 24, 70);
-}
+function drawElevationScale(seaY, elev) {
+  const x = 28, top = 40, bot = 520;
+  ctx.fillStyle = 'rgba(15,23,42,0.7)';
+  roundRect(x - 8, top - 10, 86, bot - top + 30, 10); ctx.fill();
 
-function drawBeaker() {
-  const bx = 380, by = 250, bw = 120, bh = 170;
-  // glass
-  ctx.strokeStyle = 'rgba(186,230,253,0.7)'; ctx.lineWidth = 3;
-  ctx.fillStyle = 'rgba(148,163,184,0.08)';
+  ctx.strokeStyle = 'rgba(148,163,184,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + 18, top); ctx.lineTo(x + 18, bot); ctx.stroke();
+
+  // Tick marks in metres relative to current view
+  const pxPerM = 0.045;
+  const ticks = [-4000, -2000, -1000, 0, 1000, 2500, 4000, 5000];
+  ticks.forEach(m => {
+    const y = seaY - m * pxPerM;
+    if (y < top || y > bot) return;
+    ctx.strokeStyle = m === 0 ? '#f8fafc' : 'rgba(148,163,184,0.55)';
+    ctx.lineWidth = m === 0 ? 2.5 : 1;
+    ctx.beginPath(); ctx.moveTo(x + 10, y); ctx.lineTo(x + 28, y); ctx.stroke();
+    ctx.fillStyle = m === 0 ? '#f8fafc' : '#94a3b8';
+    ctx.font = (m === 0 ? '700 11px' : '600 10px') + ' Oxanium, sans-serif';
+    ctx.textAlign = 'left';
+    const label = m === 0 ? '0' : (m > 0 ? '+' + m : String(m));
+    ctx.fillText(label, x + 32, y + 3);
+  });
+
+  // You-are-here marker at lab height
+  const labY = labScreenYAnchor();
+  ctx.fillStyle = state.elev >= 0 ? '#00f3ff' : '#fb923c';
   ctx.beginPath();
-  ctx.moveTo(bx, by); ctx.lineTo(bx, by + bh); ctx.quadraticCurveTo(bx + bw / 2, by + bh + 10, bx + bw, by + bh);
+  ctx.moveTo(x + 4, labY);
+  ctx.lineTo(x + 16, labY - 7);
+  ctx.lineTo(x + 16, labY + 7);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = "700 11px Oxanium, sans-serif";
+  ctx.textAlign = 'center';
+  ctx.fillText(Math.round(elev) + ' m', x + 34, bot + 16);
+}
+
+function drawAirColumnAboveLab(labY, elev) {
+  const frac = airColumnFraction();
+  const refH = 170; // normal air column height at sea level
+  const h = Math.max(28, Math.min(260, refH * frac));
+  const x = 150, w = 64;
+  const top = labY - 40 - h;
+
+  // Reference ghost column at sea-level size
+  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+  ctx.setLineDash([4, 4]);
+  ctx.strokeRect(x - 2, labY - 40 - refH, w + 4, refH);
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(148,163,184,0.45)';
+  ctx.font = "600 10px Oxanium, sans-serif";
+  ctx.textAlign = 'left';
+  ctx.fillText('100%', x + w + 8, labY - 40 - refH + 10);
+
+  // Actual air column
+  const layers = Math.max(3, Math.round(h / 16));
+  for (let i = 0; i < layers; i++) {
+    const a = 0.1 + (i / layers) * (elev < 0 ? 0.55 : 0.4);
+    const col = elev < 0
+      ? `rgba(251,146,60,${a})`
+      : `rgba(125,211,252,${a})`;
+    ctx.fillStyle = col;
+    ctx.fillRect(x, top + i * (h / layers), w, h / layers - 1);
+  }
+  ctx.strokeStyle = elev < 0 ? 'rgba(249,115,22,0.7)' : 'rgba(0,243,255,0.65)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x, top, w, h);
+
+  // Downward pressure arrows
+  ctx.fillStyle = elev < 0 ? 'rgba(251,146,60,0.8)' : 'rgba(0,243,255,0.8)';
+  for (let i = 0; i < 3; i++) {
+    const ay = labY - 28 + i * 12;
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, ay + 8);
+    ctx.lineTo(x + w / 2 - 8, ay);
+    ctx.lineTo(x + w / 2 + 8, ay);
+    ctx.fill();
+  }
+
+  ctx.font = "700 12px Oxanium, sans-serif";
+  ctx.fillStyle = elev < 0 ? '#fb923c' : '#7dd3fc';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('canvas_air'), x + w / 2, top - 18);
+  ctx.font = "600 11px Oxanium, sans-serif";
+  ctx.fillText(Math.round(frac * 100) + '% · ' + getExternalPressure().toFixed(1) + ' kPa', x + w / 2, top - 4);
+}
+
+function drawBoilingLab(labY) {
+  const tableY = labY + 110;
+  // platform
+  ctx.fillStyle = '#1e293b';
+  roundRect(300, tableY, 340, 22, 4); ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(330, tableY + 22, 18, 40);
+  ctx.fillRect(590, tableY + 22, 18, 40);
+
+  // label
+  ctx.font = "800 13px Oxanium, sans-serif";
+  ctx.fillStyle = '#00f3ff';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('canvas_lab'), 470, labY - 55);
+
+  drawBeakerAt(410, labY - 70);
+  drawHeaterAt(430, tableY - 14);
+  drawThermometerAt(560, labY - 90);
+}
+
+function drawBeakerAt(bx, by) {
+  const bw = 120, bh = 170;
+  ctx.strokeStyle = 'rgba(186,230,253,0.7)'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(bx, by); ctx.lineTo(bx, by + bh);
+  ctx.quadraticCurveTo(bx + bw / 2, by + bh + 10, bx + bw, by + bh);
   ctx.lineTo(bx + bw, by); ctx.stroke();
-  // water
+
   const fill = 0.72;
   const wy = by + bh * (1 - fill);
   const waterG = ctx.createLinearGradient(bx, wy, bx, by + bh);
   const hot = Math.min(1, (state.waterT - 25) / 80);
   waterG.addColorStop(0, `rgba(${56 + hot * 100},${189 - hot * 80},${248 - hot * 100},0.55)`);
-  waterG.addColorStop(1, `rgba(14,165,233,0.75)`);
+  waterG.addColorStop(1, 'rgba(14,165,233,0.75)');
   ctx.fillStyle = waterG;
   ctx.beginPath();
   ctx.moveTo(bx + 4, wy);
   ctx.lineTo(bx + 4, by + bh - 4);
   ctx.quadraticCurveTo(bx + bw / 2, by + bh + 4, bx + bw - 4, by + bh - 4);
   ctx.lineTo(bx + bw - 4, wy);
-  // surface wave
   for (let i = 0; i <= 10; i++) {
     const sx = bx + 4 + (bw - 8) * (i / 10);
     const sy = wy + Math.sin(state.t * 3 + i) * (isBoiling() ? 3 : 1);
-    if (i === 0) ctx.lineTo(sx, sy); else ctx.lineTo(sx, sy);
+    ctx.lineTo(sx, sy);
   }
   ctx.closePath(); ctx.fill();
 
-  // bubbles
   state.bubbles.forEach(b => {
     const px = bx + b.x * bw;
     const py = by + b.y * bh;
-    ctx.beginPath();
-    ctx.arc(px, py, b.r, 0, Math.PI * 2);
+    ctx.beginPath(); ctx.arc(px, py, b.r, 0, Math.PI * 2);
     ctx.strokeStyle = `rgba(255,255,255,${b.life * 0.8})`;
     ctx.lineWidth = 1.5; ctx.stroke();
     ctx.fillStyle = `rgba(186,230,253,${b.life * 0.25})`; ctx.fill();
   });
 
-  // steam when boiling
   if (isBoiling()) {
     for (let i = 0; i < 5; i++) {
       const sx = bx + 20 + i * 20 + Math.sin(state.t * 2 + i) * 6;
@@ -1222,23 +1317,27 @@ function drawBeaker() {
       ctx.fillStyle = `rgba(226,232,240,${0.15 + 0.1 * Math.sin(state.t + i)})`;
       ctx.beginPath(); ctx.ellipse(sx, sy, 10, 16, 0, 0, Math.PI * 2); ctx.fill();
     }
+    ctx.fillStyle = '#f97316';
+    ctx.font = "800 15px Oxanium, sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('● ' + (cur === 'ur' ? 'کھول رہا ہے' : 'BOILING'), bx + bw / 2, by - 28);
   }
 
-  ctx.font = "600 13px Oxanium, sans-serif";
+  ctx.font = "600 12px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8';
   ctx.textAlign = 'center';
-  ctx.fillText(T('canvas_beaker'), bx + bw / 2, by + bh + 22);
+  ctx.fillText(T('canvas_beaker'), bx + bw / 2, by + bh + 18);
 }
 
-function drawHeater() {
-  const hx = 400, hy = 415, hw = 80, hh = 18;
+function drawHeaterAt(hx, hy) {
+  const hw = 80, hh = 18;
   ctx.fillStyle = '#334155';
   roundRect(hx, hy, hw, hh, 4); ctx.fill();
   if (state.heating && state.heatPower > 0) {
     const glow = 0.4 + 0.3 * Math.sin(state.t * 8);
     ctx.fillStyle = `rgba(249,115,22,${glow})`;
     roundRect(hx + 6, hy + 4, hw - 12, hh - 8, 3); ctx.fill();
-    ctx.shadowColor = '#f97316'; ctx.shadowBlur = 20;
+    ctx.shadowColor = '#f97316'; ctx.shadowBlur = 18;
     ctx.fillStyle = '#fb923c';
     roundRect(hx + 16, hy + 6, hw - 32, hh - 12, 2); ctx.fill();
     ctx.shadowBlur = 0;
@@ -1249,40 +1348,38 @@ function drawHeater() {
   ctx.font = "600 11px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8';
   ctx.textAlign = 'center';
-  ctx.fillText(T('canvas_heater'), hx + hw / 2, hy + hh + 14);
+  ctx.fillText(T('canvas_heater'), hx + hw / 2, hy + hh + 12);
 }
 
-function drawThermometer() {
-  const tx = 530, ty = 230;
+function drawThermometerAt(tx, ty) {
   ctx.fillStyle = '#e2e8f0';
-  roundRect(tx, ty, 14, 160, 7); ctx.fill();
-  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; roundRect(tx, ty, 14, 160, 7); ctx.stroke();
-  // bulb
-  ctx.beginPath(); ctx.arc(tx + 7, ty + 168, 12, 0, Math.PI * 2);
+  roundRect(tx, ty, 14, 150, 7); ctx.fill();
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; roundRect(tx, ty, 14, 150, 7); ctx.stroke();
+  ctx.beginPath(); ctx.arc(tx + 7, ty + 158, 11, 0, Math.PI * 2);
   const hot = Math.min(1, (state.waterT - 20) / 100);
   ctx.fillStyle = `rgb(${220},${40 + (1 - hot) * 80},${40})`;
   ctx.fill();
-  // mercury column
-  const frac = Math.min(1, Math.max(0, (state.waterT - 0) / 120));
-  const mh = frac * 140;
+  const frac = Math.min(1, Math.max(0, state.waterT / 120));
+  const mh = frac * 130;
   ctx.fillStyle = `rgb(${220},${40 + (1 - hot) * 80},${40})`;
-  ctx.fillRect(tx + 4, ty + 155 - mh, 6, mh);
+  ctx.fillRect(tx + 4, ty + 145 - mh, 6, mh);
 
-  ctx.font = "700 14px Oxanium, sans-serif";
+  ctx.font = "700 13px Oxanium, sans-serif";
   ctx.fillStyle = '#00f3ff';
   ctx.textAlign = 'left';
-  ctx.fillText(state.waterT.toFixed(1) + ' ' + T('canvas_thermo'), tx + 24, ty + 20);
-  ctx.font = "600 12px Oxanium, sans-serif";
+  ctx.fillText(state.waterT.toFixed(1) + ' ' + T('canvas_thermo'), tx + 22, ty + 18);
+  ctx.font = "600 11px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8';
-  ctx.fillText('BP ' + boilingPoint(getExternalPressure()).toFixed(1) + ' °C', tx + 24, ty + 40);
+  ctx.fillText('BP ' + boilingPoint(getExternalPressure()).toFixed(1) + ' °C', tx + 22, ty + 36);
 }
 
 function drawHUD() {
   const P = getExternalPressure();
-  const BP = boilingPoint(P);
   const VP = vaporPressure_kPa(state.waterT);
-  // comparison bar
-  const x = 620, y = 300, w = 200, h = 14;
+  const x = 640, y = 70, w = 200, h = 14;
+  ctx.fillStyle = 'rgba(15,23,42,0.72)';
+  roundRect(x - 12, y - 28, 230, 78, 12); ctx.fill();
+
   ctx.font = "600 12px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8'; ctx.textAlign = 'left';
   ctx.fillText('P_vap  vs  P_ext', x, y - 10);
@@ -1298,13 +1395,14 @@ function drawHUD() {
   ctx.fillText('VP ' + VP.toFixed(1), x, y + 30);
   ctx.fillStyle = '#fb923c';
   ctx.fillText('P ' + P.toFixed(1), x + 90, y + 30);
+}
 
-  if (isBoiling()) {
-    ctx.fillStyle = '#f97316';
-    ctx.font = "800 16px Oxanium, sans-serif";
-    ctx.textAlign = 'center';
-    ctx.fillText('● ' + (cur === 'ur' ? 'کھول رہا ہے' : 'BOILING'), 450, 210);
-  }
+function roundedCloud(x, y, w) {
+  ctx.beginPath();
+  ctx.arc(x, y, w * 0.35, 0, Math.PI * 2);
+  ctx.arc(x + w * 0.35, y - 10, w * 0.4, 0, Math.PI * 2);
+  ctx.arc(x + w * 0.7, y, w * 0.32, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function roundRect(x, y, w, h, r) {
@@ -1451,7 +1549,7 @@ function boot() {
   canvas = document.getElementById('sim-canvas');
   ctx = canvas.getContext('2d');
   changeLanguage(cur);
-  setLocation('sea');
+  setElevation(0);
   resizeCanvases();
   setupInteraction();
   window.addEventListener('resize', resizeCanvases);
