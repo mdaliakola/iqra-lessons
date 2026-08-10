@@ -1448,29 +1448,45 @@ function drawApparatus() {
 
   // Yellow collision dots where canal rays strike the screen
   impactDots.forEach(d => {
-    const a = Math.max(0, d.life);
+    const a = Math.max(0, Math.min(1, d.life));
     if (a <= 0) return;
     ctx.save();
-    // Outer glow
-    ctx.shadowColor = '#facc15';
-    ctx.shadowBlur = 16 * a;
-    ctx.fillStyle = `rgba(250, 204, 21, ${0.35 * a})`;
+    // Outer yellow bloom
+    ctx.shadowColor = '#fde047';
+    ctx.shadowBlur = 22 * a;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.55 * a})`;
     ctx.beginPath();
-    ctx.arc(screenX + 1, d.y, 9 + 4 * (1 - a), 0, Math.PI * 2);
+    ctx.arc(screenX + 1, d.y, 12 + 3 * (1 - a), 0, Math.PI * 2);
     ctx.fill();
-    // Bright yellow core
-    ctx.shadowBlur = 8 * a;
-    ctx.fillStyle = `rgba(253, 224, 71, ${0.95 * a})`;
+    // Solid bright yellow disc
+    ctx.shadowBlur = 12 * a;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.95 * a})`;
     ctx.beginPath();
-    ctx.arc(screenX + 1, d.y, 4.5, 0, Math.PI * 2);
+    ctx.arc(screenX + 1, d.y, 6.5, 0, Math.PI * 2);
     ctx.fill();
-    // Hot white center
-    ctx.fillStyle = `rgba(255, 255, 255, ${0.85 * a})`;
+    // Hot white-yellow center
+    ctx.fillStyle = `rgba(254, 249, 195, ${0.95 * a})`;
     ctx.beginPath();
-    ctx.arc(screenX + 1, d.y, 1.8, 0, Math.PI * 2);
+    ctx.arc(screenX + 1, d.y, 2.8, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   });
+
+  // Persistent bright yellow hit marker at latest impact
+  if (sg > 0.08) {
+    ctx.save();
+    ctx.shadowColor = '#facc15';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(screenX + 1, lastDefl, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fef9c3';
+    ctx.beginPath();
+    ctx.arc(screenX + 1, lastDefl, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
 
   if (state.labels) labelText(screenX, tubeY - 18, t.lbl_screen, '#86efac');
 
