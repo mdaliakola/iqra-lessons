@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Anode Ray / Canal Ray</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Outfit', 'sans-serif'],
+        urdu: ['Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'serif'],
+      },
+      colors: {
+        lab: { 950: '#020617', 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+        neon: { cyan: '#00f3ff', pink: '#ff2d95', amber: '#fbbf24', green: '#22c55e' }
+      }
+    }
+  }
+}
+</script>
+
+<style>
+/* ========== BASE DESIGN SYSTEM (DO NOT REPLACE) ========== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glow-cyan { box-shadow: 0 0 20px rgba(0, 243, 255, 0.35); }
+.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+.glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.35); }
+
+canvas { touch-action: none; }
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+  width: 100%;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=range]::-moz-range-thumb {
+  height: 20px; width: 20px; border-radius: 50%;
+  background: #00f3ff; cursor: pointer; border: none;
+  box-shadow: 0 0 10px #00f3ff;
+}
+/* ========== END BASE CSS ========== */
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: #020617;
+  font-family: 'Outfit', sans-serif;
+  overflow: hidden;
+  color: #e2e8f0;
+}
+
+body.urdu-mode {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif;
+  font-size: 1.05em;
+}
+
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: radial-gradient(ellipse at center, #0f172a 0%, #020617 70%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#intro-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.intro-brand {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 900; letter-spacing: 0.12em;
+  background: linear-gradient(135deg, #fff 0%, #00f3ff 50%, #67e8f9 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(0, 243, 255, 0.5);
+  animation: introZoom 5s ease forwards;
+}
+.intro-topic {
+  margin-top: 1.2rem;
+  font-size: clamp(1.1rem, 3vw, 1.8rem);
+  color: #67e8f9; font-weight: 600; letter-spacing: 0.08em;
+  opacity: 0; animation: introFade 5s ease forwards;
+}
+.intro-ring {
+  position: absolute; width: 280px; height: 280px; border-radius: 50%;
+  border: 2px solid rgba(0, 243, 255, 0.2);
+  box-shadow: 0 0 60px rgba(0, 243, 255, 0.25), inset 0 0 40px rgba(0, 243, 255, 0.08);
+  animation: introPulse 2s ease-in-out infinite;
+}
+@keyframes introZoom {
+  0% { transform: scale(0.6); opacity: 0; filter: blur(12px); }
+  25% { transform: scale(1.05); opacity: 1; filter: blur(0); }
+  80% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.08); opacity: 0.85; }
+}
+@keyframes introFade {
+  0%, 15% { opacity: 0; transform: translateY(20px); }
+  35% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+@keyframes introPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+#app { display: none; height: 100vh; flex-direction: column; }
+#app.show { display: flex; }
+
+.tab-btn.active {
+  background: rgba(0, 243, 255, 0.15);
+  color: #00f3ff;
+  border-color: rgba(0, 243, 255, 0.4);
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.2);
+}
+
+#sim-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(0, 80, 100, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(40, 20, 80, 0.2) 0%, transparent 45%),
+    linear-gradient(160deg, #0a1224 0%, #020617 50%, #0c1528 100%);
+}
+
+#simCanvas {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+
+#fabricLayer, .canvas-container {
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 100% !important; height: 100% !important;
+  z-index: 10 !important;
+  pointer-events: none;
+}
+.canvas-container canvas { position: absolute !important; }
+
+.panel-scroll { overflow-y: auto; max-height: 100%; }
+
+.toggle-switch {
+  position: relative; width: 52px; height: 28px;
+  background: #334155; border-radius: 14px; cursor: pointer;
+  transition: background 0.25s;
+  border: 1px solid #475569;
+}
+.toggle-switch.on { background: rgba(0, 243, 255, 0.35); border-color: #00f3ff; }
+.toggle-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #94a3b8; transition: all 0.25s;
+}
+.toggle-switch.on::after {
+  left: 27px; background: #00f3ff;
+  box-shadow: 0 0 10px #00f3ff;
+}
+
+.float-ctrl {
+  position: absolute; bottom: 16px; left: 16px; z-index: 20;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.float-ctrl.minimized .float-body { display: none; }
+.float-ctrl.minimized { width: auto; }
+
+.discovery-item.done { color: #22c55e; }
+.discovery-item.done i { color: #22c55e; }
+
+.quiz-opt {
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.quiz-opt:hover:not(.locked) { border-color: #00f3ff; background: rgba(0,243,255,0.08); }
+.quiz-opt.correct { border-color: #22c55e !important; background: rgba(34,197,94,0.2) !important; }
+.quiz-opt.wrong { border-color: #ef4444 !important; background: rgba(239,68,68,0.2) !important; }
+.quiz-opt.locked { pointer-events: none; }
+
+.obs-card { animation: fadeInUp 0.35s ease; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gas-btn.active {
+  border-color: #00f3ff; color: #00f3ff;
+  background: rgba(0,243,255,0.12);
+  box-shadow: 0 0 12px rgba(0,243,255,0.25);
+}
+
+@media (max-width: 1024px) {
+  #side-panel { width: 100% !important; max-height: 42vh; }
+  #main-workspace { flex-direction: column !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== INTRO ANIMATION ========== -->
+<div id="intro-overlay">
+  <div class="intro-ring"></div>
+  <div class="relative z-10 text-center px-6">
+    <div class="mb-6">
+      <i class="fa-solid fa-atom text-cyan-400 text-5xl md:text-6xl" style="filter: drop-shadow(0 0 20px #00f3ff); animation: introPulse 1.5s ease-in-out infinite;"></i>
+    </div>
+    <h1 class="intro-brand">IQRA VIRTUAL LAB</h1>
+    <p class="intro-topic" id="intro-topic-text">ANODE RAY / CANAL RAY</p>
+    <div class="mt-10 flex items-center justify-center gap-3 text-slate-400">
+      <i class="fa-solid fa-spinner fa-spin text-cyan-400"></i>
+      <span class="text-sm tracking-widest uppercase" id="intro-loading">Initializing Virtual Laboratory...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAIN APP ========== -->
+<div id="app">
+
+  <!-- TOP HEADER -->
+  <header class="glass-panel border-b border-slate-700/50 px-3 md:px-5 py-2.5 flex items-center justify-between gap-3 shrink-0 z-30">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 glow-cyan">
+        <i class="fa-solid fa-flask-vial text-cyan-400 text-lg"></i>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-lg md:text-xl font-black tracking-tight text-white truncate">
+          IQRA <span class="text-cyan-400 font-light">VIRTUAL LAB</span>
+        </h1>
+        <p class="text-[10px] md:text-xs text-slate-400 uppercase tracking-widest truncate" data-i18n="subtitle">Anode Ray / Canal Ray · NCERT Class 11</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav class="px-3 md:px-5 py-2 flex gap-2 shrink-0 bg-slate-950/80 border-b border-slate-800">
+    <button onclick="switchTab('sim')" id="tab-sim" class="tab-btn active px-4 py-2 rounded-xl border border-slate-700 text-sm font-semibold flex items-center gap-2 transition">
+      <i class="fa-solid fa-house"></i> <span data-i18n="tab_sim">Simulation</span>
+    </button>
+    <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 py-2 rounded-xl border border-slate-700 text-slate-400 text-sm font-semibold flex items-center gap-2 transition hover:text-white">
+      <i class="fa-solid fa-clipboard-question"></i> <span data-i18n="tab_quiz">Quiz</span>
+    </button>
+  </nav>
+
+  <!-- ========== SIMULATION TAB ========== -->
+  <div id="view-sim" class="flex-1 min-h-0 flex flex-col">
+    <div id="main-workspace" class="flex-1 min-h-0 flex">
+
+      <!-- SIMULATION VIEWPORT -->
+      <div class="flex-1 min-w-0 flex flex-col relative">
+        <div id="sim-viewport">
+          <canvas id="simCanvas"></canvas>
+          <canvas id="fabricLayer"></canvas>
+
+          <!-- Zoom Controls -->
+          <div class="absolute top-3 right-3 z-20 flex flex-col gap-1.5">
+            <button onclick="zoomBy(1.2)" class="w-10 h-10 rounded-lg glass-card text-cyan-400 hover:bg-slate-700 transition flex items-center justify-center" title="+"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="zoomBy(1/1.2)" class="w-10 h-10 rounded-lg glass-card text-cyan-400 hover:bg-slate-700 transition flex items-center justify-center" title="−"><i class="fa-solid fa-minus"></i></button>
+            <button onclick="resetView()" class="w-10 h-10 rounded-lg glass-card text-amber-400 hover:bg-slate-700 transition flex items-center justify-center" title="Reset"><i class="fa-solid fa-compress"></i></button>
+          </div>
+
+          <!-- Floating Annotation Controls Card (minimizable) -->
+          <div id="float-anno" class="float-ctrl glass-panel rounded-2xl glow-cyan">
+            <div class="flex items-center justify-between px-3 py-2 border-b border-slate-700/50 cursor-move" id="float-anno-head">
+              <span class="text-xs font-bold text-cyan-400 tracking-wide" data-i18n="anno_title"><i class="fa-solid fa-pen-ruler mr-1"></i> Annotate</span>
+              <button onclick="toggleFloatAnno()" class="w-7 h-7 rounded-lg hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Minimize">
+                <i class="fa-solid fa-minus" id="float-anno-icon"></i>
+              </button>
+            </div>
+            <div class="float-body px-3 py-2.5 flex items-center gap-2">
+              <input type="color" id="float-anno-color" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value; changeAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0 rounded">
+              <button onclick="if(!isAnnoActive) toggleAnnotationMode(); setAnnoMode('pen')" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-600 text-cyan-400 hover:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="if(!isAnnoActive) toggleAnnotationMode(); setAnnoMode('eraser')" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-eraser"></i></button>
+              <button onclick="clearAnnotations()" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-600 text-red-400 hover:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+
+          <!-- Live readout -->
+          <div class="absolute top-3 left-3 z-20 glass-card rounded-xl px-3 py-2 text-xs space-y-0.5 pointer-events-none">
+            <div><span class="text-slate-400" data-i18n="read_ion">Ion:</span> <span id="read-ion" class="text-cyan-300 font-bold">H⁺</span></div>
+            <div><span class="text-slate-400" data-i18n="read_speed">Speed:</span> <span id="read-speed" class="text-amber-300 font-mono">—</span></div>
+            <div><span class="text-slate-400" data-i18n="read_defl">Deflection:</span> <span id="read-defl" class="text-pink-300 font-mono">0 px</span></div>
+          </div>
+        </div>
+
+        <!-- Observation strip -->
+        <div id="obs-panel" class="shrink-0 glass-panel border-t border-slate-700/50 px-4 py-2.5 min-h-[72px]">
+          <div class="flex flex-wrap gap-4 items-start">
+            <div class="flex-1 min-w-[180px]">
+              <p class="text-[10px] uppercase tracking-widest text-cyan-400 font-bold mb-0.5" data-i18n="obs_label">Observation</p>
+              <p id="obs-text" class="text-sm text-slate-200" data-i18n="obs_default">Turn ON power to begin the experiment.</p>
+            </div>
+            <div class="flex-1 min-w-[180px]">
+              <p class="text-[10px] uppercase tracking-widest text-amber-400 font-bold mb-0.5" data-i18n="exp_label">Explanation</p>
+              <p id="exp-text" class="text-sm text-slate-300" data-i18n="exp_default">Canal rays form when positive ions pass through holes in the perforated cathode.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE CONTROLS -->
+      <aside id="side-panel" class="w-[320px] shrink-0 glass-panel border-l border-slate-700/50 flex flex-col">
+        <div class="panel-scroll p-3 space-y-3">
+
+          <!-- Power -->
+          <div class="glass-card rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-bold text-white" data-i18n="ctrl_power"><i class="fa-solid fa-bolt text-amber-400 mr-1.5"></i>High Voltage</span>
+              <div id="power-toggle" class="toggle-switch" onclick="togglePower()"></div>
+            </div>
+            <label class="text-xs text-slate-400 flex justify-between mb-1">
+              <span data-i18n="ctrl_voltage">Voltage</span>
+              <span id="voltage-val" class="text-cyan-400 font-mono">2500 V</span>
+            </label>
+            <input type="range" id="voltage" min="500" max="5000" step="100" value="2500" oninput="updateVoltage(this.value)">
+          </div>
+
+          <!-- Gas -->
+          <div class="glass-card rounded-2xl p-3">
+            <p class="text-sm font-bold text-white mb-2" data-i18n="ctrl_gas"><i class="fa-solid fa-wind text-cyan-400 mr-1.5"></i>Gas in Tube</p>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button onclick="setGas('H')" class="gas-btn active px-2 py-2 rounded-xl border border-slate-600 text-xs font-bold transition" data-gas="H">H₂ → H⁺</button>
+              <button onclick="setGas('He')" class="gas-btn px-2 py-2 rounded-xl border border-slate-600 text-xs font-bold transition text-slate-300" data-gas="He">He → He⁺</button>
+              <button onclick="setGas('Ne')" class="gas-btn px-2 py-2 rounded-xl border border-slate-600 text-xs font-bold transition text-slate-300" data-gas="Ne">Ne → Ne⁺</button>
+              <button onclick="setGas('Ar')" class="gas-btn px-2 py-2 rounded-xl border border-slate-600 text-xs font-bold transition text-slate-300" data-gas="Ar">Ar → Ar⁺</button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 leading-relaxed" id="gas-hint" data-i18n="gas_hint">Different gases produce different positive ions.</p>
+          </div>
+
+          <!-- Pressure -->
+          <div class="glass-card rounded-2xl p-3">
+            <label class="text-xs text-slate-400 flex justify-between mb-1">
+              <span data-i18n="ctrl_pressure">Gas Pressure</span>
+              <span id="pressure-val" class="text-cyan-400 font-mono">Low</span>
+            </label>
+            <input type="range" id="pressure" min="1" max="100" value="25" oninput="updatePressure(this.value)">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span data-i18n="press_low">Low (clear beam)</span>
+              <span data-i18n="press_high">High (collisions)</span>
+            </div>
+          </div>
+
+          <!-- Electric Field -->
+          <div class="glass-card rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-white" data-i18n="ctrl_efield"><i class="fa-solid fa-arrows-up-down text-pink-400 mr-1.5"></i>Electric Field</span>
+              <div id="efield-toggle" class="toggle-switch" onclick="toggleEField()"></div>
+            </div>
+            <label class="text-xs text-slate-400 flex justify-between mb-1">
+              <span data-i18n="ctrl_estrength">Strength</span>
+              <span id="estrength-val" class="text-pink-400 font-mono">50%</span>
+            </label>
+            <input type="range" id="estrength" min="0" max="100" value="50" oninput="updateEStrength(this.value)">
+            <div class="flex gap-1.5 mt-2">
+              <button onclick="setEDir(1)" id="edir-up" class="flex-1 py-1.5 rounded-lg border border-cyan-500/40 text-cyan-400 text-xs font-bold bg-cyan-500/10" data-i18n="dir_up">↑ Up (+ top)</button>
+              <button onclick="setEDir(-1)" id="edir-down" class="flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold" data-i18n="dir_down">↓ Down (+ bot)</button>
+            </div>
+            <button onclick="reverseEField()" class="w-full mt-2 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-pink-400 hover:text-pink-300 transition" data-i18n="btn_rev_e">Reverse E Field</button>
+          </div>
+
+          <!-- Magnetic Field -->
+          <div class="glass-card rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-white" data-i18n="ctrl_bfield"><i class="fa-solid fa-magnet text-violet-400 mr-1.5"></i>Magnetic Field</span>
+              <div id="bfield-toggle" class="toggle-switch" onclick="toggleBField()"></div>
+            </div>
+            <label class="text-xs text-slate-400 flex justify-between mb-1">
+              <span data-i18n="ctrl_bstrength">Strength</span>
+              <span id="bstrength-val" class="text-violet-400 font-mono">40%</span>
+            </label>
+            <input type="range" id="bstrength" min="0" max="100" value="40" oninput="updateBStrength(this.value)">
+            <div class="flex gap-1.5 mt-2">
+              <button onclick="setBDir(1)" id="bdir-in" class="flex-1 py-1.5 rounded-lg border border-violet-500/40 text-violet-300 text-xs font-bold bg-violet-500/10" data-i18n="dir_into">× Into</button>
+              <button onclick="setBDir(-1)" id="bdir-out" class="flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold" data-i18n="dir_out">• Out</button>
+            </div>
+            <button onclick="reverseBField()" class="w-full mt-2 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-violet-400 hover:text-violet-300 transition" data-i18n="btn_rev_b">Reverse B Field</button>
+          </div>
+
+          <!-- View options -->
+          <div class="glass-card rounded-2xl p-3 space-y-2">
+            <p class="text-sm font-bold text-white mb-1" data-i18n="ctrl_view"><i class="fa-solid fa-eye text-emerald-400 mr-1.5"></i>View</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-300" data-i18n="opt_labels">Labels</span>
+              <div id="labels-toggle" class="toggle-switch on" onclick="toggleLabels()"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-300" data-i18n="opt_canals">Show Canals</span>
+              <div id="canals-toggle" class="toggle-switch" onclick="toggleCanals()"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-300" data-i18n="opt_compare">Compare Cathode Rays</span>
+              <div id="compare-toggle" class="toggle-switch" onclick="toggleCompare()"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-300" data-i18n="opt_cutaway">Cutaway View</span>
+              <div id="cutaway-toggle" class="toggle-switch on" onclick="toggleCutaway()"></div>
+            </div>
+          </div>
+
+          <!-- Discovery checklist -->
+          <div class="glass-card rounded-2xl p-3">
+            <p class="text-sm font-bold text-white mb-2" data-i18n="discoveries"><i class="fa-solid fa-list-check text-green-400 mr-1.5"></i>Discoveries</p>
+            <ul id="discovery-list" class="space-y-1.5 text-xs text-slate-400"></ul>
+          </div>
+
+          <!-- Why canal rays -->
+          <div class="glass-card rounded-2xl p-3 border border-cyan-500/20">
+            <p class="text-xs font-bold text-cyan-400 mb-1" data-i18n="why_title">Why “Canal Rays”?</p>
+            <p class="text-[11px] text-slate-300 leading-relaxed" data-i18n="why_text">Positive ions pass through holes (“canals”) in the perforated cathode — hence the name canal rays (also called anode rays / positive rays).</p>
+          </div>
+
+          <button onclick="resetExperiment()" class="w-full py-2.5 rounded-xl border border-slate-600 text-sm font-semibold text-slate-200 hover:border-cyan-400 hover:text-cyan-300 transition">
+            <i class="fa-solid fa-rotate-left mr-1"></i> <span data-i18n="btn_reset">Reset Experiment</span>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ========== QUIZ TAB ========== -->
+  <div id="view-quiz" class="hidden flex-1 min-h-0 overflow-y-auto p-4 md:p-8">
+    <div class="max-w-2xl mx-auto">
+      <div class="glass-panel rounded-3xl p-5 md:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl md:text-2xl font-black text-white" data-i18n="quiz_title">Concept Quiz</h2>
+          <span id="quiz-progress" class="text-sm text-cyan-400 font-bold" dir="ltr">1 / 5</span>
+        </div>
+        <div id="quiz-body"></div>
+        <div id="quiz-result" class="hidden text-center py-6">
+          <div class="text-5xl mb-3 text-cyan-400"><i class="fa-solid fa-trophy"></i></div>
+          <h3 class="text-2xl font-black text-white mb-2" data-i18n="quiz_final">Final Score</h3>
+          <p id="quiz-score-text" class="text-4xl font-black text-cyan-400 mb-1"></p>
+          <p id="quiz-pct-text" class="text-lg text-slate-300 mb-6"></p>
+          <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-500/30 transition glow-cyan">
+            <i class="fa-solid fa-rotate-right mr-2"></i><span data-i18n="quiz_restart">Restart Quiz</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   IQRA VIRTUAL LAB — Anode Ray / Canal Ray
+   ========================================================= */
+
+const LANG = {
+  en: {
+    subtitle: "Anode Ray / Canal Ray · NCERT Class 11",
+    intro_topic: "ANODE RAY / CANAL RAY",
+    intro_loading: "Initializing Virtual Laboratory...",
+    tab_sim: "Simulation",
+    tab_quiz: "Quiz",
+    anno_title: "Annotate",
+    read_ion: "Ion:",
+    read_speed: "Speed:",
+    read_defl: "Deflection:",
+    obs_label: "Observation",
+    exp_label: "Explanation",
+    obs_default: "Turn ON power to begin the experiment.",
+    exp_default: "Canal rays form when positive ions pass through holes in the perforated cathode.",
+    ctrl_power: "High Voltage",
+    ctrl_voltage: "Voltage",
+    ctrl_gas: "Gas in Tube",
+    gas_hint: "Different gases produce different positive ions.",
+    ctrl_pressure: "Gas Pressure",
+    press_low: "Low (clear beam)",
+    press_high: "High (collisions)",
+    ctrl_efield: "Electric Field",
+    ctrl_estrength: "Strength",
+    dir_up: "↑ Up (+ top)",
+    dir_down: "↓ Down (+ bot)",
+    btn_rev_e: "Reverse E Field",
+    ctrl_bfield: "Magnetic Field",
+    ctrl_bstrength: "Strength",
+    dir_into: "× Into",
+    dir_out: "• Out",
+    btn_rev_b: "Reverse B Field",
+    ctrl_view: "View",
+    opt_labels: "Labels",
+    opt_canals: "Show Canals",
+    opt_compare: "Compare Cathode Rays",
+    opt_cutaway: "Cutaway View",
+    discoveries: "Discoveries",
+    why_title: "Why “Canal Rays”?",
+    why_text: "Positive ions pass through holes (“canals”) in the perforated cathode — hence the name canal rays (also called anode rays / positive rays).",
+    btn_reset: "Reset Experiment",
+    quiz_title: "Concept Quiz",
+    quiz_final: "Final Score",
+    quiz_restart: "Restart Quiz",
+    quiz_next: "Next Question",
+    quiz_see: "See Results",
+    press_low_lbl: "Low",
+    press_med_lbl: "Medium",
+    press_high_lbl: "High",
+    disc: [
+      "Gas becomes ionized",
+      "Positive ions are produced",
+      "Ions move toward negative cathode",
+      "Ions pass through cathode holes",
+      "Canal-ray beam appears",
+      "Beam produces fluorescence",
+      "Beam is positively charged",
+      "Different gases → different ions"
+    ],
+    obs_power: "Discharge begins. Electrons ionize gas atoms; positive ions form.",
+    exp_power: "Ionization: atom → positive ion + e⁻. Positive ions accelerate toward the perforated cathode (−).",
+    obs_canal: "A beam of positive ions emerges behind the perforated cathode and hits the fluorescent screen.",
+    exp_canal: "Ions that pass through the canals form canal rays (anode rays / positive rays).",
+    obs_e: "The canal-ray beam bends toward the negative plate.",
+    exp_e: "For q > 0, F = qE points with the field — opposite to electron deflection.",
+    obs_b: "The canal-ray beam curves under the magnetic force.",
+    exp_b: "Lorentz force F = q(v × B) acts on positive ions; curvature depends on mass.",
+    obs_gas: "Ion identity changed with the gas. Heavier ions deflect less.",
+    exp_gas: "Canal rays are gas-dependent positive ions — unlike cathode rays (always electrons).",
+    obs_press: "At higher pressure the beam becomes fuzzier due to more collisions.",
+    exp_press: "Lower pressure → longer mean free path → clearer canal-ray beam.",
+    lbl_anode: "ANODE (+)",
+    lbl_cathode: "PERFORATED CATHODE (−)",
+    lbl_screen: "FLUORESCENT SCREEN",
+    lbl_hv: "HIGH VOLTAGE",
+    lbl_canal: "CANAL RAYS",
+    lbl_gas: "LOW-PRESSURE GAS",
+    lbl_holes: "CANALS (HOLES)",
+    lbl_eplus: "E (+) plate",
+    lbl_eminus: "E (−) plate",
+    lbl_compare_cr: "Cathode Rays (e⁻)",
+    lbl_compare_ar: "Canal Rays (+)",
+    quiz: [
+      {
+        q: "Why are they called canal rays?",
+        opts: [
+          "They pass through holes (canals) in the perforated cathode",
+          "They travel through the glass wall",
+          "They come from the vacuum pump",
+          "They are ordinary light beams"
+        ],
+        ans: 0,
+        why: "Goldstein observed rays emerging through canals (perforations) in the cathode."
+      },
+      {
+        q: "What particles make up canal rays?",
+        opts: [
+          "Electrons only",
+          "Positively charged ions of the gas",
+          "Neutral gas atoms",
+          "Photons from fluorescence"
+        ],
+        ans: 1,
+        why: "Canal rays are streams of positive ions formed from the gas in the discharge tube."
+      },
+      {
+        q: "How do canal rays differ from cathode rays regarding the gas?",
+        opts: [
+          "Both are identical for every gas",
+          "Cathode rays depend on gas; canal rays do not",
+          "Canal-ray identity/mass depends on the gas; cathode rays are always electrons",
+          "Neither depends on gas"
+        ],
+        ans: 2,
+        why: "H₂ gives H⁺, He gives He⁺, etc. Cathode rays are electrons regardless of gas."
+      },
+      {
+        q: "In an electric field, canal rays bend toward which plate?",
+        opts: [
+          "The positive plate",
+          "The negative plate",
+          "Neither — they are neutral",
+          "Both plates equally"
+        ],
+        ans: 1,
+        why: "Positive charge means F = qE is in the field direction — toward the negative plate."
+      },
+      {
+        q: "Misconception check: Do anode rays come directly from the anode metal?",
+        opts: [
+          "Yes — they are emitted by the anode",
+          "No — they are positive ions of the gas that pass through the perforated cathode",
+          "Yes — anode melts and emits ions",
+          "They are electrons leaving the anode"
+        ],
+        ans: 1,
+        why: "Positive ions form from ionized gas and travel toward (and through) the cathode."
+      }
+    ]
+  },
+  ur: {
+    subtitle: "اینوڈ رے / کینال رے · این سی ای آر ٹی جماعت گیارہویں",
+    intro_topic: "اینوڈ رے / کینال رے",
+    intro_loading: "ورچوئل لیبارٹری شروع ہو رہی ہے...",
+    tab_sim: "تخلیقِ تجربہ",
+    tab_quiz: "امتحان",
+    anno_title: "اشارہ نگاری",
+    read_ion: "آئن:",
+    read_speed: "رفتار:",
+    read_defl: "انحراف:",
+    obs_label: "مشاہدہ",
+    exp_label: "وضاحت",
+    obs_default: "تجربہ شروع کرنے کے لیے پاور آن کریں۔",
+    exp_default: "مثبت آئن جب چھید والے کیتھوڈ کے سوراخوں سے گزرتے ہیں تو کینال رے بنتی ہیں۔",
+    ctrl_power: "ہائی وولٹیج",
+    ctrl_voltage: "وولٹیج",
+    ctrl_gas: "نلی میں گیس",
+    gas_hint: "مختلف گیسیں مختلف مثبت آئن پیدا کرتی ہیں۔",
+    ctrl_pressure: "گیس کا دباؤ",
+    press_low: "کم (صاف بیم)",
+    press_high: "زیادہ (ٹکراؤ)",
+    ctrl_efield: "برقی میدان",
+    ctrl_estrength: "شدت",
+    dir_up: "↑ اوپر (+ اوپر)",
+    dir_down: "↓ نیچے (+ نیچے)",
+    btn_rev_e: "برقی میدان الٹیں",
+    ctrl_bfield: "مقناطیسی میدان",
+    ctrl_bstrength: "شدت",
+    dir_into: "× اندر کی طرف",
+    dir_out: "• باہر کی طرف",
+    btn_rev_b: "مقناطیسی میدان الٹیں",
+    ctrl_view: "منظر",
+    opt_labels: "لیبلز",
+    opt_canals: "کینالز دکھائیں",
+    opt_compare: "کیتھوڈ ریز سے موازنہ",
+    opt_cutaway: "کٹ اوے منظر",
+    discoveries: "دریافتیں",
+    why_title: "کینال رے کیوں؟",
+    why_text: "مثبت آئن چھید والے کیتھوڈ کے سوراخوں (کینالز) سے گزرتے ہیں — اسی لیے انہیں کینال رے (اینوڈ رے / مثبت رے) کہتے ہیں۔",
+    btn_reset: "تجربہ دوبارہ شروع کریں",
+    quiz_title: "تصوری امتحان",
+    quiz_final: "حتمی نتیجہ",
+    quiz_restart: "امتحان دوبارہ شروع کریں",
+    quiz_next: "اگلا سوال",
+    quiz_see: "نتائج دیکھیں",
+    press_low_lbl: "کم",
+    press_med_lbl: "درمیانہ",
+    press_high_lbl: "زیادہ",
+    disc: [
+      "گیس آئنائز ہوتی ہے",
+      "مثبت آئن بنتے ہیں",
+      "آئن منفی کیتھوڈ کی طرف جاتے ہیں",
+      "آئن کیتھوڈ کے سوراخوں سے گزرتے ہیں",
+      "کینال رے بیم نظر آتی ہے",
+      "بیم فلوروسینس پیدا کرتی ہے",
+      "بیم مثبت چارج رکھتی ہے",
+      "مختلف گیس → مختلف آئن"
+    ],
+    obs_power: "ڈسچارج شروع۔ الیکٹران گیس ایٹموں کو آئنائز کرتے ہیں؛ مثبت آئن بنتے ہیں۔",
+    exp_power: "آئنائزیشن: ایٹم → مثبت آئن + e⁻۔ مثبت آئن چھید والے کیتھوڈ (−) کی طرف تیز ہوتے ہیں۔",
+    obs_canal: "مثبت آئنوں کی بیم کیتھوڈ کے پیچھے نکلتی ہے اور فلوروسینٹ اسکرین سے ٹکراتی ہے۔",
+    exp_canal: "جو آئن کینالز سے گزرتے ہیں وہ کینال رے (اینوڈ رے) بناتے ہیں۔",
+    obs_e: "کینال رے بیم منفی پلیٹ کی طرف جھکتی ہے۔",
+    exp_e: "q > 0 کے لیے F = qE میدان کی سمت میں ہے — الیکٹران کے انحراف کے الٹ۔",
+    obs_b: "مقناطیسی قوت کے تحت کینال رے بیم مڑتی ہے۔",
+    exp_b: "لورینٹز قوت F = q(v × B) مثبت آئنوں پر عمل کرتی ہے؛ خم کمیت پر منحصر ہے۔",
+    obs_gas: "آئن کی شناخت گیس کے ساتھ بدل گئی۔ بھاری آئن کم انحراف کرتے ہیں۔",
+    exp_gas: "کینال رے گیس پر منحصر مثبت آئن ہیں — کیتھوڈ ریز (ہمیشہ الیکٹران) کے برعکس۔",
+    obs_press: "زیادہ دباؤ پر زیادہ ٹکراؤ کی وجہ سے بیم دھندلی ہو جاتی ہے۔",
+    exp_press: "کم دباؤ → زیادہ آزاد راستہ → صاف کینال رے بیم۔",
+    lbl_anode: "اینوڈ (+)",
+    lbl_cathode: "چھید والا کیتھوڈ (−)",
+    lbl_screen: "فلوروسینٹ اسکرین",
+    lbl_hv: "ہائی وولٹیج",
+    lbl_canal: "کینال رے",
+    lbl_gas: "کم دباؤ والی گیس",
+    lbl_holes: "کینالز (سوراخ)",
+    lbl_eplus: "E (+) پلیٹ",
+    lbl_eminus: "E (−) پلیٹ",
+    lbl_compare_cr: "کیتھوڈ ریز (e⁻)",
+    lbl_compare_ar: "کینال رے (+)",
+    quiz: [
+      {
+        q: "انہیں کینال رے کیوں کہا جاتا ہے؟",
+        opts: [
+          "وہ چھید والے کیتھوڈ کے سوراخوں (کینالز) سے گزرتی ہیں",
+          "وہ شیشے کی دیوار سے گزرتی ہیں",
+          "وہ ویکیوم پمپ سے آتی ہیں",
+          "وہ عام روشنی کی بیم ہیں"
+        ],
+        ans: 0,
+        why: "گولڈسٹائن نے کیتھوڈ کے کینالز سے نکلتی ہوئی ریز کا مشاہدہ کیا۔"
+      },
+      {
+        q: "کینال رے کن ذرات پر مشتمل ہوتی ہیں؟",
+        opts: [
+          "صرف الیکٹران",
+          "گیس کے مثبت چارج والے آئن",
+          "غیر جانبدار گیس ایٹم",
+          "فلوروسینس کے فوٹان"
+        ],
+        ans: 1,
+        why: "کینال رے ڈسچارج نلی میں گیس سے بننے والے مثبت آئنوں کے بہاؤ ہیں۔"
+      },
+      {
+        q: "گیس کے حوالے سے کینال رے کیتھوڈ ریز سے کیسے مختلف ہیں؟",
+        opts: [
+          "دونوں ہر گیس کے لیے ایک جیسی ہیں",
+          "کیتھوڈ ریز گیس پر منحصر؛ کینال رے نہیں",
+          "کینال رے کی شناخت/کمیت گیس پر منحصر؛ کیتھوڈ ریز ہمیشہ الیکٹران",
+          "کوئی بھی گیس پر منحصر نہیں"
+        ],
+        ans: 2,
+        why: "H₂ سے H⁺، He سے He⁺ وغیرہ۔ کیتھوڈ ریز گیس سے قطع نظر الیکٹران ہیں۔"
+      },
+      {
+        q: "برقی میدان میں کینال رے کس پلیٹ کی طرف جھکتی ہیں؟",
+        opts: [
+          "مثبت پلیٹ",
+          "منفی پلیٹ",
+          "کسی کی طرف نہیں — وہ غیر جانبدار ہیں",
+          "دونوں پلیٹوں کی طرف برابر"
+        ],
+        ans: 1,
+        why: "مثبت چارج کی وجہ سے F = qE میدان کی سمت میں ہے — منفی پلیٹ کی طرف۔"
+      },
+      {
+        q: "غلط فہمی: کیا اینوڈ رے براہِ راست اینوڈ دھات سے آتی ہیں؟",
+        opts: [
+          "ہاں — اینوڈ سے خارج ہوتی ہیں",
+          "نہیں — یہ گیس کے مثبت آئن ہیں جو چھید والے کیتھوڈ سے گزرتے ہیں",
+          "ہاں — اینوڈ پگھل کر آئن خارج کرتا ہے",
+          "یہ اینوڈ سے نکلتے الیکٹران ہیں"
+        ],
+        ans: 1,
+        why: "مثبت آئن آئنائزڈ گیس سے بنتے ہیں اور کیتھوڈ کی طرف (اور اس کے سوراخوں سے) جاتے ہیں۔"
+      }
+    ]
+  }
+};
+
+let currentLang = localStorage.getItem('iqra_lang') || 'en';
+let t = LANG[currentLang];
+
+/* ---------- State ---------- */
+const state = {
+  power: false,
+  voltage: 2500,
+  pressure: 25,
+  gas: 'H',
+  eOn: false,
+  eStr: 50,
+  eDir: 1,
+  bOn: false,
+  bStr: 40,
+  bDir: 1,
+  labels: true,
+  canals: false,
+  compare: false,
+  cutaway: true,
+  discovered: [false, false, false, false, false, false, false, false]
+};
+
+const GASES = {
+  H:  { ion: 'H⁺',  mass: 1,  color: '#67e8f9', glow: '#22d3ee' },
+  He: { ion: 'He⁺', mass: 4,  color: '#fbbf24', glow: '#f59e0b' },
+  Ne: { ion: 'Ne⁺', mass: 20, color: '#fb7185', glow: '#f43f5e' },
+  Ar: { ion: 'Ar⁺', mass: 40, color: '#a78bfa', glow: '#8b5cf6' }
+};
+
+/* ---------- Canvas / View ---------- */
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0;
+let view = { scale: 1, panX: 0, panY: 0 };
+let isPanning = false, panStart = { x: 0, y: 0 }, panOrigin = { x: 0, y: 0 };
+let particles = [];
+let electrons = [];
+let gasDots = [];
+let screenGlow = 0;
+let lastDefl = 0;
+let impactDots = []; // yellow collision spots on fluorescent screen
+let animId = null;
+let lastTs = 0;
+
+/* Apparatus layout in world coords (centered) */
+const APP = {
+  tubeX: -380, tubeY: -70, tubeW: 760, tubeH: 140,
+  anodeX: -300,
+  cathodeX: 80,
+  screenX: 300,
+  holeYs: [-36, -12, 12, 36]
+};
+
+/* ---------- Annotation (EXACT logic) ---------- */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas('fabricLayer', {
+    isDrawingMode: false,
+    width: w,
+    height: h
+  });
+  fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+  fCanvas.freeDrawingBrush.width = 4;
+
+  fCanvas.on('mouse:down', function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+      fCanvas.remove(options.target);
+    }
+  });
+
+  const fabricContainer = document.querySelector('.canvas-container');
+  if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+}
+
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById('btn-anno-toggle');
+  const toolbar = document.getElementById('anno-toolbar');
+  const fabricContainer = document.querySelector('.canvas-container');
+
+  if (isAnnoActive) {
+    btn.classList.replace('text-slate-400', 'text-cyan-400');
+    toolbar.classList.remove('max-w-0', 'opacity-0');
+    toolbar.classList.add('max-w-xs', 'opacity-100');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+    setAnnoMode('pen');
+  } else {
+    btn.classList.replace('text-cyan-400', 'text-slate-400');
+    toolbar.classList.remove('max-w-xs', 'opacity-100');
+    toolbar.classList.add('max-w-0', 'opacity-0');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function setAnnoMode(mode) {
+  document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+  document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+
+  if (mode === 'pen') {
+    document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+  if (fCanvas) fCanvas.clear();
+}
+
+function toggleFloatAnno() {
+  const el = document.getElementById('float-anno');
+  const icon = document.getElementById('float-anno-icon');
+  el.classList.toggle('minimized');
+  if (el.classList.contains('minimized')) {
+    icon.className = 'fa-solid fa-expand';
+  } else {
+    icon.className = 'fa-solid fa-minus';
+  }
+}
+
+/* ---------- i18n ---------- */
+function changeLanguage(lang) {
+  if (!LANG[lang]) return;
+  currentLang = lang;
+  t = LANG[lang];
+  localStorage.setItem('iqra_lang', lang);
+  document.getElementById('lang-select').value = lang;
+
+  const root = document.documentElement;
+  const body = document.body;
+  if (lang === 'ur') {
+    root.setAttribute('dir', 'rtl');
+    body.classList.add('urdu-mode');
+    body.setAttribute('dir', 'rtl');
+  } else {
+    root.setAttribute('dir', 'ltr');
+    body.classList.remove('urdu-mode');
+    body.setAttribute('dir', 'ltr');
+  }
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] === undefined) return;
+    const icon = el.querySelector(':scope > i');
+    if (icon) {
+      el.innerHTML = icon.outerHTML + ' ' + t[key];
+    } else {
+      el.textContent = t[key];
+    }
+  });
+
+  renderDiscoveries();
+  updateObservation();
+  updatePressureLabel();
+  document.getElementById('read-ion').textContent = GASES[state.gas].ion;
+  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) {
+    renderQuiz();
+  }
+}
+
+function applyI18n() {
+  changeLanguage(currentLang);
+}
+
+/* ---------- Tabs ---------- */
+function switchTab(tab) {
+  document.getElementById('view-sim').classList.toggle('hidden', tab !== 'sim');
+  document.getElementById('view-quiz').classList.toggle('hidden', tab !== 'quiz');
+  document.getElementById('view-sim').classList.toggle('flex', tab === 'sim');
+  document.getElementById('tab-sim').classList.toggle('active', tab === 'sim');
+  document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
+  if (tab === 'quiz') renderQuiz();
+  if (tab === 'sim') resizeCanvas();
+}
+
+/* ---------- Fullscreen ---------- */
+function toggleFullScreen() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    el.requestFullscreen?.() || el.webkitRequestFullscreen?.();
+    document.getElementById('fs-icon').className = 'fa-solid fa-compress';
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+    document.getElementById('fs-icon').className = 'fa-solid fa-expand';
+  }
+}
+
+/* ---------- Controls ---------- */
+function togglePower() {
+  state.power = !state.power;
+  document.getElementById('power-toggle').classList.toggle('on', state.power);
+  if (state.power) {
+    markDiscovery(0); markDiscovery(1);
+    spawnBurst();
+  } else {
+    particles = []; electrons = [];
+    screenGlow = 0;
+    impactDots = [];
+  }
+  updateObservation();
+}
+
+function updateVoltage(v) {
+  state.voltage = +v;
+  document.getElementById('voltage-val').textContent = v + ' V';
+  updateObservation();
+}
+
+function setGas(g) {
+  state.gas = g;
+  document.querySelectorAll('.gas-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-gas') === g);
+  });
+  document.getElementById('read-ion').textContent = GASES[g].ion;
+  markDiscovery(7);
+  updateObservation();
+}
+
+function updatePressure(v) {
+  state.pressure = +v;
+  updatePressureLabel();
+  initGasDots();
+  updateObservation();
+}
+
+function updatePressureLabel() {
+  const v = state.pressure;
+  let lbl = t.press_med_lbl;
+  if (v < 35) lbl = t.press_low_lbl;
+  else if (v > 70) lbl = t.press_high_lbl;
+  document.getElementById('pressure-val').textContent = lbl;
+}
+
+function toggleEField() {
+  state.eOn = !state.eOn;
+  document.getElementById('efield-toggle').classList.toggle('on', state.eOn);
+  if (state.eOn) markDiscovery(6);
+  updateObservation();
+}
+
+function updateEStrength(v) {
+  state.eStr = +v;
+  document.getElementById('estrength-val').textContent = v + '%';
+}
+
+function setEDir(d) {
+  state.eDir = d;
+  document.getElementById('edir-up').className = d === 1
+    ? 'flex-1 py-1.5 rounded-lg border border-cyan-500/40 text-cyan-400 text-xs font-bold bg-cyan-500/10'
+    : 'flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold';
+  document.getElementById('edir-down').className = d === -1
+    ? 'flex-1 py-1.5 rounded-lg border border-cyan-500/40 text-cyan-400 text-xs font-bold bg-cyan-500/10'
+    : 'flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold';
+}
+
+function reverseEField() { setEDir(state.eDir * -1); }
+
+function toggleBField() {
+  state.bOn = !state.bOn;
+  document.getElementById('bfield-toggle').classList.toggle('on', state.bOn);
+  if (state.bOn) markDiscovery(6);
+  updateObservation();
+}
+
+function updateBStrength(v) {
+  state.bStr = +v;
+  document.getElementById('bstrength-val').textContent = v + '%';
+}
+
+function setBDir(d) {
+  state.bDir = d;
+  document.getElementById('bdir-in').className = d === 1
+    ? 'flex-1 py-1.5 rounded-lg border border-violet-500/40 text-violet-300 text-xs font-bold bg-violet-500/10'
+    : 'flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold';
+  document.getElementById('bdir-out').className = d === -1
+    ? 'flex-1 py-1.5 rounded-lg border border-violet-500/40 text-violet-300 text-xs font-bold bg-violet-500/10'
+    : 'flex-1 py-1.5 rounded-lg border border-slate-600 text-slate-400 text-xs font-bold';
+}
+
+function reverseBField() { setBDir(state.bDir * -1); }
+
+function toggleLabels() {
+  state.labels = !state.labels;
+  document.getElementById('labels-toggle').classList.toggle('on', state.labels);
+}
+function toggleCanals() {
+  state.canals = !state.canals;
+  document.getElementById('canals-toggle').classList.toggle('on', state.canals);
+  if (state.canals) markDiscovery(3);
+}
+function toggleCompare() {
+  state.compare = !state.compare;
+  document.getElementById('compare-toggle').classList.toggle('on', state.compare);
+}
+function toggleCutaway() {
+  state.cutaway = !state.cutaway;
+  document.getElementById('cutaway-toggle').classList.toggle('on', state.cutaway);
+}
+
+function resetExperiment() {
+  state.power = false;
+  state.voltage = 2500;
+  state.pressure = 25;
+  state.gas = 'H';
+  state.eOn = false; state.eStr = 50; state.eDir = 1;
+  state.bOn = false; state.bStr = 40; state.bDir = 1;
+  particles = []; electrons = [];
+  screenGlow = 0;
+  impactDots = [];
+  document.getElementById('power-toggle').classList.remove('on');
+  document.getElementById('efield-toggle').classList.remove('on');
+  document.getElementById('bfield-toggle').classList.remove('on');
+  document.getElementById('voltage').value = 2500;
+  document.getElementById('voltage-val').textContent = '2500 V';
+  document.getElementById('pressure').value = 25;
+  document.getElementById('estrength').value = 50;
+  document.getElementById('estrength-val').textContent = '50%';
+  document.getElementById('bstrength').value = 40;
+  document.getElementById('bstrength-val').textContent = '40%';
+  setGas('H');
+  setEDir(1); setBDir(1);
+  updatePressureLabel();
+  initGasDots();
+  updateObservation();
+}
+
+/* ---------- Discoveries ---------- */
+function markDiscovery(i) {
+  if (!state.discovered[i]) {
+    state.discovered[i] = true;
+    renderDiscoveries();
+  }
+}
+function renderDiscoveries() {
+  const ul = document.getElementById('discovery-list');
+  ul.innerHTML = t.disc.map((d, i) => {
+    const done = state.discovered[i];
+    return `<li class="discovery-item flex items-start gap-2 ${done ? 'done' : ''}">
+      <i class="fa-solid ${done ? 'fa-circle-check' : 'fa-circle'} mt-0.5 shrink-0"></i>
+      <span>${d}</span>
+    </li>`;
+  }).join('');
+}
+
+function updateObservation() {
+  const obs = document.getElementById('obs-text');
+  const exp = document.getElementById('exp-text');
+  if (!state.power) {
+    obs.textContent = t.obs_default;
+    exp.textContent = t.exp_default;
+    return;
+  }
+  if (state.eOn) {
+    obs.textContent = t.obs_e; exp.textContent = t.exp_e;
+  } else if (state.bOn) {
+    obs.textContent = t.obs_b; exp.textContent = t.exp_b;
+  } else if (state.pressure > 70) {
+    obs.textContent = t.obs_press; exp.textContent = t.exp_press;
+  } else if (state.gas !== 'H') {
+    obs.textContent = t.obs_gas; exp.textContent = t.exp_gas;
+  } else {
+    obs.textContent = t.obs_canal; exp.textContent = t.exp_canal;
+  }
+}
+
+/* ---------- Physics helpers ---------- */
+function ionSpeed() {
+  // v ∝ sqrt(V/m) — scaled for visuals
+  const m = GASES[state.gas].mass;
+  return Math.sqrt(state.voltage / m) * 0.055;
+}
+
+function spawnBurst() {
+  for (let i = 0; i < 8; i++) spawnIon();
+}
+
+function spawnIon() {
+  const g = GASES[state.gas];
+  const y = (Math.random() - 0.5) * (APP.tubeH - 40);
+  particles.push({
+    x: APP.anodeX + 40 + Math.random() * 40,
+    y,
+    vx: ionSpeed() * (0.85 + Math.random() * 0.3),
+    vy: 0,
+    through: false,
+    canal: false,
+    life: 1,
+    mass: g.mass,
+    color: g.color,
+    label: g.ion,
+    kind: 'ion'
+  });
+}
+
+function spawnElectron() {
+  const y = (Math.random() - 0.5) * (APP.tubeH - 50);
+  electrons.push({
+    x: APP.cathodeX - 10,
+    y,
+    vx: -ionSpeed() * 2.2,
+    vy: (Math.random() - 0.5) * 0.4,
+    life: 1
+  });
+}
+
+function initGasDots() {
+  gasDots = [];
+  const n = Math.floor(8 + state.pressure * 0.55);
+  for (let i = 0; i < n; i++) {
+    gasDots.push({
+      x: APP.tubeX + 60 + Math.random() * (APP.cathodeX - APP.tubeX - 80),
+      y: (Math.random() - 0.5) * (APP.tubeH - 30),
+      r: 2 + Math.random() * 2,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+/* ---------- Zoom / Pan ---------- */
+function zoomBy(f) {
+  view.scale = Math.min(3.5, Math.max(0.4, view.scale * f));
+}
+function resetView() {
+  fitView();
+}
+function fitView() {
+  const pad = 80;
+  const worldW = APP.tubeW + 160;
+  const worldH = APP.tubeH + 220;
+  const sx = (W - pad) / worldW;
+  const sy = (H - pad) / worldH;
+  view.scale = Math.min(sx, sy, 1.4);
+  view.panX = 0;
+  view.panY = state.compare ? -20 : 10;
+}
+
+function worldToScreen(x, y) {
+  return {
+    x: W / 2 + (x + view.panX) * view.scale,
+    y: H / 2 + (y + view.panY) * view.scale
+  };
+}
+
+/* ---------- Drawing ---------- */
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // lab bench glow
+  const grd = ctx.createRadialGradient(W/2, H/2, 20, W/2, H/2, Math.max(W, H) * 0.55);
+  grd.addColorStop(0, 'rgba(0,80,100,0.12)');
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.save();
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(view.scale, view.scale);
+  ctx.translate(view.panX, view.panY);
+
+  if (state.compare) {
+    drawCompareMode();
+  } else {
+    drawApparatus();
+    drawParticles();
+  }
+
+  ctx.restore();
+}
+
+function drawTubeGlass(x, y, w, h, alpha) {
+  // outer glass
+  const r = 28;
+  ctx.beginPath();
+  roundRect(ctx, x, y, w, h, r);
+  ctx.fillStyle = `rgba(148, 210, 230, ${alpha * 0.08})`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(180, 230, 255, ${alpha * 0.55})`;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // inner highlight
+  ctx.beginPath();
+  roundRect(ctx, x + 4, y + 4, w - 8, h * 0.35, r * 0.6);
+  ctx.fillStyle = `rgba(255,255,255,${alpha * 0.04})`;
+  ctx.fill();
+}
+
+function roundRect(c, x, y, w, h, r) {
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+
+function drawApparatus() {
+  const { tubeX, tubeY, tubeW, tubeH, anodeX, cathodeX, screenX, holeYs } = APP;
+
+  // HV supply box
+  ctx.fillStyle = 'rgba(30,41,59,0.9)';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 2;
+  roundRectPath(ctx, -60, tubeY + tubeH + 50, 120, 55, 10);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = state.power ? '#22c55e' : '#64748b';
+  ctx.beginPath(); ctx.arc(0, tubeY + tubeH + 70, 8, 0, Math.PI * 2); ctx.fill();
+  if (state.power) {
+    ctx.shadowColor = '#22c55e'; ctx.shadowBlur = 12;
+    ctx.fill(); ctx.shadowBlur = 0;
+  }
+  if (state.labels) {
+    labelText(0, tubeY + tubeH + 118, t.lbl_hv, '#94a3b8');
+  }
+
+  // wires
+  ctx.strokeStyle = state.power ? '#f87171' : '#64748b';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(-40, tubeY + tubeH + 55);
+  ctx.lineTo(-40, tubeY + tubeH + 30);
+  ctx.lineTo(anodeX, tubeY + tubeH + 30);
+  ctx.lineTo(anodeX, tubeY + tubeH);
+  ctx.stroke();
+
+  ctx.strokeStyle = state.power ? '#60a5fa' : '#64748b';
+  ctx.beginPath();
+  ctx.moveTo(40, tubeY + tubeH + 55);
+  ctx.lineTo(40, tubeY + tubeH + 30);
+  ctx.lineTo(cathodeX, tubeY + tubeH + 30);
+  ctx.lineTo(cathodeX, tubeY + tubeH);
+  ctx.stroke();
+
+  ctx.fillStyle = '#f87171';
+  ctx.font = 'bold 14px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('+', -40, tubeY + tubeH + 48);
+  ctx.fillStyle = '#60a5fa';
+  ctx.fillText('−', 40, tubeY + tubeH + 48);
+
+  // glass tube
+  drawTubeGlass(tubeX, tubeY, tubeW, tubeH, state.cutaway ? 0.85 : 1);
+
+  // gas glow when powered
+  if (state.power) {
+    const g = GASES[state.gas];
+    const glow = ctx.createLinearGradient(anodeX, 0, cathodeX, 0);
+    glow.addColorStop(0, hexAlpha(g.glow, 0.05));
+    glow.addColorStop(0.5, hexAlpha(g.glow, 0.18));
+    glow.addColorStop(1, hexAlpha(g.glow, 0.08));
+    ctx.fillStyle = glow;
+    ctx.fillRect(tubeX + 10, tubeY + 8, cathodeX - tubeX - 20, tubeH - 16);
+  }
+
+  // gas molecules
+  const time = performance.now() / 1000;
+  gasDots.forEach(d => {
+    const ox = Math.sin(time * 0.8 + d.phase) * 3;
+    const oy = Math.cos(time * 0.6 + d.phase) * 2;
+    ctx.beginPath();
+    ctx.arc(d.x + ox, d.y + oy, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = hexAlpha(GASES[state.gas].color, 0.35 + (state.power ? 0.2 : 0));
+    ctx.fill();
+  });
+
+  // Anode (+)
+  ctx.fillStyle = '#c4b5fd';
+  ctx.strokeStyle = '#a78bfa';
+  ctx.lineWidth = 2;
+  roundRectPath(ctx, anodeX - 10, tubeY + 18, 20, tubeH - 36, 4);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#f87171';
+  ctx.font = 'bold 16px Outfit';
+  ctx.textAlign = 'center';
+  ctx.fillText('+', anodeX, tubeY + tubeH / 2 + 6);
+  if (state.labels) labelText(anodeX, tubeY - 18, t.lbl_anode, '#f9a8d4');
+
+  // Perforated cathode
+  ctx.fillStyle = '#94a3b8';
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 2;
+  roundRectPath(ctx, cathodeX - 14, tubeY + 12, 28, tubeH - 24, 3);
+  ctx.fill(); ctx.stroke();
+
+  // holes / canals
+  holeYs.forEach(hy => {
+    ctx.beginPath();
+    ctx.ellipse(cathodeX, hy, state.canals ? 7 : 5, 8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = state.canals ? 'rgba(0,243,255,0.55)' : '#0f172a';
+    ctx.fill();
+    if (state.canals) {
+      ctx.strokeStyle = '#00f3ff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      // path arrows
+      ctx.strokeStyle = 'rgba(0,243,255,0.5)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cathodeX - 50, hy);
+      ctx.lineTo(cathodeX + 70, hy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  ctx.fillStyle = '#60a5fa';
+  ctx.font = 'bold 14px Outfit';
+  ctx.fillText('−', cathodeX - 28, tubeY + 28);
+  if (state.labels) {
+    labelText(cathodeX, tubeY - 18, t.lbl_cathode, '#93c5fd');
+    if (state.canals) labelText(cathodeX + 50, tubeY + tubeH + 8, t.lbl_holes, '#00f3ff');
+  }
+
+  // Fluorescent screen
+  const sg = screenGlow;
+  ctx.fillStyle = `rgba(34, 197, 94, ${0.15 + sg * 0.55})`;
+  ctx.strokeStyle = '#4ade80';
+  ctx.lineWidth = 2;
+  roundRectPath(ctx, screenX - 6, tubeY + 20, 14, tubeH - 40, 3);
+  ctx.fill(); ctx.stroke();
+
+  // Soft green fluorescence halo around recent impact
+  if (sg > 0.05) {
+    ctx.save();
+    ctx.shadowColor = '#4ade80';
+    ctx.shadowBlur = 18 * sg;
+    ctx.fillStyle = `rgba(74, 222, 128, ${0.18 * sg})`;
+    ctx.beginPath();
+    ctx.ellipse(screenX + 1, lastDefl, 10, 16 + 10 * sg, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Yellow collision dots where canal rays strike the screen
+  impactDots.forEach(d => {
+    const a = Math.max(0, Math.min(1, d.life));
+    if (a <= 0) return;
+    ctx.save();
+    // Outer yellow bloom
+    ctx.shadowColor = '#fde047';
+    ctx.shadowBlur = 22 * a;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.55 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 12 + 3 * (1 - a), 0, Math.PI * 2);
+    ctx.fill();
+    // Solid bright yellow disc
+    ctx.shadowBlur = 12 * a;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.95 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 6.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Hot white-yellow center
+    ctx.fillStyle = `rgba(254, 249, 195, ${0.95 * a})`;
+    ctx.beginPath();
+    ctx.arc(screenX + 1, d.y, 2.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Persistent bright yellow hit marker at latest impact
+  if (sg > 0.08) {
+    ctx.save();
+    ctx.shadowColor = '#facc15';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(screenX + 1, lastDefl, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fef9c3';
+    ctx.beginPath();
+    ctx.arc(screenX + 1, lastDefl, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  if (state.labels) labelText(screenX, tubeY - 18, t.lbl_screen, '#86efac');
+
+  // Electric field plates
+  if (state.eOn) {
+    const topY = tubeY - 8;
+    const botY = tubeY + tubeH + 8;
+    const px0 = cathodeX + 40;
+    const px1 = screenX - 30;
+    ctx.fillStyle = state.eDir > 0 ? 'rgba(248,113,113,0.35)' : 'rgba(96,165,250,0.35)';
+    roundRectPath(ctx, px0, topY - 10, px1 - px0, 12, 3); ctx.fill();
+    ctx.fillStyle = state.eDir > 0 ? 'rgba(96,165,250,0.35)' : 'rgba(248,113,113,0.35)';
+    roundRectPath(ctx, px0, botY - 2, px1 - px0, 12, 3); ctx.fill();
+
+    // field lines
+    ctx.strokeStyle = 'rgba(244,114,182,0.35)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      const lx = px0 + 20 + i * ((px1 - px0 - 40) / 4);
+      ctx.beginPath();
+      ctx.moveTo(lx, topY + 4);
+      ctx.lineTo(lx, botY - 4);
+      ctx.stroke();
+      // arrow
+      const ay = state.eDir > 0 ? botY - 14 : topY + 14;
+      const ad = state.eDir > 0 ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(lx, ay);
+      ctx.lineTo(lx - 4, ay - ad * 8);
+      ctx.lineTo(lx + 4, ay - ad * 8);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(244,114,182,0.5)';
+      ctx.fill();
+    }
+    if (state.labels) {
+      labelText((px0 + px1) / 2, topY - 22, state.eDir > 0 ? t.lbl_eplus : t.lbl_eminus, '#fda4af');
+      labelText((px0 + px1) / 2, botY + 28, state.eDir > 0 ? t.lbl_eminus : t.lbl_eplus, '#93c5fd');
+    }
+  }
+
+  // Magnetic field region
+  if (state.bOn) {
+    const mx0 = cathodeX + 35;
+    const mx1 = screenX - 25;
+    ctx.fillStyle = 'rgba(139,92,246,0.08)';
+    ctx.fillRect(mx0, tubeY + 10, mx1 - mx0, tubeH - 20);
+    ctx.fillStyle = 'rgba(167,139,250,0.55)';
+    ctx.font = '14px Outfit';
+    ctx.textAlign = 'center';
+    for (let x = mx0 + 15; x < mx1; x += 28) {
+      for (let y = tubeY + 30; y < tubeY + tubeH - 20; y += 28) {
+        ctx.fillText(state.bDir > 0 ? '×' : '•', x, y);
+      }
+    }
+  }
+
+  // undeflected path reference
+  if ((state.eOn || state.bOn) && state.power) {
+    ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(cathodeX + 16, 0);
+    ctx.lineTo(screenX - 8, 0);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  if (state.labels && state.power) {
+    labelText((cathodeX + screenX) / 2, tubeY + tubeH + 28, t.lbl_canal, GASES[state.gas].color);
+  }
+  if (state.labels) {
+    labelText((anodeX + cathodeX) / 2, tubeY + tubeH / 2 + 55, t.lbl_gas, '#94a3b8');
+  }
+}
+
+function roundRectPath(c, x, y, w, h, r) {
+  c.beginPath();
+  roundRect(c, x, y, w, h, r);
+}
+
+function labelText(x, y, text, color) {
+  ctx.fillStyle = color || '#e2e8f0';
+  ctx.font = (currentLang === 'ur' ? '600 13px "Jameel Noori Nastaliq", serif' : '600 11px Outfit, sans-serif');
+  ctx.textAlign = 'center';
+  ctx.fillText(text, x, y);
+}
+
+function hexAlpha(hex, a) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function drawParticles() {
+  // electrons (faint, opposite direction)
+  electrons.forEach(e => {
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(96,165,250,0.7)';
+    ctx.fill();
+  });
+
+  particles.forEach(p => {
+    const r = 4 + Math.min(3, p.mass * 0.08);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = p.canal ? 14 : 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // + mark
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 9px Outfit';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('+', p.x, p.y + 0.5);
+    ctx.textBaseline = 'alphabetic';
+
+    if (p.canal && Math.random() > 0.7) {
+      ctx.fillStyle = hexAlpha(p.color, 0.5);
+      ctx.font = '10px Outfit';
+      ctx.fillText(p.label, p.x, p.y - 10);
+    }
+  });
+}
+
+function drawCompareMode() {
+  // two mini tubes
+  ctx.save();
+  ctx.translate(0, -90);
+  drawMiniTube(-1, false); // cathode rays
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(0, 90);
+  drawMiniTube(1, true); // canal rays
+  ctx.restore();
+
+  labelText(0, -175, t.lbl_compare_cr, '#60a5fa');
+  labelText(0, 5, t.lbl_compare_ar, GASES[state.gas].color);
+}
+
+function drawMiniTube(beamSign, isCanal) {
+  const x = -280, y = -40, w = 560, h = 80;
+  drawTubeGlass(x, y, w, h, 0.9);
+
+  // electrodes
+  ctx.fillStyle = '#c4b5fd';
+  roundRectPath(ctx, x + 40, y + 15, 14, h - 30, 3); ctx.fill();
+  ctx.fillStyle = '#94a3b8';
+  roundRectPath(ctx, x + w - 120, y + 12, 22, h - 24, 3); ctx.fill();
+
+  if (isCanal) {
+    [-18, 0, 18].forEach(hy => {
+      ctx.beginPath();
+      ctx.ellipse(x + w - 109, hy, 4, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f172a';
+      ctx.fill();
+    });
+  }
+
+  if (state.power) {
+    const col = isCanal ? GASES[state.gas].color : '#60a5fa';
+    const t0 = performance.now() / 30;
+    for (let i = 0; i < 12; i++) {
+      const px = isCanal
+        ? x + w - 100 + ((t0 * 2 + i * 18) % 160)
+        : x + w - 120 - ((t0 * 3 + i * 16) % 280);
+      const py = Math.sin(i + t0 * 0.05) * 8;
+      ctx.beginPath();
+      ctx.arc(px, py, isCanal ? 3.5 : 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+    }
+  }
+
+  ctx.fillStyle = isCanal ? '#f87171' : '#60a5fa';
+  ctx.font = 'bold 12px Outfit';
+  ctx.textAlign = 'center';
+  ctx.fillText(isCanal ? '+' : 'e⁻', x + (isCanal ? w - 50 : 80), y + h / 2 + 4);
+}
+
+/* ---------- Simulation loop ---------- */
+function update(dt) {
+  if (!state.power) {
+    screenGlow *= 0.95;
+    for (let i = impactDots.length - 1; i >= 0; i--) {
+      impactDots[i].life -= dt * 2;
+      if (impactDots[i].life <= 0) impactDots.splice(i, 1);
+    }
+    return;
+  }
+
+  // spawn rate depends on voltage & pressure
+  const spawnRate = (state.voltage / 5000) * (0.35 + state.pressure / 200);
+  if (Math.random() < spawnRate * dt * 8) spawnIon();
+  if (Math.random() < spawnRate * dt * 10) spawnElectron();
+
+  const m = GASES[state.gas].mass;
+  const eForce = state.eOn ? state.eDir * (state.eStr / 100) * (55 / m) : 0;
+  // magnetic: F = q v B → a_y proportional to vx * B / m  (into screen → up for +q moving +x with ×)
+  const bForceScale = state.bOn ? state.bDir * (state.bStr / 100) * (0.9 / m) : 0;
+
+  let hitY = 0, hits = 0;
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+
+    // before cathode: mainly +x acceleration
+    if (p.x < APP.cathodeX - 14) {
+      p.vx += (ionSpeed() - p.vx) * 0.02;
+      // slight attraction toward nearest hole
+      let nearest = APP.holeYs[0];
+      let best = Infinity;
+      APP.holeYs.forEach(hy => {
+        const d = Math.abs(p.y - hy);
+        if (d < best) { best = d; nearest = hy; }
+      });
+      p.vy += (nearest - p.y) * 0.008;
+    } else if (p.x < APP.cathodeX + 14) {
+      // in cathode region — check hole passage
+      let throughHole = false;
+      for (const hy of APP.holeYs) {
+        if (Math.abs(p.y - hy) < 10) { throughHole = true; break; }
+      }
+      if (!throughHole && !p.through) {
+        // absorbed / stopped at cathode face
+        particles.splice(i, 1);
+        markDiscovery(2);
+        continue;
+      }
+      p.through = true;
+      p.canal = true;
+      markDiscovery(2); markDiscovery(3); markDiscovery(4);
+    } else {
+      // after cathode — canal ray region with E/B fields
+      p.canal = true;
+      if (state.eOn) p.vy += eForce * dt * 60;
+      if (state.bOn) p.vy += -p.vx * bForceScale * dt * 60; // v × B
+      // pressure scattering
+      if (state.pressure > 40) {
+        p.vy += (Math.random() - 0.5) * (state.pressure / 100) * 0.8;
+      }
+    }
+
+    p.x += p.vx * dt * 60;
+    p.y += p.vy * dt * 60;
+
+    // clamp inside tube roughly
+    if (Math.abs(p.y) > APP.tubeH / 2 - 8) {
+      p.y = Math.sign(p.y) * (APP.tubeH / 2 - 8);
+      p.vy *= -0.3;
+    }
+
+    // hit screen
+    if (p.x >= APP.screenX - 8) {
+      screenGlow = Math.min(1, screenGlow + 0.25);
+      hitY += p.y;
+      hits++;
+      lastDefl = p.y;
+      // Yellow collision spot on fluorescent screen
+      impactDots.push({ y: p.y, life: 1 });
+      if (impactDots.length > 24) impactDots.shift();
+      markDiscovery(5);
+      if (state.eOn || state.bOn) markDiscovery(6);
+      particles.splice(i, 1);
+      continue;
+    }
+
+    if (p.x > APP.tubeX + APP.tubeW + 20 || p.x < APP.tubeX - 20) {
+      particles.splice(i, 1);
+    }
+  }
+
+  if (hits > 0) lastDefl = hitY / hits;
+
+  electrons.forEach((e, idx) => {
+    e.x += e.vx * dt * 60;
+    e.y += e.vy * dt * 60;
+    if (e.x < APP.anodeX - 20) electrons.splice(idx, 1);
+  });
+
+  // limit particles
+  if (particles.length > 80) particles.splice(0, particles.length - 80);
+  if (electrons.length > 40) electrons.splice(0, electrons.length - 40);
+
+  screenGlow *= 0.985;
+
+  // Fade yellow impact dots
+  for (let i = impactDots.length - 1; i >= 0; i--) {
+    impactDots[i].life -= dt * 1.6;
+    if (impactDots[i].life <= 0) impactDots.splice(i, 1);
+  }
+
+  // readout
+  document.getElementById('read-ion').textContent = GASES[state.gas].ion;
+  document.getElementById('read-speed').textContent = (ionSpeed() * 18).toFixed(1) + ' (rel)';
+  document.getElementById('read-defl').textContent = lastDefl.toFixed(1) + ' px';
+}
+
+function loop(ts) {
+  const dt = Math.min(0.033, (ts - lastTs) / 1000 || 0.016);
+  lastTs = ts;
+  update(dt);
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+/* ---------- Resize ---------- */
+function resizeCanvas() {
+  const vp = document.getElementById('sim-viewport');
+  const rect = vp.getBoundingClientRect();
+  W = Math.floor(rect.width);
+  H = Math.floor(rect.height);
+  canvas.width = W;
+  canvas.height = H;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
+  if (fCanvas) {
+    fCanvas.setWidth(W);
+    fCanvas.setHeight(H);
+    fCanvas.calcOffset();
+  } else if (typeof fabric !== 'undefined') {
+    initAnnotationCanvas(W, H);
+  }
+  fitView();
+}
+
+/* ---------- Pointer interactions (pan / zoom) ---------- */
+function setupInteractions() {
+  const vp = document.getElementById('sim-viewport');
+
+  vp.addEventListener('wheel', e => {
+    if (isAnnoActive) return;
+    e.preventDefault();
+    zoomBy(e.deltaY < 0 ? 1.1 : 1 / 1.1);
+  }, { passive: false });
+
+  vp.addEventListener('pointerdown', e => {
+    if (isAnnoActive) return;
+    if (e.target.closest('.float-ctrl') || e.target.closest('button') || e.target.closest('input')) return;
+    isPanning = true;
+    panStart = { x: e.clientX, y: e.clientY };
+    panOrigin = { x: view.panX, y: view.panY };
+    vp.setPointerCapture(e.pointerId);
+  });
+  vp.addEventListener('pointermove', e => {
+    if (!isPanning || isAnnoActive) return;
+    view.panX = panOrigin.x + (e.clientX - panStart.x) / view.scale;
+    view.panY = panOrigin.y + (e.clientY - panStart.y) / view.scale;
+  });
+  vp.addEventListener('pointerup', () => { isPanning = false; });
+  vp.addEventListener('pointercancel', () => { isPanning = false; });
+
+  // pinch zoom
+  let lastPinch = 0;
+  vp.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      lastPinch = Math.hypot(dx, dy);
+    }
+  }, { passive: true });
+  vp.addEventListener('touchmove', e => {
+    if (isAnnoActive) return;
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      if (lastPinch) zoomBy(dist / lastPinch);
+      lastPinch = dist;
+    }
+  }, { passive: false });
+}
+
+/* ---------- Quiz ---------- */
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const body = document.getElementById('quiz-body');
+  const result = document.getElementById('quiz-result');
+  if (quizIndex >= 5) {
+    body.classList.add('hidden');
+    result.classList.remove('hidden');
+    document.getElementById('quiz-progress').textContent = '5 / 5';
+    document.getElementById('quiz-score-text').textContent = quizScore + ' / 5';
+    document.getElementById('quiz-score-text').setAttribute('dir', 'ltr');
+    const pct = Math.round((quizScore / 5) * 100);
+    document.getElementById('quiz-pct-text').textContent = pct + '%';
+    document.getElementById('quiz-pct-text').setAttribute('dir', 'ltr');
+    return;
+  }
+  body.classList.remove('hidden');
+  result.classList.add('hidden');
+  quizAnswered = false;
+  document.getElementById('quiz-progress').textContent = (quizIndex + 1) + ' / 5';
+  const Q = t.quiz[quizIndex];
+  body.innerHTML = `
+    <p class="text-lg md:text-xl font-semibold text-white mb-5 leading-relaxed">${Q.q}</p>
+    <div class="space-y-2.5" id="quiz-opts">
+      ${Q.opts.map((o, i) => `
+        <button onclick="answerQuiz(${i})" class="quiz-opt w-full text-start px-4 py-3 rounded-xl glass-card text-sm md:text-base text-slate-200" data-i="${i}">
+          <span class="text-cyan-400 font-bold mr-2">${String.fromCharCode(65 + i)}.</span> ${o}
+        </button>
+      `).join('')}
+    </div>
+    <div id="quiz-feedback" class="hidden mt-4 p-3 rounded-xl border text-sm"></div>
+    <div class="mt-5 flex justify-end">
+      <button id="quiz-next-btn" onclick="nextQuiz()" class="hidden px-5 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-500/30 transition">
+        ${quizIndex < 4 ? t.quiz_next : t.quiz_see}
+      </button>
+    </div>
+  `;
+}
+
+function answerQuiz(i) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const Q = t.quiz[quizIndex];
+  const opts = document.querySelectorAll('#quiz-opts .quiz-opt');
+  opts.forEach(el => el.classList.add('locked'));
+  opts[Q.ans].classList.add('correct');
+  if (i === Q.ans) {
+    quizScore++;
+  } else {
+    opts[i].classList.add('wrong');
+  }
+  const fb = document.getElementById('quiz-feedback');
+  fb.classList.remove('hidden');
+  fb.className = `mt-4 p-3 rounded-xl border text-sm ${i === Q.ans ? 'border-green-500/40 bg-green-500/10 text-green-300' : 'border-red-500/40 bg-red-500/10 text-red-300'}`;
+  fb.textContent = Q.why;
+  document.getElementById('quiz-next-btn').classList.remove('hidden');
+}
+
+function nextQuiz() {
+  quizIndex++;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  renderQuiz();
+}
+
+/* ---------- Boot ---------- */
+function startApp() {
+  document.getElementById('intro-overlay').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  applyI18n();
+  renderDiscoveries();
+  initGasDots();
+  resizeCanvas();
+  setupInteractions();
+  requestAnimationFrame(loop);
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+  });
+}
+
+// Intro ~5s
+document.getElementById('intro-topic-text').textContent = LANG.en.intro_topic;
+setTimeout(startApp, 5000);
+
+// Sync float color with header
+document.getElementById('anno-color').addEventListener('input', e => {
+  document.getElementById('float-anno-color').value = e.target.value;
+});
+</script>
+</body>
+</html>
