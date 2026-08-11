@@ -230,10 +230,18 @@ body {
 .num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
 
 #anno-toolbar.max-w-0 { padding-left: 0; padding-right: 0; border-width: 0; }
-.canvas-container { pointer-events: none !important; position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; }
+.canvas-container {
+  pointer-events: none;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 5;
+}
 #fabricLayer, .upper-canvas, .lower-canvas {
   width: 100% !important; height: 100% !important;
 }
+#sim-canvas { z-index: 1; }
 input[type=color] { -webkit-appearance: none; appearance: none; border: none; padding: 0; }
 input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
 input[type=color]::-webkit-color-swatch { border: 1px solid #475569; border-radius: 4px; }
