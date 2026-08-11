@@ -412,7 +412,7 @@ body {
 
       <div class="glass-card rounded-2xl p-4 space-y-4">
         <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-flask-vial"></i><span data-i18n="mat_title"></span>
+          <i class="fa-solid fa-flask-vial"></i><span id="mat-heading" data-i18n="mat_title"></span>
         </h2>
         <div class="grid grid-cols-2 gap-2" id="mat-grid"></div>
         <div id="size-row">
@@ -422,7 +422,7 @@ body {
           </div>
           <input type="range" id="sl-size" class="w-full" min="0.5" max="2" step="0.1" value="1.0" oninput="onControl()">
         </div>
-        <button onclick="loadExample()" class="w-full py-2.5 rounded-xl glass-panel text-sm font-bold text-amber-300 hover:bg-slate-800/80 transition flex items-center justify-center gap-2">
+        <button id="btn-example" onclick="loadExample()" class="w-full py-2.5 rounded-xl glass-panel text-sm font-bold text-amber-300 hover:bg-slate-800/80 transition flex items-center justify-center gap-2">
           <i class="fa-solid fa-book-open"></i><span data-i18n="load_example"></span>
         </button>
       </div>
@@ -484,7 +484,14 @@ const MATERIALS = {
   al: { key: 'mat_al', lambda: 23.1e-6, color: '#c0c8d4', accent: '#64748b' },
   fe: { key: 'mat_fe', lambda: 11.5e-6, color: '#8b9aab', accent: '#475569' },
   ag: { key: 'mat_ag', lambda: 18.0e-6, color: '#e5e7eb', accent: '#9ca3af' },
-  st: { key: 'mat_st', lambda: 0.000013, color: '#9ca3af', accent: '#6b7280' } // textbook example
+  st: { key: 'mat_st', lambda: 0.000013, color: '#9ca3af', accent: '#6b7280' }
+};
+/* Gas expansion coefficients from Table 14.6 (×10⁻³ /°C) — Fig. 14.7 */
+const GASES = {
+  h2:  { key: 'gas_h2',  gamma: 3.66e-3, color: '#94a3b8' },
+  he:  { key: 'gas_he',  gamma: 3.66e-3, color: '#a5b4fc' },
+  n2:  { key: 'gas_n2',  gamma: 3.67e-3, color: '#7dd3fc' },
+  so2: { key: 'gas_so2', gamma: 3.90e-3, color: '#fcd34d' }
 };
 
 const LANG = {
@@ -508,14 +515,15 @@ en: {
   t2_label: "Final Temperature T₂",
   dT_label: "ΔT = T₂ − T₁",
   mat_title: "Solid Material",
+  gas_title: "Gas",
   L0_label: "Initial Length l₁",
   A0_label: "Initial Side Length",
-  V0_label: "Initial Side Length",
+  V0_label: "Initial Volume V₁",
   load_example: "Load Textbook Example (Steel)",
   meas_title: "Measurements",
   lambda_label: "λ (linear)",
   sigma_label: "σ (areal)",
-  beta_label: "β (volumetric)",
+  beta_label: "γ (gas)",
   L1_label: "Initial Length l₁",
   L2_label: "Final Length l₂",
   dL_label: "Increase Δl",
@@ -532,12 +540,16 @@ en: {
   mat_fe: "Iron",
   mat_ag: "Silver",
   mat_st: "Steel",
+  gas_h2: "Hydrogen",
+  gas_he: "Helium",
+  gas_n2: "Nitrogen",
+  gas_so2: "Sulphur dioxide",
   obs_linear: "Heat the rod and watch its length increase. Larger λ, longer rod, or larger ΔT means larger Δl.",
   obs_areal: "Compare BEFORE and AFTER. Real area change is tiny — the right sheet is drawn larger so you can compare. Numbers show the true A₁, A₂ and ΔA.",
-  obs_volume: "Compare BEFORE and AFTER. Real volume change is tiny — the right cube is drawn larger so you can compare. Numbers show the true V₁, V₂ and ΔV.",
+  obs_volume: "Fig. 14.7: Fixed piston keeps volume same. Movable piston rises when gas is heated — volume increases. Watch molecule motion!",
   tip_linear: "λ is the increase in length of a rod of unit length when temperature rises by 1 °C. Unit: 1/°C.",
   tip_areal: "When a sheet is heated, its area increases: A₂ = A₁(1 + σ ΔT). For equal expansion in all directions, σ ≈ 2λ.",
-  tip_volume: "When a solid is heated on all sides, volume increases: V₂ = V₁(1 + β ΔT). For equal expansion in all directions, β ≈ 3λ.",
+  tip_volume: "Effect of heat on a gas: with a movable piston, V₂ = V₁(1 + γ ΔT). Fixed piston → volume unchanged; molecules move faster.",
   lbl_rod: "Metal rod",
   lbl_fixed: "Fixed end",
   lbl_free: "Free end",
@@ -549,6 +561,13 @@ en: {
   lbl_vs: "COMPARE",
   lbl_same_size_hint: "Same object — cold vs heated",
   lbl_real_values: "Real calculated values",
+  lbl_fixed_piston: "Fixed Piston",
+  lbl_movable_piston: "Movable Piston",
+  lbl_air_molecules: "Motion of air molecules",
+  lbl_fig_gas: "Effect of heat on a gas",
+  lbl_volume_same: "Volume stays the same",
+  lbl_volume_grows: "Volume increases",
+  lbl_burner: "Burner",
   quiz_title: "Quiz — Expansion of Solids",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
   correct_fb: "Correct!",
@@ -623,14 +642,15 @@ ur: {
   t2_label: "حتمی درجہ حرارت T₂",
   dT_label: "ΔT = T₂ − T₁",
   mat_title: "ٹھوس مادہ",
+  gas_title: "گیس",
   L0_label: "ابتدائی لمبائی l₁",
   A0_label: "ابتدائی ضلع",
-  V0_label: "ابتدائی ضلع",
+  V0_label: "ابتدائی حجم V₁",
   load_example: "کتاب کی مثال (اسٹیل)",
   meas_title: "پیمائش",
   lambda_label: "λ (خطی)",
   sigma_label: "σ (سطحی)",
-  beta_label: "β (حجمی)",
+  beta_label: "γ (گیس)",
   L1_label: "ابتدائی لمبائی l₁",
   L2_label: "حتمی لمبائی l₂",
   dL_label: "اضافہ Δl",
@@ -647,12 +667,16 @@ ur: {
   mat_fe: "لوہا",
   mat_ag: "چاندی",
   mat_st: "اسٹیل",
+  gas_h2: "ہائیڈروجن",
+  gas_he: "ہیلیئم",
+  gas_n2: "نائٹروجن",
+  gas_so2: "سلفر ڈائی آکسائیڈ",
   obs_linear: "سلاخ گرم کریں اور لمبائی کا بڑھنا دیکھیں۔ بڑی λ، لمبی سلاخ یا بڑا ΔT → بڑا Δl۔",
   obs_areal: "پہلے اور اب کا موازنہ کریں۔ حقیقی رقبے کی تبدیلی بہت چھوٹی ہوتی ہے — دائیں شیٹ موازنے کے لیے بڑی دکھائی گئی ہے۔ اعداد حقیقی A₁، A₂ اور ΔA ہیں۔",
-  obs_volume: "پہلے اور اب کا موازنہ کریں۔ حقیقی حجم کی تبدیلی بہت چھوٹی ہوتی ہے — دایاں مکعب موازنے کے لیے بڑا دکھایا گیا ہے۔ اعداد حقیقی V₁، V₂ اور ΔV ہیں۔",
+  obs_volume: "شکل 14.7: ثابت پسٹن پر حجم نہیں بدلتا۔ متحرک پسٹن گرم گیس سے اوپر اٹھتا ہے — حجم بڑھتا ہے۔ مالیکیولز کی حرکت دیکھیں!",
   tip_linear: "λ اکائی لمبائی کی سلاخ میں 1 °C بڑھنے پر لمبائی کا اضافہ ہے۔ اکائی: 1/°C۔",
   tip_areal: "گرم کرنے پر شیٹ کا رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر σ ≈ 2λ۔",
-  tip_volume: "گرم کرنے پر ٹھوس ہر طرف پھیلتا ہے: V₂ = V₁(1 + β ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر β ≈ 3λ۔",
+  tip_volume: "گیس پر حرارت کا اثر: متحرک پسٹن پر V₂ = V₁(1 + γ ΔT)۔ ثابت پسٹن → حجم یکساں؛ مالیکیولز تیز حرکت کرتے ہیں۔",
   lbl_rod: "دھاتی سلاخ",
   lbl_fixed: "ثابت سرا",
   lbl_free: "آزاد سرا",
@@ -664,6 +688,13 @@ ur: {
   lbl_vs: "موازنہ",
   lbl_same_size_hint: "ایک ہی شے — ٹھنڈی بمقابلہ گرم",
   lbl_real_values: "حقیقی حساب شدہ قدریں",
+  lbl_fixed_piston: "ثابت پسٹن",
+  lbl_movable_piston: "متحرک پسٹن",
+  lbl_air_molecules: "ہوا کے مالیکیولز کی حرکت",
+  lbl_fig_gas: "گیس پر حرارت کا اثر",
+  lbl_volume_same: "حجم یکساں رہتا ہے",
+  lbl_volume_grows: "حجم بڑھتا ہے",
+  lbl_burner: "برنر",
   quiz_title: "کوئز — ٹھوس اجسام کا پھیلاؤ",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
   correct_fb: "درست!",
@@ -727,9 +758,11 @@ const S = {
   T1: 20,
   T2: 80,
   Tnow: 20,
-  size: 1.0, // length (m) or side (m)
+  size: 1.0, // length (m), sheet side (m), or gas V₁ (L)
   mat: 'al',
-  animT: 0
+  gas: 'h2',
+  animT: 0,
+  molecules: []
 };
 
 const WORLD = { w: 960, h: 540 };
@@ -745,14 +778,14 @@ function t(key) {
   return typeof v === 'function' ? v : (v != null ? v : (LANG.en[key] ?? key));
 }
 
-/* Physics helpers — exact textbook relations
-   Linear:  Δl = λ l1 ΔT ; l2 = l1(1+λΔT)
-   Areal:   A2 = A1(1+σΔT)  with σ = 2λ  (standard school relation for isotropic solid)
-   Volume:  V2 = V1(1+βΔT)  with β = 3λ
+/* Physics helpers — textbook relations
+   Linear (solid): Δl = λ l1 ΔT
+   Areal (solid):  A2 = A1(1+σΔT), σ = 2λ
+   Volume (gas, Fig 14.7 movable piston): V2 = V1(1+γΔT)
 */
 function lambda() { return MATERIALS[S.mat].lambda; }
 function sigma() { return 2 * lambda(); }
-function beta() { return 3 * lambda(); }
+function gamma() { return GASES[S.gas].gamma; }
 function dT() { return Math.max(0, S.Tnow - S.T1); }
 
 function calcLinear() {
@@ -767,14 +800,18 @@ function calcAreal() {
   return { side, A1, A2, dA: A2 - A1 };
 }
 function calcVolume() {
-  const side = S.size;
-  const V1 = side * side * side;
-  const V2 = V1 * (1 + beta() * dT());
-  return { side, V1, V2, dV: V2 - V1 };
+  // Fig 14.7 — gas in flask, V₁ in litres
+  const V1 = S.size;
+  const V2 = V1 * (1 + gamma() * dT());
+  return { V1, V2, dV: V2 - V1, gamma: gamma() };
 }
 
 function formatCoeff(v) {
   if (Math.abs(v - 0.000013) < 1e-12) return '0.000013 /°C';
+  if (v >= 1e-3) {
+    const x = v * 1e3;
+    return (Number.isInteger(x) ? x.toFixed(0) : x.toFixed(2)) + '×10⁻³ /°C';
+  }
   const x = v * 1e6;
   return (Number.isInteger(x) ? x.toFixed(0) : x.toFixed(1)) + '×10⁻⁶ /°C';
 }
@@ -787,7 +824,7 @@ function formatArea(a) {
   return a.toFixed(6) + ' m²';
 }
 function formatVol(v) {
-  return v.toFixed(6) + ' m³';
+  return v.toFixed(4) + ' L';
 }
 
 /* ============================================================
@@ -950,6 +987,8 @@ function setMode(mode) {
   ['linear','areal','volume'].forEach(m => {
     document.getElementById('mode-' + m).classList.toggle('active', m === mode);
   });
+  if (mode === 'volume' && (!S.molecules || !S.molecules.length)) initMolecules();
+  buildMatGrid();
   updateUI();
 }
 
@@ -972,7 +1011,8 @@ function onControl() {
 }
 
 function selectMat(id) {
-  S.mat = id;
+  if (S.mode === 'volume') S.gas = id;
+  else S.mat = id;
   buildMatGrid();
   updateUI();
 }
@@ -980,13 +1020,29 @@ function selectMat(id) {
 function buildMatGrid() {
   const g = document.getElementById('mat-grid');
   g.innerHTML = '';
-  Object.keys(MATERIALS).forEach(id => {
-    const b = document.createElement('button');
-    b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.mat === id ? ' active' : '');
-    b.textContent = t(MATERIALS[id].key);
-    b.onclick = () => selectMat(id);
-    g.appendChild(b);
-  });
+  const heading = document.getElementById('mat-heading');
+  const btnEx = document.getElementById('btn-example');
+  if (S.mode === 'volume') {
+    heading.textContent = t('gas_title');
+    btnEx.classList.add('hidden');
+    Object.keys(GASES).forEach(id => {
+      const b = document.createElement('button');
+      b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.gas === id ? ' active' : '');
+      b.textContent = t(GASES[id].key);
+      b.onclick = () => selectMat(id);
+      g.appendChild(b);
+    });
+  } else {
+    heading.textContent = t('mat_title');
+    btnEx.classList.remove('hidden');
+    Object.keys(MATERIALS).forEach(id => {
+      const b = document.createElement('button');
+      b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.mat === id ? ' active' : '');
+      b.textContent = t(MATERIALS[id].key);
+      b.onclick = () => selectMat(id);
+      g.appendChild(b);
+    });
+  }
 }
 
 function loadExample() {
@@ -1014,7 +1070,9 @@ function updateUI() {
 
   const sizeKey = S.mode === 'linear' ? 'L0_label' : (S.mode === 'areal' ? 'A0_label' : 'V0_label');
   document.getElementById('size-label').textContent = t(sizeKey);
-  document.getElementById('val-size').textContent = S.size.toFixed(2) + ' m';
+  document.getElementById('val-size').textContent = S.mode === 'volume'
+    ? (S.size.toFixed(2) + ' L')
+    : (S.size.toFixed(2) + ' m');
 
   // Measurement panel
   if (S.mode === 'linear') {
@@ -1046,14 +1104,14 @@ function updateUI() {
   } else {
     const r = calcVolume();
     document.getElementById('coeff-label').textContent = t('beta_label');
-    document.getElementById('m-coeff').textContent = formatCoeff(beta());
+    document.getElementById('m-coeff').textContent = formatCoeff(gamma());
     document.getElementById('m1-label').textContent = t('V1_label');
     document.getElementById('m2-label').textContent = t('V2_label');
     document.getElementById('md-label').textContent = t('dV_label');
     document.getElementById('m-1').textContent = formatVol(r.V1);
     document.getElementById('m-2').textContent = formatVol(r.V2);
     document.getElementById('m-d').textContent = formatVol(r.dV);
-    document.getElementById('formula-val').textContent = 'V₂ = V₁(1 + β ΔT)';
+    document.getElementById('formula-val').textContent = 'V₂ = V₁(1 + γ ΔT)';
     document.getElementById('obs-text').textContent = t('obs_volume');
     document.getElementById('tip-text').textContent = t('tip_volume');
   }
@@ -1445,44 +1503,240 @@ function drawAreal() {
   drawThermo(8, 180, S.Tnow);
 }
 
+function initMolecules() {
+  S.molecules = [];
+  for (let i = 0; i < 18; i++) {
+    S.molecules.push({
+      x: 0.2 + Math.random() * 0.6,
+      y: 0.25 + Math.random() * 0.55,
+      a: Math.random() * Math.PI * 2,
+      sp: 0.6 + Math.random() * 0.8
+    });
+  }
+}
+
+function drawBurner(cx, by, lit) {
+  // green base like textbook
+  ctx.fillStyle = '#22c55e';
+  roundRect(cx - 28, by, 56, 18, 4); ctx.fill();
+  ctx.fillStyle = '#16a34a';
+  roundRect(cx - 22, by + 14, 44, 10, 3); ctx.fill();
+  // barrel
+  ctx.fillStyle = '#64748b';
+  roundRect(cx - 8, by - 22, 16, 24, 3); ctx.fill();
+  if (lit) {
+    // flame
+    const flick = Math.sin(S.animT * 12) * 3;
+    ctx.beginPath();
+    ctx.moveTo(cx - 10, by - 20);
+    ctx.quadraticCurveTo(cx - 14, by - 48 + flick, cx, by - 62 + flick);
+    ctx.quadraticCurveTo(cx + 14, by - 48 - flick, cx + 10, by - 20);
+    ctx.closePath();
+    const fg = ctx.createLinearGradient(cx, by - 62, cx, by - 20);
+    fg.addColorStop(0, '#fef08a');
+    fg.addColorStop(0.45, '#fb923c');
+    fg.addColorStop(1, '#ef4444');
+    ctx.fillStyle = fg;
+    ctx.fill();
+  }
+}
+
+function drawTripod(cx, topY) {
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cx - 50, topY + 70); ctx.lineTo(cx - 18, topY);
+  ctx.moveTo(cx + 50, topY + 70); ctx.lineTo(cx + 18, topY);
+  ctx.moveTo(cx, topY + 75); ctx.lineTo(cx, topY + 8);
+  ctx.stroke();
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cx - 40, topY); ctx.lineTo(cx + 40, topY);
+  ctx.stroke();
+}
+
+function drawFlaskSetup(cx, movable) {
+  const heatFrac = Math.min(1, dT() / 80);
+  const lit = S.heat && dT() > 0.2;
+  const flaskBottom = 360;
+  const flaskW = 110;
+  const flaskH = 130;
+  const neckW = 36;
+  const neckH = 90;
+  const basePistonY = flaskBottom - flaskH - 8;
+  // movable piston rises with heat (visual)
+  const rise = movable ? (28 + heatFrac * 70) : 8;
+  const pistonY = basePistonY - rise;
+
+  drawTripod(cx, flaskBottom + 8);
+  drawBurner(cx, flaskBottom + 78, lit);
+
+  // flask body (glass)
+  ctx.beginPath();
+  ctx.moveTo(cx - flaskW / 2, flaskBottom);
+  ctx.lineTo(cx - flaskW / 2, flaskBottom - flaskH + 30);
+  ctx.quadraticCurveTo(cx - flaskW / 2, flaskBottom - flaskH, cx - neckW / 2, flaskBottom - flaskH);
+  ctx.lineTo(cx - neckW / 2, flaskBottom - flaskH - neckH);
+  ctx.lineTo(cx + neckW / 2, flaskBottom - flaskH - neckH);
+  ctx.lineTo(cx + neckW / 2, flaskBottom - flaskH);
+  ctx.quadraticCurveTo(cx + flaskW / 2, flaskBottom - flaskH, cx + flaskW / 2, flaskBottom - flaskH + 30);
+  ctx.lineTo(cx + flaskW / 2, flaskBottom);
+  ctx.closePath();
+  const glass = ctx.createLinearGradient(cx - flaskW / 2, 0, cx + flaskW / 2, 0);
+  glass.addColorStop(0, 'rgba(186,230,253,0.25)');
+  glass.addColorStop(0.5, 'rgba(224,242,254,0.45)');
+  glass.addColorStop(1, 'rgba(186,230,253,0.25)');
+  ctx.fillStyle = glass;
+  ctx.fill();
+  ctx.strokeStyle = '#7dd3fc';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // gas fill tint
+  ctx.fillStyle = lit ? 'rgba(251,146,60,0.12)' : 'rgba(125,211,252,0.08)';
+  ctx.beginPath();
+  ctx.moveTo(cx - flaskW / 2 + 4, flaskBottom - 4);
+  ctx.lineTo(cx - flaskW / 2 + 4, flaskBottom - flaskH + 34);
+  ctx.quadraticCurveTo(cx - flaskW / 2 + 4, flaskBottom - flaskH + 8, cx - neckW / 2 + 2, flaskBottom - flaskH + 4);
+  ctx.lineTo(cx - neckW / 2 + 2, pistonY + 14);
+  ctx.lineTo(cx + neckW / 2 - 2, pistonY + 14);
+  ctx.lineTo(cx + neckW / 2 - 2, flaskBottom - flaskH + 4);
+  ctx.quadraticCurveTo(cx + flaskW / 2 - 4, flaskBottom - flaskH + 8, cx + flaskW / 2 - 4, flaskBottom - flaskH + 34);
+  ctx.lineTo(cx + flaskW / 2 - 4, flaskBottom - 4);
+  ctx.closePath();
+  ctx.fill();
+
+  // molecules inside flask
+  if (!S.molecules.length) initMolecules();
+  const speed = 0.4 + heatFrac * 2.2;
+  const molColor = GASES[S.gas].color;
+  S.molecules.forEach((m, i) => {
+    // animate in local space
+    m.a += 0.02 * m.sp * speed;
+    const jx = Math.cos(m.a * m.sp + S.animT * speed) * (4 + heatFrac * 8);
+    const jy = Math.sin(m.a * 1.3 + S.animT * speed) * (4 + heatFrac * 8);
+    const mx = cx - flaskW / 2 + 18 + m.x * (flaskW - 36) + jx;
+    const my = flaskBottom - 20 - m.y * (flaskH - 40) + jy;
+    // keep roughly in body
+    const yClamp = Math.min(flaskBottom - 16, Math.max(pistonY + 24, my));
+    ctx.fillStyle = molColor;
+    ctx.beginPath();
+    ctx.arc(mx, yClamp, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // motion arrow
+    const ang = m.a + S.animT * speed;
+    const al = 8 + heatFrac * 10;
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mx, yClamp);
+    ctx.lineTo(mx + Math.cos(ang) * al, yClamp + Math.sin(ang) * al);
+    ctx.stroke();
+  });
+
+  // piston
+  ctx.fillStyle = movable ? '#94a3b8' : '#64748b';
+  roundRect(cx - neckW / 2 - 4, pistonY, neckW + 8, 14, 3);
+  ctx.fill();
+  ctx.strokeStyle = movable ? '#e2e8f0' : '#94a3b8';
+  ctx.lineWidth = 1.5;
+  roundRect(cx - neckW / 2 - 4, pistonY, neckW + 8, 14, 3);
+  ctx.stroke();
+
+  // piston rod
+  ctx.fillStyle = '#cbd5e1';
+  roundRect(cx - 3, pistonY - (movable ? 50 : 28), 6, movable ? 50 : 28, 2);
+  ctx.fill();
+  if (!movable) {
+    // lock marks for fixed piston
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - neckW / 2 - 12, pistonY + 7);
+    ctx.lineTo(cx - neckW / 2 - 2, pistonY + 7);
+    ctx.moveTo(cx + neckW / 2 + 2, pistonY + 7);
+    ctx.lineTo(cx + neckW / 2 + 12, pistonY + 7);
+    ctx.stroke();
+  } else if (heatFrac > 0.05) {
+    // up arrow
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.moveTo(cx + 28, pistonY + 20);
+    ctx.lineTo(cx + 28, pistonY - 10);
+    ctx.lineTo(cx + 22, pistonY - 2);
+    ctx.moveTo(cx + 28, pistonY - 10);
+    ctx.lineTo(cx + 34, pistonY - 2);
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
+  return { pistonY, flaskBottom, flaskH };
+}
+
 function drawVolume() {
-  drawCompareBg();
-  const mat = MATERIALS[S.mat];
+  // Fig. 14.7 — Effect of heat on a gas
+  const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
+  g.addColorStop(0, '#0b1224');
+  g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+  // panels
+  ctx.fillStyle = 'rgba(30,41,59,0.5)';
+  roundRect(30, 90, 430, 400, 18); ctx.fill();
+  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(30, 90, 430, 400, 18); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(30,41,59,0.5)';
+  roundRect(500, 90, 430, 400, 18); ctx.fill();
+  ctx.strokeStyle = 'rgba(251,146,60,0.4)';
+  roundRect(500, 90, 430, 400, 18); ctx.stroke();
+
   const { V1, V2, dV } = calcVolume();
-  const base = 78;
-  const afterSize = base * compareVisualScale();
 
-  drawText(t('lbl_before'), 250, 130, {
+  drawText(t('lbl_fixed_piston'), 245, 118, {
+    align: 'center', color: '#94a3b8',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '800 15px Oxanium'
+  });
+  drawFlaskSetup(245, false);
+  drawText(t('lbl_volume_same'), 245, 455, {
     align: 'center', color: '#38bdf8',
-    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '700 13px Manrope'
   });
-  drawText('T₁ = ' + S.T1 + ' °C', 250, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
-  drawCubeAt(220, 340, base, mat, false, null);
-  drawText('V₁', 250, 230, { align: 'center', color: '#38bdf8', font: '800 18px Oxanium' });
-  drawText(formatVol(V1), 250, 420, { align: 'center', color: '#38bdf8', font: '700 15px Oxanium' });
+  drawText('V = ' + formatVol(V1), 245, 478, {
+    align: 'center', color: '#94a3b8', font: '700 14px Oxanium'
+  });
 
-  drawText(t('lbl_after'), 710, 130, {
+  drawText(t('lbl_movable_piston'), 715, 118, {
     align: 'center', color: '#fb923c',
-    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '800 15px Oxanium'
   });
-  drawText('T₂ = ' + S.Tnow.toFixed(0) + ' °C', 710, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
-  drawCubeAt(680, 340, afterSize, mat, dT() > 0.5, base);
-  drawText('V₂', 710, 230, { align: 'center', color: '#fb923c', font: '800 18px Oxanium' });
-  drawText(formatVol(V2), 710, 420, { align: 'center', color: '#fb923c', font: '700 15px Oxanium' });
+  drawFlaskSetup(715, true);
+  drawText(t('lbl_volume_grows'), 715, 455, {
+    align: 'center', color: '#4ade80',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '700 13px Manrope'
+  });
+  drawText('V₂ = ' + formatVol(V2), 715, 478, {
+    align: 'center', color: '#fb923c', font: '700 14px Oxanium'
+  });
 
-  drawText(t('lbl_cube') + '  ·  β = 3λ = ' + formatCoeff(beta()), WORLD.w / 2, 40, {
-    align: 'center', color: '#e2e8f0',
-    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  drawText(t('lbl_fig_gas'), WORLD.w / 2, 36, {
+    align: 'center', color: '#f9a8d4',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 18px Oxanium'
   });
-  drawText(t('lbl_same_size_hint'), WORLD.w / 2, 68, {
+  drawText(t(GASES[S.gas].key) + '  ·  γ = ' + formatCoeff(gamma()) + '  ·  ΔV = ' + formatVol(dV), WORLD.w / 2, 64, {
+    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
+  });
+  drawText(t('lbl_air_molecules'), WORLD.w / 2, 530, {
     align: 'center', color: '#64748b',
-    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
+    font: cur === 'ur' ? "600 13px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
   });
-  drawText(t('lbl_real_values') + '  ·  ΔV = ' + formatVol(dV), WORLD.w / 2, 490, {
-    align: 'center', color: '#00f3ff', font: '700 15px Oxanium'
-  });
-
-  drawThermo(8, 180, S.Tnow);
 }
 
 function draw() {
@@ -1506,6 +1760,12 @@ function tickPhysics(dt) {
   if (S.Tnow < target) S.Tnow = Math.min(target, S.Tnow + rate * dt);
   else if (S.Tnow > target) S.Tnow = Math.max(target, S.Tnow - rate * dt);
   if (S.Tnow !== prev) updateUI();
+  // molecule motion for Fig. 14.7
+  if (S.mode === 'volume') {
+    if (!S.molecules.length) initMolecules();
+    const speed = 0.4 + Math.min(1, dT() / 80) * 2.2;
+    S.molecules.forEach(m => { m.a += dt * 3 * m.sp * speed; });
+  }
 }
 
 /* ============================================================
