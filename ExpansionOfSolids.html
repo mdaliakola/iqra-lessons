@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<script>
+if(window.top===window.self){
+document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Expansion of Solids</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700;800&family=Manrope:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://cdn.jsdelivr.net/gh/tariq-abdullah/urdu-web-font-CDN/JameelNooriNastaleeq.woff') format('woff'),
+       url('https://cdn.jsdelivr.net/npm/jameel-noori@1.1.2/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-track {
+background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+background: #334155;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+transform: scaleX(-1);
+}
+[dir="rtl"] {
+font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+line-height: 2.3 !important;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+background: rgba(15, 23, 42, 0.75);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+background: rgba(30, 41, 59, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+-webkit-appearance: none;
+background: #334155;
+border-radius: 8px;
+height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+-webkit-appearance: none;
+height: 20px;
+width: 20px;
+border-radius: 50%;
+background: #00f3ff;
+cursor: pointer;
+box-shadow: 0 0 10px #00f3ff;
+transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+transform: scale(1.2);
+}
+
+/* ============ Extended design language (same system) ============ */
+body {
+  font-family: 'Manrope', sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow: hidden;
+}
+.font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
+[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
+[dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0,243,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,243,255,0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+#intro {
+  position: fixed; inset: 0; z-index: 100;
+  background: radial-gradient(ellipse at center, #1a1520 0%, #0f172a 55%, #0b1220 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .8s ease;
+}
+.intro-title {
+  font-family: 'Oxanium', sans-serif;
+  font-weight: 800; letter-spacing: .14em;
+  background: linear-gradient(92deg, #00f3ff, #7dd3fc, #00f3ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: introZoom 1.6s cubic-bezier(.2,.8,.2,1) both, glowPulse 2s ease-in-out infinite;
+}
+.intro-topic {
+  color: #94a3b8; letter-spacing: .22em;
+  animation: introFade 1.4s .35s ease both;
+}
+.intro-ring {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 2px solid rgba(0,243,255,.35);
+  box-shadow: 0 0 60px rgba(0,243,255,.25), inset 0 0 40px rgba(0,243,255,.12);
+  display:flex; align-items:center; justify-content:center;
+  animation: ringSpin 2.4s linear infinite, introZoom 1.2s ease both;
+  margin-bottom: 28px; position: relative;
+}
+.intro-ring::before {
+  content:''; position:absolute; inset:-10px; border-radius:50%;
+  border-top: 2px solid #00f3ff; border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent; border-left: 2px solid transparent;
+}
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+@keyframes introZoom { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes introFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 24px rgba(0,243,255,.55); }
+  50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
+}
+
+.tab-btn {
+  position: relative; transition: color .25s ease, background-color .25s ease;
+  border-radius: 12px;
+}
+.tab-btn.active {
+  color: #00f3ff; background: rgba(0,243,255,.08);
+  box-shadow: inset 0 0 0 1px rgba(0,243,255,.35), 0 0 18px rgba(0,243,255,.15);
+}
+.view { animation: viewIn .35s ease both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.mode-btn {
+  transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.mode-btn:active { transform: scale(.96); }
+.mode-btn.active {
+  background: rgba(0,243,255,.12); color: #00f3ff;
+  border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
+}
+
+.toggle-btn {
+  transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.toggle-btn:active { transform: scale(.96); }
+.toggle-btn.on {
+  background: rgba(239,68,68,.18); color: #f87171;
+  border-color: rgba(239,68,68,.55); box-shadow: 0 0 16px rgba(239,68,68,.3);
+}
+
+.mat-chip {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.mat-chip.active {
+  background: rgba(0,243,255,.14); color:#00f3ff; border-color: rgba(0,243,255,.5);
+  box-shadow: 0 0 12px rgba(0,243,255,.2);
+}
+
+.opt-btn {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.opt-btn:not(.locked):hover { border-color: rgba(0,243,255,.45); background: rgba(0,243,255,.06); }
+.opt-btn:not(.locked):active { transform: scale(.98); }
+.opt-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; box-shadow: 0 0 18px rgba(34,197,94,.3); }
+.opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
+
+.zoom-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
+  color:#00f3ff; display:flex; align-items:center; justify-content:center;
+  backdrop-filter: blur(8px); cursor:pointer;
+  transition: background-color .2s ease, box-shadow .2s ease, transform .12s ease;
+}
+.zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
+.zoom-btn:active { transform: scale(.92); }
+
+.stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
+[dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
+.num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
+.fade-in { animation: viewIn .4s ease both; }
+
+#canvas-wrap .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 20;
+}
+#fabricLayer, .upper-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#anno-float {
+  position: absolute;
+  z-index: 35;
+  top: 56px;
+  inset-inline-start: 12px;
+  transition: all .35s cubic-bezier(.2,.8,.2,1);
+  max-width: 280px;
+}
+#anno-float.minimized { max-width: 48px; }
+#anno-float.minimized .anno-float-body { display: none; }
+#anno-float.hidden-panel { display: none; }
+.anno-float-handle { cursor: grab; }
+.anno-float-handle:active { cursor: grabbing; }
+</style>
+</head>
+<body class="bg-grid">
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-ring"><i class="fa-solid fa-temperature-high text-5xl text-orange-300" style="filter:drop-shadow(0 0 14px rgba(251,146,60,.8))"></i></div>
+  <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
+  <div class="intro-topic text-sm md:text-lg mt-5 font-bold uppercase text-center px-6" id="intro-topic">EXPANSION OF SOLIDS</div>
+  <div class="mt-8 text-slate-500 text-sm tracking-widest uppercase animate-pulse" data-i18n="loading">Loading Virtual Laboratory...</div>
+</div>
+
+<!-- APP -->
+<div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
+
+  <!-- HEADER -->
+  <header class="glass-panel flex items-center justify-between px-3 md:px-6 py-3 z-30 gap-2">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-flask text-cyan-400"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
+      </div>
+    </div>
+
+    <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5 shrink-0">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- SIMULATION -->
+  <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-3 p-3 md:p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
+
+    <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
+      <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
+        <button id="mode-linear" onclick="setMode('linear')" class="mode-btn active flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-ruler-horizontal"></i><span data-i18n="mode_linear"></span>
+        </button>
+        <button id="mode-areal" onclick="setMode('areal')" class="mode-btn flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-border-all"></i><span data-i18n="mode_areal"></span>
+        </button>
+        <button id="mode-volume" onclick="setMode('volume')" class="mode-btn flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cube"></i><span data-i18n="mode_volume"></span>
+        </button>
+      </div>
+
+      <div id="canvas-wrap" class="glass-card rounded-2xl relative flex-1 min-h-[320px] overflow-hidden">
+        <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
+        <canvas id="fabricLayer"></canvas>
+
+        <div id="anno-float" class="hidden-panel glass-panel rounded-2xl shadow-2xl overflow-hidden">
+          <div class="anno-float-handle flex items-center justify-between gap-2 px-3 py-2 border-b border-slate-700/60 bg-slate-900/60">
+            <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold">
+              <i class="fa-solid fa-pen-ruler"></i>
+              <span data-i18n="anno_title">Annotate</span>
+            </div>
+            <button onclick="toggleAnnoFloatMin()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700">
+              <i id="anno-min-icon" class="fa-solid fa-minus"></i>
+            </button>
+          </div>
+          <div class="anno-float-body p-3 flex items-center gap-2 flex-wrap">
+            <input type="color" id="anno-color-float" value="#00f3ff" onchange="syncAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0">
+            <button onclick="setAnnoMode('pen')" class="w-9 h-9 rounded-lg bg-slate-800 text-cyan-400 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="setAnnoMode('eraser')" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-eraser"></i></button>
+            <button onclick="clearAnnotations()" class="w-9 h-9 rounded-lg bg-slate-800 text-red-400 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        </div>
+
+        <div class="absolute bottom-3 flex flex-col gap-2 z-30" style="inset-inline-end:12px" dir="ltr">
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
+        </div>
+
+        <div class="absolute top-3 glass-panel rounded-xl px-3 py-2 text-xs text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
+          <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="drag_hint"></span>
+        </div>
+        <div class="absolute top-3 glass-panel rounded-xl px-3 py-1.5 text-[10px] text-amber-300/90 pointer-events-none z-10 max-w-[48%] text-end" style="inset-inline-end:12px">
+          <span data-i18n="visual_note"></span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row gap-3 md:items-center">
+        <div class="flex items-center gap-2 shrink-0">
+          <i class="fa-solid fa-eye text-cyan-400"></i>
+          <span class="font-display font-bold text-cyan-400 text-sm" data-i18n="obs_title"></span>
+        </div>
+        <p id="obs-text" class="text-sm text-slate-300 leading-relaxed flex-1"></p>
+        <div class="glass-panel rounded-xl px-4 py-2 text-center shrink-0" dir="ltr">
+          <div class="text-[10px] uppercase tracking-wider text-slate-500" data-i18n="formula_label"></div>
+          <div id="formula-val" class="stat-val text-sm md:text-base num">Δl = λ × l₁ × ΔT</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTROLS -->
+    <aside class="w-full lg:w-[360px] xl:w-[380px] flex flex-col gap-3 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
+
+      <div class="glass-card rounded-2xl p-4 space-y-4">
+        <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
+          <i class="fa-solid fa-fire"></i><span data-i18n="heat_title"></span>
+        </h2>
+        <button id="btn-heat" onclick="toggleHeat()" class="toggle-btn w-full py-3 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-power-off"></i><span id="heat-label" data-i18n="heat_off"></span>
+        </button>
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-sm font-bold text-slate-300" data-i18n="t1_label"></label>
+            <span class="stat-val text-sm num" id="val-T1">20 °C</span>
+          </div>
+          <input type="range" id="sl-T1" class="w-full" min="0" max="50" step="1" value="20" oninput="onControl()">
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-sm font-bold text-slate-300" data-i18n="t2_label"></label>
+            <span class="stat-val text-sm num" id="val-T2">80 °C</span>
+          </div>
+          <input type="range" id="sl-T2" class="w-full" min="0" max="200" step="1" value="80" oninput="onControl()">
+        </div>
+        <div class="glass-panel rounded-xl px-3 py-2 flex justify-between items-center">
+          <span class="text-xs text-slate-400" data-i18n="dT_label"></span>
+          <span class="stat-val text-sm num" id="val-dT">0 °C</span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-4">
+        <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
+          <i class="fa-solid fa-flask-vial"></i><span id="mat-heading" data-i18n="mat_title"></span>
+        </h2>
+        <div class="grid grid-cols-2 gap-2" id="mat-grid"></div>
+        <div id="size-row">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-sm font-bold text-slate-300" id="size-label" data-i18n="L0_label"></label>
+            <span class="stat-val text-sm num" id="val-size">1.00 m</span>
+          </div>
+          <input type="range" id="sl-size" class="w-full" min="0.5" max="2" step="0.1" value="1.0" oninput="onControl()">
+        </div>
+        <button id="btn-example" onclick="loadExample()" class="w-full py-2.5 rounded-xl glass-panel text-sm font-bold text-amber-300 hover:bg-slate-800/80 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-book-open"></i><span data-i18n="load_example"></span>
+        </button>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i><span data-i18n="meas_title"></span>
+        </h2>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between border-b border-slate-700/50 pb-2">
+            <span class="text-slate-400" id="coeff-label" data-i18n="lambda_label"></span>
+            <span class="stat-val num" id="m-coeff">23.1×10⁻⁶ /°C</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-700/50 pb-2">
+            <span class="text-slate-400" id="m1-label" data-i18n="L1_label"></span>
+            <span class="stat-val num" id="m-1">1.000000 m</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-700/50 pb-2">
+            <span class="text-slate-400" id="m2-label" data-i18n="L2_label"></span>
+            <span class="stat-val num" id="m-2">1.000000 m</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400" id="md-label" data-i18n="dL_label"></span>
+            <span class="stat-val num" id="m-d">0.000000 m</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4">
+        <h2 class="font-display font-bold text-sm text-green-400 flex items-center gap-2 mb-2">
+          <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
+        </h2>
+        <p class="text-sm text-slate-300 leading-relaxed" id="tip-text"></p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- QUIZ -->
+  <main id="view-quiz" class="view flex-1 min-h-0 overflow-y-auto p-4 hidden">
+    <div class="max-w-3xl mx-auto">
+      <div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+if (window.top === window.self) {
+  window.__denied = true;
+  document.documentElement.innerHTML = "<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+  throw new Error('Access denied: top-level load blocked');
+}
+
+/* ============================================================
+   TEXTBOOK VALUES (from Expansion of solids — Table 14.6 + example)
+   λ for solids is ×10⁻⁶ /°C
+============================================================ */
+const MATERIALS = {
+  cu: { key: 'mat_cu', lambda: 17.0e-6, color: '#b87333', accent: '#92400e' },
+  al: { key: 'mat_al', lambda: 23.1e-6, color: '#c0c8d4', accent: '#64748b' },
+  fe: { key: 'mat_fe', lambda: 11.5e-6, color: '#8b9aab', accent: '#475569' },
+  ag: { key: 'mat_ag', lambda: 18.0e-6, color: '#e5e7eb', accent: '#9ca3af' },
+  st: { key: 'mat_st', lambda: 0.000013, color: '#9ca3af', accent: '#6b7280' }
+};
+/* Gas expansion coefficients from Table 14.6 (×10⁻³ /°C) — Fig. 14.7 */
+const GASES = {
+  h2:  { key: 'gas_h2',  gamma: 3.66e-3, color: '#94a3b8' },
+  he:  { key: 'gas_he',  gamma: 3.66e-3, color: '#a5b4fc' },
+  n2:  { key: 'gas_n2',  gamma: 3.67e-3, color: '#7dd3fc' },
+  so2: { key: 'gas_so2', gamma: 3.90e-3, color: '#fcd34d' }
+};
+
+const LANG = {
+en: {
+  loading: "Loading Virtual Laboratory...",
+  topic: "Expansion of Solids",
+  intro_topic: "EXPANSION OF SOLIDS",
+  tab_sim: "Simulation",
+  tab_quiz: "Quiz",
+  mode_linear: "Linear Expansion",
+  mode_areal: "Areal Expansion",
+  mode_volume: "Volumetric Expansion",
+  drag_hint: "Scroll to zoom · Drag to pan",
+  visual_note: "Drawing is enlarged so you can see the change",
+  obs_title: "Observation",
+  formula_label: "Formula",
+  heat_title: "Temperature",
+  heat_off: "Heater OFF",
+  heat_on: "Heater ON",
+  t1_label: "Initial Temperature T₁",
+  t2_label: "Final Temperature T₂",
+  dT_label: "ΔT = T₂ − T₁",
+  mat_title: "Solid Material",
+  gas_title: "Gas",
+  L0_label: "Initial Length l₁",
+  A0_label: "Initial Side Length",
+  V0_label: "Initial Volume V₁",
+  load_example: "Load Textbook Example (Steel)",
+  meas_title: "Measurements",
+  lambda_label: "λ (linear)",
+  sigma_label: "σ (areal)",
+  beta_label: "γ (gas)",
+  L1_label: "Initial Length l₁",
+  L2_label: "Final Length l₂",
+  dL_label: "Increase Δl",
+  A1_label: "Initial Area A₁",
+  A2_label: "Final Area A₂",
+  dA_label: "Increase ΔA",
+  V1_label: "Initial Volume V₁",
+  V2_label: "Final Volume V₂",
+  dV_label: "Increase ΔV",
+  tip_title: "Remember",
+  anno_title: "Annotate",
+  mat_cu: "Copper",
+  mat_al: "Aluminium",
+  mat_fe: "Iron",
+  mat_ag: "Silver",
+  mat_st: "Steel",
+  gas_h2: "Hydrogen",
+  gas_he: "Helium",
+  gas_n2: "Nitrogen",
+  gas_so2: "Sulphur dioxide",
+  obs_linear: "Heat the rod and watch its length increase. Larger λ, longer rod, or larger ΔT means larger Δl.",
+  obs_areal: "Compare BEFORE and AFTER. Real area change is tiny — the right sheet is drawn larger so you can compare. Numbers show the true A₁, A₂ and ΔA.",
+  obs_volume: "Fig. 14.7: Fixed piston keeps volume same. Movable piston rises when gas is heated — volume increases. Watch molecule motion!",
+  tip_linear: "λ is the increase in length of a rod of unit length when temperature rises by 1 °C. Unit: 1/°C.",
+  tip_areal: "When a sheet is heated, its area increases: A₂ = A₁(1 + σ ΔT). For equal expansion in all directions, σ ≈ 2λ.",
+  tip_volume: "Effect of heat on a gas: with a movable piston, V₂ = V₁(1 + γ ΔT). Fixed piston → volume unchanged; molecules move faster.",
+  lbl_rod: "Metal rod",
+  lbl_fixed: "Fixed end",
+  lbl_free: "Free end",
+  lbl_heater: "Heater",
+  lbl_sheet: "Metal sheet",
+  lbl_cube: "Solid cube",
+  lbl_before: "BEFORE",
+  lbl_after: "AFTER",
+  lbl_vs: "COMPARE",
+  lbl_same_size_hint: "Same object — cold vs heated",
+  lbl_real_values: "Real calculated values",
+  lbl_fixed_piston: "Fixed Piston",
+  lbl_movable_piston: "Movable Piston",
+  lbl_air_molecules: "Motion of air molecules",
+  lbl_fig_gas: "Effect of heat on a gas",
+  lbl_volume_same: "Volume stays the same",
+  lbl_volume_grows: "Volume increases",
+  lbl_burner: "Burner",
+  quiz_title: "Quiz — Expansion of Solids",
+  quiz_progress: (i,n)=>`Question ${i} of ${n}`,
+  correct_fb: "Correct!",
+  wrong_fb: "Incorrect!",
+  next_q: "Next Question",
+  see_result: "See Result",
+  final_score: "Final Score",
+  restart: "Restart Quiz",
+  score_msg_great: "Excellent! You understand expansion of solids.",
+  score_msg_good: "Good try! Review the simulation once more.",
+  score_msg_low: "Heat the rod again in the lab and retry the quiz!",
+  quiz: [
+    {
+      q: "Linear expansion means:",
+      opts: [
+        "Increase in volume of a liquid",
+        "Increase in length of a solid rod or wire on heating",
+        "Decrease in length on heating",
+        "Change of colour of a metal"
+      ],
+      a: 1,
+      ex: "Linear expansion is the increase in length of a wire or rod of a solid due to increase in its temperature."
+    },
+    {
+      q: "Which formula is correct for the increase in length?",
+      opts: [
+        "Δl = λ / (l₁ × ΔT)",
+        "Δl = λ × l₁ × ΔT",
+        "Δl = λ + l₁ + ΔT",
+        "Δl = l₁ / (λ × ΔT)"
+      ],
+      a: 1,
+      ex: "From the textbook: l₂ − l₁ = λ × l₁ × ΔT, so Δl = λ × l₁ × ΔT."
+    },
+    {
+      q: "A steel rod has length 0.5 m. Temperature rises by 60 °C. λ = 0.000013 /°C. What is Δl?",
+      opts: ["0.039 m", "0.00039 m", "0.0039 m", "0.39 m"],
+      a: 1,
+      ex: "Δl = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)."
+    },
+    {
+      q: "From the table, which solid has the largest coefficient of linear expansion?",
+      opts: ["Iron (11.5)", "Copper (17)", "Silver (18)", "Aluminium (23.1)"],
+      a: 3,
+      ex: "Aluminium has λ = 23.1 × 10⁻⁶ /°C — the largest among the solids in the table. It expands the most for the same length and ΔT."
+    },
+    {
+      q: "The unit of the coefficient of linear expansion λ is:",
+      opts: ["m", "°C", "1/°C", "m/°C"],
+      a: 2,
+      ex: "λ = (l₂ − l₁) / (l₁ ΔT). Length cancels, so the unit is 1/°C."
+    }
+  ]
+},
+ur: {
+  loading: "ورچوئل لیب لوڈ ہو رہی ہے...",
+  topic: "ٹھوس اجسام کا پھیلاؤ",
+  intro_topic: "ٹھوس اجسام کا پھیلاؤ",
+  tab_sim: "سمولیشن",
+  tab_quiz: "کوئز",
+  mode_linear: "خطی پھیلاؤ",
+  mode_areal: "سطحی پھیلاؤ",
+  mode_volume: "حجمی پھیلاؤ",
+  drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں",
+  visual_note: "تبدیلی دکھانے کے لیے تصویر بڑی کی گئی ہے",
+  obs_title: "مشاہدہ",
+  formula_label: "فارمولا",
+  heat_title: "درجہ حرارت",
+  heat_off: "ہیٹر بند",
+  heat_on: "ہیٹر چالو",
+  t1_label: "ابتدائی درجہ حرارت T₁",
+  t2_label: "حتمی درجہ حرارت T₂",
+  dT_label: "ΔT = T₂ − T₁",
+  mat_title: "ٹھوس مادہ",
+  gas_title: "گیس",
+  L0_label: "ابتدائی لمبائی l₁",
+  A0_label: "ابتدائی ضلع",
+  V0_label: "ابتدائی حجم V₁",
+  load_example: "کتاب کی مثال (اسٹیل)",
+  meas_title: "پیمائش",
+  lambda_label: "λ (خطی)",
+  sigma_label: "σ (سطحی)",
+  beta_label: "γ (گیس)",
+  L1_label: "ابتدائی لمبائی l₁",
+  L2_label: "حتمی لمبائی l₂",
+  dL_label: "اضافہ Δl",
+  A1_label: "ابتدائی رقبہ A₁",
+  A2_label: "حتمی رقبہ A₂",
+  dA_label: "اضافہ ΔA",
+  V1_label: "ابتدائی حجم V₁",
+  V2_label: "حتمی حجم V₂",
+  dV_label: "اضافہ ΔV",
+  tip_title: "یاد رکھیں",
+  anno_title: "تشریح",
+  mat_cu: "تانبا",
+  mat_al: "ایلومینیم",
+  mat_fe: "لوہا",
+  mat_ag: "چاندی",
+  mat_st: "اسٹیل",
+  gas_h2: "ہائیڈروجن",
+  gas_he: "ہیلیئم",
+  gas_n2: "نائٹروجن",
+  gas_so2: "سلفر ڈائی آکسائیڈ",
+  obs_linear: "سلاخ گرم کریں اور لمبائی کا بڑھنا دیکھیں۔ بڑی λ، لمبی سلاخ یا بڑا ΔT → بڑا Δl۔",
+  obs_areal: "پہلے اور اب کا موازنہ کریں۔ حقیقی رقبے کی تبدیلی بہت چھوٹی ہوتی ہے — دائیں شیٹ موازنے کے لیے بڑی دکھائی گئی ہے۔ اعداد حقیقی A₁، A₂ اور ΔA ہیں۔",
+  obs_volume: "شکل 14.7: ثابت پسٹن پر حجم نہیں بدلتا۔ متحرک پسٹن گرم گیس سے اوپر اٹھتا ہے — حجم بڑھتا ہے۔ مالیکیولز کی حرکت دیکھیں!",
+  tip_linear: "λ اکائی لمبائی کی سلاخ میں 1 °C بڑھنے پر لمبائی کا اضافہ ہے۔ اکائی: 1/°C۔",
+  tip_areal: "گرم کرنے پر شیٹ کا رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر σ ≈ 2λ۔",
+  tip_volume: "گیس پر حرارت کا اثر: متحرک پسٹن پر V₂ = V₁(1 + γ ΔT)۔ ثابت پسٹن → حجم یکساں؛ مالیکیولز تیز حرکت کرتے ہیں۔",
+  lbl_rod: "دھاتی سلاخ",
+  lbl_fixed: "ثابت سرا",
+  lbl_free: "آزاد سرا",
+  lbl_heater: "ہیٹر",
+  lbl_sheet: "دھاتی شیٹ",
+  lbl_cube: "ٹھوس مکعب",
+  lbl_before: "پہلے",
+  lbl_after: "اب",
+  lbl_vs: "موازنہ",
+  lbl_same_size_hint: "ایک ہی شے — ٹھنڈی بمقابلہ گرم",
+  lbl_real_values: "حقیقی حساب شدہ قدریں",
+  lbl_fixed_piston: "ثابت پسٹن",
+  lbl_movable_piston: "متحرک پسٹن",
+  lbl_air_molecules: "ہوا کے مالیکیولز کی حرکت",
+  lbl_fig_gas: "گیس پر حرارت کا اثر",
+  lbl_volume_same: "حجم یکساں رہتا ہے",
+  lbl_volume_grows: "حجم بڑھتا ہے",
+  lbl_burner: "برنر",
+  quiz_title: "کوئز — ٹھوس اجسام کا پھیلاؤ",
+  quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
+  correct_fb: "درست!",
+  wrong_fb: "غلط!",
+  next_q: "اگلا سوال",
+  see_result: "نتیجہ دیکھیں",
+  final_score: "حتمی اسکور",
+  restart: "کوئز دوبارہ",
+  score_msg_great: "شاندار! آپ نے ٹھوس کا پھیلاؤ سمجھ لیا۔",
+  score_msg_good: "اچھی کوشش! سمولیشن ایک بار پھر دیکھیں۔",
+  score_msg_low: "لیب میں سلاخ دوبارہ گرم کریں اور کوئز پھر حل کریں!",
+  quiz: [
+    {
+      q: "خطی پھیلاؤ سے مراد ہے:",
+      opts: [
+        "مائع کے حجم میں اضافہ",
+        "گرم کرنے پر ٹھوس سلاخ یا تار کی لمبائی میں اضافہ",
+        "گرم کرنے پر لمبائی میں کمی",
+        "دھات کے رنگ میں تبدیلی"
+      ],
+      a: 1,
+      ex: "خطی پھیلاؤ: درجہ حرارت بڑھنے سے ٹھوس کی سلاخ یا تار کی لمبائی بڑھنا۔"
+    },
+    {
+      q: "لمبائی میں اضافے کا درست فارمولا کون سا ہے؟",
+      opts: [
+        "Δl = λ / (l₁ × ΔT)",
+        "Δl = λ × l₁ × ΔT",
+        "Δl = λ + l₁ + ΔT",
+        "Δl = l₁ / (λ × ΔT)"
+      ],
+      a: 1,
+      ex: "کتاب کے مطابق: l₂ − l₁ = λ × l₁ × ΔT، یعنی Δl = λ × l₁ × ΔT۔"
+    },
+    {
+      q: "اسٹیل سلاخ 0.5 m، ΔT = 60 °C، λ = 0.000013 /°C۔ Δl کیا ہے؟",
+      opts: ["0.039 m", "0.00039 m", "0.0039 m", "0.39 m"],
+      a: 1,
+      ex: "Δl = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)۔"
+    },
+    {
+      q: "جدول کے مطابق سب سے بڑی خطی پھیلاؤ کی شرح کس کی ہے؟",
+      opts: ["لوہا (11.5)", "تانبا (17)", "چاندی (18)", "ایلومینیم (23.1)"],
+      a: 3,
+      ex: "ایلومینیم کی λ = 23.1 × 10⁻⁶ /°C سب سے بڑی ہے، اس لیے وہ سب سے زیادہ پھیلتا ہے۔"
+    },
+    {
+      q: "خطی پھیلاؤ کی شرح λ کی اکائی ہے:",
+      opts: ["m", "°C", "1/°C", "m/°C"],
+      a: 2,
+      ex: "λ = (l₂ − l₁) / (l₁ ΔT)۔ لمبائی کٹ جاتی ہے، اکائی 1/°C ہے۔"
+    }
+  ]
+}
+};
+
+let cur = localStorage.getItem('iqra_lang') || 'en';
+const S = {
+  mode: 'linear',
+  heat: false,
+  T1: 20,
+  T2: 80,
+  Tnow: 20,
+  size: 1.0, // length (m), sheet side (m), or gas V₁ (L)
+  mat: 'al',
+  gas: 'h2',
+  animT: 0,
+  molecules: []
+};
+
+const WORLD = { w: 960, h: 540 };
+let canvas, ctx, wrap;
+const view = { scale: 1, x: 0, y: 0 };
+let dragging = false, lastX = 0, lastY = 0, pinchDist = 0;
+let quizIdx = 0, quizScore = 0, quizAnswered = false, quizDone = false;
+let annoFloatMin = false;
+
+function t(key) {
+  const L = LANG[cur] || LANG.en;
+  const v = L[key];
+  return typeof v === 'function' ? v : (v != null ? v : (LANG.en[key] ?? key));
+}
+
+/* Physics helpers — textbook relations
+   Linear (solid): Δl = λ l1 ΔT
+   Areal (solid):  A2 = A1(1+σΔT), σ = 2λ
+   Volume (gas, Fig 14.7 movable piston): V2 = V1(1+γΔT)
+*/
+function lambda() { return MATERIALS[S.mat].lambda; }
+function sigma() { return 2 * lambda(); }
+function gamma() { return GASES[S.gas].gamma; }
+function dT() { return Math.max(0, S.Tnow - S.T1); }
+
+function calcLinear() {
+  const l1 = S.size;
+  const dl = lambda() * l1 * dT();
+  return { l1, l2: l1 + dl, dl };
+}
+function calcAreal() {
+  const side = S.size;
+  const A1 = side * side;
+  const A2 = A1 * (1 + sigma() * dT());
+  return { side, A1, A2, dA: A2 - A1 };
+}
+function calcVolume() {
+  // Fig 14.7 — gas in flask, V₁ in litres
+  const V1 = S.size;
+  const V2 = V1 * (1 + gamma() * dT());
+  return { V1, V2, dV: V2 - V1, gamma: gamma() };
+}
+
+function formatCoeff(v) {
+  if (Math.abs(v - 0.000013) < 1e-12) return '0.000013 /°C';
+  if (v >= 1e-3) {
+    const x = v * 1e3;
+    return (Number.isInteger(x) ? x.toFixed(0) : x.toFixed(2)) + '×10⁻³ /°C';
+  }
+  const x = v * 1e6;
+  return (Number.isInteger(x) ? x.toFixed(0) : x.toFixed(1)) + '×10⁻⁶ /°C';
+}
+function formatLen(m) {
+  if (Math.abs(m) < 1e-6) return m.toFixed(8) + ' m';
+  if (Math.abs(m) < 1e-3) return m.toFixed(6) + ' m';
+  return m.toFixed(6) + ' m';
+}
+function formatArea(a) {
+  return a.toFixed(6) + ' m²';
+}
+function formatVol(v) {
+  return v.toFixed(4) + ' L';
+}
+
+/* ============================================================
+   LANGUAGE / UI
+============================================================ */
+function changeLanguage(lang) {
+  if (lang !== 'en' && lang !== 'ur') return;
+  cur = lang;
+  localStorage.setItem('iqra_lang', cur);
+  document.documentElement.lang = cur === 'ur' ? 'ur' : 'en';
+  document.documentElement.dir = cur === 'ur' ? 'rtl' : 'ltr';
+  document.getElementById('lang-select').value = cur;
+  applyI18n();
+  buildMatGrid();
+  updateUI();
+  if (!document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (typeof val === 'string') el.textContent = val;
+  });
+  document.getElementById('intro-topic').textContent = t('intro_topic');
+}
+
+function switchTab(tab) {
+  document.getElementById('view-sim').classList.toggle('hidden', tab !== 'sim');
+  document.getElementById('view-quiz').classList.toggle('hidden', tab !== 'quiz');
+  document.getElementById('tab-sim').classList.toggle('active', tab === 'sim');
+  document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
+  if (tab === 'quiz') renderQuiz();
+  if (tab === 'sim') setTimeout(resizeAll, 50);
+}
+
+function toggleFullScreen() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+    document.getElementById('fs-icon').className = 'fa-solid fa-compress';
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
+    document.getElementById('fs-icon').className = 'fa-solid fa-expand';
+  }
+}
+
+/* ============================================================
+   ANNOTATION — exact required logic
+============================================================ */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+    fCanvas = new fabric.Canvas('fabricLayer', {
+        isDrawingMode: false,
+        width: w,
+        height: h
+    });
+    fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+    fCanvas.freeDrawingBrush.width = 4;
+    
+    // Eraser logic via click
+    fCanvas.on('mouse:down', function(options) {
+        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+            fCanvas.remove(options.target);
+        }
+    });
+}
+
+function toggleAnnotationMode() {
+    isAnnoActive = !isAnnoActive;
+    const btn = document.getElementById('btn-anno-toggle');
+    const toolbar = document.getElementById('anno-toolbar');
+    
+    // Assumes the container of the canvas has class/id handling pointer-events
+    const fabricContainer = document.querySelector('.canvas-container');
+
+    if (isAnnoActive) {
+        btn.classList.replace('text-slate-400', 'text-cyan-400');
+        toolbar.classList.remove('max-w-0', 'opacity-0');
+        toolbar.classList.add('max-w-xs', 'opacity-100');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+        setAnnoMode('pen');
+        document.getElementById('anno-float').classList.remove('hidden-panel');
+    } else {
+        btn.classList.replace('text-cyan-400', 'text-slate-400');
+        toolbar.classList.remove('max-w-xs', 'opacity-100');
+        toolbar.classList.add('max-w-0', 'opacity-0');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'none';
+        if (fCanvas) fCanvas.isDrawingMode = false;
+        document.getElementById('anno-float').classList.add('hidden-panel');
+    }
+}
+
+function setAnnoMode(mode) {
+    document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+    document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+    
+    if (mode === 'pen') {
+        document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = true;
+    } else {
+        document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function changeAnnoColor(color) {
+    if(fCanvas) fCanvas.freeDrawingBrush.color = color;
+    const fl = document.getElementById('anno-color-float');
+    if (fl) fl.value = color;
+    setAnnoMode('pen');
+}
+
+function syncAnnoColor(color) {
+  document.getElementById('anno-color').value = color;
+  changeAnnoColor(color);
+}
+
+function clearAnnotations() {
+    if(fCanvas) fCanvas.clear();
+}
+
+function toggleAnnoFloatMin() {
+  annoFloatMin = !annoFloatMin;
+  document.getElementById('anno-float').classList.toggle('minimized', annoFloatMin);
+  document.getElementById('anno-min-icon').className = annoFloatMin ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
+}
+
+function setupAnnoDrag() {
+  const card = document.getElementById('anno-float');
+  const handle = card.querySelector('.anno-float-handle');
+  let ox = 0, oy = 0, draggingCard = false;
+  handle.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    draggingCard = true;
+    const r = card.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener('pointermove', e => {
+    if (!draggingCard) return;
+    const wr = document.getElementById('canvas-wrap').getBoundingClientRect();
+    const nx = e.clientX - wr.left - ox;
+    const ny = e.clientY - wr.top - oy;
+    card.style.left = Math.max(4, Math.min(wr.width - 48, nx)) + 'px';
+    card.style.top = Math.max(4, Math.min(wr.height - 48, ny)) + 'px';
+    card.style.insetInlineStart = 'auto';
+  });
+  handle.addEventListener('pointerup', () => { draggingCard = false; });
+}
+
+/* ============================================================
+   CONTROLS
+============================================================ */
+function setMode(mode) {
+  S.mode = mode;
+  ['linear','areal','volume'].forEach(m => {
+    document.getElementById('mode-' + m).classList.toggle('active', m === mode);
+  });
+  if (mode === 'volume' && (!S.molecules || !S.molecules.length)) initMolecules();
+  buildMatGrid();
+  updateUI();
+}
+
+function toggleHeat() {
+  S.heat = !S.heat;
+  document.getElementById('btn-heat').classList.toggle('on', S.heat);
+  updateUI();
+}
+
+function onControl() {
+  S.T1 = +document.getElementById('sl-T1').value;
+  S.T2 = +document.getElementById('sl-T2').value;
+  S.size = +document.getElementById('sl-size').value;
+  if (S.T2 < S.T1) {
+    S.T2 = S.T1;
+    document.getElementById('sl-T2').value = S.T2;
+  }
+  if (!S.heat) S.Tnow = S.T1;
+  updateUI();
+}
+
+function selectMat(id) {
+  if (S.mode === 'volume') S.gas = id;
+  else S.mat = id;
+  buildMatGrid();
+  updateUI();
+}
+
+function buildMatGrid() {
+  const g = document.getElementById('mat-grid');
+  g.innerHTML = '';
+  const heading = document.getElementById('mat-heading');
+  const btnEx = document.getElementById('btn-example');
+  if (S.mode === 'volume') {
+    heading.textContent = t('gas_title');
+    btnEx.classList.add('hidden');
+    Object.keys(GASES).forEach(id => {
+      const b = document.createElement('button');
+      b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.gas === id ? ' active' : '');
+      b.textContent = t(GASES[id].key);
+      b.onclick = () => selectMat(id);
+      g.appendChild(b);
+    });
+  } else {
+    heading.textContent = t('mat_title');
+    btnEx.classList.remove('hidden');
+    Object.keys(MATERIALS).forEach(id => {
+      const b = document.createElement('button');
+      b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.mat === id ? ' active' : '');
+      b.textContent = t(MATERIALS[id].key);
+      b.onclick = () => selectMat(id);
+      g.appendChild(b);
+    });
+  }
+}
+
+function loadExample() {
+  // Textbook: steel, l1=0.5 m, ΔT=60°C → use T1=20, T2=80
+  S.mat = 'st';
+  S.size = 0.5;
+  S.T1 = 20;
+  S.T2 = 80;
+  S.heat = true;
+  S.Tnow = S.T1;
+  document.getElementById('sl-size').value = S.size;
+  document.getElementById('sl-T1').value = S.T1;
+  document.getElementById('sl-T2').value = S.T2;
+  document.getElementById('btn-heat').classList.add('on');
+  setMode('linear');
+  buildMatGrid();
+  updateUI();
+}
+
+function updateUI() {
+  document.getElementById('heat-label').textContent = S.heat ? t('heat_on') : t('heat_off');
+  document.getElementById('val-T1').textContent = S.T1 + ' °C';
+  document.getElementById('val-T2').textContent = S.T2 + ' °C';
+  document.getElementById('val-dT').textContent = dT().toFixed(1) + ' °C';
+
+  const sizeKey = S.mode === 'linear' ? 'L0_label' : (S.mode === 'areal' ? 'A0_label' : 'V0_label');
+  document.getElementById('size-label').textContent = t(sizeKey);
+  document.getElementById('val-size').textContent = S.mode === 'volume'
+    ? (S.size.toFixed(2) + ' L')
+    : (S.size.toFixed(2) + ' m');
+
+  // Measurement panel
+  if (S.mode === 'linear') {
+    const r = calcLinear();
+    document.getElementById('coeff-label').textContent = t('lambda_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(lambda());
+    document.getElementById('m1-label').textContent = t('L1_label');
+    document.getElementById('m2-label').textContent = t('L2_label');
+    document.getElementById('md-label').textContent = t('dL_label');
+    document.getElementById('m-1').textContent = formatLen(r.l1);
+    document.getElementById('m-2').textContent = formatLen(r.l2);
+    document.getElementById('m-d').textContent = formatLen(r.dl);
+    document.getElementById('formula-val').textContent = 'Δl = λ × l₁ × ΔT';
+    document.getElementById('obs-text').textContent = t('obs_linear');
+    document.getElementById('tip-text').textContent = t('tip_linear');
+  } else if (S.mode === 'areal') {
+    const r = calcAreal();
+    document.getElementById('coeff-label').textContent = t('sigma_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(sigma());
+    document.getElementById('m1-label').textContent = t('A1_label');
+    document.getElementById('m2-label').textContent = t('A2_label');
+    document.getElementById('md-label').textContent = t('dA_label');
+    document.getElementById('m-1').textContent = formatArea(r.A1);
+    document.getElementById('m-2').textContent = formatArea(r.A2);
+    document.getElementById('m-d').textContent = formatArea(r.dA);
+    document.getElementById('formula-val').textContent = 'A₂ = A₁(1 + σ ΔT)';
+    document.getElementById('obs-text').textContent = t('obs_areal');
+    document.getElementById('tip-text').textContent = t('tip_areal');
+  } else {
+    const r = calcVolume();
+    document.getElementById('coeff-label').textContent = t('beta_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(gamma());
+    document.getElementById('m1-label').textContent = t('V1_label');
+    document.getElementById('m2-label').textContent = t('V2_label');
+    document.getElementById('md-label').textContent = t('dV_label');
+    document.getElementById('m-1').textContent = formatVol(r.V1);
+    document.getElementById('m-2').textContent = formatVol(r.V2);
+    document.getElementById('m-d').textContent = formatVol(r.dV);
+    document.getElementById('formula-val').textContent = 'V₂ = V₁(1 + γ ΔT)';
+    document.getElementById('obs-text').textContent = t('obs_volume');
+    document.getElementById('tip-text').textContent = t('tip_volume');
+  }
+}
+
+/* ============================================================
+   ZOOM / PAN
+============================================================ */
+function resizeAll() {
+  wrap = document.getElementById('canvas-wrap');
+  canvas = document.getElementById('sim-canvas');
+  if (!wrap || !canvas) return;
+  const r = wrap.getBoundingClientRect();
+  if (r.width < 10 || r.height < 10) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = r.width * dpr;
+  canvas.height = r.height * dpr;
+  canvas.style.width = r.width + 'px';
+  canvas.style.height = r.height + 'px';
+  ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if (fCanvas) {
+    fCanvas.setWidth(r.width);
+    fCanvas.setHeight(r.height);
+    fCanvas.calcOffset();
+    const fabricContainer = document.querySelector('.canvas-container');
+    if (fabricContainer) fabricContainer.style.pointerEvents = isAnnoActive ? 'auto' : 'none';
+  } else if (typeof fabric !== 'undefined') {
+    initAnnotationCanvas(r.width, r.height);
+    const fabricContainer = document.querySelector('.canvas-container');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+  }
+  fitView();
+}
+
+function fitView() {
+  if (!wrap) return;
+  const r = wrap.getBoundingClientRect();
+  view.scale = Math.min(r.width / WORLD.w, r.height / WORLD.h) * 0.94;
+  view.x = (r.width - WORLD.w * view.scale) / 2;
+  view.y = (r.height - WORLD.h * view.scale) / 2;
+}
+
+function zoomBy(f) {
+  if (!wrap) return;
+  const r = wrap.getBoundingClientRect();
+  const cx = r.width / 2, cy = r.height / 2;
+  const wx = (cx - view.x) / view.scale;
+  const wy = (cy - view.y) / view.scale;
+  view.scale = Math.max(0.4, Math.min(3.5, view.scale * f));
+  view.x = cx - wx * view.scale;
+  view.y = cy - wy * view.scale;
+}
+function resetView() { fitView(); }
+
+function setupPointer() {
+  const el = document.getElementById('sim-canvas');
+  el.addEventListener('pointerdown', e => {
+    if (isAnnoActive) return;
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    el.setPointerCapture(e.pointerId);
+    el.classList.replace('cursor-grab', 'cursor-grabbing');
+  });
+  el.addEventListener('pointermove', e => {
+    if (!dragging || isAnnoActive) return;
+    view.x += e.clientX - lastX;
+    view.y += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  el.addEventListener('pointerup', () => {
+    dragging = false;
+    el.classList.replace('cursor-grabbing', 'cursor-grab');
+  });
+  el.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = wrap.getBoundingClientRect();
+    const cx = e.clientX - r.left, cy = e.clientY - r.top;
+    const wx = (cx - view.x) / view.scale;
+    const wy = (cy - view.y) / view.scale;
+    const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    view.scale = Math.max(0.4, Math.min(3.5, view.scale * f));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+  }, { passive: false });
+  el.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchDist = Math.hypot(dx, dy);
+    }
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    if (e.touches.length === 2 && pinchDist > 0) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const d = Math.hypot(dx, dy);
+      zoomBy(d / pinchDist);
+      pinchDist = d;
+    }
+  }, { passive: false });
+}
+
+/* ============================================================
+   DRAW
+============================================================ */
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawText(str, x, y, opt = {}) {
+  ctx.fillStyle = opt.color || '#94a3b8';
+  ctx.font = opt.font || (cur === 'ur'
+    ? "600 15px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif"
+    : '600 13px Manrope,sans-serif');
+  ctx.textAlign = opt.align || 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(str, x, y);
+}
+
+function drawBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
+  g.addColorStop(0, '#0b1224');
+  g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+  ctx.fillStyle = '#1e293b';
+  roundRect(50, 420, WORLD.w - 100, 60, 12);
+  ctx.fill();
+  ctx.fillStyle = '#334155';
+  roundRect(50, 420, WORLD.w - 100, 12, 6);
+  ctx.fill();
+}
+
+function drawThermo(x, y, T) {
+  const h = 110;
+  const frac = Math.max(0, Math.min(1, T / 200));
+  ctx.fillStyle = '#cbd5e1';
+  roundRect(x, y, 14, h, 7); ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  roundRect(x + 3, y + 6, 8, h - 28, 4); ctx.fill();
+  const fillH = (h - 36) * frac;
+  ctx.fillStyle = frac > 0.5 ? '#ef4444' : '#38bdf8';
+  ctx.fillRect(x + 3, y + 6 + (h - 36 - fillH), 8, fillH);
+  ctx.beginPath();
+  ctx.arc(x + 7, y + h - 8, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '700 12px Oxanium,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(T.toFixed(0) + '°C', x + 7, y - 10);
+}
+
+function drawLinear() {
+  drawBg();
+  const mat = MATERIALS[S.mat];
+  const { l1, dl } = calcLinear();
+  // Visual scale: base length mapped to pixels; expansion exaggerated ×8000 for visibility
+  const basePx = 280 + (l1 / 2) * 200;
+  const expandPx = Math.min(160, dl * 8000);
+  const rodX = 160, rodY = 280, rodH = 30;
+  const rodW = basePx + expandPx;
+
+  // clamp
+  ctx.fillStyle = '#475569';
+  roundRect(rodX - 34, rodY - 14, 36, rodH + 28, 6); ctx.fill();
+
+  // heater
+  const intensity = S.heat ? Math.min(1, dT() / 50) : 0;
+  const hx = rodX + 50, hy = rodY + 60, hw = Math.min(rodW - 60, 260);
+  if (intensity > 0) {
+    const g = ctx.createRadialGradient(hx + hw / 2, hy, 2, hx + hw / 2, hy, hw * 0.6);
+    g.addColorStop(0, `rgba(251,146,60,${0.35 * intensity})`);
+    g.addColorStop(1, 'rgba(251,146,60,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(hx - 30, hy - 40, hw + 60, 90);
+  }
+  ctx.fillStyle = intensity > 0 ? '#7f1d1d' : '#334155';
+  roundRect(hx, hy, hw, 16, 6); ctx.fill();
+  ctx.strokeStyle = intensity > 0 ? '#f97316' : '#64748b';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i < hw - 12; i += 12) {
+    ctx.moveTo(hx + 6 + i, hy + 4);
+    ctx.quadraticCurveTo(hx + 12 + i, hy + (i % 24 < 12 ? 14 : 2), hx + 18 + i, hy + 4);
+  }
+  ctx.stroke();
+
+  // rod
+  const rg = ctx.createLinearGradient(0, rodY, 0, rodY + rodH);
+  rg.addColorStop(0, '#ffffff66');
+  rg.addColorStop(0.4, mat.color);
+  rg.addColorStop(1, mat.accent);
+  ctx.fillStyle = rg;
+  roundRect(rodX, rodY, rodW, rodH, 6); ctx.fill();
+
+  // markers
+  ctx.fillStyle = '#00f3ff';
+  ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10;
+  ctx.fillRect(rodX + rodW - 3, rodY - 8, 4, rodH + 16);
+  ctx.shadowBlur = 0;
+  if (expandPx > 1) {
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(148,163,184,.6)';
+    ctx.beginPath();
+    ctx.moveTo(rodX + basePx, rodY - 14);
+    ctx.lineTo(rodX + basePx, rodY + rodH + 14);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawText('l₁', rodX + basePx, rodY - 22, { align: 'center', color: '#94a3b8', font: '700 12px Oxanium' });
+    drawText('l₂', rodX + rodW, rodY - 22, { align: 'center', color: '#00f3ff', font: '700 12px Oxanium' });
+  }
+
+  drawThermo(50, 160, S.Tnow);
+  drawText(t(mat.key) + '  ·  λ = ' + formatCoeff(lambda()), WORLD.w / 2, 55, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  });
+  drawText('Δl = ' + formatLen(dl), WORLD.w / 2, 88, {
+    align: 'center', color: '#00f3ff', font: '700 16px Oxanium'
+  });
+  drawText(t('lbl_fixed'), rodX - 10, rodY - 32, { align: 'center' });
+  drawText(t('lbl_free'), rodX + rodW, rodY + rodH + 24, { align: 'center', color: '#00f3ff' });
+  drawText(t('lbl_heater'), hx + hw / 2, hy + 32, { align: 'center' });
+}
+
+function drawCompareBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
+  g.addColorStop(0, '#0b1224');
+  g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+  roundRect(40, 100, 420, 360, 20); ctx.fill();
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(40, 100, 420, 360, 20); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+  roundRect(500, 100, 420, 360, 20); ctx.fill();
+  ctx.strokeStyle = 'rgba(251, 146, 60, 0.4)';
+  roundRect(500, 100, 420, 360, 20); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(WORLD.w / 2, 280, 28, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
+  ctx.strokeStyle = '#00f3ff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  drawText(t('lbl_vs'), WORLD.w / 2, 280, {
+    align: 'center', color: '#00f3ff',
+    font: cur === 'ur' ? "700 14px 'Jameel Noori Nastaliq'" : '800 11px Oxanium'
+  });
+}
+
+/** Educational visual growth for comparison (real Δ is tiny). */
+function compareVisualScale() {
+  const dt = dT();
+  return 1 + Math.min(0.45, (dt / 200) * 0.45 + (dt > 0 ? 0.08 : 0));
+}
+
+function drawSheetAt(cx, cy, size, mat, hot) {
+  const g = ctx.createLinearGradient(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2);
+  if (hot) {
+    g.addColorStop(0, '#fdba74');
+    g.addColorStop(0.45, mat.color);
+    g.addColorStop(1, mat.accent);
+  } else {
+    g.addColorStop(0, '#e2e8f0');
+    g.addColorStop(0.45, mat.color);
+    g.addColorStop(1, '#64748b');
+  }
+  ctx.fillStyle = g;
+  ctx.globalAlpha = 0.95;
+  roundRect(cx - size / 2, cy - size / 2, size, size, 10);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = hot ? '#fb923c' : '#38bdf8';
+  ctx.lineWidth = 2.5;
+  roundRect(cx - size / 2, cy - size / 2, size, size, 10);
+  ctx.stroke();
+
+  ctx.strokeStyle = hot ? 'rgba(251,146,60,.7)' : 'rgba(56,189,248,.7)';
+  ctx.lineWidth = 1.5;
+  const x0 = cx - size / 2, y0 = cy + size / 2 + 16;
+  ctx.beginPath();
+  ctx.moveTo(x0, y0); ctx.lineTo(x0 + size, y0);
+  ctx.moveTo(x0, y0 - 5); ctx.lineTo(x0, y0 + 5);
+  ctx.moveTo(x0 + size, y0 - 5); ctx.lineTo(x0 + size, y0 + 5);
+  ctx.stroke();
+}
+
+function drawCubeAt(cx, cy, size, mat, hot, ghostSize) {
+  function iso(x, y, z) {
+    return { x: cx + (x - z) * 0.86, y: cy + y + (x + z) * 0.48 };
+  }
+  function pts(s) {
+    return [
+      iso(0, 0, 0), iso(s, 0, 0), iso(s, 0, s), iso(0, 0, s),
+      iso(0, -s, 0), iso(s, -s, 0), iso(s, -s, s), iso(0, -s, s)
+    ];
+  }
+  function strokeCube(p, color, dash) {
+    if (dash) ctx.setLineDash([5, 4]); else ctx.setLineDash([]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = dash ? 1.5 : 2;
+    [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i, j]) => {
+      ctx.beginPath(); ctx.moveTo(p[i].x, p[i].y); ctx.lineTo(p[j].x, p[j].y); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+  function fillCube(p) {
+    ctx.fillStyle = hot ? mat.accent : '#64748b';
+    ctx.beginPath();
+    ctx.moveTo(p[0].x, p[0].y); ctx.lineTo(p[1].x, p[1].y); ctx.lineTo(p[5].x, p[5].y); ctx.lineTo(p[4].x, p[4].y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = mat.color;
+    ctx.beginPath();
+    ctx.moveTo(p[1].x, p[1].y); ctx.lineTo(p[2].x, p[2].y); ctx.lineTo(p[6].x, p[6].y); ctx.lineTo(p[5].x, p[5].y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = hot ? 'rgba(253,186,116,0.85)' : 'rgba(226,232,240,0.75)';
+    ctx.beginPath();
+    ctx.moveTo(p[4].x, p[4].y); ctx.lineTo(p[5].x, p[5].y); ctx.lineTo(p[6].x, p[6].y); ctx.lineTo(p[7].x, p[7].y);
+    ctx.closePath(); ctx.fill();
+  }
+
+  if (ghostSize && ghostSize < size - 1) {
+    strokeCube(pts(ghostSize), 'rgba(148,163,184,0.55)', true);
+  }
+  const p = pts(size);
+  fillCube(p);
+  strokeCube(p, hot ? '#fb923c' : '#38bdf8', false);
+}
+
+function drawAreal() {
+  drawCompareBg();
+  const mat = MATERIALS[S.mat];
+  const { A1, A2, dA } = calcAreal();
+  const base = 150;
+  const afterSize = base * compareVisualScale();
+
+  drawText(t('lbl_before'), 250, 130, {
+    align: 'center', color: '#38bdf8',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₁ = ' + S.T1 + ' °C', 250, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+  drawSheetAt(250, 290, base, mat, false);
+  drawText('A₁', 250, 290, { align: 'center', color: '#0f172a', font: '800 22px Oxanium' });
+  drawText(formatArea(A1), 250, 420, { align: 'center', color: '#38bdf8', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_after'), 710, 130, {
+    align: 'center', color: '#fb923c',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₂ = ' + S.Tnow.toFixed(0) + ' °C', 710, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+
+  ctx.strokeStyle = 'rgba(56,189,248,0.45)';
+  ctx.setLineDash([6, 5]);
+  ctx.lineWidth = 2;
+  roundRect(710 - base / 2, 290 - base / 2, base, base, 10);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  drawSheetAt(710, 290, afterSize, mat, dT() > 0.5);
+  drawText('A₂', 710, 290, { align: 'center', color: '#0f172a', font: '800 22px Oxanium' });
+  drawText(formatArea(A2), 710, 420, { align: 'center', color: '#fb923c', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_sheet') + '  ·  σ = 2λ = ' + formatCoeff(sigma()), WORLD.w / 2, 40, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  });
+  drawText(t('lbl_same_size_hint'), WORLD.w / 2, 68, {
+    align: 'center', color: '#64748b',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
+  });
+  drawText(t('lbl_real_values') + '  ·  ΔA = ' + formatArea(dA), WORLD.w / 2, 490, {
+    align: 'center', color: '#00f3ff', font: '700 15px Oxanium'
+  });
+
+  drawThermo(8, 180, S.Tnow);
+}
+
+function initMolecules() {
+  S.molecules = [];
+  for (let i = 0; i < 18; i++) {
+    S.molecules.push({
+      x: 0.2 + Math.random() * 0.6,
+      y: 0.25 + Math.random() * 0.55,
+      a: Math.random() * Math.PI * 2,
+      sp: 0.6 + Math.random() * 0.8
+    });
+  }
+}
+
+function drawBurner(cx, by, lit) {
+  // green base like textbook
+  ctx.fillStyle = '#22c55e';
+  roundRect(cx - 28, by, 56, 18, 4); ctx.fill();
+  ctx.fillStyle = '#16a34a';
+  roundRect(cx - 22, by + 14, 44, 10, 3); ctx.fill();
+  // barrel
+  ctx.fillStyle = '#64748b';
+  roundRect(cx - 8, by - 22, 16, 24, 3); ctx.fill();
+  if (lit) {
+    // flame
+    const flick = Math.sin(S.animT * 12) * 3;
+    ctx.beginPath();
+    ctx.moveTo(cx - 10, by - 20);
+    ctx.quadraticCurveTo(cx - 14, by - 48 + flick, cx, by - 62 + flick);
+    ctx.quadraticCurveTo(cx + 14, by - 48 - flick, cx + 10, by - 20);
+    ctx.closePath();
+    const fg = ctx.createLinearGradient(cx, by - 62, cx, by - 20);
+    fg.addColorStop(0, '#fef08a');
+    fg.addColorStop(0.45, '#fb923c');
+    fg.addColorStop(1, '#ef4444');
+    ctx.fillStyle = fg;
+    ctx.fill();
+  }
+}
+
+function drawTripod(cx, topY) {
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cx - 50, topY + 70); ctx.lineTo(cx - 18, topY);
+  ctx.moveTo(cx + 50, topY + 70); ctx.lineTo(cx + 18, topY);
+  ctx.moveTo(cx, topY + 75); ctx.lineTo(cx, topY + 8);
+  ctx.stroke();
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cx - 40, topY); ctx.lineTo(cx + 40, topY);
+  ctx.stroke();
+}
+
+function drawFlaskSetup(cx, movable) {
+  const heatFrac = Math.min(1, dT() / 80);
+  const lit = S.heat && dT() > 0.2;
+  const flaskBottom = 360;
+  const flaskW = 110;
+  const flaskH = 130;
+  const neckW = 36;
+  const neckH = 90;
+  const basePistonY = flaskBottom - flaskH - 8;
+  // movable piston rises with heat (visual)
+  const rise = movable ? (28 + heatFrac * 70) : 8;
+  const pistonY = basePistonY - rise;
+
+  drawTripod(cx, flaskBottom + 8);
+  drawBurner(cx, flaskBottom + 78, lit);
+
+  // flask body (glass)
+  ctx.beginPath();
+  ctx.moveTo(cx - flaskW / 2, flaskBottom);
+  ctx.lineTo(cx - flaskW / 2, flaskBottom - flaskH + 30);
+  ctx.quadraticCurveTo(cx - flaskW / 2, flaskBottom - flaskH, cx - neckW / 2, flaskBottom - flaskH);
+  ctx.lineTo(cx - neckW / 2, flaskBottom - flaskH - neckH);
+  ctx.lineTo(cx + neckW / 2, flaskBottom - flaskH - neckH);
+  ctx.lineTo(cx + neckW / 2, flaskBottom - flaskH);
+  ctx.quadraticCurveTo(cx + flaskW / 2, flaskBottom - flaskH, cx + flaskW / 2, flaskBottom - flaskH + 30);
+  ctx.lineTo(cx + flaskW / 2, flaskBottom);
+  ctx.closePath();
+  const glass = ctx.createLinearGradient(cx - flaskW / 2, 0, cx + flaskW / 2, 0);
+  glass.addColorStop(0, 'rgba(186,230,253,0.25)');
+  glass.addColorStop(0.5, 'rgba(224,242,254,0.45)');
+  glass.addColorStop(1, 'rgba(186,230,253,0.25)');
+  ctx.fillStyle = glass;
+  ctx.fill();
+  ctx.strokeStyle = '#7dd3fc';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // gas fill tint
+  ctx.fillStyle = lit ? 'rgba(251,146,60,0.12)' : 'rgba(125,211,252,0.08)';
+  ctx.beginPath();
+  ctx.moveTo(cx - flaskW / 2 + 4, flaskBottom - 4);
+  ctx.lineTo(cx - flaskW / 2 + 4, flaskBottom - flaskH + 34);
+  ctx.quadraticCurveTo(cx - flaskW / 2 + 4, flaskBottom - flaskH + 8, cx - neckW / 2 + 2, flaskBottom - flaskH + 4);
+  ctx.lineTo(cx - neckW / 2 + 2, pistonY + 14);
+  ctx.lineTo(cx + neckW / 2 - 2, pistonY + 14);
+  ctx.lineTo(cx + neckW / 2 - 2, flaskBottom - flaskH + 4);
+  ctx.quadraticCurveTo(cx + flaskW / 2 - 4, flaskBottom - flaskH + 8, cx + flaskW / 2 - 4, flaskBottom - flaskH + 34);
+  ctx.lineTo(cx + flaskW / 2 - 4, flaskBottom - 4);
+  ctx.closePath();
+  ctx.fill();
+
+  // molecules inside flask
+  if (!S.molecules.length) initMolecules();
+  const speed = 0.4 + heatFrac * 2.2;
+  const molColor = GASES[S.gas].color;
+  S.molecules.forEach((m, i) => {
+    // animate in local space
+    m.a += 0.02 * m.sp * speed;
+    const jx = Math.cos(m.a * m.sp + S.animT * speed) * (4 + heatFrac * 8);
+    const jy = Math.sin(m.a * 1.3 + S.animT * speed) * (4 + heatFrac * 8);
+    const mx = cx - flaskW / 2 + 18 + m.x * (flaskW - 36) + jx;
+    const my = flaskBottom - 20 - m.y * (flaskH - 40) + jy;
+    // keep roughly in body
+    const yClamp = Math.min(flaskBottom - 16, Math.max(pistonY + 24, my));
+    ctx.fillStyle = molColor;
+    ctx.beginPath();
+    ctx.arc(mx, yClamp, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // motion arrow
+    const ang = m.a + S.animT * speed;
+    const al = 8 + heatFrac * 10;
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mx, yClamp);
+    ctx.lineTo(mx + Math.cos(ang) * al, yClamp + Math.sin(ang) * al);
+    ctx.stroke();
+  });
+
+  // piston
+  ctx.fillStyle = movable ? '#94a3b8' : '#64748b';
+  roundRect(cx - neckW / 2 - 4, pistonY, neckW + 8, 14, 3);
+  ctx.fill();
+  ctx.strokeStyle = movable ? '#e2e8f0' : '#94a3b8';
+  ctx.lineWidth = 1.5;
+  roundRect(cx - neckW / 2 - 4, pistonY, neckW + 8, 14, 3);
+  ctx.stroke();
+
+  // piston rod
+  ctx.fillStyle = '#cbd5e1';
+  roundRect(cx - 3, pistonY - (movable ? 50 : 28), 6, movable ? 50 : 28, 2);
+  ctx.fill();
+  if (!movable) {
+    // lock marks for fixed piston
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - neckW / 2 - 12, pistonY + 7);
+    ctx.lineTo(cx - neckW / 2 - 2, pistonY + 7);
+    ctx.moveTo(cx + neckW / 2 + 2, pistonY + 7);
+    ctx.lineTo(cx + neckW / 2 + 12, pistonY + 7);
+    ctx.stroke();
+  } else if (heatFrac > 0.05) {
+    // up arrow
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.moveTo(cx + 28, pistonY + 20);
+    ctx.lineTo(cx + 28, pistonY - 10);
+    ctx.lineTo(cx + 22, pistonY - 2);
+    ctx.moveTo(cx + 28, pistonY - 10);
+    ctx.lineTo(cx + 34, pistonY - 2);
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
+  return { pistonY, flaskBottom, flaskH };
+}
+
+function drawVolume() {
+  // Fig. 14.7 — Effect of heat on a gas
+  const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
+  g.addColorStop(0, '#0b1224');
+  g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+  // panels
+  ctx.fillStyle = 'rgba(30,41,59,0.5)';
+  roundRect(30, 90, 430, 400, 18); ctx.fill();
+  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(30, 90, 430, 400, 18); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(30,41,59,0.5)';
+  roundRect(500, 90, 430, 400, 18); ctx.fill();
+  ctx.strokeStyle = 'rgba(251,146,60,0.4)';
+  roundRect(500, 90, 430, 400, 18); ctx.stroke();
+
+  const { V1, V2, dV } = calcVolume();
+
+  drawText(t('lbl_fixed_piston'), 245, 118, {
+    align: 'center', color: '#94a3b8',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '800 15px Oxanium'
+  });
+  drawFlaskSetup(245, false);
+  drawText(t('lbl_volume_same'), 245, 455, {
+    align: 'center', color: '#38bdf8',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '700 13px Manrope'
+  });
+  drawText('V = ' + formatVol(V1), 245, 478, {
+    align: 'center', color: '#94a3b8', font: '700 14px Oxanium'
+  });
+
+  drawText(t('lbl_movable_piston'), 715, 118, {
+    align: 'center', color: '#fb923c',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '800 15px Oxanium'
+  });
+  drawFlaskSetup(715, true);
+  drawText(t('lbl_volume_grows'), 715, 455, {
+    align: 'center', color: '#4ade80',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '700 13px Manrope'
+  });
+  drawText('V₂ = ' + formatVol(V2), 715, 478, {
+    align: 'center', color: '#fb923c', font: '700 14px Oxanium'
+  });
+
+  drawText(t('lbl_fig_gas'), WORLD.w / 2, 36, {
+    align: 'center', color: '#f9a8d4',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 18px Oxanium'
+  });
+  drawText(t(GASES[S.gas].key) + '  ·  γ = ' + formatCoeff(gamma()) + '  ·  ΔV = ' + formatVol(dV), WORLD.w / 2, 64, {
+    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
+  });
+  drawText(t('lbl_air_molecules'), WORLD.w / 2, 530, {
+    align: 'center', color: '#64748b',
+    font: cur === 'ur' ? "600 13px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
+  });
+}
+
+function draw() {
+  if (!ctx || !wrap) return;
+  const r = wrap.getBoundingClientRect();
+  ctx.clearRect(0, 0, r.width, r.height);
+  ctx.save();
+  ctx.translate(view.x, view.y);
+  ctx.scale(view.scale, view.scale);
+  if (S.mode === 'linear') drawLinear();
+  else if (S.mode === 'areal') drawAreal();
+  else drawVolume();
+  ctx.restore();
+}
+
+function tickPhysics(dt) {
+  S.animT += dt;
+  const target = S.heat ? S.T2 : S.T1;
+  const rate = 30;
+  const prev = S.Tnow;
+  if (S.Tnow < target) S.Tnow = Math.min(target, S.Tnow + rate * dt);
+  else if (S.Tnow > target) S.Tnow = Math.max(target, S.Tnow - rate * dt);
+  if (S.Tnow !== prev) updateUI();
+  // molecule motion for Fig. 14.7
+  if (S.mode === 'volume') {
+    if (!S.molecules.length) initMolecules();
+    const speed = 0.4 + Math.min(1, dT() / 80) * 2.2;
+    S.molecules.forEach(m => { m.a += dt * 3 * m.sp * speed; });
+  }
+}
+
+/* ============================================================
+   QUIZ
+============================================================ */
+function renderQuiz() {
+  const box = document.getElementById('quiz-box');
+  const quiz = (LANG[cur] || LANG.en).quiz;
+  if (quizDone) {
+    const pct = Math.round((quizScore / quiz.length) * 100);
+    const msg = pct >= 80 ? t('score_msg_great') : pct >= 50 ? t('score_msg_good') : t('score_msg_low');
+    box.innerHTML = `
+      <div class="text-center space-y-6 fade-in">
+        <h2 class="font-display font-bold text-2xl text-cyan-400">${t('final_score')}</h2>
+        <div class="stat-val text-5xl num">${quizScore} / ${quiz.length}</div>
+        <div class="text-3xl font-bold text-slate-200 num">${pct}%</div>
+        <p class="text-slate-300">${msg}</p>
+        <button onclick="restartQuiz()" class="px-8 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold">${t('restart')}</button>
+      </div>`;
+    return;
+  }
+  const q = quiz[quizIdx];
+  const progress = LANG[cur].quiz_progress(quizIdx + 1, quiz.length);
+  const opts = q.opts.map((o, i) =>
+    `<button class="opt-btn w-full text-start px-4 py-3 rounded-xl text-slate-200 mb-2 ${quizAnswered ? 'locked' : ''}" id="opt-${i}" onclick="answerQuiz(${i})">${String.fromCharCode(65 + i)}. ${o}</button>`
+  ).join('');
+  box.innerHTML = `
+    <div class="space-y-5">
+      <div class="flex justify-between items-center gap-3">
+        <h2 class="font-display font-bold text-xl text-cyan-400">${t('quiz_title')}</h2>
+        <span class="text-sm text-slate-400">${progress}</span>
+      </div>
+      <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div class="h-full bg-cyan-400 transition-all" style="width:${((quizIdx+(quizAnswered?1:0))/quiz.length)*100}%"></div>
+      </div>
+      <p class="text-lg font-bold text-slate-100 leading-relaxed">${q.q}</p>
+      <div>${opts}</div>
+      <div id="quiz-fb" class="hidden glass-panel rounded-xl p-4 text-sm"></div>
+      <div class="flex justify-end">
+        <button id="quiz-next" onclick="nextQuiz()" class="hidden px-6 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold">${quizIdx >= quiz.length - 1 ? t('see_result') : t('next_q')}</button>
+      </div>
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = (LANG[cur] || LANG.en).quiz[quizIdx];
+  const correct = i === q.a;
+  if (correct) quizScore++;
+  document.getElementById('opt-' + q.a).classList.add('correct');
+  if (!correct) document.getElementById('opt-' + i).classList.add('wrong');
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.add('locked'));
+  const fb = document.getElementById('quiz-fb');
+  fb.classList.remove('hidden');
+  fb.innerHTML = `<span class="font-bold ${correct ? 'text-green-400' : 'text-red-400'}">${correct ? t('correct_fb') : t('wrong_fb')}</span>
+    <p class="mt-2 text-slate-300">${q.ex}</p>`;
+  document.getElementById('quiz-next').classList.remove('hidden');
+}
+
+function nextQuiz() {
+  const quiz = (LANG[cur] || LANG.en).quiz;
+  if (quizIdx >= quiz.length - 1) { quizDone = true; renderQuiz(); return; }
+  quizIdx++; quizAnswered = false; renderQuiz();
+}
+function restartQuiz() {
+  quizIdx = 0; quizScore = 0; quizAnswered = false; quizDone = false; renderQuiz();
+}
+
+/* ============================================================
+   BOOT
+============================================================ */
+let lastTs = 0;
+function loop(ts) {
+  if (window.__denied) return;
+  const dt = Math.min(0.05, (ts - lastTs) / 1000 || 0.016);
+  lastTs = ts;
+  tickPhysics(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function boot() {
+  // Verify textbook example once at start
+  const check = 0.000013 * 0.5 * 60;
+  if (Math.abs(check - 0.00039) > 1e-12) console.error('Steel example mismatch', check);
+
+  changeLanguage(cur);
+  buildMatGrid();
+  setupPointer();
+  setupAnnoDrag();
+  resizeAll();
+  updateUI();
+  window.addEventListener('resize', resizeAll);
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fs-icon').className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+    setTimeout(resizeAll, 100);
+  });
+
+  setTimeout(() => {
+    const intro = document.getElementById('intro');
+    intro.style.opacity = '0';
+    setTimeout(() => {
+      intro.style.display = 'none';
+      document.getElementById('app').style.opacity = '1';
+      resizeAll();
+      requestAnimationFrame(loop);
+    }, 800);
+  }, 4800);
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+else boot();
+</script>
+</body>
+</html>
