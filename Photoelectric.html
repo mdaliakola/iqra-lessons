@@ -473,17 +473,18 @@ en: {
   tip_title: "Discover",
   metals: { cs:'Cesium', k:'Potassium', na:'Sodium', ca:'Calcium', mg:'Magnesium', al:'Aluminium', zn:'Zinc' },
   status_off: "Light is OFF — turn it ON to begin the experiment.",
-  status_below: "f < f₀ — NO photoelectrons. Photon energy is below the work function.",
-  status_threshold: "f ≈ f₀ — Emission just begins. Electrons leave with nearly zero KE.",
-  status_emit: "f > f₀ — Photoelectrons emitted! Watch current and kinetic energy.",
+  status_below: "f < f₀ — NO emission. Photons hit the metal but electrons stay inside.",
+  status_threshold: "f ≈ f₀ — Electrons just leave but stick on the surface (Kmax ≈ 0).",
+  status_emit: "f > f₀ — Electrons fly with Kinetic Energy Kmax = hf − φ. Raise f to speed them up!",
   status_stopped: "Retarding potential ≥ Vs — current is ZERO (stopping potential).",
   status_sat: "Accelerating potential — saturation photocurrent reached.",
-  tip_off: "Predict first: can light eject electrons? Turn the light ON and test frequency vs intensity.",
-  tip_below: "Classical wave theory fails here: even bright light below threshold ejects no electrons. Try shorter wavelength (higher f).",
+  tip_off: "Predict first: can light eject electrons? Turn the light ON and slowly raise frequency.",
+  tip_below: "Low frequency: photons arrive, but hf < φ — NO electrons leave the metal. Raise frequency (shorter λ).",
+  tip_stuck: "At threshold: electrons appear but cling to the surface with almost zero KE. Raise f a little more.",
   tip_emit_int: "Raise intensity: more photons → more electrons → larger saturation current. Kmax stays the same!",
-  tip_emit_freq: "Raise frequency: each photon carries more energy → Kmax and Vs increase. Intensity alone cannot do this.",
+  tip_emit_freq: "Higher frequency → leftover energy becomes Kinetic Energy. Electrons race faster toward the collector.",
   tip_voltage: "Make V more negative. Current falls and becomes zero at stopping potential Vs = Kmax/e.",
-  tip_micro: "Each photon gives all its energy hf to one electron. Emission is all-or-nothing — not gradual heating.",
+  tip_micro: "Watch three stages: below threshold (no leave) → at threshold (stick on surface) → above (fly with KE).",
   tip_graph: "I–V curve: current saturates for V > 0 and drops to zero at V = −Vs. Intensity scales the height, frequency shifts Vs.",
   lbl_source: "LIGHT SOURCE",
   lbl_filter: "MONOCHROMATIC",
@@ -496,8 +497,9 @@ en: {
   lbl_photon: "γ",
   lbl_electron: "e⁻",
   lbl_metal_surface: "Metal Surface",
-  lbl_absorbed: "Absorbed",
-  lbl_ejected: "Ejected",
+  lbl_absorbed: "Absorbed — no emission",
+  lbl_ejected: "Flying with KE",
+  lbl_stuck: "Stuck on surface (Kmax ≈ 0)",
   lbl_reflected: "Insufficient energy",
   graph_title: "Photocurrent vs Collector Potential",
   graph_I: "I (μA)",
@@ -577,17 +579,18 @@ ur: {
   tip_title: "دریافت کریں",
   metals: { cs:'سیزیم', k:'پوٹاشیم', na:'سوڈیم', ca:'کیلشیم', mg:'میگنیشیم', al:'ایلومینیم', zn:'زنک' },
   status_off: "روشنی بند ہے — تجربہ شروع کرنے کے لیے روشنی آن کریں۔",
-  status_below: "f < f₀ — کوئی ضیا برقی الیکٹران نہیں۔ فوٹون توانائی کارِ فعل سے کم ہے۔",
-  status_threshold: "f ≈ f₀ — اخراج ابھی شروع ہوا۔ حرکی توانائی تقریباً صفر ہے۔",
-  status_emit: "f > f₀ — ضیا برقی الیکٹران خارج ہو رہے ہیں! رو اور حرکی توانائی دیکھیں۔",
+  status_below: "f < f₀ — کوئی اخراج نہیں۔ فوٹون پڑتے ہیں مگر الیکٹران دھات کے اندر رہتے ہیں۔",
+  status_threshold: "f ≈ f₀ — الیکٹران سطح پر نکل کر چپک جاتے ہیں (Kmax ≈ 0)۔",
+  status_emit: "f > f₀ — الیکٹران حرکی توانائی Kmax = hf − φ کے ساتھ اڑتے ہیں! f بڑھائیں تو تیز ہوں گے۔",
   status_stopped: "روکنے والا پوٹینشل ≥ Vs — رو صفر ہے (روکنے والا پوٹینشل)۔",
   status_sat: "تیز کرنے والا پوٹینشل — سنترپت ضیا برقی رو حاصل۔",
-  tip_off: "پہلے اندازہ لگائیں: کیا روشنی الیکٹران نکال سکتی ہے؟ روشنی آن کریں اور تعدد بمقابلہ شدت آزمائیں۔",
-  tip_below: "کلاسیکی موج نظریہ یہاں ناکام ہے: حد سے نیچے تیز روشنی بھی الیکٹران نہیں نکالتی۔ طولِ موج کم کریں (تعدد بڑھائیں)۔",
+  tip_off: "پہلے اندازہ لگائیں: کیا روشنی الیکٹران نکال سکتی ہے؟ روشنی آن کریں اور آہستہ تعدد بڑھائیں۔",
+  tip_below: "کم تعدد: فوٹون آتے ہیں مگر hf < φ — کوئی الیکٹران نہیں نکلتا۔ تعدد بڑھائیں (λ کم کریں)۔",
+  tip_stuck: "حدِ ادنیٰ پر: الیکٹران نظر آتے ہیں مگر سطح پر چپکے رہتے ہیں، تقریباً صفر KE۔ تھوڑی سی f اور بڑھائیں۔",
   tip_emit_int: "شدت بڑھائیں: زیادہ فوٹون → زیادہ الیکٹران → سنترپت رو بڑھتی ہے۔ Kmax وہی رہتا ہے!",
-  tip_emit_freq: "تعدد بڑھائیں: ہر فوٹون زیادہ توانائی رکھتا ہے → Kmax اور Vs بڑھتے ہیں۔ صرف شدت یہ نہیں کر سکتی۔",
+  tip_emit_freq: "زیادہ تعدد → باقی توانائی حرکی توانائی بنتی ہے۔ الیکٹران جمع کنندہ کی طرف تیز بھاگتے ہیں۔",
   tip_voltage: "V کو مزید منفی کریں۔ رو گھٹتی ہے اور روکنے والے پوٹینشل Vs = Kmax/e پر صفر ہو جاتی ہے۔",
-  tip_micro: "ہر فوٹون اپنی تمام توانائی hf ایک الیکٹران کو دیتا ہے۔ اخراج مکمل یا صفر ہوتا ہے — بتدریج حرارت نہیں۔",
+  tip_micro: "تین مرحلے دیکھیں: حد سے کم (نہیں نکلتے) → حد پر (سطح پر چپکے) → حد سے اوپر (KE کے ساتھ اڑتے)۔",
   tip_graph: "I–V منحنی: V > 0 پر رو سنترپت ہوتی ہے اور V = −Vs پر صفر۔ شدت اونچائی بدلتی ہے، تعدد Vs کو ہلاتا ہے۔",
   lbl_source: "روشنی کا منبع",
   lbl_filter: "یک رنگ",
@@ -600,8 +603,9 @@ ur: {
   lbl_photon: "γ",
   lbl_electron: "e⁻",
   lbl_metal_surface: "دھات کی سطح",
-  lbl_absorbed: "جذب",
-  lbl_ejected: "خارج",
+  lbl_absorbed: "جذب — کوئی اخراج نہیں",
+  lbl_ejected: "KE کے ساتھ اڑ رہے ہیں",
+  lbl_stuck: "سطح پر چپکے (Kmax ≈ 0)",
   lbl_reflected: "ناکافی توانائی",
   graph_title: "ضیا برقی رو بمقابلہ جمع کنندہ پوٹینشل",
   graph_I: "I (μA)",
@@ -665,7 +669,7 @@ const state = {
   zoom: 1, panX: 0, panY: 0
 };
 
-const particles = { photons: [], electrons: [] };
+const particles = { photons: [], electrons: [], sparks: [] };
 let baseScale = 1;
 let canvas, ctx;
 let animId = 0;
@@ -694,18 +698,21 @@ function physics() {
   const f0 = thresholdFreq(m.phi);
   const l0 = thresholdLambda(m.phi);
   const emitting = state.lightOn && hf >= m.phi - 1e-6;
-  const nearThresh = state.lightOn && Math.abs(hf - m.phi) < 0.05;
   const Kmax = emitting ? Math.max(0, hf - m.phi) : 0;
+  // Pedagogical bands: no emit | stick on surface (tiny KE) | fly with KE
+  const stuck = emitting && Kmax < 0.15;
+  const nearThresh = stuck;
   const Vs = Kmax; // volts when Kmax in eV
-  const Isat = emitting ? (state.intensity / 100) * 12 : 0; // μA scale
+  // Stuck electrons cannot reach the collector → no photocurrent yet
+  const Isat = (emitting && !stuck) ? (state.intensity / 100) * 12 : 0;
   let I = 0;
-  if (emitting && state.intensity > 0) {
+  if (emitting && !stuck && state.intensity > 0) {
     if (state.V >= 0) I = Isat;
     else if (Vs < 1e-6) I = 0;
     else if (state.V <= -Vs) I = 0;
     else I = Isat * (1 + state.V / Vs);
   }
-  return { m, hf, f, f0, l0, emitting, nearThresh, Kmax, Vs, Isat, I };
+  return { m, hf, f, f0, l0, emitting, nearThresh, stuck, Kmax, Vs, Isat, I };
 }
 
 function wavelengthColor(nm) {
@@ -858,7 +865,7 @@ function updateUI() {
   let msg = T('status_off'), cls = 'text-slate-300';
   if (state.lightOn) {
     if (!p.emitting) { msg = T('status_below'); cls = 'text-red-300'; }
-    else if (p.nearThresh) { msg = T('status_threshold'); cls = 'text-amber-300'; }
+    else if (p.stuck) { msg = T('status_threshold'); cls = 'text-amber-300'; }
     else if (state.V <= -p.Vs && p.Vs > 0) { msg = T('status_stopped'); cls = 'text-orange-300'; }
     else if (state.V >= 0) { msg = T('status_sat'); cls = 'text-green-300'; }
     else { msg = T('status_emit'); cls = 'text-cyan-300'; }
@@ -877,6 +884,7 @@ function updateTip() {
   else if (state.view === 'graph') tip = T('tip_graph');
   else if (!state.lightOn) tip = T('tip_off');
   else if (!p.emitting) tip = T('tip_below');
+  else if (p.stuck) tip = T('tip_stuck');
   else if (state.V < 0) tip = T('tip_voltage');
   else if (state.intensity < 40) tip = T('tip_emit_int');
   else tip = T('tip_emit_freq');
@@ -1082,14 +1090,40 @@ function spawnParticles(dt, p) {
     // hit emitter region
     if (!ph.hit && ph.x > -210 && ph.x < -150 && ph.y > -70 && ph.y < 70) {
       ph.hit = true;
-      if (p.emitting && Math.random() < 0.55) {
-        const speed = 60 + p.Kmax * 50;
+      if (!p.emitting) {
+        // Below threshold: photon absorbed — NO electron leaves
+        particles.sparks = particles.sparks || [];
+        particles.sparks.push({
+          x: -172, y: ph.y * 0.55, life: 0.55, kind: 'absorb'
+        });
+      } else if (p.stuck) {
+        // At threshold: electron appears but sticks / crawls on surface
+        if (Math.random() < 0.7) {
+          particles.electrons.push({
+            x: -168 + Math.random() * 6,
+            y: ph.y * 0.55 + (Math.random() - 0.5) * 16,
+            vx: 2 + Math.random() * 4,
+            vy: (Math.random() - 0.5) * 18,
+            ax: 0,
+            life: 2.2,
+            mode: 'stuck',
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      } else if (Math.random() < 0.6) {
+        // Above threshold: fly with KE ∝ Kmax
+        const speed = 35 + Math.sqrt(Math.max(p.Kmax, 0)) * 95;
         const reach = !(state.V <= -p.Vs && p.Vs > 0);
-        const accel = state.V * 35;
+        const accel = state.V * 40;
         particles.electrons.push({
-          x: -160, y: ph.y * 0.6 + (Math.random()-0.5)*20,
-          vx: (reach ? 40 : 10) + speed * 0.3, vy: (Math.random()-0.5)*30,
-          ax: accel, life: 1.4, stopped: !reach && state.V < 0
+          x: -160,
+          y: ph.y * 0.55 + (Math.random() - 0.5) * 18,
+          vx: (reach ? 25 : 8) + speed * 0.45,
+          vy: (Math.random() - 0.5) * (18 + p.Kmax * 8),
+          ax: accel,
+          life: 1.5,
+          mode: 'fly',
+          stopped: !reach && state.V < 0
         });
       }
       particles.photons.splice(i, 1);
@@ -1100,15 +1134,45 @@ function spawnParticles(dt, p) {
   // update electrons
   for (let i = particles.electrons.length - 1; i >= 0; i--) {
     const el = particles.electrons[i];
-    el.vx += el.ax * dt;
-    if (el.stopped) { el.vx *= 0.92; el.life -= dt * 1.2; }
-    else el.life -= dt * 0.45;
-    el.x += el.vx * dt; el.y += el.vy * dt;
+    if (el.mode === 'stuck') {
+      // Cling / jitter on emitter surface — do not reach collector
+      el.phase = (el.phase || 0) + dt * 8;
+      el.x = -168 + Math.sin(el.phase) * 3;
+      el.y += Math.sin(el.phase * 1.7) * 12 * dt;
+      if (el.y < -70) el.y = -70;
+      if (el.y > 70) el.y = 70;
+      el.life -= dt * 0.55;
+    } else {
+      el.vx += el.ax * dt;
+      if (el.stopped) { el.vx *= 0.9; el.life -= dt * 1.2; }
+      else el.life -= dt * 0.42;
+      el.x += el.vx * dt; el.y += el.vy * dt;
+    }
     if (el.x > 200 || el.life <= 0 || el.x < -250) particles.electrons.splice(i, 1);
+  }
+  // absorb sparks
+  if (particles.sparks) {
+    for (let i = particles.sparks.length - 1; i >= 0; i--) {
+      particles.sparks[i].life -= dt * 1.8;
+      if (particles.sparks[i].life <= 0) particles.sparks.splice(i, 1);
+    }
+  }
+  // If regime changed, drop mismatched electrons quickly
+  if (!p.emitting) {
+    particles.electrons.length = 0;
+  } else if (p.stuck) {
+    for (let i = particles.electrons.length - 1; i >= 0; i--) {
+      if (particles.electrons[i].mode === 'fly') particles.electrons.splice(i, 1);
+    }
+  } else {
+    for (let i = particles.electrons.length - 1; i >= 0; i--) {
+      if (particles.electrons[i].mode === 'stuck') particles.electrons.splice(i, 1);
+    }
   }
   // cap
   if (particles.photons.length > 80) particles.photons.splice(0, particles.photons.length - 80);
   if (particles.electrons.length > 60) particles.electrons.splice(0, particles.electrons.length - 60);
+  if (particles.sparks && particles.sparks.length > 30) particles.sparks.splice(0, particles.sparks.length - 30);
 }
 
 function draw() {
@@ -1278,12 +1342,44 @@ function drawApparatus() {
     ctx.font = 'bold 10px Oxanium, monospace';
     ctx.fillText(T('lbl_photon'), ph.x, ph.y - 8);
   });
-  particles.electrons.forEach(el => {
+  // absorb flashes when hf < φ
+  (particles.sparks || []).forEach(sp => {
+    const a = Math.max(0, sp.life);
     ctx.beginPath();
-    ctx.fillStyle = `rgba(250,204,21,${Math.max(0.25, el.life)})`;
-    ctx.shadowColor = 'rgba(250,204,21,0.9)'; ctx.shadowBlur = 12;
-    ctx.arc(el.x, el.y, 3.5, 0, Math.PI*2); ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.strokeStyle = `rgba(239,68,68,${a})`;
+    ctx.lineWidth = 2;
+    ctx.moveTo(sp.x - 5, sp.y - 5); ctx.lineTo(sp.x + 5, sp.y + 5);
+    ctx.moveTo(sp.x + 5, sp.y - 5); ctx.lineTo(sp.x - 5, sp.y + 5);
+    ctx.stroke();
+  });
+  particles.electrons.forEach(el => {
+    const stuck = el.mode === 'stuck';
+    ctx.beginPath();
+    if (stuck) {
+      ctx.fillStyle = `rgba(251,146,60,${Math.max(0.35, el.life)})`;
+      ctx.shadowColor = 'rgba(251,146,60,0.95)';
+      ctx.shadowBlur = 10;
+      ctx.arc(el.x, el.y, 4.2, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(253,186,116,0.9)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(el.x, el.y, 7 + Math.sin((el.phase||0))*1.5, 0, Math.PI*2);
+      ctx.stroke();
+    } else {
+      const r = 3.2 + Math.min(2.5, (el.vx || 0) / 80);
+      ctx.fillStyle = `rgba(250,204,21,${Math.max(0.25, el.life)})`;
+      ctx.shadowColor = 'rgba(250,204,21,0.9)'; ctx.shadowBlur = 12;
+      ctx.arc(el.x, el.y, r, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+      // motion streak
+      ctx.strokeStyle = 'rgba(253,224,71,0.45)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(el.x - Math.min(22, (el.vx||0)*0.12), el.y);
+      ctx.lineTo(el.x, el.y);
+      ctx.stroke();
+    }
   });
 
   ctx.restore();
@@ -1347,27 +1443,45 @@ function drawMicro() {
   ctx.fillStyle = 'rgba(15,23,42,0.9)';
   roundRect(ctx, -300, 160, 520, 70, 14);
   ctx.fill();
-  ctx.strokeStyle = p.emitting ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.5)';
+  const stageStroke = !state.lightOn ? 'rgba(148,163,184,0.4)'
+    : !p.emitting ? 'rgba(239,68,68,0.55)'
+    : p.stuck ? 'rgba(251,146,60,0.6)'
+    : 'rgba(34,197,94,0.5)';
+  ctx.strokeStyle = stageStroke;
   ctx.stroke();
-  ctx.fillStyle = p.emitting ? '#86efac' : '#fca5a5';
+  ctx.fillStyle = !state.lightOn ? '#cbd5e1'
+    : !p.emitting ? '#fca5a5'
+    : p.stuck ? '#fdba74'
+    : '#86efac';
   ctx.font = 'bold 15px Manrope, sans-serif';
-  const msg = !state.lightOn ? T('status_off')
-    : p.emitting ? `${T('lbl_ejected')}:  hf (${p.hf.toFixed(2)} eV) ≥ φ (${p.m.phi.toFixed(2)} eV)`
-    : `${T('lbl_reflected')}:  hf (${p.hf.toFixed(2)} eV) < φ (${p.m.phi.toFixed(2)} eV)`;
+  let msg = T('status_off');
+  if (state.lightOn) {
+    if (!p.emitting) msg = `${T('lbl_absorbed')}:  hf (${p.hf.toFixed(2)} eV) < φ (${p.m.phi.toFixed(2)} eV)`;
+    else if (p.stuck) msg = `${T('lbl_stuck')}:  hf ≈ φ   Kmax = ${p.Kmax.toFixed(2)} eV`;
+    else msg = `${T('lbl_ejected')}:  Kmax = ${p.Kmax.toFixed(2)} eV`;
+  }
   ctx.fillText(msg, -40, 200);
 
-  // flying electrons if emitting
-  if (p.emitting && state.lightOn) {
+  // electron motion by stage
+  if (state.lightOn && p.emitting) {
     for (let i = 0; i < 4; i++) {
       const t = (performance.now()/900 + i*0.25) % 1;
-      const ex = 220 + t * 80;
-      const ey = -80 + i * 35 + Math.sin(t*6)*8;
+      let ex, ey;
+      if (p.stuck) {
+        // cling near metal edge
+        ex = -40 + Math.sin(performance.now()/300 + i) * 8;
+        ey = -90 + i * 40 + Math.sin(t*8)*6;
+      } else {
+        const flight = 0.35 + Math.min(0.9, Math.sqrt(p.Kmax) * 0.35);
+        ex = 40 + t * 220 * flight;
+        ey = -80 + i * 35 + Math.sin(t*6)*8;
+      }
       ctx.beginPath();
-      ctx.fillStyle = '#facc15';
-      ctx.shadowColor = '#facc15'; ctx.shadowBlur = 12;
-      ctx.arc(ex, ey, 5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = p.stuck ? '#fb923c' : '#facc15';
+      ctx.shadowColor = p.stuck ? '#fb923c' : '#facc15'; ctx.shadowBlur = 12;
+      ctx.arc(ex, ey, p.stuck ? 5.5 : 5, 0, Math.PI*2); ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.fillStyle = '#fde68a';
+      ctx.fillStyle = p.stuck ? '#fdba74' : '#fde68a';
       ctx.font = 'bold 11px Oxanium, monospace';
       ctx.fillText(T('lbl_electron'), ex + 14, ey + 4);
     }
