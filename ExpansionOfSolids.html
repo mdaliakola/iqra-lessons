@@ -197,16 +197,6 @@ body {
   box-shadow: 0 0 12px rgba(0,243,255,.2);
 }
 
-.pred-btn {
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
-  border: 1px solid rgba(255,255,255,.1);
-}
-.pred-btn.selected {
-  background: rgba(0,243,255,.14); color:#00f3ff; border-color: rgba(0,243,255,.5);
-}
-.pred-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; }
-.pred-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; }
-
 .opt-btn {
   transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
   border: 1px solid rgba(255,255,255,.1);
@@ -244,7 +234,6 @@ body {
   height: 100% !important;
 }
 
-/* Floating annotation controls card (minimizable) */
 #anno-float {
   position: absolute;
   z-index: 35;
@@ -253,9 +242,7 @@ body {
   transition: all .35s cubic-bezier(.2,.8,.2,1);
   max-width: 280px;
 }
-#anno-float.minimized {
-  max-width: 48px;
-}
+#anno-float.minimized { max-width: 48px; }
 #anno-float.minimized .anno-float-body { display: none; }
 #anno-float.hidden-panel { display: none; }
 .anno-float-handle { cursor: grab; }
@@ -332,22 +319,15 @@ body {
   <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-3 p-3 md:p-4 min-h-0 overflow-y-auto lg:overflow-hidden">
 
     <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0">
-      <!-- Mode selector -->
       <div class="glass-card rounded-2xl p-2 flex flex-wrap gap-2">
-        <button id="mode-linear" onclick="setMode('linear')" class="mode-btn active flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
+        <button id="mode-linear" onclick="setMode('linear')" class="mode-btn active flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
           <i class="fa-solid fa-ruler-horizontal"></i><span data-i18n="mode_linear"></span>
         </button>
-        <button id="mode-micro" onclick="setMode('micro')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-atom"></i><span data-i18n="mode_micro"></span>
+        <button id="mode-areal" onclick="setMode('areal')" class="mode-btn flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-border-all"></i><span data-i18n="mode_areal"></span>
         </button>
-        <button id="mode-compare" onclick="setMode('compare')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-not-equal"></i><span data-i18n="mode_compare"></span>
-        </button>
-        <button id="mode-hole" onclick="setMode('hole')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-circle-dot"></i><span data-i18n="mode_hole"></span>
-        </button>
-        <button id="mode-area" onclick="setMode('area')" class="mode-btn flex-1 min-w-[110px] px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm text-slate-300 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-cube"></i><span data-i18n="mode_area"></span>
+        <button id="mode-volume" onclick="setMode('volume')" class="mode-btn flex-1 min-w-[120px] px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cube"></i><span data-i18n="mode_volume"></span>
         </button>
       </div>
 
@@ -355,19 +335,18 @@ body {
         <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <canvas id="fabricLayer"></canvas>
 
-        <!-- Floating annotation controls card -->
         <div id="anno-float" class="hidden-panel glass-panel rounded-2xl shadow-2xl overflow-hidden">
           <div class="anno-float-handle flex items-center justify-between gap-2 px-3 py-2 border-b border-slate-700/60 bg-slate-900/60">
             <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold">
               <i class="fa-solid fa-pen-ruler"></i>
-              <span class="anno-float-title" data-i18n="anno_title">Annotate</span>
+              <span data-i18n="anno_title">Annotate</span>
             </div>
-            <button onclick="toggleAnnoFloatMin()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700" title="Minimize">
+            <button onclick="toggleAnnoFloatMin()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700">
               <i id="anno-min-icon" class="fa-solid fa-minus"></i>
             </button>
           </div>
           <div class="anno-float-body p-3 flex items-center gap-2 flex-wrap">
-            <input type="color" id="anno-color-float" value="#00f3ff" onchange="syncAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0" title="Color">
+            <input type="color" id="anno-color-float" value="#00f3ff" onchange="syncAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0">
             <button onclick="setAnnoMode('pen')" class="w-9 h-9 rounded-lg bg-slate-800 text-cyan-400 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-pen"></i></button>
             <button onclick="setAnnoMode('eraser')" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-eraser"></i></button>
             <button onclick="clearAnnotations()" class="w-9 h-9 rounded-lg bg-slate-800 text-red-400 border border-slate-700 hover:bg-slate-700"><i class="fa-solid fa-trash-can"></i></button>
@@ -375,20 +354,19 @@ body {
         </div>
 
         <div class="absolute bottom-3 flex flex-col gap-2 z-30" style="inset-inline-end:12px" dir="ltr">
-          <button class="zoom-btn" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
-          <button class="zoom-btn" onclick="zoomBy(1/1.2)" title="−"><i class="fa-solid fa-minus"></i></button>
-          <button class="zoom-btn" onclick="resetView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
         </div>
 
         <div class="absolute top-3 glass-panel rounded-xl px-3 py-2 text-xs text-cyan-300 pointer-events-none z-10" style="inset-inline-start:12px">
           <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="drag_hint"></span>
         </div>
-        <div class="absolute top-3 glass-panel rounded-xl px-3 py-1.5 text-[10px] text-amber-300/90 pointer-events-none z-10 max-w-[46%] text-end" style="inset-inline-end:12px">
-          <span data-i18n="magnify_note"></span>
+        <div class="absolute top-3 glass-panel rounded-xl px-3 py-1.5 text-[10px] text-amber-300/90 pointer-events-none z-10 max-w-[48%] text-end" style="inset-inline-end:12px">
+          <span data-i18n="visual_note"></span>
         </div>
       </div>
 
-      <!-- Live formula / observation strip -->
       <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row gap-3 md:items-center">
         <div class="flex items-center gap-2 shrink-0">
           <i class="fa-solid fa-eye text-cyan-400"></i>
@@ -397,15 +375,14 @@ body {
         <p id="obs-text" class="text-sm text-slate-300 leading-relaxed flex-1"></p>
         <div class="glass-panel rounded-xl px-4 py-2 text-center shrink-0" dir="ltr">
           <div class="text-[10px] uppercase tracking-wider text-slate-500" data-i18n="formula_label"></div>
-          <div id="formula-val" class="stat-val text-sm md:text-base num">ΔL = α L ΔT</div>
+          <div id="formula-val" class="stat-val text-sm md:text-base num">Δl = λ × l₁ × ΔT</div>
         </div>
       </div>
     </section>
 
     <!-- CONTROLS -->
-    <aside class="w-full lg:w-[360px] xl:w-[400px] flex flex-col gap-3 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
+    <aside class="w-full lg:w-[360px] xl:w-[380px] flex flex-col gap-3 lg:overflow-y-auto lg:min-h-0 shrink-0 pb-2">
 
-      <!-- Heat & Temperature -->
       <div class="glass-card rounded-2xl p-4 space-y-4">
         <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-fire"></i><span data-i18n="heat_title"></span>
@@ -418,12 +395,12 @@ body {
             <label class="text-sm font-bold text-slate-300" data-i18n="t1_label"></label>
             <span class="stat-val text-sm num" id="val-T1">20 °C</span>
           </div>
-          <input type="range" id="sl-T1" class="w-full" min="0" max="80" step="1" value="20" oninput="onControl()">
+          <input type="range" id="sl-T1" class="w-full" min="0" max="50" step="1" value="20" oninput="onControl()">
         </div>
         <div>
           <div class="flex justify-between items-center mb-2">
             <label class="text-sm font-bold text-slate-300" data-i18n="t2_label"></label>
-            <span class="stat-val text-sm num" id="val-T2">20 °C</span>
+            <span class="stat-val text-sm num" id="val-T2">80 °C</span>
           </div>
           <input type="range" id="sl-T2" class="w-full" min="0" max="200" step="1" value="80" oninput="onControl()">
         </div>
@@ -433,79 +410,47 @@ body {
         </div>
       </div>
 
-      <!-- Material & Length -->
-      <div id="panel-material" class="glass-card rounded-2xl p-4 space-y-4">
+      <div class="glass-card rounded-2xl p-4 space-y-4">
         <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-flask-vial"></i><span data-i18n="mat_title"></span>
         </h2>
         <div class="grid grid-cols-2 gap-2" id="mat-grid"></div>
-        <div id="compare-mat-row" class="hidden space-y-2">
-          <label class="text-xs font-bold text-slate-400" data-i18n="mat_b"></label>
-          <div class="grid grid-cols-2 gap-2" id="mat-grid-b"></div>
-        </div>
-        <div id="length-row">
+        <div id="size-row">
           <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="L0_label"></label>
-            <span class="stat-val text-sm num" id="val-L0">1.00 m</span>
+            <label class="text-sm font-bold text-slate-300" id="size-label" data-i18n="L0_label"></label>
+            <span class="stat-val text-sm num" id="val-size">1.00 m</span>
           </div>
-          <input type="range" id="sl-L0" class="w-full" min="0.5" max="3" step="0.1" value="1.0" oninput="onControl()">
+          <input type="range" id="sl-size" class="w-full" min="0.5" max="2" step="0.1" value="1.0" oninput="onControl()">
         </div>
-        <div>
-          <div class="flex justify-between items-center mb-2">
-            <label class="text-sm font-bold text-slate-300" data-i18n="mag_label"></label>
-            <span class="stat-val text-sm num" id="val-mag">1000×</span>
-          </div>
-          <input type="range" id="sl-mag" class="w-full" min="0" max="3" step="1" value="2" oninput="onControl()">
-          <div class="flex justify-between text-[10px] text-slate-500 mt-1" dir="ltr">
-            <span>1×</span><span>100×</span><span>1000×</span><span>10000×</span>
-          </div>
-        </div>
+        <button onclick="loadExample()" class="w-full py-2.5 rounded-xl glass-panel text-sm font-bold text-amber-300 hover:bg-slate-800/80 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-book-open"></i><span data-i18n="load_example"></span>
+        </button>
       </div>
 
-      <!-- Hole prediction (hole mode) -->
-      <div id="panel-hole" class="glass-card rounded-2xl p-4 space-y-3 hidden">
-        <h2 class="font-display font-bold text-sm text-amber-300 flex items-center gap-2">
-          <i class="fa-solid fa-lightbulb"></i><span data-i18n="predict_title"></span>
-        </h2>
-        <p class="text-sm text-slate-300" data-i18n="predict_q"></p>
-        <div class="grid grid-cols-1 gap-2">
-          <button id="pred-0" onclick="makePrediction(0)" class="pred-btn px-3 py-2.5 rounded-xl text-sm text-slate-300 text-start" data-i18n="pred_smaller"></button>
-          <button id="pred-1" onclick="makePrediction(1)" class="pred-btn px-3 py-2.5 rounded-xl text-sm text-slate-300 text-start" data-i18n="pred_same"></button>
-          <button id="pred-2" onclick="makePrediction(2)" class="pred-btn px-3 py-2.5 rounded-xl text-sm text-slate-300 text-start" data-i18n="pred_larger"></button>
-        </div>
-        <p id="pred-feedback" class="text-sm leading-relaxed hidden"></p>
-      </div>
-
-      <!-- Measurements -->
       <div class="glass-card rounded-2xl p-4 space-y-3">
         <h2 class="font-display font-bold text-sm text-cyan-400 flex items-center gap-2">
-          <i class="fa-solid fa-gauge-high"></i><span data-i18n="meas_title"></span>
+          <i class="fa-solid fa-calculator"></i><span data-i18n="meas_title"></span>
         </h2>
         <div class="space-y-2 text-sm">
           <div class="flex justify-between border-b border-slate-700/50 pb-2">
-            <span class="text-slate-400" data-i18n="alpha_label"></span>
-            <span class="stat-val num" id="m-alpha">23.1×10⁻⁶ /°C</span>
+            <span class="text-slate-400" id="coeff-label" data-i18n="lambda_label"></span>
+            <span class="stat-val num" id="m-coeff">23.1×10⁻⁶ /°C</span>
           </div>
           <div class="flex justify-between border-b border-slate-700/50 pb-2">
-            <span class="text-slate-400" data-i18n="L1_label"></span>
-            <span class="stat-val num" id="m-L1">1.000000 m</span>
+            <span class="text-slate-400" id="m1-label" data-i18n="L1_label"></span>
+            <span class="stat-val num" id="m-1">1.000000 m</span>
           </div>
           <div class="flex justify-between border-b border-slate-700/50 pb-2">
-            <span class="text-slate-400" data-i18n="L2_label"></span>
-            <span class="stat-val num" id="m-L2">1.000000 m</span>
-          </div>
-          <div class="flex justify-between border-b border-slate-700/50 pb-2">
-            <span class="text-slate-400" data-i18n="dL_label"></span>
-            <span class="stat-val num" id="m-dL">0.000000 m</span>
+            <span class="text-slate-400" id="m2-label" data-i18n="L2_label"></span>
+            <span class="stat-val num" id="m-2">1.000000 m</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-slate-400" data-i18n="vis_dL"></span>
-            <span class="stat-val num text-amber-300" id="m-vis">0.00 mm</span>
+            <span class="text-slate-400" id="md-label" data-i18n="dL_label"></span>
+            <span class="stat-val num" id="m-d">0.000000 m</span>
           </div>
         </div>
       </div>
 
-      <!-- Concept tip -->
       <div class="glass-card rounded-2xl p-4">
         <h2 class="font-display font-bold text-sm text-green-400 flex items-center gap-2 mb-2">
           <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
@@ -531,83 +476,75 @@ if (window.top === window.self) {
 }
 
 /* ============================================================
-   TRANSLATION DICTIONARY
+   TEXTBOOK VALUES (from Expansion of solids — Table 14.6 + example)
+   λ for solids is ×10⁻⁶ /°C
 ============================================================ */
+const MATERIALS = {
+  cu: { key: 'mat_cu', lambda: 17.0e-6, color: '#b87333', accent: '#92400e' },
+  al: { key: 'mat_al', lambda: 23.1e-6, color: '#c0c8d4', accent: '#64748b' },
+  fe: { key: 'mat_fe', lambda: 11.5e-6, color: '#8b9aab', accent: '#475569' },
+  ag: { key: 'mat_ag', lambda: 18.0e-6, color: '#e5e7eb', accent: '#9ca3af' },
+  st: { key: 'mat_st', lambda: 0.000013, color: '#9ca3af', accent: '#6b7280' } // textbook example
+};
+
 const LANG = {
 en: {
   loading: "Loading Virtual Laboratory...",
-  topic: "Expansion of Solids — Thermal Lab",
+  topic: "Expansion of Solids",
   intro_topic: "EXPANSION OF SOLIDS",
   tab_sim: "Simulation",
   tab_quiz: "Quiz",
-  mode_linear: "Linear Lab",
-  mode_micro: "Atoms",
-  mode_compare: "Compare",
-  mode_hole: "Hole Plate",
-  mode_area: "Area & Volume",
+  mode_linear: "Linear Expansion",
+  mode_areal: "Areal Expansion",
+  mode_volume: "Volumetric Expansion",
   drag_hint: "Scroll to zoom · Drag to pan",
-  magnify_note: "Visual expansion is magnified for learning",
+  visual_note: "Drawing is enlarged so you can see the change",
   obs_title: "Observation",
-  formula_label: "Key Relation",
-  heat_title: "Heating Controls",
+  formula_label: "Formula",
+  heat_title: "Temperature",
   heat_off: "Heater OFF",
   heat_on: "Heater ON",
   t1_label: "Initial Temperature T₁",
-  t2_label: "Target Temperature T₂",
+  t2_label: "Final Temperature T₂",
   dT_label: "ΔT = T₂ − T₁",
-  mat_title: "Material & Size",
-  mat_b: "Material B",
-  L0_label: "Initial Length L₁",
-  mag_label: "Visual Magnification",
-  predict_title: "Predict First!",
-  predict_q: "What happens to the hole when the plate is heated?",
-  pred_smaller: "A. Hole becomes smaller",
-  pred_same: "B. Hole stays the same",
-  pred_larger: "C. Hole becomes larger",
-  pred_ok: "Correct! The hole expands with the plate — every direction of the metal grows.",
-  pred_bad: "Not quite. Heat the plate after predicting and watch carefully — the hole grows too!",
-  meas_title: "Live Measurements",
-  alpha_label: "α (coefficient)",
-  L1_label: "Initial Length L₁",
-  L2_label: "Final Length L₂",
-  dL_label: "Actual ΔL",
-  vis_dL: "Visualized ΔL",
-  tip_title: "Concept Tip",
+  mat_title: "Solid Material",
+  L0_label: "Initial Length l₁",
+  A0_label: "Initial Side Length",
+  V0_label: "Initial Side Length",
+  load_example: "Load Textbook Example (Steel)",
+  meas_title: "Measurements",
+  lambda_label: "λ (linear)",
+  sigma_label: "σ (areal)",
+  beta_label: "β (volumetric)",
+  L1_label: "Initial Length l₁",
+  L2_label: "Final Length l₂",
+  dL_label: "Increase Δl",
+  A1_label: "Initial Area A₁",
+  A2_label: "Final Area A₂",
+  dA_label: "Increase ΔA",
+  V1_label: "Initial Volume V₁",
+  V2_label: "Final Volume V₂",
+  dV_label: "Increase ΔV",
+  tip_title: "Remember",
   anno_title: "Annotate",
-  mat_al: "Aluminium",
   mat_cu: "Copper",
+  mat_al: "Aluminium",
   mat_fe: "Iron",
   mat_ag: "Silver",
   mat_st: "Steel",
-  obs_linear_cold: "Set T₂ above T₁, turn the heater ON, and watch the free end of the rod move. Larger L, ΔT, or α → larger ΔL.",
-  obs_linear_hot: "The rod is expanding. ΔL = α L₁ ΔT. Compare the tiny real ΔL with the magnified visual motion.",
-  obs_micro_cold: "Atoms vibrate gently in a lattice. Increase temperature — vibration amplitude grows and average spacing increases.",
-  obs_micro_hot: "Faster, larger vibrations → greater average interatomic separation → the solid expands.",
-  obs_compare: "Same L₁ and ΔT for both rods. The material with larger α expands more. Aluminium outruns iron!",
-  obs_hole_wait: "Make a prediction first, then turn the heater ON to test your idea.",
-  obs_hole_expand: "The hole expands! Imagine the missing disc also expanding — that is why the hole grows.",
-  obs_area: "The sheet expands in length and width (areal, σ≈2α). The cube expands in all three dimensions (volumetric, β≈3α).",
-  tip_linear: "Thermal expansion depends on three things: original size, temperature change, and the material (α).",
-  tip_micro: "Heating does not push atoms apart permanently — it increases thermal motion so their average distance grows.",
-  tip_compare: "α tells how much length changes per unit length per °C. Bigger α → more expansion for the same ΔT.",
-  tip_hole: "A common misconception: people think the hole shrinks. In reality every linear dimension of the plate — including the hole diameter — increases.",
-  tip_area: "For isotropic solids: σ ≈ 2α and β ≈ 3α. Linear → areal → volumetric is the same idea in 1D, 2D, and 3D.",
+  obs_linear: "Heat the rod and watch its length increase. Larger λ, longer rod, or larger ΔT means larger Δl.",
+  obs_areal: "A sheet expands in length and width. Area increases: A₂ = A₁(1 + σ ΔT).",
+  obs_volume: "A solid expands in all directions. Volume increases: V₂ = V₁(1 + β ΔT).",
+  tip_linear: "λ is the increase in length of a rod of unit length when temperature rises by 1 °C. Unit: 1/°C.",
+  tip_areal: "When a sheet is heated, its area increases: A₂ = A₁(1 + σ ΔT). For equal expansion in all directions, σ ≈ 2λ.",
+  tip_volume: "When a solid is heated on all sides, volume increases: V₂ = V₁(1 + β ΔT). For equal expansion in all directions, β ≈ 3λ.",
+  lbl_rod: "Metal rod",
   lbl_fixed: "Fixed end",
   lbl_free: "Free end",
   lbl_heater: "Heater",
-  lbl_ruler: "Scale",
-  lbl_rod: "Metal rod",
-  lbl_plate: "Metal plate",
-  lbl_hole: "Hole",
-  lbl_sheet: "Sheet (2D)",
-  lbl_cube: "Cube (3D)",
-  lbl_cold: "Cold",
-  lbl_hot: "Hot",
-  lbl_lattice: "Atomic Lattice",
-  lbl_compare_title: "Material Comparison",
-  lbl_hole_title: "Hole-in-Plate Experiment",
-  lbl_area_title: "Areal & Volumetric Expansion",
-  quiz_title: "Concept Quiz — Expansion of Solids",
+  lbl_sheet: "Metal sheet",
+  lbl_cube: "Solid cube",
+  quiz_title: "Quiz — Expansion of Solids",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
   correct_fb: "Correct!",
   wrong_fb: "Incorrect!",
@@ -615,183 +552,164 @@ en: {
   see_result: "See Result",
   final_score: "Final Score",
   restart: "Restart Quiz",
-  score_msg_great: "Outstanding! You truly understand thermal expansion.",
-  score_msg_good: "Good work! Revisit the simulation and try again.",
-  score_msg_low: "Keep experimenting in the lab — discovery beats memorization!",
+  score_msg_great: "Excellent! You understand expansion of solids.",
+  score_msg_good: "Good try! Review the simulation once more.",
+  score_msg_low: "Heat the rod again in the lab and retry the quiz!",
   quiz: [
     {
-      q: "A metal rod expands when heated mainly because:",
+      q: "Linear expansion means:",
       opts: [
-        "Atoms are destroyed and push outward",
-        "Average interatomic separation increases as thermal motion rises",
-        "Gravity pulls atoms apart",
-        "The heater adds extra atoms to the rod"
+        "Increase in volume of a liquid",
+        "Increase in length of a solid rod or wire on heating",
+        "Decrease in length on heating",
+        "Change of colour of a metal"
       ],
       a: 1,
-      ex: "Heating increases atomic vibration. The average distance between atoms grows, so the solid expands."
+      ex: "Linear expansion is the increase in length of a wire or rod of a solid due to increase in its temperature."
     },
     {
-      q: "For the same L₁ and same ΔT, which expands the most?",
-      opts: ["Iron (α = 11.5×10⁻⁶ /°C)", "Copper (α = 17×10⁻⁶ /°C)", "Aluminium (α = 23.1×10⁻⁶ /°C)", "All expand equally"],
-      a: 2,
-      ex: "ΔL = α L₁ ΔT. With L₁ and ΔT fixed, larger α gives larger expansion — aluminium wins."
+      q: "Which formula is correct for the increase in length?",
+      opts: [
+        "Δl = λ / (l₁ × ΔT)",
+        "Δl = λ × l₁ × ΔT",
+        "Δl = λ + l₁ + ΔT",
+        "Δl = l₁ / (λ × ΔT)"
+      ],
+      a: 1,
+      ex: "From the textbook: l₂ − l₁ = λ × l₁ × ΔT, so Δl = λ × l₁ × ΔT."
     },
     {
-      q: "A steel rod has L₁ = 0.5 m, α = 0.000013 /°C, ΔT = 60°C. What is ΔL?",
+      q: "A steel rod has length 0.5 m. Temperature rises by 60 °C. λ = 0.000013 /°C. What is Δl?",
       opts: ["0.039 m", "0.00039 m", "0.0039 m", "0.39 m"],
       a: 1,
-      ex: "ΔL = α L₁ ΔT = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)."
+      ex: "Δl = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)."
     },
     {
-      q: "When a metal plate with a circular hole is heated, the hole:",
-      opts: ["Becomes smaller", "Stays exactly the same", "Becomes larger", "Disappears"],
-      a: 2,
-      ex: "Every linear size of the plate expands — including the hole diameter. Think of the missing disc expanding too."
+      q: "From the table, which solid has the largest coefficient of linear expansion?",
+      opts: ["Iron (11.5)", "Copper (17)", "Silver (18)", "Aluminium (23.1)"],
+      a: 3,
+      ex: "Aluminium has λ = 23.1 × 10⁻⁶ /°C — the largest among the solids in the table. It expands the most for the same length and ΔT."
     },
     {
-      q: "The coefficient of linear expansion α has SI unit:",
-      opts: ["m", "m/°C", "1/°C (or /K)", "°C"],
+      q: "The unit of the coefficient of linear expansion λ is:",
+      opts: ["m", "°C", "1/°C", "m/°C"],
       a: 2,
-      ex: "α = ΔL / (L₁ ΔT), so length cancels and the unit is 1/°C (or K⁻¹)."
+      ex: "λ = (l₂ − l₁) / (l₁ ΔT). Length cancels, so the unit is 1/°C."
     }
   ]
 },
 ur: {
   loading: "ورچوئل لیب لوڈ ہو رہی ہے...",
-  topic: "ٹھوس اجسام کا پھیلاؤ — حرارتی تجربہ گاہ",
+  topic: "ٹھوس اجسام کا پھیلاؤ",
   intro_topic: "ٹھوس اجسام کا پھیلاؤ",
   tab_sim: "سمولیشن",
   tab_quiz: "کوئز",
-  mode_linear: "طولی لیب",
-  mode_micro: "ایٹم",
-  mode_compare: "موازنہ",
-  mode_hole: "سوراخ والی پلیٹ",
-  mode_area: "رقبہ و حجم",
+  mode_linear: "خطی پھیلاؤ",
+  mode_areal: "سطحی پھیلاؤ",
+  mode_volume: "حجمی پھیلاؤ",
   drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں",
-  magnify_note: "تعلیمی مقصد کے لیے بصری پھیلاؤ بڑا دکھایا گیا ہے",
+  visual_note: "تبدیلی دکھانے کے لیے تصویر بڑی کی گئی ہے",
   obs_title: "مشاہدہ",
-  formula_label: "اہم تعلق",
-  heat_title: "حرارتی کنٹرولز",
+  formula_label: "فارمولا",
+  heat_title: "درجہ حرارت",
   heat_off: "ہیٹر بند",
   heat_on: "ہیٹر چالو",
   t1_label: "ابتدائی درجہ حرارت T₁",
-  t2_label: "مطلوبہ درجہ حرارت T₂",
+  t2_label: "حتمی درجہ حرارت T₂",
   dT_label: "ΔT = T₂ − T₁",
-  mat_title: "مادہ اور جسامت",
-  mat_b: "مادہ B",
-  L0_label: "ابتدائی لمبائی L₁",
-  mag_label: "بصری تکبیر",
-  predict_title: "پہلے اندازہ لگائیں!",
-  predict_q: "پلیٹ گرم کرنے پر سوراخ کا کیا ہوگا؟",
-  pred_smaller: "ا۔ سوراخ چھوٹا ہو جائے گا",
-  pred_same: "ب۔ سوراخ ویسا ہی رہے گا",
-  pred_larger: "ج۔ سوراخ بڑا ہو جائے گا",
-  pred_ok: "درست! سوراخ پلیٹ کے ساتھ پھیلتا ہے — دھات ہر سمت میں بڑھتی ہے۔",
-  pred_bad: "بالکل درست نہیں۔ اندازہ لگانے کے بعد ہیٹر چالو کریں اور غور سے دیکھیں — سوراخ بھی بڑا ہوتا ہے!",
-  meas_title: "براہِ راست پیمائش",
-  alpha_label: "α (عددی سر)",
-  L1_label: "ابتدائی لمبائی L₁",
-  L2_label: "حتمی لمبائی L₂",
-  dL_label: "اصلی ΔL",
-  vis_dL: "بصری ΔL",
-  tip_title: "تصوراتی نکتہ",
+  mat_title: "ٹھوس مادہ",
+  L0_label: "ابتدائی لمبائی l₁",
+  A0_label: "ابتدائی ضلع",
+  V0_label: "ابتدائی ضلع",
+  load_example: "کتاب کی مثال (اسٹیل)",
+  meas_title: "پیمائش",
+  lambda_label: "λ (خطی)",
+  sigma_label: "σ (سطحی)",
+  beta_label: "β (حجمی)",
+  L1_label: "ابتدائی لمبائی l₁",
+  L2_label: "حتمی لمبائی l₂",
+  dL_label: "اضافہ Δl",
+  A1_label: "ابتدائی رقبہ A₁",
+  A2_label: "حتمی رقبہ A₂",
+  dA_label: "اضافہ ΔA",
+  V1_label: "ابتدائی حجم V₁",
+  V2_label: "حتمی حجم V₂",
+  dV_label: "اضافہ ΔV",
+  tip_title: "یاد رکھیں",
   anno_title: "تشریح",
-  mat_al: "ایلومینیم",
   mat_cu: "تانبا",
+  mat_al: "ایلومینیم",
   mat_fe: "لوہا",
   mat_ag: "چاندی",
   mat_st: "اسٹیل",
-  obs_linear_cold: "T₂ کو T₁ سے زیادہ رکھیں، ہیٹر چالو کریں اور سلاخ کے آزاد سرے کی حرکت دیکھیں۔ بڑی L، ΔT یا α → بڑا ΔL۔",
-  obs_linear_hot: "سلاخ پھیل رہی ہے۔ ΔL = α L₁ ΔT۔ حقیقی چھوٹی ΔL کا موازنہ بصری تکبیر سے کریں۔",
-  obs_micro_cold: "ایٹم جالی میں ہلکے سے کمپائیں کر رہے ہیں۔ درجہ حرارت بڑھائیں — کمپائش کی وسعت بڑھتی ہے اور اوسط فاصلہ بڑھتا ہے۔",
-  obs_micro_hot: "تیز اور بڑی کمپائش → اوسط بین جوہری فاصلہ بڑھتا ہے → ٹھوس جسم پھیلتا ہے۔",
-  obs_compare: "دونوں سلاخوں کے لیے ایک جیسی L₁ اور ΔT۔ بڑی α والا مادہ زیادہ پھیلتا ہے۔ ایلومینیم لوہے سے آگے ہے۔",
-  obs_hole_wait: "پہلے اپنا اندازہ منتخب کریں، پھر خیال آزمانے کے لیے ہیٹر چالو کریں۔",
-  obs_hole_expand: "سوراخ پھیل گیا! غائب قرص کا بھی پھیلنا فرض کریں — اسی لیے سوراخ بڑا ہوتا ہے۔",
-  obs_area: "شیٹ لمبائی اور چوڑائی میں پھیلتی ہے (سطحی، σ≈2α)۔ مکعب تینوں سمتوں میں پھیلتا ہے (حجمی، β≈3α)۔",
-  tip_linear: "حرارتی پھیلاؤ تین چیزوں پر منحصر ہے: اصل جسامت، درجہ حرارت کی تبدیلی، اور مادہ (α)۔",
-  tip_micro: "گرمی ایٹموں کو مستقل طور پر الگ نہیں دھکیلتی — حرارتی حرکت بڑھتی ہے جس سے اوسط فاصلہ بڑھتا ہے۔",
-  tip_compare: "α بتاتا ہے کہ فی اکائی لمبائی فی °C لمبائی کتنی بدلتی ہے۔ بڑی α → ایک ہی ΔT پر زیادہ پھیلاؤ۔",
-  tip_hole: "عام غلط فہمی: لوگ سمجھتے ہیں سوراخ سکڑتا ہے۔ حقیقت میں پلیٹ کی ہر طولی جسامت — بشمول سوراخ کا قطر — بڑھتی ہے۔",
-  tip_area: "ہم جنس ٹھوس کے لیے: σ ≈ 2α اور β ≈ 3α۔ طولی → سطحی → حجمی ایک ہی تصور ہے 1D، 2D اور 3D میں۔",
+  obs_linear: "سلاخ گرم کریں اور لمبائی کا بڑھنا دیکھیں۔ بڑی λ، لمبی سلاخ یا بڑا ΔT → بڑا Δl۔",
+  obs_areal: "شیٹ لمبائی اور چوڑائی میں پھیلتی ہے۔ رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔",
+  obs_volume: "ٹھوس ہر سمت میں پھیلتا ہے۔ حجم بڑھتا ہے: V₂ = V₁(1 + β ΔT)۔",
+  tip_linear: "λ اکائی لمبائی کی سلاخ میں 1 °C بڑھنے پر لمبائی کا اضافہ ہے۔ اکائی: 1/°C۔",
+  tip_areal: "گرم کرنے پر شیٹ کا رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر σ ≈ 2λ۔",
+  tip_volume: "گرم کرنے پر ٹھوس ہر طرف پھیلتا ہے: V₂ = V₁(1 + β ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر β ≈ 3λ۔",
+  lbl_rod: "دھاتی سلاخ",
   lbl_fixed: "ثابت سرا",
   lbl_free: "آزاد سرا",
   lbl_heater: "ہیٹر",
-  lbl_ruler: "پیمانہ",
-  lbl_rod: "دھاتی سلاخ",
-  lbl_plate: "دھاتی پلیٹ",
-  lbl_hole: "سوراخ",
-  lbl_sheet: "شیٹ (2D)",
-  lbl_cube: "مکعب (3D)",
-  lbl_cold: "ٹھنڈا",
-  lbl_hot: "گرم",
-  lbl_lattice: "جوہری جالی",
-  lbl_compare_title: "مادوں کا موازنہ",
-  lbl_hole_title: "سوراخ والا تجربہ",
-  lbl_area_title: "سطحی و حجمی پھیلاؤ",
-  quiz_title: "تصوراتی کوئز — ٹھوس اجسام کا پھیلاؤ",
+  lbl_sheet: "دھاتی شیٹ",
+  lbl_cube: "ٹھوس مکعب",
+  quiz_title: "کوئز — ٹھوس اجسام کا پھیلاؤ",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
-  correct_fb: "درست جواب!",
-  wrong_fb: "غلط جواب!",
+  correct_fb: "درست!",
+  wrong_fb: "غلط!",
   next_q: "اگلا سوال",
   see_result: "نتیجہ دیکھیں",
   final_score: "حتمی اسکور",
-  restart: "کوئز دوبارہ شروع کریں",
-  score_msg_great: "شاندار! آپ نے حرارتی پھیلاؤ کا تصور سمجھ لیا ہے۔",
-  score_msg_good: "اچھی کوشش! سمولیشن دوبارہ دیکھیں اور پھر کوشش کریں۔",
-  score_msg_low: "لیب میں مزید تجربہ کریں — دریافت یادداشت سے بہتر ہے!",
+  restart: "کوئز دوبارہ",
+  score_msg_great: "شاندار! آپ نے ٹھوس کا پھیلاؤ سمجھ لیا۔",
+  score_msg_good: "اچھی کوشش! سمولیشن ایک بار پھر دیکھیں۔",
+  score_msg_low: "لیب میں سلاخ دوبارہ گرم کریں اور کوئز پھر حل کریں!",
   quiz: [
     {
-      q: "دھاتی سلاخ گرم کرنے پر بنیادی طور پر اس لیے پھیلتی ہے کہ:",
+      q: "خطی پھیلاؤ سے مراد ہے:",
       opts: [
-        "ایٹم تباہ ہو کر باہر دھکیلے جاتے ہیں",
-        "حرارتی حرکت بڑھنے سے اوسط بین جوہری فاصلہ بڑھتا ہے",
-        "کششِ ثقل ایٹموں کو الگ کھینچتی ہے",
-        "ہیٹر سلاخ میں نئے ایٹم شامل کر دیتا ہے"
+        "مائع کے حجم میں اضافہ",
+        "گرم کرنے پر ٹھوس سلاخ یا تار کی لمبائی میں اضافہ",
+        "گرم کرنے پر لمبائی میں کمی",
+        "دھات کے رنگ میں تبدیلی"
       ],
       a: 1,
-      ex: "گرمی سے ایٹموں کی کمپائش بڑھتی ہے۔ ان کے درمیان اوسط فاصلہ بڑھتا ہے، اس لیے ٹھوس جسم پھیلتا ہے۔"
+      ex: "خطی پھیلاؤ: درجہ حرارت بڑھنے سے ٹھوس کی سلاخ یا تار کی لمبائی بڑھنا۔"
     },
     {
-      q: "ایک جیسی L₁ اور ایک جیسی ΔT پر سب سے زیادہ کون پھیلتا ہے؟",
-      opts: ["لوہا (α = 11.5×10⁻⁶ /°C)", "تانبا (α = 17×10⁻⁶ /°C)", "ایلومینیم (α = 23.1×10⁻⁶ /°C)", "سب برابر پھیلتے ہیں"],
-      a: 2,
-      ex: "ΔL = α L₁ ΔT۔ جب L₁ اور ΔT ثابت ہوں تو بڑی α زیادہ پھیلاؤ دیتی ہے — ایلومینیم سب سے زیادہ پھیلتا ہے۔"
+      q: "لمبائی میں اضافے کا درست فارمولا کون سا ہے؟",
+      opts: [
+        "Δl = λ / (l₁ × ΔT)",
+        "Δl = λ × l₁ × ΔT",
+        "Δl = λ + l₁ + ΔT",
+        "Δl = l₁ / (λ × ΔT)"
+      ],
+      a: 1,
+      ex: "کتاب کے مطابق: l₂ − l₁ = λ × l₁ × ΔT، یعنی Δl = λ × l₁ × ΔT۔"
     },
     {
-      q: "ایک اسٹیل سلاخ: L₁ = 0.5 m، α = 0.000013 /°C، ΔT = 60°C۔ ΔL کیا ہے؟",
+      q: "اسٹیل سلاخ 0.5 m، ΔT = 60 °C، λ = 0.000013 /°C۔ Δl کیا ہے؟",
       opts: ["0.039 m", "0.00039 m", "0.0039 m", "0.39 m"],
       a: 1,
-      ex: "ΔL = α L₁ ΔT = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)۔"
+      ex: "Δl = 0.000013 × 0.5 × 60 = 0.00039 m (= 0.039 cm)۔"
     },
     {
-      q: "گول سوراخ والی دھاتی پلیٹ گرم کرنے پر سوراخ:",
-      opts: ["چھوٹا ہو جاتا ہے", "بالکل ویسا ہی رہتا ہے", "بڑا ہو جاتا ہے", "غائب ہو جاتا ہے"],
-      a: 2,
-      ex: "پلیٹ کی ہر طولی جسامت پھیلتی ہے — بشمول سوراخ کا قطر۔ غائب قرص کا بھی پھیلنا فرض کریں۔"
+      q: "جدول کے مطابق سب سے بڑی خطی پھیلاؤ کی شرح کس کی ہے؟",
+      opts: ["لوہا (11.5)", "تانبا (17)", "چاندی (18)", "ایلومینیم (23.1)"],
+      a: 3,
+      ex: "ایلومینیم کی λ = 23.1 × 10⁻⁶ /°C سب سے بڑی ہے، اس لیے وہ سب سے زیادہ پھیلتا ہے۔"
     },
     {
-      q: "طولی پھیلاؤ کے عددی سر α کی SI اکائی ہے:",
-      opts: ["m", "m/°C", "1/°C (یا /K)", "°C"],
+      q: "خطی پھیلاؤ کی شرح λ کی اکائی ہے:",
+      opts: ["m", "°C", "1/°C", "m/°C"],
       a: 2,
-      ex: "α = ΔL / (L₁ ΔT)، لمبائی کٹ جاتی ہے، اس لیے اکائی 1/°C (یا K⁻¹) ہے۔"
+      ex: "λ = (l₂ − l₁) / (l₁ ΔT)۔ لمبائی کٹ جاتی ہے، اکائی 1/°C ہے۔"
     }
   ]
 }
 };
 
-const MATERIALS = {
-  al: { key: 'mat_al', alpha: 23.1e-6, color: '#c0c8d4', accent: '#94a3b8' },
-  cu: { key: 'mat_cu', alpha: 17.0e-6, color: '#b87333', accent: '#d97706' },
-  fe: { key: 'mat_fe', alpha: 11.5e-6, color: '#8b9aab', accent: '#64748b' },
-  ag: { key: 'mat_ag', alpha: 18.0e-6, color: '#e5e7eb', accent: '#a8b2c1' },
-  st: { key: 'mat_st', alpha: 13.0e-6, color: '#9ca3af', accent: '#6b7280' }
-};
-const MAG_LEVELS = [1, 100, 1000, 10000];
-
-/* ============================================================
-   STATE
-============================================================ */
 let cur = localStorage.getItem('iqra_lang') || 'en';
 const S = {
   mode: 'linear',
@@ -799,22 +717,16 @@ const S = {
   T1: 20,
   T2: 80,
   Tnow: 20,
-  L0: 1.0,
+  size: 1.0, // length (m) or side (m)
   mat: 'al',
-  matB: 'fe',
-  magIdx: 2,
-  prediction: null,
-  holeRevealed: false,
   animT: 0
 };
 
-const WORLD = { w: 960, h: 560 };
+const WORLD = { w: 960, h: 540 };
 let canvas, ctx, wrap;
 const view = { scale: 1, x: 0, y: 0 };
-let dragging = false, lastX = 0, lastY = 0;
-let pinchDist = 0;
+let dragging = false, lastX = 0, lastY = 0, pinchDist = 0;
 let quizIdx = 0, quizScore = 0, quizAnswered = false, quizDone = false;
-let atoms = [];
 let annoFloatMin = false;
 
 function t(key) {
@@ -823,8 +735,53 @@ function t(key) {
   return typeof v === 'function' ? v : (v != null ? v : (LANG.en[key] ?? key));
 }
 
+/* Physics helpers — exact textbook relations
+   Linear:  Δl = λ l1 ΔT ; l2 = l1(1+λΔT)
+   Areal:   A2 = A1(1+σΔT)  with σ = 2λ  (standard school relation for isotropic solid)
+   Volume:  V2 = V1(1+βΔT)  with β = 3λ
+*/
+function lambda() { return MATERIALS[S.mat].lambda; }
+function sigma() { return 2 * lambda(); }
+function beta() { return 3 * lambda(); }
+function dT() { return Math.max(0, S.Tnow - S.T1); }
+
+function calcLinear() {
+  const l1 = S.size;
+  const dl = lambda() * l1 * dT();
+  return { l1, l2: l1 + dl, dl };
+}
+function calcAreal() {
+  const side = S.size;
+  const A1 = side * side;
+  const A2 = A1 * (1 + sigma() * dT());
+  return { side, A1, A2, dA: A2 - A1 };
+}
+function calcVolume() {
+  const side = S.size;
+  const V1 = side * side * side;
+  const V2 = V1 * (1 + beta() * dT());
+  return { side, V1, V2, dV: V2 - V1 };
+}
+
+function formatCoeff(v) {
+  if (Math.abs(v - 0.000013) < 1e-12) return '0.000013 /°C';
+  const x = v * 1e6;
+  return (Number.isInteger(x) ? x.toFixed(0) : x.toFixed(1)) + '×10⁻⁶ /°C';
+}
+function formatLen(m) {
+  if (Math.abs(m) < 1e-6) return m.toFixed(8) + ' m';
+  if (Math.abs(m) < 1e-3) return m.toFixed(6) + ' m';
+  return m.toFixed(6) + ' m';
+}
+function formatArea(a) {
+  return a.toFixed(6) + ' m²';
+}
+function formatVol(v) {
+  return v.toFixed(6) + ' m³';
+}
+
 /* ============================================================
-   LANGUAGE
+   LANGUAGE / UI
 ============================================================ */
 function changeLanguage(lang) {
   if (lang !== 'en' && lang !== 'ur') return;
@@ -834,8 +791,8 @@ function changeLanguage(lang) {
   document.documentElement.dir = cur === 'ur' ? 'rtl' : 'ltr';
   document.getElementById('lang-select').value = cur;
   applyI18n();
-  buildMaterialGrids();
-  updateObservation();
+  buildMatGrid();
+  updateUI();
   if (!document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
 }
 
@@ -845,15 +802,9 @@ function applyI18n() {
     const val = t(key);
     if (typeof val === 'string') el.textContent = val;
   });
-  const intro = document.getElementById('intro-topic');
-  if (intro) intro.textContent = t('intro_topic');
-  updateControlLabels();
-  document.getElementById('tip-text').textContent = currentTip();
+  document.getElementById('intro-topic').textContent = t('intro_topic');
 }
 
-/* ============================================================
-   TABS / FULLSCREEN
-============================================================ */
 function switchTab(tab) {
   document.getElementById('view-sim').classList.toggle('hidden', tab !== 'sim');
   document.getElementById('view-quiz').classList.toggle('hidden', tab !== 'quiz');
@@ -875,7 +826,7 @@ function toggleFullScreen() {
 }
 
 /* ============================================================
-   ANNOTATION (Fabric.js) — exact logic required
+   ANNOTATION — exact required logic
 ============================================================ */
 let fCanvas;
 let isAnnoActive = false;
@@ -953,8 +904,7 @@ function clearAnnotations() {
 
 function toggleAnnoFloatMin() {
   annoFloatMin = !annoFloatMin;
-  const el = document.getElementById('anno-float');
-  el.classList.toggle('minimized', annoFloatMin);
+  document.getElementById('anno-float').classList.toggle('minimized', annoFloatMin);
   document.getElementById('anno-min-icon').className = annoFloatMin ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
 }
 
@@ -966,15 +916,13 @@ function setupAnnoDrag() {
     if (e.target.closest('button')) return;
     draggingCard = true;
     const r = card.getBoundingClientRect();
-    const wrapEl = document.getElementById('canvas-wrap').getBoundingClientRect();
     ox = e.clientX - r.left;
     oy = e.clientY - r.top;
     handle.setPointerCapture(e.pointerId);
   });
   handle.addEventListener('pointermove', e => {
     if (!draggingCard) return;
-    const wrapEl = document.getElementById('canvas-wrap');
-    const wr = wrapEl.getBoundingClientRect();
+    const wr = document.getElementById('canvas-wrap').getBoundingClientRect();
     const nx = e.clientX - wr.left - ox;
     const ny = e.clientY - wr.top - oy;
     card.style.left = Math.max(4, Math.min(wr.width - 48, nx)) + 'px';
@@ -989,199 +937,120 @@ function setupAnnoDrag() {
 ============================================================ */
 function setMode(mode) {
   S.mode = mode;
-  ['linear','micro','compare','hole','area'].forEach(m => {
+  ['linear','areal','volume'].forEach(m => {
     document.getElementById('mode-' + m).classList.toggle('active', m === mode);
   });
-  document.getElementById('panel-hole').classList.toggle('hidden', mode !== 'hole');
-  document.getElementById('compare-mat-row').classList.toggle('hidden', mode !== 'compare');
-  document.getElementById('length-row').classList.toggle('hidden', mode === 'micro' || mode === 'hole');
-  if (mode === 'micro') initAtoms();
-  if (mode === 'hole') {
-    S.prediction = null;
-    S.holeRevealed = false;
-    S.heat = false;
-    document.getElementById('btn-heat').classList.remove('on');
-    [0,1,2].forEach(i => {
-      const b = document.getElementById('pred-' + i);
-      b.classList.remove('selected','correct','wrong');
-    });
-    document.getElementById('pred-feedback').classList.add('hidden');
-  }
-  updateControlLabels();
-  updateObservation();
-  document.getElementById('tip-text').textContent = currentTip();
+  updateUI();
 }
 
 function toggleHeat() {
-  if (S.mode === 'hole' && S.prediction === null) {
-    // Require prediction first
-    document.getElementById('obs-text').textContent = t('obs_hole_wait');
-    return;
-  }
   S.heat = !S.heat;
   document.getElementById('btn-heat').classList.toggle('on', S.heat);
-  updateControlLabels();
-  if (S.mode === 'hole' && S.heat) {
-    S.holeRevealed = true;
-    revealPrediction();
-  }
-  updateObservation();
+  updateUI();
 }
 
 function onControl() {
   S.T1 = +document.getElementById('sl-T1').value;
   S.T2 = +document.getElementById('sl-T2').value;
-  S.L0 = +document.getElementById('sl-L0').value;
-  S.magIdx = +document.getElementById('sl-mag').value;
+  S.size = +document.getElementById('sl-size').value;
   if (S.T2 < S.T1) {
     S.T2 = S.T1;
     document.getElementById('sl-T2').value = S.T2;
   }
   if (!S.heat) S.Tnow = S.T1;
-  updateControlLabels();
-  updateMeasurements();
-  updateObservation();
+  updateUI();
 }
 
-function selectMat(id, which) {
-  if (which === 'b') S.matB = id;
-  else S.mat = id;
-  buildMaterialGrids();
-  updateMeasurements();
-  updateObservation();
+function selectMat(id) {
+  S.mat = id;
+  buildMatGrid();
+  updateUI();
 }
 
-function buildMaterialGrids() {
-  const mk = (gridId, active, which) => {
-    const g = document.getElementById(gridId);
-    g.innerHTML = '';
-    Object.keys(MATERIALS).forEach(id => {
-      const m = MATERIALS[id];
-      const b = document.createElement('button');
-      b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (active === id ? ' active' : '');
-      b.textContent = t(m.key);
-      b.onclick = () => selectMat(id, which);
-      g.appendChild(b);
-    });
-  };
-  mk('mat-grid', S.mat, 'a');
-  mk('mat-grid-b', S.matB, 'b');
-}
-
-function makePrediction(i) {
-  if (S.holeRevealed) return;
-  S.prediction = i;
-  [0,1,2].forEach(j => {
-    document.getElementById('pred-' + j).classList.toggle('selected', j === i);
+function buildMatGrid() {
+  const g = document.getElementById('mat-grid');
+  g.innerHTML = '';
+  Object.keys(MATERIALS).forEach(id => {
+    const b = document.createElement('button');
+    b.className = 'mat-chip px-2 py-2.5 rounded-xl font-bold text-xs text-slate-300' + (S.mat === id ? ' active' : '');
+    b.textContent = t(MATERIALS[id].key);
+    b.onclick = () => selectMat(id);
+    g.appendChild(b);
   });
-  updateObservation();
 }
 
-function revealPrediction() {
-  const fb = document.getElementById('pred-feedback');
-  fb.classList.remove('hidden');
-  const correct = 2;
-  [0,1,2].forEach(j => {
-    const b = document.getElementById('pred-' + j);
-    b.classList.remove('selected');
-    if (j === correct) b.classList.add('correct');
-    else if (j === S.prediction) b.classList.add('wrong');
-  });
-  fb.textContent = S.prediction === correct ? t('pred_ok') : t('pred_bad');
-  fb.className = 'text-sm leading-relaxed ' + (S.prediction === correct ? 'text-green-400' : 'text-amber-300');
+function loadExample() {
+  // Textbook: steel, l1=0.5 m, ΔT=60°C → use T1=20, T2=80
+  S.mat = 'st';
+  S.size = 0.5;
+  S.T1 = 20;
+  S.T2 = 80;
+  S.heat = true;
+  S.Tnow = S.T1;
+  document.getElementById('sl-size').value = S.size;
+  document.getElementById('sl-T1').value = S.T1;
+  document.getElementById('sl-T2').value = S.T2;
+  document.getElementById('btn-heat').classList.add('on');
+  setMode('linear');
+  buildMatGrid();
+  updateUI();
 }
 
-function updateControlLabels() {
+function updateUI() {
   document.getElementById('heat-label').textContent = S.heat ? t('heat_on') : t('heat_off');
   document.getElementById('val-T1').textContent = S.T1 + ' °C';
   document.getElementById('val-T2').textContent = S.T2 + ' °C';
-  const dT = Math.max(0, effectiveT() - S.T1);
-  document.getElementById('val-dT').textContent = dT.toFixed(1) + ' °C';
-  document.getElementById('val-L0').textContent = S.L0.toFixed(2) + ' m';
-  document.getElementById('val-mag').textContent = MAG_LEVELS[S.magIdx] + '×';
-  updateMeasurements();
-}
+  document.getElementById('val-dT').textContent = dT().toFixed(1) + ' °C';
 
-function effectiveT() { return S.Tnow; }
+  const sizeKey = S.mode === 'linear' ? 'L0_label' : (S.mode === 'areal' ? 'A0_label' : 'V0_label');
+  document.getElementById('size-label').textContent = t(sizeKey);
+  document.getElementById('val-size').textContent = S.size.toFixed(2) + ' m';
 
-function dT() { return Math.max(0, effectiveT() - S.T1); }
-
-function calcDL(matId, L) {
-  const a = MATERIALS[matId].alpha;
-  return a * L * dT();
-}
-
-function formatAlpha(a) {
-  const exp = (a * 1e6).toFixed(1);
-  return exp + '×10⁻⁶ /°C';
-}
-
-function formatLen(m) {
-  if (Math.abs(m) < 1e-4) return (m * 1e6).toFixed(2) + ' μm';
-  if (Math.abs(m) < 1e-2) return (m * 1e3).toFixed(3) + ' mm';
-  return m.toFixed(6) + ' m';
-}
-
-function updateMeasurements() {
-  const mat = MATERIALS[S.mat];
-  const dL = calcDL(S.mat, S.L0);
-  const L2 = S.L0 + dL;
-  const mag = MAG_LEVELS[S.magIdx];
-  document.getElementById('m-alpha').textContent = formatAlpha(mat.alpha);
-  document.getElementById('m-L1').textContent = S.L0.toFixed(6) + ' m';
-  document.getElementById('m-L2').textContent = L2.toFixed(6) + ' m';
-  document.getElementById('m-dL').textContent = formatLen(dL);
-  document.getElementById('m-vis').textContent = formatLen(dL * mag);
-
-  if (S.mode === 'area') {
-    document.getElementById('formula-val').textContent = 'σ≈2α · β≈3α';
-  } else if (S.mode === 'micro') {
-    document.getElementById('formula-val').textContent = 'T ↑ → spacing ↑';
-  } else if (S.mode === 'hole') {
-    document.getElementById('formula-val').textContent = 'd₂ = d₁(1+αΔT)';
+  // Measurement panel
+  if (S.mode === 'linear') {
+    const r = calcLinear();
+    document.getElementById('coeff-label').textContent = t('lambda_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(lambda());
+    document.getElementById('m1-label').textContent = t('L1_label');
+    document.getElementById('m2-label').textContent = t('L2_label');
+    document.getElementById('md-label').textContent = t('dL_label');
+    document.getElementById('m-1').textContent = formatLen(r.l1);
+    document.getElementById('m-2').textContent = formatLen(r.l2);
+    document.getElementById('m-d').textContent = formatLen(r.dl);
+    document.getElementById('formula-val').textContent = 'Δl = λ × l₁ × ΔT';
+    document.getElementById('obs-text').textContent = t('obs_linear');
+    document.getElementById('tip-text').textContent = t('tip_linear');
+  } else if (S.mode === 'areal') {
+    const r = calcAreal();
+    document.getElementById('coeff-label').textContent = t('sigma_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(sigma());
+    document.getElementById('m1-label').textContent = t('A1_label');
+    document.getElementById('m2-label').textContent = t('A2_label');
+    document.getElementById('md-label').textContent = t('dA_label');
+    document.getElementById('m-1').textContent = formatArea(r.A1);
+    document.getElementById('m-2').textContent = formatArea(r.A2);
+    document.getElementById('m-d').textContent = formatArea(r.dA);
+    document.getElementById('formula-val').textContent = 'A₂ = A₁(1 + σ ΔT)';
+    document.getElementById('obs-text').textContent = t('obs_areal');
+    document.getElementById('tip-text').textContent = t('tip_areal');
   } else {
-    document.getElementById('formula-val').textContent = 'ΔL = α L ΔT';
-  }
-}
-
-function currentTip() {
-  return t('tip_' + (S.mode === 'area' ? 'area' : S.mode === 'hole' ? 'hole' : S.mode === 'compare' ? 'compare' : S.mode === 'micro' ? 'micro' : 'linear'));
-}
-
-function updateObservation() {
-  let key;
-  if (S.mode === 'linear') key = S.heat && dT() > 0.5 ? 'obs_linear_hot' : 'obs_linear_cold';
-  else if (S.mode === 'micro') key = dT() > 5 ? 'obs_micro_hot' : 'obs_micro_cold';
-  else if (S.mode === 'compare') key = 'obs_compare';
-  else if (S.mode === 'hole') key = S.holeRevealed ? 'obs_hole_expand' : 'obs_hole_wait';
-  else key = 'obs_area';
-  document.getElementById('obs-text').textContent = t(key);
-  document.getElementById('tip-text').textContent = currentTip();
-}
-
-/* ============================================================
-   ATOMS (micro mode)
-============================================================ */
-function initAtoms() {
-  atoms = [];
-  const cols = 8, rows = 6;
-  const spacing = 48;
-  const ox = WORLD.w / 2 - (cols - 1) * spacing / 2;
-  const oy = WORLD.h / 2 - (rows - 1) * spacing / 2 + 10;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      atoms.push({
-        bx: ox + c * spacing,
-        by: oy + r * spacing,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.8 + Math.random() * 0.6
-      });
-    }
+    const r = calcVolume();
+    document.getElementById('coeff-label').textContent = t('beta_label');
+    document.getElementById('m-coeff').textContent = formatCoeff(beta());
+    document.getElementById('m1-label').textContent = t('V1_label');
+    document.getElementById('m2-label').textContent = t('V2_label');
+    document.getElementById('md-label').textContent = t('dV_label');
+    document.getElementById('m-1').textContent = formatVol(r.V1);
+    document.getElementById('m-2').textContent = formatVol(r.V2);
+    document.getElementById('m-d').textContent = formatVol(r.dV);
+    document.getElementById('formula-val').textContent = 'V₂ = V₁(1 + β ΔT)';
+    document.getElementById('obs-text').textContent = t('obs_volume');
+    document.getElementById('tip-text').textContent = t('tip_volume');
   }
 }
 
 /* ============================================================
-   ZOOM / PAN / RESIZE
+   ZOOM / PAN
 ============================================================ */
 function resizeAll() {
   wrap = document.getElementById('canvas-wrap');
@@ -1214,9 +1083,7 @@ function resizeAll() {
 function fitView() {
   if (!wrap) return;
   const r = wrap.getBoundingClientRect();
-  const sx = r.width / WORLD.w;
-  const sy = r.height / WORLD.h;
-  view.scale = Math.min(sx, sy) * 0.94;
+  view.scale = Math.min(r.width / WORLD.w, r.height / WORLD.h) * 0.94;
   view.x = (r.width - WORLD.w * view.scale) / 2;
   view.y = (r.height - WORLD.h * view.scale) / 2;
 }
@@ -1231,15 +1098,13 @@ function zoomBy(f) {
   view.x = cx - wx * view.scale;
   view.y = cy - wy * view.scale;
 }
-
 function resetView() { fitView(); }
 
 function setupPointer() {
   const el = document.getElementById('sim-canvas');
   el.addEventListener('pointerdown', e => {
     if (isAnnoActive) return;
-    dragging = true;
-    lastX = e.clientX; lastY = e.clientY;
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
     el.setPointerCapture(e.pointerId);
     el.classList.replace('cursor-grab', 'cursor-grabbing');
   });
@@ -1259,13 +1124,11 @@ function setupPointer() {
     const cx = e.clientX - r.left, cy = e.clientY - r.top;
     const wx = (cx - view.x) / view.scale;
     const wy = (cy - view.y) / view.scale;
-    const f = e.deltaY < 0 ? 1.12 : 1/1.12;
+    const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
     view.scale = Math.max(0.4, Math.min(3.5, view.scale * f));
     view.x = cx - wx * view.scale;
     view.y = cy - wy * view.scale;
   }, { passive: false });
-
-  // Pinch zoom
   el.addEventListener('touchstart', e => {
     if (e.touches.length === 2) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -1286,19 +1149,7 @@ function setupPointer() {
 }
 
 /* ============================================================
-   PHYSICS ANIMATION
-============================================================ */
-function tickPhysics(dt) {
-  S.animT += dt;
-  const target = S.heat ? S.T2 : S.T1;
-  const rate = 28; // °C per second toward target
-  if (S.Tnow < target) S.Tnow = Math.min(target, S.Tnow + rate * dt);
-  else if (S.Tnow > target) S.Tnow = Math.max(target, S.Tnow - rate * dt);
-  updateControlLabels();
-}
-
-/* ============================================================
-   DRAWING HELPERS
+   DRAW
 ============================================================ */
 function roundRect(x, y, w, h, r) {
   ctx.beginPath();
@@ -1310,443 +1161,216 @@ function roundRect(x, y, w, h, r) {
   ctx.closePath();
 }
 
-function heatGlow(x, y, w, intensity) {
-  if (intensity <= 0) return;
-  const g = ctx.createRadialGradient(x + w/2, y, 4, x + w/2, y, w * 0.7);
-  g.addColorStop(0, `rgba(251,146,60,${0.35 * intensity})`);
-  g.addColorStop(1, 'rgba(251,146,60,0)');
-  ctx.fillStyle = g;
-  ctx.fillRect(x - 40, y - 40, w + 80, 100);
+function drawText(str, x, y, opt = {}) {
+  ctx.fillStyle = opt.color || '#94a3b8';
+  ctx.font = opt.font || (cur === 'ur'
+    ? "600 15px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif"
+    : '600 13px Manrope,sans-serif');
+  ctx.textAlign = opt.align || 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(str, x, y);
 }
 
-function drawLabBench() {
-  // ambient
+function drawBg() {
   const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
   g.addColorStop(0, '#0b1224');
-  g.addColorStop(0.7, '#111827');
   g.addColorStop(1, '#0f172a');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, WORLD.w, WORLD.h);
-
-  // subtle grid
-  ctx.strokeStyle = 'rgba(0,243,255,0.04)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x < WORLD.w; x += 40) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, WORLD.h); ctx.stroke();
-  }
-  for (let y = 0; y < WORLD.h; y += 40) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WORLD.w, y); ctx.stroke();
-  }
-
-  // bench
   ctx.fillStyle = '#1e293b';
-  roundRect(40, 430, WORLD.w - 80, 70, 12);
+  roundRect(50, 420, WORLD.w - 100, 60, 12);
   ctx.fill();
   ctx.fillStyle = '#334155';
-  roundRect(40, 430, WORLD.w - 80, 14, 8);
+  roundRect(50, 420, WORLD.w - 100, 12, 6);
   ctx.fill();
 }
 
-function drawThermometer(x, y, T) {
-  const h = 120;
-  const frac = Math.max(0, Math.min(1, (T - 0) / 200));
+function drawThermo(x, y, T) {
+  const h = 110;
+  const frac = Math.max(0, Math.min(1, T / 200));
   ctx.fillStyle = '#cbd5e1';
-  roundRect(x, y, 14, h, 7);
-  ctx.fill();
+  roundRect(x, y, 14, h, 7); ctx.fill();
   ctx.fillStyle = '#0f172a';
-  roundRect(x + 3, y + 6, 8, h - 28, 4);
-  ctx.fill();
+  roundRect(x + 3, y + 6, 8, h - 28, 4); ctx.fill();
   const fillH = (h - 36) * frac;
-  ctx.fillStyle = frac > 0.6 ? '#ef4444' : frac > 0.3 ? '#f97316' : '#38bdf8';
+  ctx.fillStyle = frac > 0.5 ? '#ef4444' : '#38bdf8';
   ctx.fillRect(x + 3, y + 6 + (h - 36 - fillH), 8, fillH);
   ctx.beginPath();
   ctx.arc(x + 7, y + h - 8, 12, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#e2e8f0';
-  ctx.font = '700 12px Oxanium, monospace';
+  ctx.font = '700 12px Oxanium,monospace';
   ctx.textAlign = 'center';
   ctx.fillText(T.toFixed(0) + '°C', x + 7, y - 10);
 }
 
-function drawText(str, x, y, opt = {}) {
-  ctx.fillStyle = opt.color || '#94a3b8';
-  ctx.font = opt.font || '600 13px Manrope, sans-serif';
-  if (cur === 'ur') ctx.font = opt.font || "600 15px 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif";
-  ctx.textAlign = opt.align || 'left';
-  ctx.textBaseline = opt.base || 'middle';
-  ctx.fillText(str, x, y);
-}
-
-/* ============================================================
-   MODE RENDERERS
-============================================================ */
 function drawLinear() {
-  drawLabBench();
+  drawBg();
   const mat = MATERIALS[S.mat];
-  const dL = calcDL(S.mat, S.L0);
-  const mag = MAG_LEVELS[S.magIdx];
-  const basePx = 420 * (S.L0 / 1.5);
-  const expandPx = Math.min(180, dL * mag * 8000); // visual exaggeration mapped
-  const rodX = 140;
-  const rodY = 300;
-  const rodH = 28;
+  const { l1, dl } = calcLinear();
+  // Visual scale: base length mapped to pixels; expansion exaggerated ×8000 for visibility
+  const basePx = 280 + (l1 / 2) * 200;
+  const expandPx = Math.min(160, dl * 8000);
+  const rodX = 160, rodY = 280, rodH = 30;
   const rodW = basePx + expandPx;
 
-  // fixed clamp
+  // clamp
   ctx.fillStyle = '#475569';
-  roundRect(rodX - 36, rodY - 18, 40, rodH + 36, 6);
-  ctx.fill();
-  ctx.fillStyle = '#64748b';
-  roundRect(rodX - 40, rodY - 8, 18, rodH + 16, 4);
-  ctx.fill();
+  roundRect(rodX - 34, rodY - 14, 36, rodH + 28, 6); ctx.fill();
 
   // heater
-  const heatX = rodX + 40, heatY = rodY + 55, heatW = Math.min(rodW - 40, 280);
-  const intensity = S.heat ? Math.min(1, dT() / 60) : 0;
-  heatGlow(heatX, heatY, heatW, intensity);
+  const intensity = S.heat ? Math.min(1, dT() / 50) : 0;
+  const hx = rodX + 50, hy = rodY + 60, hw = Math.min(rodW - 60, 260);
+  if (intensity > 0) {
+    const g = ctx.createRadialGradient(hx + hw / 2, hy, 2, hx + hw / 2, hy, hw * 0.6);
+    g.addColorStop(0, `rgba(251,146,60,${0.35 * intensity})`);
+    g.addColorStop(1, 'rgba(251,146,60,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(hx - 30, hy - 40, hw + 60, 90);
+  }
   ctx.fillStyle = intensity > 0 ? '#7f1d1d' : '#334155';
-  roundRect(heatX, heatY, heatW, 18, 6);
-  ctx.fill();
-  // coils
+  roundRect(hx, hy, hw, 16, 6); ctx.fill();
   ctx.strokeStyle = intensity > 0 ? '#f97316' : '#64748b';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  for (let i = 0; i < heatW - 10; i += 14) {
-    ctx.moveTo(heatX + 8 + i, heatY + 4);
-    ctx.quadraticCurveTo(heatX + 8 + i + 7, heatY + (i % 28 < 14 ? 16 : 2), heatX + 8 + i + 14, heatY + 4);
+  for (let i = 0; i < hw - 12; i += 12) {
+    ctx.moveTo(hx + 6 + i, hy + 4);
+    ctx.quadraticCurveTo(hx + 12 + i, hy + (i % 24 < 12 ? 14 : 2), hx + 18 + i, hy + 4);
   }
   ctx.stroke();
-  if (intensity > 0) {
-    for (let i = 0; i < 8; i++) {
-      const fx = heatX + 20 + i * (heatW / 8) + Math.sin(S.animT * 4 + i) * 3;
-      const fy = heatY - 8 - (S.animT * 40 + i * 12) % 40;
-      ctx.globalAlpha = 0.35;
-      ctx.fillStyle = '#fb923c';
-      ctx.beginPath(); ctx.arc(fx, fy, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-  }
 
   // rod
-  const rg = ctx.createLinearGradient(rodX, 0, rodX, rodY + rodH);
-  rg.addColorStop(0, '#ffffff55');
-  rg.addColorStop(0.35, mat.color);
+  const rg = ctx.createLinearGradient(0, rodY, 0, rodY + rodH);
+  rg.addColorStop(0, '#ffffff66');
+  rg.addColorStop(0.4, mat.color);
   rg.addColorStop(1, mat.accent);
   ctx.fillStyle = rg;
-  roundRect(rodX, rodY, rodW, rodH, 6);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  roundRect(rodX, rodY, rodW, rodH, 6); ctx.fill();
 
-  // free-end marker
+  // markers
   ctx.fillStyle = '#00f3ff';
-  ctx.shadowColor = '#00f3ff';
-  ctx.shadowBlur = 12;
-  ctx.fillRect(rodX + rodW - 3, rodY - 10, 4, rodH + 20);
+  ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10;
+  ctx.fillRect(rodX + rodW - 3, rodY - 8, 4, rodH + 16);
   ctx.shadowBlur = 0;
-
-  // ghost original end
   if (expandPx > 1) {
-    ctx.strokeStyle = 'rgba(148,163,184,0.5)';
     ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(148,163,184,.6)';
     ctx.beginPath();
-    ctx.moveTo(rodX + basePx, rodY - 16);
-    ctx.lineTo(rodX + basePx, rodY + rodH + 16);
+    ctx.moveTo(rodX + basePx, rodY - 14);
+    ctx.lineTo(rodX + basePx, rodY + rodH + 14);
     ctx.stroke();
     ctx.setLineDash([]);
-    drawText('L₁', rodX + basePx, rodY - 24, { align: 'center', color: '#94a3b8', font: '700 12px Oxanium' });
-    drawText('L₂', rodX + rodW, rodY - 24, { align: 'center', color: '#00f3ff', font: '700 12px Oxanium' });
+    drawText('l₁', rodX + basePx, rodY - 22, { align: 'center', color: '#94a3b8', font: '700 12px Oxanium' });
+    drawText('l₂', rodX + rodW, rodY - 22, { align: 'center', color: '#00f3ff', font: '700 12px Oxanium' });
   }
 
-  // ruler
-  const rulerY = rodY + 100;
-  ctx.fillStyle = '#0f172a';
-  roundRect(rodX, rulerY, basePx + 40, 22, 4);
-  ctx.fill();
-  ctx.strokeStyle = '#64748b';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  ctx.fillStyle = '#94a3b8';
-  ctx.font = '700 10px Oxanium';
-  for (let i = 0; i <= 10; i++) {
-    const xx = rodX + (basePx * i) / 10;
-    ctx.beginPath();
-    ctx.moveTo(xx, rulerY);
-    ctx.lineTo(xx, rulerY + (i % 5 === 0 ? 14 : 8));
-    ctx.stroke();
-  }
-
-  drawThermometer(40, 180, effectiveT());
-  drawText(t('lbl_fixed'), rodX - 16, rodY - 36, { align: 'center', color: '#94a3b8' });
-  drawText(t('lbl_free'), rodX + rodW, rodY + rodH + 28, { align: 'center', color: '#00f3ff' });
-  drawText(t('lbl_heater'), heatX + heatW / 2, heatY + 36, { align: 'center' });
-  drawText(t(mat.key) + '  ·  α = ' + formatAlpha(mat.alpha), WORLD.w / 2, 70, {
-    align: 'center', color: '#e2e8f0', font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  drawThermo(50, 160, S.Tnow);
+  drawText(t(mat.key) + '  ·  λ = ' + formatCoeff(lambda()), WORLD.w / 2, 55, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
   });
-  drawText('ΔL = ' + formatLen(dL) + '   ·   ' + MAG_LEVELS[S.magIdx] + '×', WORLD.w / 2, 100, {
+  drawText('Δl = ' + formatLen(dl), WORLD.w / 2, 88, {
     align: 'center', color: '#00f3ff', font: '700 16px Oxanium'
   });
+  drawText(t('lbl_fixed'), rodX - 10, rodY - 32, { align: 'center' });
+  drawText(t('lbl_free'), rodX + rodW, rodY + rodH + 24, { align: 'center', color: '#00f3ff' });
+  drawText(t('lbl_heater'), hx + hw / 2, hy + 32, { align: 'center' });
 }
 
-function drawMicro() {
-  drawLabBench();
-  ctx.fillStyle = 'rgba(15,23,42,0.65)';
-  roundRect(120, 80, WORLD.w - 240, 340, 20);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(0,243,255,0.2)';
-  ctx.stroke();
-
-  const heatFrac = Math.min(1, dT() / 100);
-  const amp = 2 + heatFrac * 14;
-  const spacingGrow = 1 + heatFrac * 0.18;
+function drawAreal() {
+  drawBg();
   const mat = MATERIALS[S.mat];
-
-  if (!atoms.length) initAtoms();
-
-  // bonds
-  ctx.strokeStyle = `rgba(148,163,184,${0.25 + heatFrac * 0.2})`;
-  ctx.lineWidth = 1.5;
-  const cols = 8;
-  for (let i = 0; i < atoms.length; i++) {
-    const a = atoms[i];
-    const ax = a.bx * spacingGrow + (WORLD.w / 2) * (1 - spacingGrow) + Math.sin(S.animT * a.speed * (1 + heatFrac * 3) + a.phase) * amp;
-    const ay = a.by * spacingGrow + (WORLD.h / 2) * (1 - spacingGrow) * 0.3 + Math.cos(S.animT * a.speed * (1 + heatFrac * 3) + a.phase * 1.3) * amp;
-    a._x = ax; a._y = ay;
-  }
-  for (let i = 0; i < atoms.length; i++) {
-    const c = i % cols, r = Math.floor(i / cols);
-    const neighbors = [];
-    if (c < cols - 1) neighbors.push(i + 1);
-    if (r < 5) neighbors.push(i + cols);
-    neighbors.forEach(j => {
-      ctx.beginPath();
-      ctx.moveTo(atoms[i]._x, atoms[i]._y);
-      ctx.lineTo(atoms[j]._x, atoms[j]._y);
-      ctx.stroke();
-    });
-  }
-
-  atoms.forEach(a => {
-    const grd = ctx.createRadialGradient(a._x - 3, a._y - 3, 2, a._x, a._y, 14);
-    grd.addColorStop(0, '#fff');
-    grd.addColorStop(0.4, mat.color);
-    grd.addColorStop(1, mat.accent);
-    ctx.fillStyle = grd;
-    ctx.beginPath();
-    ctx.arc(a._x, a._y, 11, 0, Math.PI * 2);
-    ctx.fill();
-    if (heatFrac > 0.2) {
-      ctx.strokeStyle = `rgba(251,146,60,${0.3 + heatFrac * 0.5})`;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(a._x, a._y, 14 + amp * 0.3, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-  });
-
-  drawThermometer(50, 160, effectiveT());
-  drawText(t('lbl_lattice'), WORLD.w / 2, 50, {
-    align: 'center', color: '#e2e8f0', font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '700 20px Oxanium'
-  });
-  drawText(t('lbl_cold') + ' ←→ ' + t('lbl_hot'), WORLD.w / 2, 455, {
-    align: 'center', color: heatFrac > 0.4 ? '#fb923c' : '#38bdf8'
-  });
-}
-
-function drawCompare() {
-  drawLabBench();
-  const pairs = [
-    { id: S.mat, y: 200, label: 'A' },
-    { id: S.matB, y: 310, label: 'B' }
-  ];
-  pairs.forEach(p => {
-    const mat = MATERIALS[p.id];
-    const dL = calcDL(p.id, S.L0);
-    const mag = MAG_LEVELS[S.magIdx];
-    const basePx = 380;
-    const expandPx = Math.min(160, dL * mag * 8000);
-    const rodX = 160;
-    ctx.fillStyle = '#475569';
-    roundRect(rodX - 30, p.y - 10, 32, 40, 5);
-    ctx.fill();
-    const rg = ctx.createLinearGradient(0, p.y, 0, p.y + 22);
-    rg.addColorStop(0, mat.color);
-    rg.addColorStop(1, mat.accent);
-    ctx.fillStyle = rg;
-    roundRect(rodX, p.y, basePx + expandPx, 22, 5);
-    ctx.fill();
-    ctx.fillStyle = '#00f3ff';
-    ctx.fillRect(rodX + basePx + expandPx - 2, p.y - 6, 3, 34);
-    if (expandPx > 1) {
-      ctx.strokeStyle = 'rgba(148,163,184,0.45)';
-      ctx.setLineDash([3, 3]);
-      ctx.beginPath();
-      ctx.moveTo(rodX + basePx, p.y - 12);
-      ctx.lineTo(rodX + basePx, p.y + 34);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    drawText(p.label + ' · ' + t(mat.key), rodX, p.y - 18, { color: '#e2e8f0' });
-    drawText('α = ' + formatAlpha(mat.alpha) + '   ΔL = ' + formatLen(dL), rodX + basePx + expandPx + 16, p.y + 12, {
-      color: '#00f3ff', font: '700 13px Oxanium'
-    });
-  });
-
-  // heater shared
-  const intensity = S.heat ? Math.min(1, dT() / 60) : 0;
-  heatGlow(200, 360, 300, intensity);
-  ctx.fillStyle = intensity > 0 ? '#7f1d1d' : '#334155';
-  roundRect(200, 370, 300, 16, 6);
-  ctx.fill();
-  drawThermometer(50, 180, effectiveT());
-  drawText(t('lbl_compare_title'), WORLD.w / 2, 60, {
-    align: 'center', color: '#e2e8f0', font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '700 20px Oxanium'
-  });
-}
-
-function drawHole() {
-  drawLabBench();
-  const mat = MATERIALS[S.mat];
-  const alpha = mat.alpha;
-  const grow = 1 + alpha * dT() * MAG_LEVELS[S.magIdx] * 40; // exaggerated
+  const { side, A1, A2, dA } = calcAreal();
+  const grow = Math.sqrt(A2 / A1); // linear size factor from area formula
+  const s0 = 140 + side * 40;
+  const s = s0 * grow;
   const cx = WORLD.w / 2, cy = 270;
-  const plate = 220 * grow;
-  const hole = 70 * grow;
 
-  // plate
-  const g = ctx.createLinearGradient(cx - plate, cy - plate * 0.7, cx + plate, cy + plate * 0.7);
+  // ghost
+  ctx.strokeStyle = 'rgba(148,163,184,.45)';
+  ctx.setLineDash([5, 4]);
+  ctx.strokeRect(cx - s0 / 2, cy - s0 / 2, s0, s0);
+  ctx.setLineDash([]);
+
+  const g = ctx.createLinearGradient(cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2);
   g.addColorStop(0, mat.color);
   g.addColorStop(1, mat.accent);
+  ctx.globalAlpha = 0.9;
   ctx.fillStyle = g;
-  roundRect(cx - plate / 2, cy - plate / 2, plate, plate, 16);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // hole (cut out by drawing bench color)
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, hole / 2, 0, Math.PI * 2);
-  ctx.fillStyle = '#0b1224';
-  ctx.fill();
+  ctx.fillRect(cx - s / 2, cy - s / 2, s, s);
+  ctx.globalAlpha = 1;
   ctx.strokeStyle = '#00f3ff';
   ctx.lineWidth = 2;
-  ctx.shadowColor = '#00f3ff';
-  ctx.shadowBlur = 10;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-  ctx.restore();
+  ctx.strokeRect(cx - s / 2, cy - s / 2, s, s);
 
-  // original hole ghost
-  if (grow > 1.01) {
-    ctx.strokeStyle = 'rgba(148,163,184,0.55)';
-    ctx.setLineDash([5, 4]);
-    ctx.beginPath();
-    ctx.arc(cx, cy, 35, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  // heater under plate
-  const intensity = S.heat ? Math.min(1, dT() / 60) : 0;
-  heatGlow(cx - 120, cy + plate / 2 + 20, 240, intensity);
+  const intensity = S.heat ? Math.min(1, dT() / 50) : 0;
   ctx.fillStyle = intensity > 0 ? '#7f1d1d' : '#334155';
-  roundRect(cx - 120, cy + plate / 2 + 30, 240, 16, 6);
-  ctx.fill();
+  roundRect(cx - 100, cy + s / 2 + 28, 200, 14, 6); ctx.fill();
 
-  drawThermometer(60, 160, effectiveT());
-  drawText(t('lbl_plate'), cx, cy - plate / 2 - 24, { align: 'center', color: '#e2e8f0' });
-  drawText(t('lbl_hole'), cx, cy, { align: 'center', color: '#00f3ff', font: '700 14px Oxanium' });
-  drawText(t('lbl_hole_title'), WORLD.w / 2, 55, {
-    align: 'center', color: '#e2e8f0', font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '700 20px Oxanium'
+  drawThermo(50, 160, S.Tnow);
+  drawText(t('lbl_sheet') + '  ·  σ = 2λ = ' + formatCoeff(sigma()), WORLD.w / 2, 55, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  });
+  drawText('A₁ = ' + formatArea(A1) + '   →   A₂ = ' + formatArea(A2), WORLD.w / 2, 90, {
+    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
+  });
+  drawText('ΔA = ' + formatArea(dA), WORLD.w / 2, 118, {
+    align: 'center', color: '#94a3b8', font: '700 13px Oxanium'
   });
 }
 
-function drawArea() {
-  drawLabBench();
+function drawVolume() {
+  drawBg();
   const mat = MATERIALS[S.mat];
-  const a = mat.alpha;
-  const dTval = dT();
-  const mag = MAG_LEVELS[S.magIdx];
-  const linearGrow = 1 + a * dTval * mag * 25;
+  const { side, V1, V2, dV } = calcVolume();
+  const grow = Math.cbrt(V2 / V1);
+  const s0 = 70 + side * 20;
+  const s = s0 * grow;
+  const cx = WORLD.w / 2, cy = 300;
 
-  // Sheet (2D)
-  const sx = 180, sy = 160;
-  const side0 = 140;
-  const side = side0 * linearGrow;
-  ctx.fillStyle = 'rgba(15,23,42,0.5)';
-  roundRect(100, 90, 320, 300, 16);
-  ctx.fill();
-  // original ghost
-  ctx.strokeStyle = 'rgba(148,163,184,0.4)';
-  ctx.setLineDash([4, 4]);
-  ctx.strokeRect(sx, sy, side0, side0);
-  ctx.setLineDash([]);
-  const g1 = ctx.createLinearGradient(sx, sy, sx + side, sy + side);
-  g1.addColorStop(0, mat.color);
-  g1.addColorStop(1, mat.accent);
-  ctx.globalAlpha = 0.85;
-  ctx.fillStyle = g1;
-  ctx.fillRect(sx, sy, side, side);
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = '#00f3ff';
-  ctx.strokeRect(sx, sy, side, side);
-  const A1 = side0 * side0;
-  const A2 = A1 * (1 + 2 * a * dTval);
-  drawText(t('lbl_sheet'), 260, 120, { align: 'center', color: '#e2e8f0' });
-  drawText('A₂/A₁ ≈ ' + (A2 / A1).toFixed(5), 260, 380, { align: 'center', color: '#00f3ff', font: '700 13px Oxanium' });
-
-  // Cube (3D isometric)
-  const cx = 680, cy = 280;
-  const s0 = 70;
-  const s = s0 * linearGrow;
   function iso(x, y, z) {
     return { x: cx + (x - z) * 0.9, y: cy + y + (x + z) * 0.5 };
   }
-  const pts = [
-    iso(0,0,0), iso(s,0,0), iso(s,0,s), iso(0,0,s),
-    iso(0,-s,0), iso(s,-s,0), iso(s,-s,s), iso(0,-s,s)
-  ];
-  // ghost
-  const gpts = [
-    iso(0,0,0), iso(s0,0,0), iso(s0,0,s0), iso(0,0,s0),
-    iso(0,-s0,0), iso(s0,-s0,0), iso(s0,-s0,s0), iso(0,-s0,s0)
-  ];
-  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
-  ctx.setLineDash([3, 3]);
-  [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j]) => {
-    ctx.beginPath(); ctx.moveTo(gpts[i].x, gpts[i].y); ctx.lineTo(gpts[j].x, gpts[j].y); ctx.stroke();
+  function drawCube(size, stroke, fillTop, fillSide, fillFront, dash) {
+    const p = [
+      iso(0,0,0), iso(size,0,0), iso(size,0,size), iso(0,0,size),
+      iso(0,-size,0), iso(size,-size,0), iso(size,-size,size), iso(0,-size,size)
+    ];
+    if (dash) { ctx.setLineDash([4, 4]); } else { ctx.setLineDash([]); }
+    if (fillFront) {
+      ctx.fillStyle = fillFront;
+      ctx.beginPath(); ctx.moveTo(p[0].x,p[0].y); ctx.lineTo(p[1].x,p[1].y); ctx.lineTo(p[5].x,p[5].y); ctx.lineTo(p[4].x,p[4].y); ctx.closePath(); ctx.fill();
+    }
+    if (fillSide) {
+      ctx.fillStyle = fillSide;
+      ctx.beginPath(); ctx.moveTo(p[1].x,p[1].y); ctx.lineTo(p[2].x,p[2].y); ctx.lineTo(p[6].x,p[6].y); ctx.lineTo(p[5].x,p[5].y); ctx.closePath(); ctx.fill();
+    }
+    if (fillTop) {
+      ctx.fillStyle = fillTop;
+      ctx.beginPath(); ctx.moveTo(p[4].x,p[4].y); ctx.lineTo(p[5].x,p[5].y); ctx.lineTo(p[6].x,p[6].y); ctx.lineTo(p[7].x,p[7].y); ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 1.5;
+    [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j]) => {
+      ctx.beginPath(); ctx.moveTo(p[i].x, p[i].y); ctx.lineTo(p[j].x, p[j].y); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+
+  drawCube(s0, 'rgba(148,163,184,.45)', null, null, null, true);
+  drawCube(s, '#00f3ff', '#e2e8f0aa', mat.color, mat.accent, false);
+
+  drawThermo(50, 160, S.Tnow);
+  drawText(t('lbl_cube') + '  ·  β = 3λ = ' + formatCoeff(beta()), WORLD.w / 2, 55, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
   });
-  ctx.setLineDash([]);
-
-  // faces
-  ctx.fillStyle = mat.accent;
-  ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y);
-  ctx.lineTo(pts[5].x, pts[5].y); ctx.lineTo(pts[4].x, pts[4].y); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = mat.color;
-  ctx.beginPath();
-  ctx.moveTo(pts[1].x, pts[1].y); ctx.lineTo(pts[2].x, pts[2].y);
-  ctx.lineTo(pts[6].x, pts[6].y); ctx.lineTo(pts[5].x, pts[5].y); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#e2e8f0aa';
-  ctx.beginPath();
-  ctx.moveTo(pts[4].x, pts[4].y); ctx.lineTo(pts[5].x, pts[5].y);
-  ctx.lineTo(pts[6].x, pts[6].y); ctx.lineTo(pts[7].x, pts[7].y); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = '#00f3ff';
-  ctx.lineWidth = 1.5;
-  [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j]) => {
-    ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+  drawText('V₁ = ' + formatVol(V1) + '   →   V₂ = ' + formatVol(V2), WORLD.w / 2, 90, {
+    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
   });
-
-  const V1 = 1, V2 = 1 + 3 * a * dTval;
-  drawText(t('lbl_cube'), cx, 120, { align: 'center', color: '#e2e8f0' });
-  drawText('V₂/V₁ ≈ ' + V2.toFixed(5), cx, 400, { align: 'center', color: '#00f3ff', font: '700 13px Oxanium' });
-
-  drawThermometer(40, 160, effectiveT());
-  drawText(t('lbl_area_title'), WORLD.w / 2, 50, {
-    align: 'center', color: '#e2e8f0', font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '700 20px Oxanium'
+  drawText('ΔV = ' + formatVol(dV), WORLD.w / 2, 118, {
+    align: 'center', color: '#94a3b8', font: '700 13px Oxanium'
   });
 }
 
@@ -1757,14 +1381,20 @@ function draw() {
   ctx.save();
   ctx.translate(view.x, view.y);
   ctx.scale(view.scale, view.scale);
-
   if (S.mode === 'linear') drawLinear();
-  else if (S.mode === 'micro') drawMicro();
-  else if (S.mode === 'compare') drawCompare();
-  else if (S.mode === 'hole') drawHole();
-  else drawArea();
-
+  else if (S.mode === 'areal') drawAreal();
+  else drawVolume();
   ctx.restore();
+}
+
+function tickPhysics(dt) {
+  S.animT += dt;
+  const target = S.heat ? S.T2 : S.T1;
+  const rate = 30;
+  const prev = S.Tnow;
+  if (S.Tnow < target) S.Tnow = Math.min(target, S.Tnow + rate * dt);
+  else if (S.Tnow > target) S.Tnow = Math.max(target, S.Tnow - rate * dt);
+  if (S.Tnow !== prev) updateUI();
 }
 
 /* ============================================================
@@ -1782,13 +1412,13 @@ function renderQuiz() {
         <div class="stat-val text-5xl num">${quizScore} / ${quiz.length}</div>
         <div class="text-3xl font-bold text-slate-200 num">${pct}%</div>
         <p class="text-slate-300">${msg}</p>
-        <button onclick="restartQuiz()" class="px-8 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-500/30 transition">${t('restart')}</button>
+        <button onclick="restartQuiz()" class="px-8 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold">${t('restart')}</button>
       </div>`;
     return;
   }
   const q = quiz[quizIdx];
-  const progress = typeof t('quiz_progress') === 'function' ? LANG[cur].quiz_progress(quizIdx + 1, quiz.length) : `Q ${quizIdx + 1}`;
-  let opts = q.opts.map((o, i) =>
+  const progress = LANG[cur].quiz_progress(quizIdx + 1, quiz.length);
+  const opts = q.opts.map((o, i) =>
     `<button class="opt-btn w-full text-start px-4 py-3 rounded-xl text-slate-200 mb-2 ${quizAnswered ? 'locked' : ''}" id="opt-${i}" onclick="answerQuiz(${i})">${String.fromCharCode(65 + i)}. ${o}</button>`
   ).join('');
   box.innerHTML = `
@@ -1798,7 +1428,7 @@ function renderQuiz() {
         <span class="text-sm text-slate-400">${progress}</span>
       </div>
       <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-        <div class="h-full bg-cyan-400 transition-all" style="width:${((quizIdx + (quizAnswered?1:0))/quiz.length)*100}%"></div>
+        <div class="h-full bg-cyan-400 transition-all" style="width:${((quizIdx+(quizAnswered?1:0))/quiz.length)*100}%"></div>
       </div>
       <p class="text-lg font-bold text-slate-100 leading-relaxed">${q.q}</p>
       <div>${opts}</div>
@@ -1827,23 +1457,15 @@ function answerQuiz(i) {
 
 function nextQuiz() {
   const quiz = (LANG[cur] || LANG.en).quiz;
-  if (quizIdx >= quiz.length - 1) {
-    quizDone = true;
-    renderQuiz();
-    return;
-  }
-  quizIdx++;
-  quizAnswered = false;
-  renderQuiz();
+  if (quizIdx >= quiz.length - 1) { quizDone = true; renderQuiz(); return; }
+  quizIdx++; quizAnswered = false; renderQuiz();
 }
-
 function restartQuiz() {
-  quizIdx = 0; quizScore = 0; quizAnswered = false; quizDone = false;
-  renderQuiz();
+  quizIdx = 0; quizScore = 0; quizAnswered = false; quizDone = false; renderQuiz();
 }
 
 /* ============================================================
-   MAIN LOOP / BOOT
+   BOOT
 ============================================================ */
 let lastTs = 0;
 function loop(ts) {
@@ -1856,20 +1478,22 @@ function loop(ts) {
 }
 
 function boot() {
+  // Verify textbook example once at start
+  const check = 0.000013 * 0.5 * 60;
+  if (Math.abs(check - 0.00039) > 1e-12) console.error('Steel example mismatch', check);
+
   changeLanguage(cur);
-  buildMaterialGrids();
-  initAtoms();
+  buildMatGrid();
   setupPointer();
   setupAnnoDrag();
   resizeAll();
-  updateObservation();
+  updateUI();
   window.addEventListener('resize', resizeAll);
   document.addEventListener('fullscreenchange', () => {
     document.getElementById('fs-icon').className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
     setTimeout(resizeAll, 100);
   });
 
-  // Intro animation ~5s
   setTimeout(() => {
     const intro = document.getElementById('intro');
     intro.style.opacity = '0';
