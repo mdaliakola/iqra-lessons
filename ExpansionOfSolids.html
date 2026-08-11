@@ -533,8 +533,8 @@ en: {
   mat_ag: "Silver",
   mat_st: "Steel",
   obs_linear: "Heat the rod and watch its length increase. Larger λ, longer rod, or larger ΔT means larger Δl.",
-  obs_areal: "A sheet expands in length and width. Area increases: A₂ = A₁(1 + σ ΔT).",
-  obs_volume: "A solid expands in all directions. Volume increases: V₂ = V₁(1 + β ΔT).",
+  obs_areal: "Compare BEFORE and AFTER. Real area change is tiny — the right sheet is drawn larger so you can compare. Numbers show the true A₁, A₂ and ΔA.",
+  obs_volume: "Compare BEFORE and AFTER. Real volume change is tiny — the right cube is drawn larger so you can compare. Numbers show the true V₁, V₂ and ΔV.",
   tip_linear: "λ is the increase in length of a rod of unit length when temperature rises by 1 °C. Unit: 1/°C.",
   tip_areal: "When a sheet is heated, its area increases: A₂ = A₁(1 + σ ΔT). For equal expansion in all directions, σ ≈ 2λ.",
   tip_volume: "When a solid is heated on all sides, volume increases: V₂ = V₁(1 + β ΔT). For equal expansion in all directions, β ≈ 3λ.",
@@ -544,6 +544,11 @@ en: {
   lbl_heater: "Heater",
   lbl_sheet: "Metal sheet",
   lbl_cube: "Solid cube",
+  lbl_before: "BEFORE",
+  lbl_after: "AFTER",
+  lbl_vs: "COMPARE",
+  lbl_same_size_hint: "Same object — cold vs heated",
+  lbl_real_values: "Real calculated values",
   quiz_title: "Quiz — Expansion of Solids",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
   correct_fb: "Correct!",
@@ -643,8 +648,8 @@ ur: {
   mat_ag: "چاندی",
   mat_st: "اسٹیل",
   obs_linear: "سلاخ گرم کریں اور لمبائی کا بڑھنا دیکھیں۔ بڑی λ، لمبی سلاخ یا بڑا ΔT → بڑا Δl۔",
-  obs_areal: "شیٹ لمبائی اور چوڑائی میں پھیلتی ہے۔ رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔",
-  obs_volume: "ٹھوس ہر سمت میں پھیلتا ہے۔ حجم بڑھتا ہے: V₂ = V₁(1 + β ΔT)۔",
+  obs_areal: "پہلے اور اب کا موازنہ کریں۔ حقیقی رقبے کی تبدیلی بہت چھوٹی ہوتی ہے — دائیں شیٹ موازنے کے لیے بڑی دکھائی گئی ہے۔ اعداد حقیقی A₁، A₂ اور ΔA ہیں۔",
+  obs_volume: "پہلے اور اب کا موازنہ کریں۔ حقیقی حجم کی تبدیلی بہت چھوٹی ہوتی ہے — دایاں مکعب موازنے کے لیے بڑا دکھایا گیا ہے۔ اعداد حقیقی V₁، V₂ اور ΔV ہیں۔",
   tip_linear: "λ اکائی لمبائی کی سلاخ میں 1 °C بڑھنے پر لمبائی کا اضافہ ہے۔ اکائی: 1/°C۔",
   tip_areal: "گرم کرنے پر شیٹ کا رقبہ بڑھتا ہے: A₂ = A₁(1 + σ ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر σ ≈ 2λ۔",
   tip_volume: "گرم کرنے پر ٹھوس ہر طرف پھیلتا ہے: V₂ = V₁(1 + β ΔT)۔ سب سمتوں میں برابر پھیلاؤ پر β ≈ 3λ۔",
@@ -654,6 +659,11 @@ ur: {
   lbl_heater: "ہیٹر",
   lbl_sheet: "دھاتی شیٹ",
   lbl_cube: "ٹھوس مکعب",
+  lbl_before: "پہلے",
+  lbl_after: "اب",
+  lbl_vs: "موازنہ",
+  lbl_same_size_hint: "ایک ہی شے — ٹھنڈی بمقابلہ گرم",
+  lbl_real_values: "حقیقی حساب شدہ قدریں",
   quiz_title: "کوئز — ٹھوس اجسام کا پھیلاؤ",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
   correct_fb: "درست!",
@@ -1277,101 +1287,202 @@ function drawLinear() {
   drawText(t('lbl_heater'), hx + hw / 2, hy + 32, { align: 'center' });
 }
 
-function drawAreal() {
-  drawBg();
-  const mat = MATERIALS[S.mat];
-  const { side, A1, A2, dA } = calcAreal();
-  const grow = Math.sqrt(A2 / A1); // linear size factor from area formula
-  const s0 = 140 + side * 40;
-  const s = s0 * grow;
-  const cx = WORLD.w / 2, cy = 270;
-
-  // ghost
-  ctx.strokeStyle = 'rgba(148,163,184,.45)';
-  ctx.setLineDash([5, 4]);
-  ctx.strokeRect(cx - s0 / 2, cy - s0 / 2, s0, s0);
-  ctx.setLineDash([]);
-
-  const g = ctx.createLinearGradient(cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2);
-  g.addColorStop(0, mat.color);
-  g.addColorStop(1, mat.accent);
-  ctx.globalAlpha = 0.9;
+function drawCompareBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, WORLD.h);
+  g.addColorStop(0, '#0b1224');
+  g.addColorStop(1, '#0f172a');
   ctx.fillStyle = g;
-  ctx.fillRect(cx - s / 2, cy - s / 2, s, s);
-  ctx.globalAlpha = 1;
+  ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+  roundRect(40, 100, 420, 360, 20); ctx.fill();
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(40, 100, 420, 360, 20); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+  roundRect(500, 100, 420, 360, 20); ctx.fill();
+  ctx.strokeStyle = 'rgba(251, 146, 60, 0.4)';
+  roundRect(500, 100, 420, 360, 20); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(WORLD.w / 2, 280, 28, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
   ctx.strokeStyle = '#00f3ff';
   ctx.lineWidth = 2;
-  ctx.strokeRect(cx - s / 2, cy - s / 2, s, s);
-
-  const intensity = S.heat ? Math.min(1, dT() / 50) : 0;
-  ctx.fillStyle = intensity > 0 ? '#7f1d1d' : '#334155';
-  roundRect(cx - 100, cy + s / 2 + 28, 200, 14, 6); ctx.fill();
-
-  drawThermo(50, 160, S.Tnow);
-  drawText(t('lbl_sheet') + '  ·  σ = 2λ = ' + formatCoeff(sigma()), WORLD.w / 2, 55, {
-    align: 'center', color: '#e2e8f0',
-    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
-  });
-  drawText('A₁ = ' + formatArea(A1) + '   →   A₂ = ' + formatArea(A2), WORLD.w / 2, 90, {
-    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
-  });
-  drawText('ΔA = ' + formatArea(dA), WORLD.w / 2, 118, {
-    align: 'center', color: '#94a3b8', font: '700 13px Oxanium'
+  ctx.stroke();
+  drawText(t('lbl_vs'), WORLD.w / 2, 280, {
+    align: 'center', color: '#00f3ff',
+    font: cur === 'ur' ? "700 14px 'Jameel Noori Nastaliq'" : '800 11px Oxanium'
   });
 }
 
-function drawVolume() {
-  drawBg();
-  const mat = MATERIALS[S.mat];
-  const { side, V1, V2, dV } = calcVolume();
-  const grow = Math.cbrt(V2 / V1);
-  const s0 = 70 + side * 20;
-  const s = s0 * grow;
-  const cx = WORLD.w / 2, cy = 300;
+/** Educational visual growth for comparison (real Δ is tiny). */
+function compareVisualScale() {
+  const dt = dT();
+  return 1 + Math.min(0.45, (dt / 200) * 0.45 + (dt > 0 ? 0.08 : 0));
+}
 
-  function iso(x, y, z) {
-    return { x: cx + (x - z) * 0.9, y: cy + y + (x + z) * 0.5 };
+function drawSheetAt(cx, cy, size, mat, hot) {
+  const g = ctx.createLinearGradient(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2);
+  if (hot) {
+    g.addColorStop(0, '#fdba74');
+    g.addColorStop(0.45, mat.color);
+    g.addColorStop(1, mat.accent);
+  } else {
+    g.addColorStop(0, '#e2e8f0');
+    g.addColorStop(0.45, mat.color);
+    g.addColorStop(1, '#64748b');
   }
-  function drawCube(size, stroke, fillTop, fillSide, fillFront, dash) {
-    const p = [
-      iso(0,0,0), iso(size,0,0), iso(size,0,size), iso(0,0,size),
-      iso(0,-size,0), iso(size,-size,0), iso(size,-size,size), iso(0,-size,size)
+  ctx.fillStyle = g;
+  ctx.globalAlpha = 0.95;
+  roundRect(cx - size / 2, cy - size / 2, size, size, 10);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = hot ? '#fb923c' : '#38bdf8';
+  ctx.lineWidth = 2.5;
+  roundRect(cx - size / 2, cy - size / 2, size, size, 10);
+  ctx.stroke();
+
+  ctx.strokeStyle = hot ? 'rgba(251,146,60,.7)' : 'rgba(56,189,248,.7)';
+  ctx.lineWidth = 1.5;
+  const x0 = cx - size / 2, y0 = cy + size / 2 + 16;
+  ctx.beginPath();
+  ctx.moveTo(x0, y0); ctx.lineTo(x0 + size, y0);
+  ctx.moveTo(x0, y0 - 5); ctx.lineTo(x0, y0 + 5);
+  ctx.moveTo(x0 + size, y0 - 5); ctx.lineTo(x0 + size, y0 + 5);
+  ctx.stroke();
+}
+
+function drawCubeAt(cx, cy, size, mat, hot, ghostSize) {
+  function iso(x, y, z) {
+    return { x: cx + (x - z) * 0.86, y: cy + y + (x + z) * 0.48 };
+  }
+  function pts(s) {
+    return [
+      iso(0, 0, 0), iso(s, 0, 0), iso(s, 0, s), iso(0, 0, s),
+      iso(0, -s, 0), iso(s, -s, 0), iso(s, -s, s), iso(0, -s, s)
     ];
-    if (dash) { ctx.setLineDash([4, 4]); } else { ctx.setLineDash([]); }
-    if (fillFront) {
-      ctx.fillStyle = fillFront;
-      ctx.beginPath(); ctx.moveTo(p[0].x,p[0].y); ctx.lineTo(p[1].x,p[1].y); ctx.lineTo(p[5].x,p[5].y); ctx.lineTo(p[4].x,p[4].y); ctx.closePath(); ctx.fill();
-    }
-    if (fillSide) {
-      ctx.fillStyle = fillSide;
-      ctx.beginPath(); ctx.moveTo(p[1].x,p[1].y); ctx.lineTo(p[2].x,p[2].y); ctx.lineTo(p[6].x,p[6].y); ctx.lineTo(p[5].x,p[5].y); ctx.closePath(); ctx.fill();
-    }
-    if (fillTop) {
-      ctx.fillStyle = fillTop;
-      ctx.beginPath(); ctx.moveTo(p[4].x,p[4].y); ctx.lineTo(p[5].x,p[5].y); ctx.lineTo(p[6].x,p[6].y); ctx.lineTo(p[7].x,p[7].y); ctx.closePath(); ctx.fill();
-    }
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 1.5;
-    [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j]) => {
+  }
+  function strokeCube(p, color, dash) {
+    if (dash) ctx.setLineDash([5, 4]); else ctx.setLineDash([]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = dash ? 1.5 : 2;
+    [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i, j]) => {
       ctx.beginPath(); ctx.moveTo(p[i].x, p[i].y); ctx.lineTo(p[j].x, p[j].y); ctx.stroke();
     });
     ctx.setLineDash([]);
   }
+  function fillCube(p) {
+    ctx.fillStyle = hot ? mat.accent : '#64748b';
+    ctx.beginPath();
+    ctx.moveTo(p[0].x, p[0].y); ctx.lineTo(p[1].x, p[1].y); ctx.lineTo(p[5].x, p[5].y); ctx.lineTo(p[4].x, p[4].y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = mat.color;
+    ctx.beginPath();
+    ctx.moveTo(p[1].x, p[1].y); ctx.lineTo(p[2].x, p[2].y); ctx.lineTo(p[6].x, p[6].y); ctx.lineTo(p[5].x, p[5].y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = hot ? 'rgba(253,186,116,0.85)' : 'rgba(226,232,240,0.75)';
+    ctx.beginPath();
+    ctx.moveTo(p[4].x, p[4].y); ctx.lineTo(p[5].x, p[5].y); ctx.lineTo(p[6].x, p[6].y); ctx.lineTo(p[7].x, p[7].y);
+    ctx.closePath(); ctx.fill();
+  }
 
-  drawCube(s0, 'rgba(148,163,184,.45)', null, null, null, true);
-  drawCube(s, '#00f3ff', '#e2e8f0aa', mat.color, mat.accent, false);
+  if (ghostSize && ghostSize < size - 1) {
+    strokeCube(pts(ghostSize), 'rgba(148,163,184,0.55)', true);
+  }
+  const p = pts(size);
+  fillCube(p);
+  strokeCube(p, hot ? '#fb923c' : '#38bdf8', false);
+}
 
-  drawThermo(50, 160, S.Tnow);
-  drawText(t('lbl_cube') + '  ·  β = 3λ = ' + formatCoeff(beta()), WORLD.w / 2, 55, {
+function drawAreal() {
+  drawCompareBg();
+  const mat = MATERIALS[S.mat];
+  const { A1, A2, dA } = calcAreal();
+  const base = 150;
+  const afterSize = base * compareVisualScale();
+
+  drawText(t('lbl_before'), 250, 130, {
+    align: 'center', color: '#38bdf8',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₁ = ' + S.T1 + ' °C', 250, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+  drawSheetAt(250, 290, base, mat, false);
+  drawText('A₁', 250, 290, { align: 'center', color: '#0f172a', font: '800 22px Oxanium' });
+  drawText(formatArea(A1), 250, 420, { align: 'center', color: '#38bdf8', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_after'), 710, 130, {
+    align: 'center', color: '#fb923c',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₂ = ' + S.Tnow.toFixed(0) + ' °C', 710, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+
+  ctx.strokeStyle = 'rgba(56,189,248,0.45)';
+  ctx.setLineDash([6, 5]);
+  ctx.lineWidth = 2;
+  roundRect(710 - base / 2, 290 - base / 2, base, base, 10);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  drawSheetAt(710, 290, afterSize, mat, dT() > 0.5);
+  drawText('A₂', 710, 290, { align: 'center', color: '#0f172a', font: '800 22px Oxanium' });
+  drawText(formatArea(A2), 710, 420, { align: 'center', color: '#fb923c', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_sheet') + '  ·  σ = 2λ = ' + formatCoeff(sigma()), WORLD.w / 2, 40, {
     align: 'center', color: '#e2e8f0',
     font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
   });
-  drawText('V₁ = ' + formatVol(V1) + '   →   V₂ = ' + formatVol(V2), WORLD.w / 2, 90, {
-    align: 'center', color: '#00f3ff', font: '700 14px Oxanium'
+  drawText(t('lbl_same_size_hint'), WORLD.w / 2, 68, {
+    align: 'center', color: '#64748b',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
   });
-  drawText('ΔV = ' + formatVol(dV), WORLD.w / 2, 118, {
-    align: 'center', color: '#94a3b8', font: '700 13px Oxanium'
+  drawText(t('lbl_real_values') + '  ·  ΔA = ' + formatArea(dA), WORLD.w / 2, 490, {
+    align: 'center', color: '#00f3ff', font: '700 15px Oxanium'
   });
+
+  drawThermo(8, 180, S.Tnow);
+}
+
+function drawVolume() {
+  drawCompareBg();
+  const mat = MATERIALS[S.mat];
+  const { V1, V2, dV } = calcVolume();
+  const base = 78;
+  const afterSize = base * compareVisualScale();
+
+  drawText(t('lbl_before'), 250, 130, {
+    align: 'center', color: '#38bdf8',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₁ = ' + S.T1 + ' °C', 250, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+  drawCubeAt(220, 340, base, mat, false, null);
+  drawText('V₁', 250, 230, { align: 'center', color: '#38bdf8', font: '800 18px Oxanium' });
+  drawText(formatVol(V1), 250, 420, { align: 'center', color: '#38bdf8', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_after'), 710, 130, {
+    align: 'center', color: '#fb923c',
+    font: cur === 'ur' ? "700 20px 'Jameel Noori Nastaliq'" : '800 16px Oxanium'
+  });
+  drawText('T₂ = ' + S.Tnow.toFixed(0) + ' °C', 710, 158, { align: 'center', color: '#94a3b8', font: '700 13px Oxanium' });
+  drawCubeAt(680, 340, afterSize, mat, dT() > 0.5, base);
+  drawText('V₂', 710, 230, { align: 'center', color: '#fb923c', font: '800 18px Oxanium' });
+  drawText(formatVol(V2), 710, 420, { align: 'center', color: '#fb923c', font: '700 15px Oxanium' });
+
+  drawText(t('lbl_cube') + '  ·  β = 3λ = ' + formatCoeff(beta()), WORLD.w / 2, 40, {
+    align: 'center', color: '#e2e8f0',
+    font: cur === 'ur' ? "700 18px 'Jameel Noori Nastaliq'" : '700 18px Oxanium'
+  });
+  drawText(t('lbl_same_size_hint'), WORLD.w / 2, 68, {
+    align: 'center', color: '#64748b',
+    font: cur === 'ur' ? "600 14px 'Jameel Noori Nastaliq'" : '600 12px Manrope'
+  });
+  drawText(t('lbl_real_values') + '  ·  ΔV = ' + formatVol(dV), WORLD.w / 2, 490, {
+    align: 'center', color: '#00f3ff', font: '700 15px Oxanium'
+  });
+
+  drawThermo(8, 180, S.Tnow);
 }
 
 function draw() {
