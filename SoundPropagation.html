@@ -1172,20 +1172,19 @@ function drawScene() {
   const ampDisp = 10 * state.amplitude * Math.pow(state.air, 0.9) * (state.playing ? 1 : 0);
   const count = desiredCount();
 
-  // density field labels
+  // density field labels aligned with wave peaks/troughs
   if (state.playing && state.air > 0.08) {
-    for (let n = 0; n < Math.ceil(k); n++) {
-      const crestPhase = Math.PI/2 + state.phase;
-      const u = ((crestPhase)/(2*Math.PI) + n) / k;
-      if (u < 0.05 || u > 0.95) continue;
-      const x = chamberX + marginX + u * usableW;
-      ctx.fillStyle = 'rgba(248,113,113,0.85)';
-      ctx.font = `bold ${10*s}px Manrope, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText(t('lbl_compression'), x, chamberY + 16*s);
-
-      const tu = ((3*Math.PI/2 + state.phase)/(2*Math.PI) + n) / k;
-      if (tu >= 0.05 && tu <= 0.95) {
+    ctx.font = `bold ${10*s}px Manrope, sans-serif`;
+    ctx.textAlign = 'center';
+    for (let n = -2; n < k + 3; n++) {
+      const u = (Math.PI/2 + state.phase + 2*Math.PI*n) / (2*Math.PI*k);
+      if (u >= 0.08 && u <= 0.92) {
+        const x = chamberX + marginX + u * usableW;
+        ctx.fillStyle = 'rgba(248,113,113,0.85)';
+        ctx.fillText(t('lbl_compression'), x, chamberY + 16*s);
+      }
+      const tu = (3*Math.PI/2 + state.phase + 2*Math.PI*n) / (2*Math.PI*k);
+      if (tu >= 0.08 && tu <= 0.92) {
         const tx = chamberX + marginX + tu * usableW;
         ctx.fillStyle = 'rgba(96,165,250,0.9)';
         ctx.fillText(t('lbl_rarefaction'), tx, chamberY + chamberH - 10*s);
