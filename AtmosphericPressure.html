@@ -532,6 +532,9 @@ en: {
   score_msg_low: "Keep experimenting — slide below and above sea level!",
   canvas_sea: "SEA LEVEL",
   canvas_air: "AIR COLUMN",
+  canvas_atm: "Atmosphere ↓",
+  canvas_vap: "Vapor ↑",
+  canvas_equal: "EQUAL → BOILING",
   canvas_beaker: "BEAKER",
   canvas_heater: "HEATER",
   canvas_thermo: "°C",
@@ -595,6 +598,9 @@ ur: {
   score_msg_low: "تجربہ جاری رکھیں — سطحِ سمندر کے اوپر اور نیچے جائیں!",
   canvas_sea: "سطحِ سمندر",
   canvas_air: "ہوائی ستون",
+  canvas_atm: "فضا ↓",
+  canvas_vap: "بخار ↑",
+  canvas_equal: "برابر → کھولاؤ",
   canvas_beaker: "بیکر",
   canvas_heater: "ہیٹر",
   canvas_thermo: "°C",
@@ -691,6 +697,33 @@ function boilingPoint(P_kPa) {
 
 function isBoiling() {
   return state.waterT >= boilingPoint(getExternalPressure()) - 0.3 && state.heatPower > 0;
+}
+
+/** Arrow count 0–25 scaled to sea-level pressure (101.3 kPa → 25 arrows). */
+function pressureArrowCount(P_kPa) {
+  return Math.max(0, Math.min(25, Math.round((P_kPa / SEA_P) * 25)));
+}
+
+function drawDownArrow(cx, cy, size, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + size);
+  ctx.lineTo(cx - size * 0.55, cy);
+  ctx.lineTo(cx + size * 0.55, cy);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.85, size * 0.36, size * 0.9);
+}
+
+function drawUpArrow(cx, cy, size, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - size);
+  ctx.lineTo(cx - size * 0.55, cy);
+  ctx.lineTo(cx + size * 0.55, cy);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.05, size * 0.36, size * 0.9);
 }
 
 /* ============================================================
@@ -844,7 +877,8 @@ function updateReadings() {
   document.getElementById('read-T').textContent = state.waterT.toFixed(1) + ' °C';
   document.getElementById('read-VP').textContent = VP.toFixed(1) + ' kPa';
   document.getElementById('read-pos').textContent = formatElevLabel();
-  document.getElementById('read-aircol').textContent = Math.round(frac * 100) + '%';
+  document.getElementById('read-aircol').textContent =
+    pressureArrowCount(P) + ' ↓ / ' + pressureArrowCount(VP) + ' ↑';
   document.getElementById('val-elev').textContent = formatElevLabel();
 
   const st = document.getElementById('read-status');
@@ -1205,69 +1239,66 @@ function drawElevationScale(seaY, elev) {
 }
 
 function drawAirColumnAboveLab(labY, elev) {
+  // Dark, low-visibility air mass pressing downward (not a bright neon bar)
   const frac = airColumnFraction();
-  const refH = 170; // normal air column height at sea level
-  const h = Math.max(28, Math.min(260, refH * frac));
-  const x = 150, w = 64;
-  const top = labY - 40 - h;
+  const refH = 180;
+  const h = Math.max(36, Math.min(280, refH * Math.min(frac, 1.35)));
+  const x = 132, w = 72;
+  const top = labY - 50 - h;
+  const P = getExternalPressure();
+  const nAtm = pressureArrowCount(P);
 
-  // Reference ghost column at sea-level size
-  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
-  ctx.setLineDash([4, 4]);
-  ctx.strokeRect(x - 2, labY - 40 - refH, w + 4, refH);
+  // Soft dark column body
+  const g = ctx.createLinearGradient(x, top, x, labY - 40);
+  g.addColorStop(0, 'rgba(15, 23, 42, 0.15)');
+  g.addColorStop(0.45, 'rgba(30, 41, 59, 0.35)');
+  g.addColorStop(1, 'rgba(15, 23, 42, 0.55)');
+  ctx.fillStyle = g;
+  roundRect(x, top, w, h, 8); ctx.fill();
+  ctx.strokeStyle = 'rgba(51, 65, 85, 0.55)';
+  ctx.lineWidth = 1;
+  roundRect(x, top, w, h, 8); ctx.stroke();
+
+  // Faint sea-level reference outline (barely visible)
+  ctx.strokeStyle = 'rgba(71, 85, 105, 0.35)';
+  ctx.setLineDash([3, 5]);
+  ctx.strokeRect(x - 3, labY - 50 - refH, w + 6, refH);
   ctx.setLineDash([]);
-  ctx.fillStyle = 'rgba(148,163,184,0.45)';
-  ctx.font = "600 10px Oxanium, sans-serif";
-  ctx.textAlign = 'left';
-  ctx.fillText('100%', x + w + 8, labY - 40 - refH + 10);
 
-  // Actual air column
-  const layers = Math.max(3, Math.round(h / 16));
-  for (let i = 0; i < layers; i++) {
-    const a = 0.1 + (i / layers) * (elev < 0 ? 0.55 : 0.4);
-    const col = elev < 0
-      ? `rgba(251,146,60,${a})`
-      : `rgba(125,211,252,${a})`;
-    ctx.fillStyle = col;
-    ctx.fillRect(x, top + i * (h / layers), w, h / layers - 1);
-  }
-  ctx.strokeStyle = elev < 0 ? 'rgba(249,115,22,0.7)' : 'rgba(0,243,255,0.65)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(x, top, w, h);
-
-  // Downward pressure arrows
-  ctx.fillStyle = elev < 0 ? 'rgba(251,146,60,0.8)' : 'rgba(0,243,255,0.8)';
-  for (let i = 0; i < 3; i++) {
-    const ay = labY - 28 + i * 12;
-    ctx.beginPath();
-    ctx.moveTo(x + w / 2, ay + 8);
-    ctx.lineTo(x + w / 2 - 8, ay);
-    ctx.lineTo(x + w / 2 + 8, ay);
-    ctx.fill();
+  // Dense dark downward arrows inside the column (= atmospheric push)
+  const cols = 5;
+  const rows = Math.max(1, Math.ceil(nAtm / cols));
+  let drawn = 0;
+  for (let r = 0; r < rows && drawn < nAtm; r++) {
+    for (let c = 0; c < cols && drawn < nAtm; c++) {
+      const ax = x + 10 + c * ((w - 20) / (cols - 1));
+      const ay = top + 18 + r * Math.max(12, (h - 36) / Math.max(1, rows - 0.2));
+      const size = 5 + (nAtm / 25) * 3;
+      drawDownArrow(ax, ay, size, 'rgba(15, 23, 42, 0.72)');
+      drawn++;
+    }
   }
 
-  ctx.font = "700 12px Oxanium, sans-serif";
-  ctx.fillStyle = elev < 0 ? '#fb923c' : '#7dd3fc';
+  ctx.font = "700 11px Oxanium, sans-serif";
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.75)';
   ctx.textAlign = 'center';
-  ctx.fillText(T('canvas_air'), x + w / 2, top - 18);
-  ctx.font = "600 11px Oxanium, sans-serif";
-  ctx.fillText(Math.round(frac * 100) + '% · ' + getExternalPressure().toFixed(1) + ' kPa', x + w / 2, top - 4);
+  ctx.fillText(T('canvas_air'), x + w / 2, top - 16);
+  ctx.font = "600 10px Oxanium, sans-serif";
+  ctx.fillText(nAtm + ' ↓ · ' + P.toFixed(1) + ' kPa', x + w / 2, top - 3);
 }
 
 function drawBoilingLab(labY) {
   const tableY = labY + 110;
-  // platform
   ctx.fillStyle = '#1e293b';
   roundRect(300, tableY, 340, 22, 4); ctx.fill();
   ctx.fillStyle = '#0f172a';
   ctx.fillRect(330, tableY + 22, 18, 40);
   ctx.fillRect(590, tableY + 22, 18, 40);
 
-  // label
   ctx.font = "800 13px Oxanium, sans-serif";
   ctx.fillStyle = '#00f3ff';
   ctx.textAlign = 'center';
-  ctx.fillText(T('canvas_lab'), 470, labY - 55);
+  ctx.fillText(T('canvas_lab'), 470, labY - 118);
 
   drawBeakerAt(410, labY - 70);
   drawHeaterAt(430, tableY - 14);
@@ -1276,6 +1307,31 @@ function drawBoilingLab(labY) {
 
 function drawBeakerAt(bx, by) {
   const bw = 120, bh = 170;
+  const P = getExternalPressure();
+  const VP = vaporPressure_kPa(state.waterT);
+  const nAtm = pressureArrowCount(P);
+  const nVap = pressureArrowCount(VP);
+  const equal = Math.abs(P - VP) < 1.2 || isBoiling();
+  const boil = isBoiling();
+
+  // —— Atmosphere arrows pressing DOWN on top of the beaker (up to 25) ——
+  const atmSize = 4.5 + (nAtm / 25) * 3.5;
+  const atmCols = 5;
+  let aDrawn = 0;
+  const atmRows = Math.max(1, Math.ceil(nAtm / atmCols));
+  for (let r = 0; r < atmRows && aDrawn < nAtm; r++) {
+    for (let c = 0; c < atmCols && aDrawn < nAtm; c++) {
+      const ax = bx + 14 + c * ((bw - 28) / Math.max(1, atmCols - 1));
+      const ay = by - 8 - r * (atmSize + 7) - Math.sin(state.t * 2 + aDrawn) * 1.2;
+      const col = equal
+        ? 'rgba(148, 163, 184, 0.9)'
+        : 'rgba(30, 41, 59, 0.92)';
+      drawDownArrow(ax, ay, atmSize, col);
+      aDrawn++;
+    }
+  }
+
+  // Beaker glass
   ctx.strokeStyle = 'rgba(186,230,253,0.7)'; ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(bx, by); ctx.lineTo(bx, by + bh);
@@ -1296,36 +1352,69 @@ function drawBeakerAt(bx, by) {
   ctx.lineTo(bx + bw - 4, wy);
   for (let i = 0; i <= 10; i++) {
     const sx = bx + 4 + (bw - 8) * (i / 10);
-    const sy = wy + Math.sin(state.t * 3 + i) * (isBoiling() ? 3 : 1);
+    const sy = wy + Math.sin(state.t * 3 + i) * (boil ? 3 : 1);
     ctx.lineTo(sx, sy);
   }
   ctx.closePath(); ctx.fill();
 
+  // —— Vapor arrows pushing UP from inside the water (up to 25) ——
+  const vapSize = 4.5 + (nVap / 25) * 3.5;
+  const vapCols = 5;
+  let vDrawn = 0;
+  const vapRows = Math.max(1, Math.ceil(Math.max(nVap, 1) / vapCols));
+  if (nVap > 0) {
+    for (let r = 0; r < vapRows && vDrawn < nVap; r++) {
+      for (let c = 0; c < vapCols && vDrawn < nVap; c++) {
+        const ax = bx + 14 + c * ((bw - 28) / Math.max(1, vapCols - 1));
+        const waterDepth = (by + bh - 10) - (wy + 8);
+        const ay = (by + bh - 18) - r * Math.max(12, waterDepth / Math.max(1, vapRows)) 
+          - Math.sin(state.t * 3 + vDrawn) * 2;
+        const col = equal
+          ? 'rgba(226, 232, 240, 0.95)'
+          : `rgba(186, 230, 253, ${0.45 + 0.5 * (nVap / 25)})`;
+        drawUpArrow(ax, Math.min(ay, wy + 16), vapSize, col);
+        vDrawn++;
+      }
+    }
+  }
+
+  // Bubbles only when pressures match (boiling)
   state.bubbles.forEach(b => {
     const px = bx + b.x * bw;
     const py = by + b.y * bh;
     ctx.beginPath(); ctx.arc(px, py, b.r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255,255,255,${b.life * 0.8})`;
+    ctx.strokeStyle = `rgba(255,255,255,${b.life * 0.85})`;
     ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = `rgba(186,230,253,${b.life * 0.25})`; ctx.fill();
+    ctx.fillStyle = `rgba(226,232,240,${b.life * 0.28})`; ctx.fill();
   });
 
-  if (isBoiling()) {
-    for (let i = 0; i < 5; i++) {
-      const sx = bx + 20 + i * 20 + Math.sin(state.t * 2 + i) * 6;
-      const sy = by - 10 - ((state.t * 40 + i * 30) % 80);
-      ctx.fillStyle = `rgba(226,232,240,${0.15 + 0.1 * Math.sin(state.t + i)})`;
-      ctx.beginPath(); ctx.ellipse(sx, sy, 10, 16, 0, 0, Math.PI * 2); ctx.fill();
+  if (boil) {
+    for (let i = 0; i < 6; i++) {
+      const sx = bx + 18 + i * 16 + Math.sin(state.t * 2 + i) * 5;
+      const sy = by - 6 - ((state.t * 45 + i * 28) % 70);
+      ctx.fillStyle = `rgba(226,232,240,${0.18 + 0.12 * Math.sin(state.t + i)})`;
+      ctx.beginPath(); ctx.ellipse(sx, sy, 9, 14, 0, 0, Math.PI * 2); ctx.fill();
     }
+  }
+
+  // Labels: arrow counts + equality cue
+  ctx.textAlign = 'center';
+  ctx.font = "700 11px Oxanium, sans-serif";
+  ctx.fillStyle = 'rgba(148,163,184,0.95)';
+  ctx.fillText(T('canvas_atm') + '  ' + nAtm, bx + bw / 2, by - 8 - atmRows * (atmSize + 7) - 6);
+
+  ctx.fillStyle = equal ? '#f8fafc' : 'rgba(125,211,252,0.9)';
+  ctx.font = "700 11px Oxanium, sans-serif";
+  ctx.fillText(T('canvas_vap') + '  ' + nVap, bx + bw / 2, wy - 6);
+
+  if (equal && (boil || VP >= P * 0.97)) {
     ctx.fillStyle = '#f97316';
-    ctx.font = "800 15px Oxanium, sans-serif";
-    ctx.textAlign = 'center';
-    ctx.fillText('● ' + (cur === 'ur' ? 'کھول رہا ہے' : 'BOILING'), bx + bw / 2, by - 28);
+    ctx.font = "800 14px Oxanium, sans-serif";
+    ctx.fillText('● ' + T('canvas_equal'), bx + bw / 2, by - 8 - atmRows * (atmSize + 7) - 22);
   }
 
   ctx.font = "600 12px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8';
-  ctx.textAlign = 'center';
   ctx.fillText(T('canvas_beaker'), bx + bw / 2, by + bh + 18);
 }
 
