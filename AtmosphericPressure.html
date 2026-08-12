@@ -494,7 +494,7 @@ en: {
   lbl_sea_zero: "0 Sea Level",
   lbl_height_side: "Height (Mountain) →",
   position: "Position",
-  air_col_h: "Air Column Above",
+  air_col_h: "Air / Vapor Arrows",
   pos_sea: "Sea Level",
   pos_mountain: "Mountain",
   pos_under: "Underground",
@@ -514,9 +514,9 @@ en: {
   status_cooled: "Cooling down",
   tip_title: "Discover",
   central_q: "Central question: Does water always boil at 100°C?",
-  tip_sea: "At sea level (0 m) the air column is normal (~101.3 kPa). Water boils near 100°C when vapor pressure matches this pressure.",
-  tip_mountain: "Going UP: less air remains above you → thinner air column → lower pressure → boiling point FALLS below 100°C.",
-  tip_under: "Going DOWN: the underground chamber model raises air pressure → boiling point RISES above 100°C (like a pressure cooker).",
+  tip_sea: "At sea level, about 25 dark arrows press DOWN (atmosphere). Heat the water — vapor arrows grow UP from inside. When both counts match (~25), water boils and bubbles.",
+  tip_mountain: "Higher up: fewer atmosphere arrows (thinner air). Vapor needs fewer arrows to match — so boiling starts BELOW 100°C.",
+  tip_under: "Underground: more atmosphere-side pressure (up to 25 arrows). Vapor must grow stronger to match — boiling ABOVE 100°C.",
   drag_hint: "Scroll to zoom · Drag to pan · Use the elevation slider",
   anno_card: "Annotate",
   quiz_title: "Concept Quiz — Atmospheric Pressure",
@@ -560,7 +560,7 @@ ur: {
   lbl_sea_zero: "0 سطحِ سمندر",
   lbl_height_side: "اونچائی (پہاڑ) →",
   position: "مقام",
-  air_col_h: "اوپر ہوائی ستون",
+  air_col_h: "فضا / بخار تیر",
   pos_sea: "سطحِ سمندر",
   pos_mountain: "پہاڑ",
   pos_under: "زیرِ زمین",
@@ -580,9 +580,9 @@ ur: {
   status_cooled: "ٹھنڈا ہو رہا ہے",
   tip_title: "دریافت کریں",
   central_q: "مرکزی سوال: کیا پانی ہمیشہ 100°C پر کھولتا ہے؟",
-  tip_sea: "سطحِ سمندر (0 m) پر ہوائی ستون عام ہے (~101.3 kPa)۔ جب بخاراتی دباؤ برابر ہو تو پانی تقریباً 100°C پر کھولتا ہے۔",
-  tip_mountain: "اوپر جانا: اوپر کم ہوا → پتلا ہوائی ستون → کم دباؤ → نقطۂ کھولاؤ 100°C سے گرتا ہے۔",
-  tip_under: "نیچے جانا: زیرِ زمین خانے کا ماڈل دباؤ بڑھاتا ہے → نقطۂ کھولاؤ 100°C سے اوپر چلا جاتا ہے (پریشر ککر جیسا)۔",
+  tip_sea: "سطحِ سمندر پر تقریباً 25 سیاہ تیر نیچے دباتے ہیں (فضا)۔ پانی گرم کریں — اندر سے بخار کے تیر اوپر بڑھیں گے۔ جب دونوں کی تعداد برابر ہو (~25)، پانی کھولتا اور بلبلے بنتے ہیں۔",
+  tip_mountain: "اوپر: فضائی تیر کم (پتلی ہوا)۔ بخار کو برابر ہونے کے لیے کم تیر درکار — اس لیے کھولاؤ 100°C سے کم پر شروع ہوتا ہے۔",
+  tip_under: "زیرِ زمین: دباؤ زیادہ (تیر 25 تک)۔ بخار کو برابر ہونے کے لیے زیادہ زور چاہیے — کھولاؤ 100°C سے اوپر۔",
   drag_hint: "زوم کے لیے اسکرول · پین کے لیے گھسیٹیں · بلندی سلائیڈر استعمال کریں",
   anno_card: "نوٹ",
   quiz_title: "تصوری کوئز — فضائی دباؤ",
@@ -871,7 +871,6 @@ function updateReadings() {
   const P = getExternalPressure();
   const BP = boilingPoint(P);
   const VP = vaporPressure_kPa(state.waterT);
-  const frac = airColumnFraction();
   document.getElementById('read-P').textContent = P.toFixed(1) + ' kPa';
   document.getElementById('read-BP').textContent = BP.toFixed(1) + ' °C';
   document.getElementById('read-T').textContent = state.waterT.toFixed(1) + ' °C';
@@ -1465,9 +1464,11 @@ function drawThermometerAt(tx, ty) {
 function drawHUD() {
   const P = getExternalPressure();
   const VP = vaporPressure_kPa(state.waterT);
+  const nAtm = pressureArrowCount(P);
+  const nVap = pressureArrowCount(VP);
   const x = 640, y = 70, w = 200, h = 14;
-  ctx.fillStyle = 'rgba(15,23,42,0.72)';
-  roundRect(x - 12, y - 28, 230, 78, 12); ctx.fill();
+  ctx.fillStyle = 'rgba(15,23,42,0.78)';
+  roundRect(x - 12, y - 28, 230, 96, 12); ctx.fill();
 
   ctx.font = "600 12px Oxanium, sans-serif";
   ctx.fillStyle = '#94a3b8'; ctx.textAlign = 'left';
@@ -1475,15 +1476,20 @@ function drawHUD() {
 
   const maxP = Math.max(P, VP, 110);
   ctx.fillStyle = '#1e293b'; roundRect(x, y, w, h, 4); ctx.fill();
-  ctx.fillStyle = '#22d3ee'; roundRect(x, y, w * (VP / maxP), h, 4); ctx.fill();
-  ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2;
+  ctx.fillStyle = '#94a3b8'; roundRect(x, y, w * (VP / maxP), h, 4); ctx.fill();
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
   const px = x + w * (P / maxP);
   ctx.beginPath(); ctx.moveTo(px, y - 3); ctx.lineTo(px, y + h + 3); ctx.stroke();
 
-  ctx.fillStyle = '#67e8f9'; ctx.font = "600 11px Oxanium, sans-serif";
-  ctx.fillText('VP ' + VP.toFixed(1), x, y + 30);
-  ctx.fillStyle = '#fb923c';
-  ctx.fillText('P ' + P.toFixed(1), x + 90, y + 30);
+  ctx.fillStyle = '#cbd5e1'; ctx.font = "600 11px Oxanium, sans-serif";
+  ctx.fillText('VP ' + VP.toFixed(1) + '  (' + nVap + ' ↑)', x, y + 30);
+  ctx.fillStyle = '#64748b';
+  ctx.fillText('P ' + P.toFixed(1) + '  (' + nAtm + ' ↓)', x, y + 48);
+  if (Math.abs(nAtm - nVap) === 0 && nAtm > 0) {
+    ctx.fillStyle = '#f97316';
+    ctx.font = "700 11px Oxanium, sans-serif";
+    ctx.fillText(T('canvas_equal'), x, y + 64);
+  }
 }
 
 function roundedCloud(x, y, w) {
