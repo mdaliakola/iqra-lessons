@@ -434,8 +434,8 @@ body {
         <h2 class="font-display font-bold text-base text-cyan-400 flex items-center gap-2">
           <i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span>
         </h2>
-        <p class="text-sm text-slate-300 leading-relaxed" id="tip-text"></p>
-        <p class="text-xs text-cyan-300/80 mt-2" data-i18n="central_q"></p>
+        <p class="text-sm text-slate-100 leading-relaxed" id="tip-text"></p>
+        <p class="text-xs text-cyan-200 mt-2 font-semibold" data-i18n="central_q"></p>
       </div>
     </aside>
   </main>
@@ -1295,42 +1295,41 @@ function drawElevationScale(seaY, elev) {
 }
 
 function drawAirColumnAboveLab(labY, elev) {
-  // Previous layered cyan air-column look (restored)
+  // Vivid layered cyan air column
   const frac = airColumnFraction();
-  const refH = 170;
-  const h = Math.max(28, Math.min(260, refH * frac));
-  const x = 150, w = 64;
-  const top = labY - 40 - h;
+  const refH = 175;
+  const h = Math.max(36, Math.min(270, refH * frac));
+  const x = 148, w = 70;
+  const top = labY - 42 - h;
   const P = getExternalPressure();
 
-  // Ghost reference at sea-level height
-  ctx.strokeStyle = 'rgba(148,163,184,0.35)';
-  ctx.setLineDash([4, 4]);
-  ctx.strokeRect(x - 2, labY - 40 - refH, w + 4, refH);
-  ctx.setLineDash([]);
-  drawLabelPill('100%', x + w + 28, labY - 40 - refH + 12, '#94a3b8', '600 10px Oxanium, sans-serif');
+  ctx.fillStyle = elev < 0 ? 'rgba(249,115,22,0.08)' : 'rgba(0,243,255,0.08)';
+  roundRect(x - 8, top - 8, w + 16, h + 16, 10); ctx.fill();
 
-  // Layered cyan / amber column body
-  const layers = Math.max(3, Math.round(h / 16));
+  ctx.strokeStyle = 'rgba(148,163,184,0.4)';
+  ctx.setLineDash([4, 4]);
+  ctx.strokeRect(x - 2, labY - 42 - refH, w + 4, refH);
+  ctx.setLineDash([]);
+  drawLabelPill('100%', x + w + 30, labY - 42 - refH + 12, '#e2e8f0', '700 10px Oxanium, sans-serif');
+
+  const layers = Math.max(4, Math.round(h / 14));
   for (let i = 0; i < layers; i++) {
-    const a = 0.12 + (i / layers) * (elev < 0 ? 0.5 : 0.38);
-    ctx.fillStyle = elev < 0
-      ? `rgba(251,146,60,${a})`
-      : `rgba(125,211,252,${a})`;
+    const t = i / Math.max(1, layers - 1);
+    const a = 0.22 + t * 0.55;
+    ctx.fillStyle = elev < 0 ? `rgba(251,146,60,${a})` : `rgba(56,189,248,${a})`;
     ctx.fillRect(x, top + i * (h / layers), w, h / layers - 1);
   }
-  ctx.strokeStyle = elev < 0 ? 'rgba(249,115,22,0.7)' : 'rgba(0,243,255,0.65)';
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = elev < 0 ? '#fb923c' : '#00f3ff';
+  ctx.lineWidth = 2;
   ctx.strokeRect(x, top, w, h);
 
-  // A few clear downward pressure indicators at the base (not a dense black grid)
-  const tipColor = elev < 0 ? '#fb923c' : '#67e8f9';
+  const tipColor = elev < 0 ? '#fdba74' : '#67e8f9';
   for (let i = 0; i < 3; i++) {
-    drawDownArrow(x + w / 2, labY - 34 + i * 14, 7, tipColor, 'rgba(15,23,42,0.45)');
+    drawDownArrow(x + w / 2, labY - 30 + i * 16, 8, tipColor, 'rgba(15,23,42,0.5)');
   }
 
-  drawLabelPill(T('canvas_air'), x + w / 2, top - 18, tipColor, '700 11px Oxanium, sans-serif');
-  drawLabelPill(Math.round(frac * 100) + '% · ' + P.toFixed(1) + ' kPa', x + w / 2, top + 8, '#e2e8f0', '600 10px Oxanium, sans-serif');
+  drawLabelPill(T('canvas_air'), x + w / 2, top - 16, tipColor, '800 12px Oxanium, sans-serif');
+  drawLabelPill(Math.round(frac * 100) + '% · ' + P.toFixed(1) + ' kPa', x + w / 2, top + 10, '#f8fafc', '700 11px Oxanium, sans-serif');
 }
 
 function drawBoilingLab(labY) {
@@ -1341,15 +1340,15 @@ function drawBoilingLab(labY) {
   ctx.fillRect(330, tableY + 22, 18, 40);
   ctx.fillRect(590, tableY + 22, 18, 40);
 
-  drawLabelPill(T('canvas_lab'), 470, labY - 132, '#00f3ff', '800 13px Oxanium, sans-serif');
+  drawLabelPill(T('canvas_lab'), 470, labY - 148, '#00f3ff', '800 13px Oxanium, sans-serif');
 
-  drawBeakerAt(410, labY - 70);
-  drawHeaterAt(430, tableY - 14);
-  drawThermometerAt(560, labY - 90);
+  drawBeakerAt(410, labY - 55);
+  drawHeaterAt(435, tableY - 14);
+  drawThermometerAt(565, labY - 80);
 }
 
 function drawBeakerAt(bx, by) {
-  const bw = 130, bh = 175;
+  const bw = 128, bh = 168;
   const P = getExternalPressure();
   const VP = vaporPressure_kPa(state.waterT);
   const nAtm = pressureArrowCount(P);
@@ -1357,44 +1356,42 @@ function drawBeakerAt(bx, by) {
   const equal = Math.abs(P - VP) < 1.2 || isBoiling();
   const boil = isBoiling();
 
-  // Atmosphere panel above beaker (dark plate so arrows + text stay readable)
-  const atmSize = 6.2;
+  const atmSize = 7;
   const atmCols = 5;
   const atmRows = Math.max(1, Math.ceil(Math.max(nAtm, 1) / atmCols));
-  const atmBlockH = atmRows * atmSize * 2.15 + 18;
-  const panelY = by - atmBlockH - 36;
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-  roundRect(bx - 18, panelY, bw + 36, atmBlockH + 28, 12);
+  const stripH = 26 + atmRows * (atmSize * 2.05);
+  const stripY = by - stripH - 8;
+
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+  roundRect(bx - 14, stripY, bw + 28, stripH, 10);
   ctx.fill();
-  ctx.strokeStyle = equal ? 'rgba(34,197,94,0.55)' : 'rgba(0,243,255,0.35)';
-  ctx.lineWidth = 1.5;
-  roundRect(bx - 18, panelY, bw + 36, atmBlockH + 28, 12);
+  ctx.strokeStyle = equal ? '#22c55e' : '#00f3ff';
+  ctx.lineWidth = 2;
+  roundRect(bx - 14, stripY, bw + 28, stripH, 10);
   ctx.stroke();
 
-  drawLabelPill(T('canvas_atm') + '  ' + nAtm, bx + bw / 2, panelY + 14, '#7dd3fc', '700 12px Oxanium, sans-serif');
+  drawLabelPill(T('canvas_atm') + ' · ' + nAtm, bx + bw / 2, stripY + 12, equal ? '#86efac' : '#67e8f9', '800 12px Oxanium, sans-serif');
 
-  // Clear cyan downward arrows = atmospheric pressure
   if (nAtm > 0) {
     drawArrowGrid(
-      nAtm, bx + 8, panelY + 28, bw - 16, atmCols, atmSize, true,
-      equal ? '#22c55e' : '#38bdf8',
-      'rgba(15,23,42,0.55)'
+      nAtm, bx + 6, stripY + 26, bw - 12, atmCols, atmSize, true,
+      equal ? '#4ade80' : '#22d3ee',
+      'rgba(15,23,42,0.65)'
     );
   }
 
-  // Beaker glass
-  ctx.strokeStyle = 'rgba(186,230,253,0.85)'; ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(186,230,253,0.9)'; ctx.lineWidth = 3.5;
   ctx.beginPath();
   ctx.moveTo(bx, by); ctx.lineTo(bx, by + bh);
   ctx.quadraticCurveTo(bx + bw / 2, by + bh + 10, bx + bw, by + bh);
   ctx.lineTo(bx + bw, by); ctx.stroke();
 
-  const fill = 0.72;
+  const fill = 0.7;
   const wy = by + bh * (1 - fill);
   const waterG = ctx.createLinearGradient(bx, wy, bx, by + bh);
   const hot = Math.min(1, (state.waterT - 25) / 80);
-  waterG.addColorStop(0, `rgba(${56 + hot * 100},${189 - hot * 80},${248 - hot * 100},0.6)`);
-  waterG.addColorStop(1, 'rgba(14,165,233,0.8)');
+  waterG.addColorStop(0, `rgba(${40 + hot * 80},${140 - hot * 40},${220 - hot * 80},0.7)`);
+  waterG.addColorStop(1, 'rgba(2,132,199,0.85)');
   ctx.fillStyle = waterG;
   ctx.beginPath();
   ctx.moveTo(bx + 4, wy);
@@ -1403,50 +1400,51 @@ function drawBeakerAt(bx, by) {
   ctx.lineTo(bx + bw - 4, wy);
   for (let i = 0; i <= 10; i++) {
     const sx = bx + 4 + (bw - 8) * (i / 10);
-    const sy = wy + Math.sin(state.t * 3 + i) * (boil ? 3 : 1);
+    const sy = wy + Math.sin(state.t * 3 + i) * (boil ? 3.5 : 1);
     ctx.lineTo(sx, sy);
   }
   ctx.closePath(); ctx.fill();
 
-  // Vapor arrows rising from inside water — amber/orange, clear shapes
-  const vapSize = 6.2;
+  const vapSize = 7;
   const vapCols = 5;
   if (nVap > 0) {
     const vapRows = Math.ceil(nVap / vapCols);
-    const startY = by + bh - 22;
+    const startY = wy + 28 + Math.min(50, (vapRows - 1) * vapSize * 1.1);
     drawArrowGrid(
       nVap, bx + 10, startY, bw - 20, vapCols, vapSize, false,
-      equal ? '#22c55e' : '#fbbf24',
-      'rgba(15,23,42,0.45)'
+      equal ? '#4ade80' : '#f59e0b',
+      'rgba(15,23,42,0.55)'
     );
-    // Keep label clear over water with dark pill
-    const vapLabelY = Math.max(wy + 14, startY - vapRows * vapSize * 2.15 - 4);
-    drawLabelPill(T('canvas_vap') + '  ' + nVap, bx + bw / 2, vapLabelY, equal ? '#86efac' : '#fde68a', '700 12px Oxanium, sans-serif');
-  } else {
-    drawLabelPill(T('canvas_vap') + '  0', bx + bw / 2, wy + 16, '#94a3b8', '700 12px Oxanium, sans-serif');
   }
 
-  // Bubbles when boiling
+  drawLabelPill(
+    T('canvas_vap') + ' · ' + nVap,
+    bx + bw / 2,
+    wy + 12,
+    equal ? '#86efac' : '#fbbf24',
+    '800 12px Oxanium, sans-serif'
+  );
+
   state.bubbles.forEach(b => {
     const px = bx + b.x * bw;
     const py = by + b.y * bh;
     ctx.beginPath(); ctx.arc(px, py, b.r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255,255,255,${b.life * 0.9})`;
-    ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = `rgba(226,232,240,${b.life * 0.3})`; ctx.fill();
+    ctx.strokeStyle = `rgba(255,255,255,${b.life * 0.95})`;
+    ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.fillStyle = `rgba(255,255,255,${b.life * 0.22})`; ctx.fill();
   });
 
   if (boil) {
-    for (let i = 0; i < 6; i++) {
-      const sx = bx + 18 + i * 16 + Math.sin(state.t * 2 + i) * 5;
-      const sy = by - 4 - ((state.t * 45 + i * 28) % 55);
-      ctx.fillStyle = `rgba(226,232,240,${0.2 + 0.12 * Math.sin(state.t + i)})`;
-      ctx.beginPath(); ctx.ellipse(sx, sy, 9, 14, 0, 0, Math.PI * 2); ctx.fill();
+    for (let i = 0; i < 7; i++) {
+      const sx = bx + 16 + i * 15 + Math.sin(state.t * 2 + i) * 4;
+      const sy = by - 2 - ((state.t * 50 + i * 26) % 48);
+      ctx.fillStyle = `rgba(255,255,255,${0.22 + 0.12 * Math.sin(state.t + i)})`;
+      ctx.beginPath(); ctx.ellipse(sx, sy, 8, 13, 0, 0, Math.PI * 2); ctx.fill();
     }
-    drawLabelPill('● ' + T('canvas_equal'), bx + bw / 2, panelY - 10, '#fb923c', '800 13px Oxanium, sans-serif');
+    drawLabelPill('● ' + T('canvas_equal'), bx + bw / 2, stripY - 12, '#fb923c', '800 13px Oxanium, sans-serif');
   }
 
-  drawLabelPill(T('canvas_beaker'), bx + bw / 2, by + bh + 16, '#cbd5e1', '600 12px Oxanium, sans-serif');
+  drawLabelPill(T('canvas_beaker'), bx + bw / 2, by + bh + 18, '#e2e8f0', '700 12px Oxanium, sans-serif');
 }
 
 function drawHeaterAt(hx, hy) {
