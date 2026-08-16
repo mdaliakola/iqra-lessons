@@ -790,14 +790,18 @@ function clearAnnotations() {
 ============================================================ */
 function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (el.id === 'concept-tip' && state.messageKey) return;
     const v = T(el.dataset.i18n);
     if (typeof v === 'string') el.textContent = v;
   });
-  document.getElementById('intro-topic').textContent = T('intro_topic');
-  document.getElementById('intro-loading').textContent = T('intro_loading');
+  const introTopic = document.getElementById('intro-topic');
+  const introLoading = document.getElementById('intro-loading');
+  if (introTopic) introTopic.textContent = T('intro_topic');
+  if (introLoading) introLoading.textContent = T('intro_loading');
   renderPredictOptions();
   updateReadouts();
   updateLawStatus();
+  if (state.messageKey) showDiscovery(state.messageKey);
   renderQuiz();
 }
 
@@ -1307,12 +1311,12 @@ function drawPuck() {
     drawArrow(px, py, px, py - Math.min(50, state.mass*6), '#a5b4fc', 'N');
   }
   if (state.showVel && Math.abs(state.v) > 0.05) {
-    const len = Math.min(130, Math.abs(state.v) * 12);
-    drawArrow(px, py - r - 28, px + Math.sign(state.v)*len, py - r - 28, '#22d3ee', '|v| '+Math.abs(state.v).toFixed(1));
+    const len = Math.min(120, 18 + Math.abs(state.v) * 4);
+    drawArrow(px, py - r - 28, px + Math.sign(state.v)*len, py - r - 28, '#22d3ee', '|v| '+Math.abs(state.v).toFixed(1)+' m/s');
   }
   if (state.showAcc && Math.abs(state.a) > 0.05) {
-    const len = Math.min(100, Math.abs(state.a) * 10);
-    drawArrow(px, py + r + 18, px + Math.sign(state.a)*len, py + r + 18, '#c084fc', '|a| '+Math.abs(state.a).toFixed(1));
+    const len = Math.min(100, 14 + Math.abs(state.a) * 8);
+    drawArrow(px, py + r + 18, px + Math.sign(state.a)*len, py + r + 18, '#c084fc', '|a| '+Math.abs(state.a).toFixed(1)+' m/s²');
   }
 }
 
