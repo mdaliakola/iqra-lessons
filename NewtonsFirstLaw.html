@@ -10,30 +10,26 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>IQRA VIRTUAL LAB — Newton's First Law of Motion</title>
 
-<!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Font Awesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<!-- Google Fonts CDN -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700;800&family=Manrope:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
-<!-- Fabric.js CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 <style>
-/* Jameel Noori Nastaliq — preferred Urdu font */
+/* ===== Jameel Noori Nastaliq (primary) + Noto Nastaliq (fallback) ===== */
 @font-face {
   font-family: 'Jameel Noori Nastaliq';
-  src: url('https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoNastaliqUrdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
-  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/tariq-abdullah/urdu-web-font-CDN/JameelNooriNastaleeq.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Jameel Noori Nastaliq';
-  src: url('https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoNastaliqUrdu/NotoNastaliqUrdu-Bold.ttf') format('truetype');
-  font-weight: 700;
+  src: url('https://cdn.jsdelivr.net/npm/jameel-noori@1.1.2/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
@@ -47,6 +43,15 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 /* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
 [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
 [dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+  font-size: 1.08em;
+}
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] select,
+[dir="rtl"] input,
+[dir="rtl"] .urdu-ready {
   font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
   line-height: 2.3 !important;
 }
@@ -93,7 +98,6 @@ input[type=range]::-moz-range-thumb {
   background: #00f3ff; cursor: pointer; box-shadow: 0 0 10px #00f3ff;
 }
 
-/* Extended design language */
 body {
   font-family: 'Manrope', sans-serif;
   background: #0f172a;
@@ -102,8 +106,7 @@ body {
   margin: 0;
 }
 .font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
-[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
-[dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
+[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important; }
 
 .bg-grid {
   background-image:
@@ -112,7 +115,6 @@ body {
   background-size: 44px 44px;
 }
 
-/* Intro */
 #intro {
   position: fixed; inset: 0; z-index: 100;
   background: radial-gradient(ellipse at center, #10233f 0%, #0f172a 65%);
@@ -175,10 +177,6 @@ body {
   background: rgba(34,197,94,.14); color: #4ade80;
   border-color: rgba(34,197,94,.5); box-shadow: 0 0 14px rgba(34,197,94,.25);
 }
-.ctrl-btn.on-amber {
-  background: rgba(245,158,11,.14); color: #fbbf24;
-  border-color: rgba(245,158,11,.5);
-}
 
 .opt-btn {
   transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
@@ -213,18 +211,21 @@ body {
 }
 .canvas-container canvas { width: 100% !important; height: 100% !important; }
 
-.predict-opt.selected {
-  border-color: rgba(0,243,255,.6) !important;
-  background: rgba(0,243,255,.1) !important;
-  color: #67e8f9;
+.p-bar {
+  height: 10px; border-radius: 999px; background: #1e293b; overflow: hidden;
 }
+.p-bar > span {
+  display:block; height:100%; border-radius:999px;
+  transition: width .2s ease;
+}
+.obj-a-accent { color: #22d3ee; }
+.obj-b-accent { color: #fbbf24; }
 </style>
 </head>
 <body class="bg-grid">
 
-<!-- ===================== INTRO ===================== -->
 <div id="intro">
-  <div class="intro-ring"><i class="fa-solid fa-cube text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
+  <div class="intro-ring"><i class="fa-solid fa-cubes text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
   <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
   <div class="intro-topic text-base md:text-lg mt-5 font-bold uppercase" id="intro-topic">NEWTON'S FIRST LAW OF MOTION</div>
   <div class="mt-8 flex items-center gap-2 text-cyan-400/80 text-sm">
@@ -233,7 +234,6 @@ body {
   </div>
 </div>
 
-<!-- ===================== APP ===================== -->
 <div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
 
   <!-- HEADER -->
@@ -258,7 +258,6 @@ body {
     </nav>
 
     <div class="flex items-center gap-3">
-      <!-- Annotation Toolbar (Hidden by default) -->
       <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
         <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
         <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
@@ -266,12 +265,10 @@ body {
         <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
       </div>
 
-      <!-- Annotation Toggle Button -->
       <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
         <i class="fa-solid fa-pen-nib"></i>
       </button>
 
-      <!-- Language Selector -->
       <div class="relative">
         <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
           <option value="en">🌐 English</option>
@@ -282,7 +279,6 @@ body {
         </select>
       </div>
 
-      <!-- Fullscreen Button -->
       <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
         <i class="fa-solid fa-expand" id="fs-icon"></i>
       </button>
@@ -290,190 +286,103 @@ body {
   </header>
 
   <!-- ===================== SIMULATION ===================== -->
-  <main id="view-sim" class="view flex-1 flex flex-col xl:flex-row gap-3 p-3 min-h-0 overflow-hidden">
+  <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-3 p-3 min-h-0 overflow-hidden">
 
-    <!-- LEFT CONTROLS -->
-    <aside class="xl:w-72 shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0 order-2 xl:order-1">
+    <!-- CONTROLS -->
+    <aside class="lg:w-80 shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0 order-2 lg:order-1">
+
       <div class="glass-card rounded-2xl p-4 space-y-3">
         <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold flex items-center gap-2">
           <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
         </div>
-        <div class="grid grid-cols-3 gap-2">
-          <button id="btn-start" onclick="startSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
-            <i class="fa-solid fa-play text-green-400"></i><span data-i18n="btn_start"></span>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-launch" onclick="launchBoth()" class="ctrl-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play text-green-400"></i><span data-i18n="btn_launch"></span>
           </button>
-          <button id="btn-pause" onclick="pauseSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
-            <i class="fa-solid fa-pause text-amber-400"></i><span data-i18n="btn_pause"></span>
-          </button>
-          <button onclick="resetSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
+          <button onclick="resetSim()" class="ctrl-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-200 flex items-center justify-center gap-2">
             <i class="fa-solid fa-rotate-left text-cyan-400"></i><span data-i18n="btn_reset"></span>
           </button>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-apply" onclick="applyForce()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-bolt text-yellow-400"></i><span data-i18n="btn_apply"></span>
-          </button>
-          <button id="btn-remove" onclick="removeForce()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-ban text-red-400"></i><span data-i18n="btn_remove"></span>
-          </button>
-          <button onclick="reverseForce()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-arrows-left-right text-cyan-400"></i><span data-i18n="btn_reverse"></span>
-          </button>
-          <button id="btn-auto" onclick="runAutoExperiment()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-wand-magic-sparkles text-fuchsia-400"></i><span data-i18n="btn_auto"></span>
-          </button>
-        </div>
+        <button id="btn-same-p" onclick="toggleSameMomentum()" class="ctrl-btn active w-full rounded-xl px-3 py-3 text-sm font-bold text-slate-200 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-link"></i><span data-i18n="btn_same_p"></span>
+        </button>
+        <p class="text-xs text-slate-400 leading-relaxed" data-i18n="hint_same_p"></p>
       </div>
 
-      <div class="glass-card rounded-2xl p-4 space-y-4">
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_force"></span>
-            <span class="stat-val text-sm num" id="val-force">10 N</span>
+      <!-- Object A -->
+      <div class="glass-card rounded-2xl p-4 space-y-3 border border-cyan-500/20">
+        <div class="flex items-center justify-between">
+          <div class="font-bold text-cyan-300 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-cyan-400 glow-cyan"></span>
+            <span data-i18n="obj_a"></span>
           </div>
-          <input id="slider-force" type="range" min="0" max="50" value="10" step="1" oninput="onForceSlider(this.value)">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-dir-left" onclick="setForceDir(-1)" class="ctrl-btn rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-arrow-left"></i> <span data-i18n="btn_left"></span>
-          </button>
-          <button id="btn-dir-right" onclick="setForceDir(1)" class="ctrl-btn active rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
-            <span data-i18n="btn_right"></span> <i class="fa-solid fa-arrow-right"></i>
-          </button>
+          <span class="stat-val text-sm num" id="pa-val">p = 20</span>
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
             <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_mass"></span>
-            <span class="stat-val text-sm num" id="val-mass">2 kg</span>
+            <span class="stat-val text-sm num" id="val-ma">4.0 kg</span>
           </div>
-          <input id="slider-mass" type="range" min="1" max="10" value="2" step="0.5" oninput="onMassSlider(this.value)">
+          <input id="slider-ma" type="range" min="1" max="10" value="4" step="0.5" oninput="onMassA(this.value)">
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_friction"></span>
-            <span class="stat-val text-sm num" id="val-friction">0%</span>
+            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_vel"></span>
+            <span class="stat-val text-sm num" id="val-va">5.0 m/s</span>
           </div>
-          <input id="slider-friction" type="range" min="0" max="100" value="0" step="5" oninput="onFrictionSlider(this.value)">
+          <input id="slider-va" type="range" min="1" max="20" value="5" step="0.5" oninput="onVelA(this.value)">
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-smooth" onclick="setSurface('smooth')" class="ctrl-btn active rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-ice-cream"></i> <span data-i18n="btn_smooth"></span>
-          </button>
-          <button id="btn-rough" onclick="setSurface('rough')" class="ctrl-btn rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-mountain"></i> <span data-i18n="btn_rough"></span>
-          </button>
-        </div>
-        <button id="btn-space" onclick="toggleSpaceMode()" class="ctrl-btn w-full rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-rocket text-indigo-300"></i><span data-i18n="btn_space"></span>
-        </button>
+        <div class="p-bar"><span id="bar-pa" class="bg-cyan-400" style="width:50%"></span></div>
+        <div class="text-xs text-slate-400"><span data-i18n="lbl_formula"></span> <span class="num text-cyan-300" id="eq-a">p = 4 × 5 = 20</span></div>
       </div>
 
-      <div class="glass-card rounded-2xl p-4 space-y-2">
-        <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold mb-1" data-i18n="lbl_vectors"></div>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-show-f" onclick="toggleVec('showForces')" class="ctrl-btn active rounded-xl px-2 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-arrows-up-down-left-right"></i> <span data-i18n="btn_forces"></span>
-          </button>
-          <button id="btn-show-v" onclick="toggleVec('showVel')" class="ctrl-btn active rounded-xl px-2 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-gauge-high"></i> <span data-i18n="btn_vel"></span>
-          </button>
-          <button id="btn-show-a" onclick="toggleVec('showAcc')" class="ctrl-btn rounded-xl px-2 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-forward"></i> <span data-i18n="btn_acc"></span>
-          </button>
-          <button id="btn-show-g" onclick="toggleVec('showGraph')" class="ctrl-btn rounded-xl px-2 py-2.5 text-xs font-bold text-slate-200">
-            <i class="fa-solid fa-chart-line"></i> <span data-i18n="btn_graph"></span>
-          </button>
+      <!-- Object B -->
+      <div class="glass-card rounded-2xl p-4 space-y-3 border border-amber-500/20">
+        <div class="flex items-center justify-between">
+          <div class="font-bold text-amber-300 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <span data-i18n="obj_b"></span>
+          </div>
+          <span class="stat-val text-sm num text-amber-300" id="pb-val">p = 20</span>
         </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_mass"></span>
+            <span class="stat-val text-sm num text-amber-300" id="val-mb">2.0 kg</span>
+          </div>
+          <input id="slider-mb" type="range" min="1" max="10" value="2" step="0.5" oninput="onMassB(this.value)">
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_vel"></span>
+            <span class="stat-val text-sm num text-amber-300" id="val-vb">10.0 m/s</span>
+          </div>
+          <input id="slider-vb" type="range" min="1" max="20" value="10" step="0.5" oninput="onVelB(this.value)">
+        </div>
+        <div class="p-bar"><span id="bar-pb" class="bg-amber-400" style="width:50%"></span></div>
+        <div class="text-xs text-slate-400"><span data-i18n="lbl_formula"></span> <span class="num text-amber-300" id="eq-b">p = 2 × 10 = 20</span></div>
       </div>
+
+      <div id="compare-msg" class="glass-panel rounded-2xl px-4 py-3 text-sm text-center text-cyan-200 leading-relaxed"></div>
     </aside>
 
-    <!-- CENTER SIMULATION -->
-    <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0 order-1 xl:order-2">
-      <div id="sim-viewport" class="glass-card rounded-2xl relative flex-1 min-h-[280px] overflow-hidden">
-        <canvas id="sim-canvas" class="absolute inset-0 w-full h-full"></canvas>
+    <!-- CANVAS -->
+    <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0 order-1 lg:order-2">
+      <div id="sim-viewport" class="glass-card rounded-2xl relative flex-1 min-h-[300px] overflow-hidden">
+        <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
         <canvas id="fabricLayer"></canvas>
 
         <div class="absolute bottom-3 flex flex-col gap-2 z-30" style="inset-inline-end:12px" dir="ltr">
-          <button class="zoom-btn" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
-          <button class="zoom-btn" onclick="zoomBy(1/1.2)" title="−"><i class="fa-solid fa-minus"></i></button>
-          <button class="zoom-btn" onclick="resetView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
         </div>
 
-        <div id="discovery-banner" class="absolute top-3 left-3 right-3 z-10 pointer-events-none hidden">
-          <div class="glass-panel rounded-xl px-4 py-3 text-sm text-cyan-200 text-center glow-cyan" id="discovery-text"></div>
+        <div id="impact-banner" class="absolute top-3 left-3 right-3 z-10 pointer-events-none hidden">
+          <div class="glass-panel rounded-xl px-4 py-3 text-sm text-center text-amber-100" id="impact-text"></div>
         </div>
-
-        <div id="graph-panel" class="absolute bottom-3 left-3 z-10 glass-panel rounded-xl p-2 hidden" style="width:min(260px,46vw); height:110px;">
-          <canvas id="graph-canvas" width="260" height="100"></canvas>
-        </div>
-      </div>
-
-      <!-- Predict strip -->
-      <div class="glass-card rounded-2xl p-3 md:p-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <div class="text-xs uppercase tracking-widest text-amber-300/90 font-bold flex items-center gap-2">
-            <i class="fa-solid fa-lightbulb"></i><span data-i18n="predict_title"></span>
-          </div>
-          <div class="flex gap-2">
-            <button id="btn-test" onclick="runPredictTest()" class="ctrl-btn rounded-xl px-4 py-2 text-xs font-bold text-slate-200" disabled>
-              <i class="fa-solid fa-flask"></i> <span data-i18n="btn_test"></span>
-            </button>
-            <button id="btn-check" onclick="checkPrediction()" class="ctrl-btn rounded-xl px-4 py-2 text-xs font-bold text-slate-200" disabled>
-              <i class="fa-solid fa-check-double"></i> <span data-i18n="btn_check"></span>
-            </button>
-          </div>
-        </div>
-        <p class="text-sm text-slate-300 mb-2" data-i18n="predict_q"></p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-2" id="predict-options"></div>
-        <div id="predict-feedback" class="mt-2 text-sm font-bold hidden"></div>
       </div>
     </section>
-
-    <!-- RIGHT DASHBOARD -->
-    <aside class="xl:w-72 shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0 order-3">
-      <div class="glass-card rounded-2xl p-4 space-y-3">
-        <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold flex items-center gap-2">
-          <i class="fa-solid fa-gauge"></i><span data-i18n="dash_title"></span>
-        </div>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_mass"></span><span class="stat-val num" id="d-mass">2.0 kg</span></div>
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_applied"></span><span class="stat-val num" id="d-applied">0.0 N</span></div>
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_fric"></span><span class="stat-val num" id="d-fric">0.0 N</span></div>
-          <div class="flex justify-between gap-2 border-t border-slate-700/60 pt-2"><span class="text-slate-300 font-bold" data-i18n="d_net"></span><span class="stat-val num text-base" id="d-net">0.0 N</span></div>
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_vel"></span><span class="stat-val num" id="d-vel">0.00 m/s</span></div>
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_acc"></span><span class="stat-val num" id="d-acc">0.00 m/s²</span></div>
-          <div class="flex justify-between gap-2"><span class="text-slate-400" data-i18n="d_dir"></span><span class="stat-val" id="d-dir">—</span></div>
-        </div>
-        <div id="law-status" class="glass-panel rounded-xl px-3 py-3 text-xs leading-relaxed text-center text-cyan-200"></div>
-      </div>
-
-      <div class="glass-card rounded-2xl p-4 space-y-2">
-        <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold" data-i18n="exp_title"></div>
-        <button onclick="loadExperiment(1)" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 text-start">
-          <span class="text-cyan-400 num me-1">1.</span><span data-i18n="exp1"></span>
-        </button>
-        <button onclick="loadExperiment(2)" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 text-start">
-          <span class="text-cyan-400 num me-1">2.</span><span data-i18n="exp2"></span>
-        </button>
-        <button onclick="loadExperiment(3)" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 text-start">
-          <span class="text-cyan-400 num me-1">3.</span><span data-i18n="exp3"></span>
-        </button>
-        <button onclick="loadExperiment(4)" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 text-start">
-          <span class="text-cyan-400 num me-1">4.</span><span data-i18n="exp4"></span>
-        </button>
-        <button onclick="loadExperiment(5)" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 text-start">
-          <span class="text-cyan-400 num me-1">5.</span><span data-i18n="exp5"></span>
-        </button>
-        <button onclick="runBreakChallenge()" class="ctrl-btn w-full rounded-xl px-3 py-2.5 text-xs font-bold text-amber-200 text-start on-amber">
-          <i class="fa-solid fa-skull-crossbones me-1"></i><span data-i18n="exp_break"></span>
-        </button>
-      </div>
-
-      <div class="glass-card rounded-2xl p-4">
-        <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold mb-2" data-i18n="tip_title"></div>
-        <p class="text-sm text-slate-300 leading-relaxed" id="concept-tip" data-i18n="tip_default"></p>
-      </div>
-    </aside>
   </main>
 
   <!-- ===================== QUIZ ===================== -->
@@ -497,77 +406,34 @@ body {
 
 <script>
 /* ============================================================
-   TRANSLATION DICTIONARY
+   TRANSLATIONS
 ============================================================ */
 const LANG = {
 en: {
-  topic: "Newton's First Law of Motion",
+  topic: "Newton's First Law — Momentum Comparison",
   intro_topic: "NEWTON'S FIRST LAW OF MOTION",
   intro_loading: "Loading Interactive Engine...",
   tab_sim: "Simulation",
   tab_quiz: "Quiz",
-  ctrl_title: "Experiment Controls",
-  btn_start: "Start",
-  btn_pause: "Pause",
+  ctrl_title: "Mass & Velocity",
+  btn_launch: "Launch Both",
   btn_reset: "Reset",
-  btn_apply: "Apply Force",
-  btn_remove: "Remove Force",
-  btn_reverse: "Reverse",
-  btn_auto: "Auto Exp.",
-  lbl_force: "Applied Force",
+  btn_same_p: "Same Momentum (p)",
+  hint_same_p: "ON: changing mass auto-adjusts velocity so both keep equal momentum. OFF: change mass freely and watch impact differ.",
+  obj_a: "Object A — Heavy & Slow",
+  obj_b: "Object B — Light & Fast",
   lbl_mass: "Mass",
-  lbl_friction: "Friction",
-  btn_left: "Left",
-  btn_right: "Right",
-  btn_smooth: "Smooth",
-  btn_rough: "Rough",
-  btn_space: "Space Mode",
-  lbl_vectors: "Visual Tools",
-  btn_forces: "Forces",
-  btn_vel: "Velocity",
-  btn_acc: "Accel.",
-  btn_graph: "Graph",
-  dash_title: "Live Physics Data",
-  d_mass: "Mass",
-  d_applied: "Applied Force",
-  d_fric: "Friction",
-  d_net: "Net Force",
-  d_vel: "Velocity",
-  d_acc: "Acceleration",
-  d_dir: "Direction",
-  exp_title: "Guided Experiments",
-  exp1: "Object at Rest",
-  exp2: "Push the Object",
-  exp3: "Remove the Force",
-  exp4: "Rough Surface",
-  exp5: "Space Coasting",
-  exp_break: "Break the Law?",
-  tip_title: "Discovery Tip",
-  tip_default: "Change a variable, press Start, and watch: what stays the same, and what changes?",
-  predict_title: "Predict Mode",
-  predict_q: "What will happen when the applied force is removed (friction ≈ 0)?",
-  pred_opt1: "Object will stop immediately",
-  pred_opt2: "Object continues at constant velocity",
-  pred_opt3: "Object moves backward",
-  btn_test: "Test",
-  btn_check: "Check Prediction",
-  pred_correct: "Excellent! Zero net force means no CHANGE in motion — not necessarily no motion.",
-  pred_wrong: "Not quite. With zero net force, velocity stays constant (including zero).",
-  msg_rest: "Object remains at rest — no unbalanced external force acts on it.",
-  msg_uniform: "No net force does not mean no motion. Zero net force means no change in motion.",
-  msg_accel: "An unbalanced force changes the state of motion.",
-  msg_friction: "Friction is an external unbalanced force that changes motion.",
-  msg_space: "In space, with almost no external force, motion continues.",
-  msg_balanced: "Balanced forces do not change the state of motion.",
-  msg_break_fail: "You cannot change motion without a net external force. Newton's First Law holds!",
-  msg_break: "Challenge: try to change velocity without any unbalanced force…",
-  dir_left: "← Left",
-  dir_right: "Right →",
-  dir_none: "—",
-  law_rest: "State: At Rest (Inertia)",
-  law_uniform: "State: Uniform Motion (Inertia)",
-  law_changing: "State: Motion Changing",
-  quiz_title: "Concept Quiz — Newton's First Law",
+  lbl_vel: "Velocity",
+  lbl_formula: "p = m × v →",
+  msg_same: "Same momentum → both obstacles push back almost equally. Inertia of motion depends on p = mv.",
+  msg_diff: "Momentums differ → the obstacle is pushed farther by the larger p. Change mass and observe.",
+  impact_same: "Both hit with similar momentum. Obstacles move similar distances.",
+  impact_a: "Object A has larger momentum — its obstacle moves farther.",
+  impact_b: "Object B has larger momentum — its obstacle moves farther.",
+  canvas_obstacle: "Obstacle",
+  canvas_track_a: "Lane A",
+  canvas_track_b: "Lane B",
+  quiz_title: "Concept Quiz — Inertia & Momentum",
   quiz_progress: (i,n)=>`Question ${i} of ${n}`,
   correct_fb: "Correct!",
   wrong_fb: "Not quite!",
@@ -575,85 +441,42 @@ en: {
   see_result: "See Result",
   final_score: "Final Score",
   restart: "Restart Quiz",
-  score_msg_great: "Outstanding! You discovered inertia through experiment.",
-  score_msg_good: "Good work! Revisit the Remove Force experiment once more.",
-  score_msg_low: "Keep experimenting — observation builds understanding!",
+  score_msg_great: "Excellent! You connected inertia with momentum.",
+  score_msg_good: "Good work! Launch again and compare impacts.",
+  score_msg_low: "Keep comparing mass and velocity — observe p = mv.",
   quiz: [
-    { q: "An object continues in its state of rest or uniform motion unless acted upon by:", opts: ["Gravity alone", "An unbalanced external force", "Its own velocity", "Temperature"], a: 1, ex: "Newton's First Law: only an unbalanced external force changes the state of motion." },
-    { q: "A puck slides on nearly frictionless ice at constant velocity. Net force is:", opts: ["Equal to its weight", "Very large", "Approximately zero", "Always increasing"], a: 2, ex: "Constant velocity means acceleration is zero, so net force is approximately zero." },
-    { q: "You push a box then remove the force on a smooth surface. The box:", opts: ["Stops instantly", "Continues with nearly constant velocity", "Reverses direction", "Floats upward"], a: 1, ex: "With zero net force, motion does not change — velocity stays nearly constant." },
-    { q: "Why does a moving object eventually stop on a rough floor?", opts: ["Moving objects naturally stop", "Friction acts as an unbalanced force", "Velocity disappears by itself", "Mass becomes zero"], a: 1, ex: "Friction is an external unbalanced force that reduces velocity until the object stops." },
-    { q: "In deep space, after engines shut off, a spacecraft:", opts: ["Stops immediately", "Slows down naturally", "Continues in a straight line at constant speed", "Falls toward Earth instantly"], a: 2, ex: "With no significant unbalanced force, inertia keeps the spacecraft in uniform straight-line motion." }
+    { q: "Momentum of an object is defined as:", opts: ["m ÷ v", "m × v", "m + v", "v ÷ m"], a: 1, ex: "Momentum p = m × v. Same p can come from heavy-slow or light-fast objects." },
+    { q: "A heavy slow object and a light fast object can have:", opts: ["Only different momentum", "The same momentum", "Zero mass", "No velocity ever"], a: 1, ex: "If m₁v₁ = m₂v₂, momenta are equal even when mass and speed differ." },
+    { q: "Newton's First Law says motion continues unless:", opts: ["Temperature changes", "An unbalanced external force acts", "Mass becomes large", "Velocity is written down"], a: 1, ex: "An unbalanced force is needed to change the state of motion (inertia)." },
+    { q: "If two objects have the same momentum and hit identical obstacles, the impacts are:", opts: ["Always zero", "Usually similar", "Impossible", "Only for gases"], a: 1, ex: "Equal momentum means similar impulse delivery to the same obstacle." },
+    { q: "You increase mass but keep velocity the same. Momentum:", opts: ["Decreases", "Stays the same", "Increases", "Becomes negative"], a: 2, ex: "p = mv — larger mass at the same speed means larger momentum and a stronger impact." }
   ]
 },
 ur: {
-  topic: "نیوٹن کا پہلا قانونِ حرکت",
+  topic: "نیوٹن کا پہلا قانون — مومینٹم موازنہ",
   intro_topic: "نیوٹن کا پہلا قانونِ حرکت",
   intro_loading: "تعاملی انجن لوڈ ہو رہا ہے...",
   tab_sim: "سمولیشن",
   tab_quiz: "کوئز",
-  ctrl_title: "تجرباتی کنٹرولز",
-  btn_start: "شروع",
-  btn_pause: "وقفہ",
+  ctrl_title: "کمیت اور سمتی رفتار",
+  btn_launch: "دونوں چلائیں",
   btn_reset: "ری سیٹ",
-  btn_apply: "قوت لگائیں",
-  btn_remove: "قوت ہٹائیں",
-  btn_reverse: "الٹ سمت",
-  btn_auto: "خودکار تجربہ",
-  lbl_force: "لگائی گئی قوت",
+  btn_same_p: "ایک جیسا مومینٹم (p)",
+  hint_same_p: "آن: کمیت بدلنے پر سمتی رفتار خود ایڈجسٹ ہوتی ہے تاکہ دونوں کا مومینٹم برابر رہے۔ آف: کمیت آزادانہ بدلیں اور اثر کا فرق دیکھیں۔",
+  obj_a: "جسم A — بھاری اور سست",
+  obj_b: "جسم B — ہلکا اور تیز",
   lbl_mass: "کمیت",
-  lbl_friction: "رگڑ",
-  btn_left: "بائیں",
-  btn_right: "دائیں",
-  btn_smooth: "ہموار",
-  btn_rough: "کھردری",
-  btn_space: "خلائی موڈ",
-  lbl_vectors: "بصری اوزار",
-  btn_forces: "قوتیں",
-  btn_vel: "رفتار",
-  btn_acc: "اسراع",
-  btn_graph: "گراف",
-  dash_title: "زندہ طبیعیاتی ڈیٹا",
-  d_mass: "کمیت",
-  d_applied: "لگائی گئی قوت",
-  d_fric: "رگڑ",
-  d_net: "محصل قوت",
-  d_vel: "سمتی رفتار",
-  d_acc: "اسراع",
-  d_dir: "سمت",
-  exp_title: "رہنمائی شدہ تجربات",
-  exp1: "جسم سکون میں",
-  exp2: "جسم کو دھکیلیں",
-  exp3: "قوت ہٹا دیں",
-  exp4: "کھردری سطح",
-  exp5: "خلا میں حرکت",
-  exp_break: "کیا قانون توڑ سکتے ہیں؟",
-  tip_title: "دریافت کا اشارہ",
-  tip_default: "متغیر تبدیل کریں، شروع دبائیں، اور دیکھیں: کیا برقرار رہتا ہے اور کیا بدلتا ہے؟",
-  predict_title: "پیش گوئی موڈ",
-  predict_q: "جب لگائی گئی قوت ہٹا دی جائے (رگڑ ≈ 0) تو کیا ہوگا؟",
-  pred_opt1: "جسم فوراً رک جائے گا",
-  pred_opt2: "جسم یکساں سمتی رفتار سے چلتا رہے گا",
-  pred_opt3: "جسم پیچھے کی طرف حرکت کرے گا",
-  btn_test: "آزمائیں",
-  btn_check: "پیش گوئی جانچیں",
-  pred_correct: "شاندار! صفر محصل قوت کا مطلب حرکت کی تبدیلی نہ ہونا ہے — لازمی طور پر حرکت کا نہ ہونا نہیں۔",
-  pred_wrong: "درست نہیں۔ صفر محصل قوت پر سمتی رفتار مستقل رہتی ہے (بشمول صفر)۔",
-  msg_rest: "جسم سکون میں رہتا ہے — کوئی غیر متوازن بیرونی قوت عمل نہیں کر رہی۔",
-  msg_uniform: "صفر محصل قوت کا مطلب حرکت نہ ہونا نہیں۔ صفر محصل قوت کا مطلب حرکت میں تبدیلی نہ ہونا ہے۔",
-  msg_accel: "غیر متوازن قوت حرکت کی حالت بدل دیتی ہے۔",
-  msg_friction: "رگڑ ایک بیرونی غیر متوازن قوت ہے جو حرکت بدلتی ہے۔",
-  msg_space: "خلا میں تقریباً بغیر بیرونی قوت کے حرکت جاری رہتی ہے۔",
-  msg_balanced: "متوازن قوتیں حرکت کی حالت نہیں بدلتیں۔",
-  msg_break_fail: "بغیر محصل بیرونی قوت کے حرکت نہیں بدل سکتے۔ نیوٹن کا پہلا قانون برقرار ہے!",
-  msg_break: "چیلنج: بغیر غیر متوازن قوت کے سمتی رفتار بدلنے کی کوشش کریں…",
-  dir_left: "← بائیں",
-  dir_right: "دائیں →",
-  dir_none: "—",
-  law_rest: "حالت: سکون (جمود)",
-  law_uniform: "حالت: یکساں حرکت (جمود)",
-  law_changing: "حالت: حرکت بدل رہی ہے",
-  quiz_title: "تصوراتی کوئز — نیوٹن کا پہلا قانون",
+  lbl_vel: "سمتی رفتار",
+  lbl_formula: "p = m × v →",
+  msg_same: "ایک جیسا مومینٹم → دونوں رکاوٹیں تقریباً یکساں دھکیل جاتی ہیں۔ حرکت کا جمود p = mv پر منحصر ہے۔",
+  msg_diff: "مومینٹم مختلف ہیں → زیادہ p والی رکاوٹ زیادہ دور جاتی ہے۔ کمیت بدلیں اور فرق دیکھیں۔",
+  impact_same: "دونوں نے ملتا جلتا مومینٹم سے ٹکرایا۔ رکاوٹیں ملتی جلتی دوری تک ہلیں۔",
+  impact_a: "جسم A کا مومینٹم زیادہ ہے — اس کی رکاوٹ زیادہ دور گئی۔",
+  impact_b: "جسم B کا مومینٹم زیادہ ہے — اس کی رکاوٹ زیادہ دور گئی۔",
+  canvas_obstacle: "رکاوٹ",
+  canvas_track_a: "لین A",
+  canvas_track_b: "لین B",
+  quiz_title: "تصوراتی کوئز — جمود اور مومینٹم",
   quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
   correct_fb: "درست جواب!",
   wrong_fb: "غلط جواب!",
@@ -661,64 +484,46 @@ ur: {
   see_result: "نتیجہ دیکھیں",
   final_score: "حتمی اسکور",
   restart: "کوئز دوبارہ شروع کریں",
-  score_msg_great: "شاندار! آپ نے جمود کا تصور تجربے سے دریافت کر لیا۔",
-  score_msg_good: "اچھی کوشش! قوت ہٹانے والے تجربے کو ایک بار پھر دیکھیں۔",
-  score_msg_low: "تجربہ جاری رکھیں — مشاہدہ ہی فہم پیدا کرتا ہے!",
+  score_msg_great: "شاندار! آپ نے جمود کو مومینٹم سے جوڑ لیا۔",
+  score_msg_good: "اچھی کوشش! دوبارہ چلائیں اور اثرات کا موازنہ کریں۔",
+  score_msg_low: "کمیت اور سمتی رفتار کا موازنہ جاری رکھیں — p = mv کا مشاہدہ کریں۔",
   quiz: [
-    { q: "کوئی جسم اپنی سکون یا یکساں حرکت کی حالت میں رہتا ہے جب تک اس پر عمل نہ کرے:", opts: ["صرف ثقالت", "غیر متوازن بیرونی قوت", "اس کی اپنی سمتی رفتار", "درجہ حرارت"], a: 1, ex: "نیوٹن کا پہلا قانون: صرف غیر متوازن بیرونی قوت حرکت کی حالت بدلتی ہے۔" },
-    { q: "ایک ہاکی پَک تقریباً بغیر رگڑ والی برف پر یکساں سمتی رفتار سے چل رہا ہے۔ محصل قوت ہے:", opts: ["اس کے وزن کے برابر", "بہت زیادہ", "تقریباً صفر", "ہمیشہ بڑھتی ہوئی"], a: 2, ex: "یکساں سمتی رفتار کا مطلب اسراع صفر ہے، لہٰذا محصل قوت تقریباً صفر ہے۔" },
-    { q: "آپ ایک ڈبے کو دھکیلتے ہیں پھر ہموار سطح پر قوت ہٹا دیتے ہیں۔ ڈبہ:", opts: ["فوراً رک جاتا ہے", "تقریباً یکساں سمتی رفتار سے چلتا رہتا ہے", "سمت الٹ لیتا ہے", "اوپر اڑ جاتا ہے"], a: 1, ex: "صفر محصل قوت پر حرکت نہیں بدلتی — سمتی رفتار تقریباً مستقل رہتی ہے۔" },
-    { q: "کھردری فرش پر متحرک جسم آخر کار کیوں رک جاتا ہے؟", opts: ["متحرک اجسام قدرتی طور پر رک جاتے ہیں", "رگڑ غیر متوازن قوت کے طور پر عمل کرتی ہے", "سمتی رفتار خود ختم ہو جاتی ہے", "کمیت صفر ہو جاتی ہے"], a: 1, ex: "رگڑ ایک بیرونی غیر متوازن قوت ہے جو سمتی رفتار گھٹاتی ہے یہاں تک کہ جسم رک جائے۔" },
-    { q: "گہرے خلا میں انجن بند ہونے کے بعد خلائی جہاز:", opts: ["فوراً رک جاتا ہے", "قدرتی طور پر سست ہو جاتا ہے", "سیدھی لکیر میں یکساں رفتار سے چلتا رہتا ہے", "فوراً زمین کی طرف گرتا ہے"], a: 2, ex: "بغیر نمایاں غیر متوازن قوت کے جمود خلائی جہاز کو یکساں سیدھی حرکت پر رکھتا ہے۔" }
+    { q: "کسی جسم کا مومینٹم کیا ہوتا ہے؟", opts: ["m ÷ v", "m × v", "m + v", "v ÷ m"], a: 1, ex: "مومینٹم p = m × v۔ ایک جیسا p بھاری-سست یا ہلکے-تیز جسم سے آ سکتا ہے۔" },
+    { q: "ایک بھاری سست جسم اور ایک ہلکا تیز جسم رکھ سکتے ہیں:", opts: ["صرف مختلف مومینٹم", "ایک جیسا مومینٹم", "صفر کمیت", "کبھی سمتی رفتار نہیں"], a: 1, ex: "اگر m₁v₁ = m₂v₂ ہو تو کمیت اور رفتار مختلف ہونے کے باوجود مومینٹم برابر ہو سکتا ہے۔" },
+    { q: "نیوٹن کا پہلا قانون کہتا ہے کہ حرکت جاری رہتی ہے جب تک:", opts: ["درجہ حرارت بدلے", "غیر متوازن بیرونی قوت عمل کرے", "کمیت بڑی ہو جائے", "رفتار لکھ لی جائے"], a: 1, ex: "حرکت کی حالت بدلنے کے لیے غیر متوازن قوت درکار ہوتی ہے (جمود)۔" },
+    { q: "اگر دو اجسام کا مومینٹم برابر ہو اور وہ ایک جیسی رکاوٹوں سے ٹکرائیں تو اثرات:", opts: ["ہمیشہ صفر", "عموماً ملتے جلتے", "ناممکن", "صرف گیسوں کے لیے"], a: 1, ex: "برابر مومینٹم کا مطلب ایک جیسی رکاوٹ پر ملتا جلتا امپلس ہے۔" },
+    { q: "آپ کمیت بڑھائیں لیکن سمتی رفتار وہی رکھیں۔ مومینٹم:", opts: ["گھٹے گا", "وہی رہے گا", "بڑھے گا", "منفی ہو جائے گا"], a: 2, ex: "p = mv — یکساں رفتار پر زیادہ کمیت کا مطلب زیادہ مومینٹم اور مضبوط اثر ہے۔" }
   ]
 }
 };
 
-/* ============================================================
-   GLOBAL STATE
-============================================================ */
 let cur = localStorage.getItem('iqra_n1_lang') || 'en';
 const T = k => (LANG[cur] && LANG[cur][k] !== undefined) ? LANG[cur][k] : k;
 
+/* ============================================================
+   STATE — two objects, same/different momentum
+============================================================ */
 const state = {
+  sameP: true,
+  targetP: 20,
+  A: { m: 4, v0: 5, x: -12, v: 0, r: 0.7, hit: false, color: '#22d3ee' },
+  B: { m: 2, v0: 10, x: -12, v: 0, r: 0.5, hit: false, color: '#fbbf24' },
+  obsA: { x0: 8, x: 8, v: 0 },
+  obsB: { x0: 8, x: 8, v: 0 },
   running: false,
-  mass: 2,
-  forceMag: 10,
-  forceDir: 1,
-  forceOn: false,
-  frictionPct: 0,
-  surface: 'smooth',
-  spaceMode: false,
-  showForces: true,
-  showVel: true,
-  showAcc: false,
-  showGraph: false,
-  x: 0,
-  v: 0,
-  a: 0,
-  appliedF: 0,
-  frictionF: 0,
-  netF: 0,
   zoom: 1,
   panX: 0,
   panY: 0,
-  trail: [],
-  graphHist: [],
-  predictChoice: null,
-  predictTested: false,
-  autoTimer: null,
-  messageKey: null
+  flash: 0,
+  resultKey: null
 };
 
-const WORLD = { trackHalf: 18, puckR: 0.55, g: 9.8, muMax: 0.55 };
-
-let canvas, ctx, W = 800, H = 500, baseScale = 28;
-let gCanvas, gctx;
+let canvas, ctx, W = 900, H = 520, baseScale = 26;
 let lastTs = 0;
 let dragging = null, lastP = null, pinch = null;
 
 /* ============================================================
-   ANNOTATION (EXACT LOGIC)
+   ANNOTATION (exact logic)
 ============================================================ */
 let fCanvas;
 let isAnnoActive = false;
@@ -731,13 +536,11 @@ function initAnnotationCanvas(w, h) {
   });
   fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
   fCanvas.freeDrawingBrush.width = 4;
-
   fCanvas.on('mouse:down', function(options) {
     if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
       fCanvas.remove(options.target);
     }
   });
-
   const fabricContainer = document.querySelector('.canvas-container');
   if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
 }
@@ -747,7 +550,6 @@ function toggleAnnotationMode() {
   const btn = document.getElementById('btn-anno-toggle');
   const toolbar = document.getElementById('anno-toolbar');
   const fabricContainer = document.querySelector('.canvas-container');
-
   if (isAnnoActive) {
     btn.classList.replace('text-slate-400', 'text-cyan-400');
     toolbar.classList.remove('max-w-0', 'opacity-0');
@@ -762,11 +564,9 @@ function toggleAnnotationMode() {
     if (fCanvas) fCanvas.isDrawingMode = false;
   }
 }
-
 function setAnnoMode(mode) {
   document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
   document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
-
   if (mode === 'pen') {
     document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
     if(fCanvas) fCanvas.isDrawingMode = true;
@@ -775,22 +575,19 @@ function setAnnoMode(mode) {
     if(fCanvas) fCanvas.isDrawingMode = false;
   }
 }
-
 function changeAnnoColor(color) {
   if(fCanvas) fCanvas.freeDrawingBrush.color = color;
   setAnnoMode('pen');
 }
-
 function clearAnnotations() {
   if(fCanvas) fCanvas.clear();
 }
 
 /* ============================================================
-   LANGUAGE / TABS / FULLSCREEN
+   LANGUAGE / TABS / FS
 ============================================================ */
 function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    if (el.id === 'concept-tip' && state.messageKey) return;
     const v = T(el.dataset.i18n);
     if (typeof v === 'string') el.textContent = v;
   });
@@ -798,10 +595,7 @@ function applyI18n() {
   const introLoading = document.getElementById('intro-loading');
   if (introTopic) introTopic.textContent = T('intro_topic');
   if (introLoading) introLoading.textContent = T('intro_loading');
-  renderPredictOptions();
   updateReadouts();
-  updateLawStatus();
-  if (state.messageKey) showDiscovery(state.messageKey);
   renderQuiz();
 }
 
@@ -811,6 +605,7 @@ function changeLanguage(l) {
   localStorage.setItem('iqra_n1_lang', l);
   document.documentElement.setAttribute('dir', l === 'ur' ? 'rtl' : 'ltr');
   document.documentElement.setAttribute('lang', l);
+  document.body.classList.toggle('urdu-ready', l === 'ur');
   document.getElementById('lang-select').value = l;
   applyI18n();
 }
@@ -835,338 +630,190 @@ function switchTab(t) {
   document.getElementById('view-quiz').classList.toggle('hidden', t !== 'quiz');
   document.getElementById('tab-sim').classList.toggle('active', t === 'sim');
   document.getElementById('tab-quiz').classList.toggle('active', t === 'quiz');
-  if (t === 'sim') { fitCanvas(); }
+  if (t === 'sim') fitCanvas();
 }
 
 /* ============================================================
    CONTROLS
 ============================================================ */
-function onForceSlider(v) {
-  state.forceMag = +v;
-  if (state.forceOn) state.appliedF = state.forceMag * state.forceDir;
-  updateReadouts();
-}
-function onMassSlider(v) {
-  state.mass = +v;
-  updateReadouts();
-}
-function onFrictionSlider(v) {
-  state.frictionPct = +v;
-  if (state.frictionPct > 0 && state.surface === 'smooth' && !state.spaceMode) setSurface('rough', true);
-  updateReadouts();
-}
-function setForceDir(d) {
-  state.forceDir = d;
-  if (state.forceOn) state.appliedF = state.forceMag * state.forceDir;
-  document.getElementById('btn-dir-left').classList.toggle('active', d < 0);
-  document.getElementById('btn-dir-right').classList.toggle('active', d > 0);
-  updateReadouts();
-}
-function applyForce() {
-  state.forceOn = true;
-  state.appliedF = state.forceMag * state.forceDir;
-  document.getElementById('btn-apply').classList.add('on-green');
-  document.getElementById('btn-remove').classList.remove('on-green');
-  if (!state.running) startSim();
-  updateReadouts();
-}
-function removeForce() {
-  state.forceOn = false;
-  state.appliedF = 0;
-  document.getElementById('btn-apply').classList.remove('on-green');
-  document.getElementById('btn-remove').classList.add('on-green');
-  setTimeout(() => document.getElementById('btn-remove').classList.remove('on-green'), 600);
-  if (Math.abs(state.frictionF) < 0.05 && Math.abs(state.v) > 0.05) {
-    showDiscovery('msg_uniform');
-  }
-  updateReadouts();
-}
-function reverseForce() {
-  setForceDir(-state.forceDir);
-  if (state.forceOn) applyForce();
-}
-function setSurface(s, fromSlider) {
-  state.surface = s;
-  state.spaceMode = false;
-  document.getElementById('btn-space').classList.remove('active');
-  document.getElementById('btn-smooth').classList.toggle('active', s === 'smooth');
-  document.getElementById('btn-rough').classList.toggle('active', s === 'rough');
-  if (!fromSlider) {
-    if (s === 'smooth') {
-      state.frictionPct = 0;
-      document.getElementById('slider-friction').value = 0;
-    } else if (state.frictionPct === 0) {
-      state.frictionPct = 40;
-      document.getElementById('slider-friction').value = 40;
-    }
-  }
-  updateReadouts();
-}
-function toggleSpaceMode() {
-  state.spaceMode = !state.spaceMode;
-  document.getElementById('btn-space').classList.toggle('active', state.spaceMode);
-  if (state.spaceMode) {
-    state.frictionPct = 0;
-    document.getElementById('slider-friction').value = 0;
-    document.getElementById('btn-smooth').classList.remove('active');
-    document.getElementById('btn-rough').classList.remove('active');
-    showDiscovery('msg_space');
+function pA() { return state.A.m * state.A.v0; }
+function pB() { return state.B.m * state.B.v0; }
+
+function clampVel(v) { return Math.min(20, Math.max(1, Math.round(v*2)/2)); }
+
+function syncSameP(from) {
+  if (!state.sameP) return;
+  state.targetP = from === 'A' ? pA() : pB();
+  if (from === 'A') {
+    state.B.v0 = clampVel(state.targetP / state.B.m);
+    document.getElementById('slider-vb').value = state.B.v0;
+  } else if (from === 'B') {
+    state.A.v0 = clampVel(state.targetP / state.A.m);
+    document.getElementById('slider-va').value = state.A.v0;
   } else {
-    setSurface('smooth');
+    state.A.v0 = clampVel(state.targetP / state.A.m);
+    state.B.v0 = clampVel(state.targetP / state.B.m);
+    document.getElementById('slider-va').value = state.A.v0;
+    document.getElementById('slider-vb').value = state.B.v0;
+  }
+}
+
+function onMassA(v) {
+  state.A.m = +v;
+  state.A.r = 0.35 + state.A.m * 0.08;
+  if (state.sameP) syncSameP('A');
+  updateReadouts();
+}
+function onMassB(v) {
+  state.B.m = +v;
+  state.B.r = 0.35 + state.B.m * 0.08;
+  if (state.sameP) syncSameP('B');
+  updateReadouts();
+}
+function onVelA(v) {
+  state.A.v0 = +v;
+  if (state.sameP) {
+    state.targetP = pA();
+    state.B.v0 = clampVel(state.targetP / state.B.m);
+    document.getElementById('slider-vb').value = state.B.v0;
   }
   updateReadouts();
 }
-function toggleVec(key) {
-  state[key] = !state[key];
-  const map = { showForces:'btn-show-f', showVel:'btn-show-v', showAcc:'btn-show-a', showGraph:'btn-show-g' };
-  document.getElementById(map[key]).classList.toggle('active', state[key]);
-  document.getElementById('graph-panel').classList.toggle('hidden', !state.showGraph);
-}
-
-function startSim() {
-  state.running = true;
-  document.getElementById('btn-start').classList.add('on-green');
-  document.getElementById('btn-pause').classList.remove('on-amber');
-}
-function pauseSim() {
-  state.running = false;
-  document.getElementById('btn-start').classList.remove('on-green');
-  document.getElementById('btn-pause').classList.add('on-amber');
-}
-function resetSim() {
-  if (state.autoTimer) { clearTimeout(state.autoTimer); state.autoTimer = null; }
-  state.running = false;
-  state.x = 0; state.v = 0; state.a = 0;
-  state.forceOn = false; state.appliedF = 0;
-  state.frictionF = 0; state.netF = 0;
-  state.trail = []; state.graphHist = [];
-  state.messageKey = null;
-  document.getElementById('btn-start').classList.remove('on-green');
-  document.getElementById('btn-pause').classList.remove('on-amber');
-  document.getElementById('btn-apply').classList.remove('on-green');
-  document.getElementById('discovery-banner').classList.add('hidden');
-  updateReadouts();
-}
-
-function showDiscovery(key) {
-  state.messageKey = key;
-  const banner = document.getElementById('discovery-banner');
-  const text = document.getElementById('discovery-text');
-  text.textContent = T(key);
-  banner.classList.remove('hidden');
-  const tip = document.getElementById('concept-tip');
-  tip.textContent = T(key);
-}
-
-/* ============================================================
-   EXPERIMENTS
-============================================================ */
-function loadExperiment(n) {
-  resetSim();
-  state.spaceMode = false;
-  document.getElementById('btn-space').classList.remove('active');
-
-  if (n === 1) {
-    state.mass = 2; state.forceMag = 0; state.forceOn = false; state.appliedF = 0;
-    setSurface('smooth'); setForceDir(1);
-    document.getElementById('slider-force').value = 0;
-    document.getElementById('slider-mass').value = 2;
-    showDiscovery('msg_rest');
-    startSim();
-  } else if (n === 2) {
-    state.mass = 2; state.forceMag = 10;
-    setSurface('smooth'); setForceDir(1);
-    document.getElementById('slider-force').value = 10;
-    document.getElementById('slider-mass').value = 2;
-    applyForce();
-    showDiscovery('msg_accel');
-  } else if (n === 3) {
-    state.mass = 2; state.forceMag = 15; state.v = 0;
-    setSurface('smooth'); setForceDir(1);
-    document.getElementById('slider-force').value = 15;
-    document.getElementById('slider-mass').value = 2;
-    applyForce();
-    state.autoTimer = setTimeout(() => {
-      removeForce();
-      showDiscovery('msg_uniform');
-    }, 2200);
-  } else if (n === 4) {
-    state.mass = 2; state.forceMag = 20; state.v = 8;
-    setSurface('rough');
-    state.frictionPct = 55;
-    document.getElementById('slider-friction').value = 55;
-    document.getElementById('slider-force').value = 20;
-    document.getElementById('slider-mass').value = 2;
-    removeForce();
-    startSim();
-    showDiscovery('msg_friction');
-  } else if (n === 5) {
-    toggleSpaceMode();
-    state.mass = 3; state.forceMag = 12; state.v = 0;
-    document.getElementById('slider-force').value = 12;
-    document.getElementById('slider-mass').value = 3;
-    applyForce();
-    state.autoTimer = setTimeout(() => {
-      removeForce();
-      showDiscovery('msg_space');
-    }, 1800);
+function onVelB(v) {
+  state.B.v0 = +v;
+  if (state.sameP) {
+    state.targetP = pB();
+    state.A.v0 = clampVel(state.targetP / state.A.m);
+    document.getElementById('slider-va').value = state.A.v0;
   }
   updateReadouts();
 }
 
-function runAutoExperiment() {
-  loadExperiment(3);
-}
-
-function runBreakChallenge() {
-  resetSim();
-  setSurface('smooth');
-  state.forceMag = 0;
-  document.getElementById('slider-force').value = 0;
-  showDiscovery('msg_break');
-  startSim();
-  state.autoTimer = setTimeout(() => showDiscovery('msg_break_fail'), 5000);
-}
-
-/* ============================================================
-   PREDICT MODE
-============================================================ */
-function renderPredictOptions() {
-  const box = document.getElementById('predict-options');
-  const opts = [T('pred_opt1'), T('pred_opt2'), T('pred_opt3')];
-  box.innerHTML = opts.map((o,i) => `
-    <button class="predict-opt ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 text-start ${state.predictChoice===i?'selected':''}" onclick="selectPredict(${i})">
-      <span class="num text-cyan-400 me-1">${String.fromCharCode(65+i)}.</span>${o}
-    </button>`).join('');
-  document.getElementById('btn-test').disabled = state.predictChoice === null;
-  const fb = document.getElementById('predict-feedback');
-  fb.classList.add('hidden');
-}
-
-function selectPredict(i) {
-  state.predictChoice = i;
-  state.predictTested = false;
-  document.getElementById('btn-check').disabled = true;
-  renderPredictOptions();
-  document.getElementById('btn-test').disabled = false;
-}
-
-function runPredictTest() {
-  resetSim();
-  setSurface('smooth');
-  state.mass = 2; state.forceMag = 12;
-  document.getElementById('slider-force').value = 12;
-  document.getElementById('slider-mass').value = 2;
-  setForceDir(1);
-  applyForce();
-  state.predictTested = false;
-  document.getElementById('btn-check').disabled = true;
-  state.autoTimer = setTimeout(() => {
-    removeForce();
-    state.predictTested = true;
-    document.getElementById('btn-check').disabled = false;
-    showDiscovery('msg_uniform');
-  }, 2000);
-}
-
-function checkPrediction() {
-  const fb = document.getElementById('predict-feedback');
-  const ok = state.predictChoice === 1;
-  fb.classList.remove('hidden');
-  fb.className = 'mt-2 text-sm font-bold ' + (ok ? 'text-green-400' : 'text-red-400');
-  fb.textContent = ok ? T('pred_correct') : T('pred_wrong');
-}
-
-/* ============================================================
-   PHYSICS
-============================================================ */
-function computeForces() {
-  const applied = state.forceOn ? state.forceMag * state.forceDir : 0;
-  let fric = 0;
-  const mu = state.spaceMode ? 0 : (state.frictionPct / 100) * WORLD.muMax;
-  const maxStatic = mu * state.mass * WORLD.g;
-
-  if (Math.abs(state.v) > 0.02) {
-    fric = -Math.sign(state.v) * maxStatic;
-  } else {
-    if (Math.abs(applied) <= maxStatic + 1e-6) {
-      fric = -applied;
-      state.v = 0;
-    } else {
-      fric = -Math.sign(applied || 1) * maxStatic;
-    }
+function toggleSameMomentum() {
+  state.sameP = !state.sameP;
+  document.getElementById('btn-same-p').classList.toggle('active', state.sameP);
+  if (state.sameP) {
+    state.targetP = pA();
+    syncSameP('A');
   }
-
-  state.appliedF = applied;
-  state.frictionF = fric;
-  state.netF = applied + fric;
-  state.a = state.netF / state.mass;
-}
-
-function stepPhysics(dt) {
-  if (!state.running) return;
-  computeForces();
-  state.v += state.a * dt;
-  if (Math.abs(state.v) < 0.015 && Math.abs(state.netF) < 0.05) state.v = 0;
-  state.x += state.v * dt;
-
-  if (state.x > WORLD.trackHalf - 1) state.x = -WORLD.trackHalf + 1;
-  if (state.x < -WORLD.trackHalf + 1) state.x = WORLD.trackHalf - 1;
-
-  state.trail.push({ x: state.x, t: performance.now() });
-  if (state.trail.length > 80) state.trail.shift();
-
-  state.graphHist.push({ v: state.v, a: state.a, f: state.netF });
-  if (state.graphHist.length > 120) state.graphHist.shift();
-
-  updateLawStatus();
-}
-
-function updateLawStatus() {
-  const el = document.getElementById('law-status');
-  if (!el) return;
-  if (Math.abs(state.netF) < 0.08) {
-    if (Math.abs(state.v) < 0.05) {
-      el.textContent = T('law_rest');
-      el.className = 'glass-panel rounded-xl px-3 py-3 text-xs leading-relaxed text-center text-slate-300';
-    } else {
-      el.textContent = T('law_uniform');
-      el.className = 'glass-panel rounded-xl px-3 py-3 text-xs leading-relaxed text-center text-cyan-200 glow-cyan';
-    }
-  } else {
-    el.textContent = T('law_changing');
-    el.className = 'glass-panel rounded-xl px-3 py-3 text-xs leading-relaxed text-center text-amber-200';
-  }
+  updateReadouts();
 }
 
 function updateReadouts() {
-  document.getElementById('val-force').textContent = state.forceMag.toFixed(0) + ' N';
-  document.getElementById('val-mass').textContent = state.mass.toFixed(1) + ' kg';
-  document.getElementById('val-friction').textContent = state.frictionPct.toFixed(0) + '%';
-  document.getElementById('d-mass').textContent = state.mass.toFixed(1) + ' kg';
-  document.getElementById('d-applied').textContent = state.appliedF.toFixed(1) + ' N';
-  document.getElementById('d-fric').textContent = state.frictionF.toFixed(1) + ' N';
-  document.getElementById('d-net').textContent = state.netF.toFixed(1) + ' N';
-  document.getElementById('d-vel').textContent = state.v.toFixed(2) + ' m/s';
-  document.getElementById('d-acc').textContent = state.a.toFixed(2) + ' m/s²';
-  if (Math.abs(state.v) < 0.05) document.getElementById('d-dir').textContent = T('dir_none');
-  else document.getElementById('d-dir').textContent = state.v > 0 ? T('dir_right') : T('dir_left');
-  if (state.messageKey) {
-    document.getElementById('discovery-text').textContent = T(state.messageKey);
+  const pa = pA(), pb = pB();
+  document.getElementById('val-ma').textContent = state.A.m.toFixed(1) + ' kg';
+  document.getElementById('val-mb').textContent = state.B.m.toFixed(1) + ' kg';
+  document.getElementById('val-va').textContent = state.A.v0.toFixed(1) + ' m/s';
+  document.getElementById('val-vb').textContent = state.B.v0.toFixed(1) + ' m/s';
+  document.getElementById('pa-val').textContent = 'p = ' + pa.toFixed(1);
+  document.getElementById('pb-val').textContent = 'p = ' + pb.toFixed(1);
+  document.getElementById('eq-a').textContent = `p = ${state.A.m.toFixed(1)} × ${state.A.v0.toFixed(1)} = ${pa.toFixed(1)}`;
+  document.getElementById('eq-b').textContent = `p = ${state.B.m.toFixed(1)} × ${state.B.v0.toFixed(1)} = ${pb.toFixed(1)}`;
+  const maxP = Math.max(40, pa, pb);
+  document.getElementById('bar-pa').style.width = Math.min(100, (pa/maxP)*100) + '%';
+  document.getElementById('bar-pb').style.width = Math.min(100, (pb/maxP)*100) + '%';
+
+  const msg = document.getElementById('compare-msg');
+  const diff = Math.abs(pa - pb);
+  if (diff < 0.6) {
+    msg.textContent = T('msg_same');
+    msg.className = 'glass-panel rounded-2xl px-4 py-3 text-sm text-center text-cyan-200 leading-relaxed glow-cyan';
+  } else {
+    msg.textContent = T('msg_diff');
+    msg.className = 'glass-panel rounded-2xl px-4 py-3 text-sm text-center text-amber-200 leading-relaxed';
+  }
+
+  if (state.resultKey) {
+    document.getElementById('impact-text').textContent = T(state.resultKey);
+  }
+}
+
+function launchBoth() {
+  resetPositions(false);
+  state.A.v = state.A.v0;
+  state.B.v = state.B.v0;
+  state.running = true;
+  state.resultKey = null;
+  document.getElementById('impact-banner').classList.add('hidden');
+  document.getElementById('btn-launch').classList.add('on-green');
+}
+
+function resetPositions(full) {
+  state.A.x = -12; state.B.x = -12;
+  state.A.v = 0; state.B.v = 0;
+  state.A.hit = false; state.B.hit = false;
+  state.obsA.x = state.obsA.x0; state.obsA.v = 0;
+  state.obsB.x = state.obsB.x0; state.obsB.v = 0;
+  state.flash = 0;
+  if (full) {
+    state.running = false;
+    state.resultKey = null;
+    document.getElementById('btn-launch').classList.remove('on-green');
+    document.getElementById('impact-banner').classList.add('hidden');
+  }
+}
+
+function resetSim() {
+  resetPositions(true);
+  updateReadouts();
+}
+
+/* ============================================================
+   PHYSICS — collide with identical springy obstacles
+============================================================ */
+function stepPhysics(dt) {
+  if (!state.running) return;
+
+  ['A','B'].forEach(key => {
+    const obj = state[key];
+    const obs = key === 'A' ? state.obsA : state.obsB;
+    if (!obj.hit) {
+      obj.x += obj.v * dt;
+      const contact = obs.x - obj.r - 0.55;
+      if (obj.x >= contact) {
+        obj.x = contact;
+        // momentum transfer to obstacle (visual): impulse ~ p
+        const p = obj.m * obj.v;
+        obs.v = p / 6; // identical obstacles (mass ~6 visual units)
+        obj.v *= 0.15;
+        obj.hit = true;
+        state.flash = 1;
+      }
+    } else {
+      obj.x += obj.v * dt;
+      obj.v *= Math.pow(0.15, dt);
+    }
+    obs.x += obs.v * dt;
+    obs.v *= Math.pow(0.35, dt); // damping so displacement settles
+    if (obs.x < obs.x0) { obs.x = obs.x0; obs.v = 0; }
+  });
+
+  if (state.flash > 0) state.flash -= dt * 1.4;
+
+  if (state.A.hit && state.B.hit && Math.abs(state.obsA.v) < 0.05 && Math.abs(state.obsB.v) < 0.05) {
+    const da = state.obsA.x - state.obsA.x0;
+    const db = state.obsB.x - state.obsB.x0;
+    if (Math.abs(da - db) < 0.35) state.resultKey = 'impact_same';
+    else if (da > db) state.resultKey = 'impact_a';
+    else state.resultKey = 'impact_b';
+    document.getElementById('impact-text').textContent = T(state.resultKey);
+    document.getElementById('impact-banner').classList.remove('hidden');
+    state.running = false;
+    document.getElementById('btn-launch').classList.remove('on-green');
   }
 }
 
 /* ============================================================
-   ZOOM / PAN
+   DRAW / ZOOM
 ============================================================ */
 function S() { return baseScale * state.zoom; }
 function X(wx) { return W/2 + wx * S() + state.panX; }
-function Y(wy) { return H * 0.58 - wy * S() + state.panY; }
+function Y(wy) { return H/2 - wy * S() + state.panY; }
 
 function zoomBy(k, cx, cy) {
   cx = cx ?? W/2; cy = cy ?? H/2;
   const old = state.zoom;
-  state.zoom = Math.min(3.5, Math.max(0.45, state.zoom * k));
+  state.zoom = Math.min(3.2, Math.max(0.5, state.zoom * k));
   const r = state.zoom / old;
   state.panX = (state.panX + W/2 - cx) * r + cx - W/2;
   state.panY = (state.panY + H/2 - cy) * r + cy - H/2;
@@ -1176,204 +823,179 @@ function resetView() {
   fitBestZoom();
 }
 function fitBestZoom() {
-  const need = (WORLD.trackHalf * 2 + 4) * baseScale;
-  const z = Math.min(1.2, Math.max(0.55, (W - 40) / need));
-  state.zoom = z;
+  const need = 28 * baseScale;
+  state.zoom = Math.min(1.15, Math.max(0.55, (W - 40) / need));
   state.panX = 0; state.panY = 0;
 }
 
-/* ============================================================
-   DRAWING
-============================================================ */
-function drawArrow(x1, y1, x2, y2, color, label) {
-  const dx = x2 - x1, dy = y2 - y1;
-  const len = Math.hypot(dx, dy);
-  if (len < 4) return;
-  const ang = Math.atan2(dy, dx);
+function drawArrow(x1,y1,x2,y2,color,label) {
+  const dx = x2-x1, dy = y2-y1, len = Math.hypot(dx,dy);
+  if (len < 3) return;
+  const ang = Math.atan2(dy,dx);
   ctx.save();
   ctx.strokeStyle = color; ctx.fillStyle = color;
   ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(x2, y2);
-  ctx.lineTo(x2 - 12*Math.cos(ang-0.4), y2 - 12*Math.sin(ang-0.4));
-  ctx.lineTo(x2 - 12*Math.cos(ang+0.4), y2 - 12*Math.sin(ang+0.4));
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-11*Math.cos(ang-0.4), y2-11*Math.sin(ang-0.4));
+  ctx.lineTo(x2-11*Math.cos(ang+0.4), y2-11*Math.sin(ang+0.4));
   ctx.closePath(); ctx.fill();
   if (label) {
-    ctx.font = `600 12px Manrope,sans-serif`;
-    ctx.fillText(label, (x1+x2)/2, (y1+y2)/2 - 10);
+    ctx.font = '600 12px Oxanium,monospace';
+    ctx.fillText(label, (x1+x2)/2 - 10, (y1+y2)/2 - 8);
   }
   ctx.restore();
 }
 
-function drawBackground() {
-  if (state.spaceMode) {
-    const g = ctx.createRadialGradient(W/2, H/2, 40, W/2, H/2, Math.max(W,H));
-    g.addColorStop(0, '#0b1228'); g.addColorStop(1, '#020617');
-    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle = '#e2e8f0';
-    for (let i=0;i<70;i++) {
-      const sx = ((i*97 + 13) % W);
-      const sy = ((i*53 + 29) % (H*0.7));
-      ctx.globalAlpha = 0.35 + (i%5)*0.12;
-      ctx.beginPath(); ctx.arc(sx, sy, (i%3)*0.6+0.6, 0, Math.PI*2); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  } else {
-    const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0, '#0b1730'); g.addColorStop(1, '#0f172a');
-    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-  }
-}
+function drawLane(yWorld, obj, obs, labelKey, accent) {
+  const y = Y(yWorld);
+  const xL = X(-14), xR = X(14);
 
-function drawTrack() {
-  const y = Y(0);
-  const x0 = X(-WORLD.trackHalf), x1 = X(WORLD.trackHalf);
+  // track
+  ctx.fillStyle = 'rgba(15,23,42,0.65)';
+  ctx.fillRect(xL, y - 28, xR - xL, 56);
+  ctx.strokeStyle = accent + '66';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(xL, y+18); ctx.lineTo(xR, y+18); ctx.stroke();
 
-  ctx.fillStyle = state.spaceMode ? 'rgba(99,102,241,0.12)' :
-    (state.surface === 'rough' ? 'rgba(120,53,15,0.45)' : 'rgba(56,189,248,0.12)');
-  ctx.fillRect(x0, y - 6, x1-x0, 28);
+  ctx.fillStyle = accent;
+  ctx.font = cur === 'ur'
+    ? `600 14px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
+    : '700 13px Oxanium,sans-serif';
+  ctx.fillText(T(labelKey), xL + 8, y - 34);
 
-  ctx.strokeStyle = state.spaceMode ? 'rgba(165,180,252,0.5)' :
-    (state.surface === 'rough' ? 'rgba(251,146,60,0.7)' : 'rgba(34,211,238,0.55)');
-  ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-
-  if (state.surface === 'rough' && !state.spaceMode) {
-    ctx.strokeStyle = 'rgba(180,83,9,0.55)';
-    ctx.lineWidth = 1.5;
-    for (let i = -WORLD.trackHalf; i < WORLD.trackHalf; i += 0.7) {
-      const px = X(i);
-      ctx.beginPath(); ctx.moveTo(px, y+2); ctx.lineTo(px+4, y+10); ctx.stroke();
-    }
+  // obstacle (spring block)
+  const ox = X(obs.x), ow = 0.9 * S(), oh = 1.5 * S();
+  // spring coils from rest position
+  const restX = X(obs.x0);
+  ctx.strokeStyle = 'rgba(148,163,184,0.55)';
+  ctx.lineWidth = 2;
+  const coils = 6;
+  for (let i=0;i<coils;i++) {
+    const t0 = i/coils, t1 = (i+1)/coils;
+    const xa = restX + (ox - restX - ow/2) * t0;
+    const xb = restX + (ox - restX - ow/2) * t1;
+    const ya = y + ((i%2)?-10:10);
+    const yb = y + (((i+1)%2)?-10:10);
+    ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xb, yb); ctx.stroke();
   }
 
-  // ticks
-  ctx.fillStyle = 'rgba(148,163,184,0.5)';
-  ctx.font = '11px Oxanium,monospace';
-  for (let i = -15; i <= 15; i += 5) {
-    const px = X(i);
-    ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, y+8); ctx.stroke();
-    ctx.fillText(i+' m', px-10, y+22);
-  }
-}
-
-function drawPuck() {
-  const px = X(state.x), py = Y(WORLD.puckR);
-  const r = WORLD.puckR * S();
-
-  // trail
-  if (state.trail.length > 1) {
-    ctx.strokeStyle = 'rgba(0,243,255,0.25)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    state.trail.forEach((p,i) => {
-      const tx = X(p.x), ty = Y(WORLD.puckR*0.2);
-      if (i===0) ctx.moveTo(tx,ty); else ctx.lineTo(tx,ty);
-    });
-    ctx.stroke();
-  }
-
-  // shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.beginPath(); ctx.ellipse(px, Y(0)+4, r*1.1, r*0.28, 0, 0, Math.PI*2); ctx.fill();
-
-  const grad = ctx.createRadialGradient(px-r*0.3, py-r*0.4, r*0.1, px, py, r);
-  grad.addColorStop(0, '#67e8f9');
-  grad.addColorStop(0.55, '#0891b2');
-  grad.addColorStop(1, '#155e75');
-  ctx.fillStyle = grad;
-  ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI*2); ctx.fill();
-  ctx.strokeStyle = 'rgba(165,243,252,0.8)';
-  ctx.lineWidth = 2; ctx.stroke();
-
-  ctx.fillStyle = '#ecfeff';
-  ctx.font = `700 ${Math.max(11, r*0.45)}px Oxanium,monospace`;
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(ox - ow/2, y - oh/2, ow, oh);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.strokeRect(ox - ow/2, y - oh/2, ow, oh);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = cur === 'ur'
+    ? `600 12px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif`
+    : '600 11px Manrope,sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(state.mass.toFixed(1)+' kg', px, py+4);
+  ctx.fillText(T('canvas_obstacle'), ox, y + 4);
   ctx.textAlign = 'start';
 
-  // vectors
-  if (state.showForces) {
-    const scale = 3.2;
-    if (Math.abs(state.appliedF) > 0.05) {
-      const len = Math.min(140, Math.abs(state.appliedF) * scale);
-      const dir = Math.sign(state.appliedF);
-      drawArrow(px, py - r - 8, px + dir*len, py - r - 8, '#fbbf24', Math.abs(state.appliedF).toFixed(0)+' N');
-    }
-    if (Math.abs(state.frictionF) > 0.05) {
-      const len = Math.min(120, Math.abs(state.frictionF) * scale);
-      const dir = Math.sign(state.frictionF);
-      drawArrow(px, py + 4, px + dir*len, py + 4, '#f87171', '|f| '+Math.abs(state.frictionF).toFixed(1)+' N');
-    }
-    // weight & normal (decorative when showForces)
-    drawArrow(px, py, px, py + Math.min(50, state.mass*6), '#94a3b8', 'mg');
-    drawArrow(px, py, px, py - Math.min(50, state.mass*6), '#a5b4fc', 'N');
+  // displacement marker
+  const d = obs.x - obs.x0;
+  if (d > 0.05) {
+    ctx.fillStyle = accent;
+    ctx.font = '700 12px Oxanium,monospace';
+    ctx.fillText('Δx = ' + d.toFixed(2) + ' m', ox + ow/2 + 8, y - oh/2 - 6);
   }
-  if (state.showVel && Math.abs(state.v) > 0.05) {
-    const len = Math.min(120, 18 + Math.abs(state.v) * 4);
-    drawArrow(px, py - r - 28, px + Math.sign(state.v)*len, py - r - 28, '#22d3ee', '|v| '+Math.abs(state.v).toFixed(1)+' m/s');
+
+  // object
+  const px = X(obj.x), py = y - 2;
+  const r = obj.r * S();
+  const g = ctx.createRadialGradient(px - r*0.3, py - r*0.3, r*0.1, px, py, r);
+  g.addColorStop(0, '#fff');
+  g.addColorStop(0.35, accent);
+  g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#fff8'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = `700 ${Math.max(10, r*0.4)}px Oxanium,monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText(obj.m.toFixed(1)+' kg', px, py + 4);
+  ctx.textAlign = 'start';
+
+  // velocity / momentum vector
+  if (Math.abs(obj.v) > 0.05 || (!obj.hit && state.running)) {
+    const spd = Math.abs(obj.v || obj.v0);
+    const len = Math.min(110, 18 + Math.tanh(spd/10)*80);
+    const dir = Math.sign(obj.v || obj.v0) || 1;
+    drawArrow(px + r + 4, py - r - 10, px + r + 4 + dir*len, py - r - 10, accent, '|v| '+spd.toFixed(1));
   }
-  if (state.showAcc && Math.abs(state.a) > 0.05) {
-    const len = Math.min(100, 14 + Math.abs(state.a) * 8);
-    drawArrow(px, py + r + 18, px + Math.sign(state.a)*len, py + r + 18, '#c084fc', '|a| '+Math.abs(state.a).toFixed(1)+' m/s²');
-  }
+
+  // momentum badge
+  ctx.fillStyle = 'rgba(15,23,42,0.75)';
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 1.5;
+  roundRect(px - 34, py + r + 8, 68, 22, 8);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = accent;
+  ctx.font = '700 11px Oxanium,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('p='+(obj.m*obj.v0).toFixed(1), px, py + r + 23);
+  ctx.textAlign = 'start';
 }
 
-function drawGraph() {
-  if (!state.showGraph || !gctx) return;
-  const gw = gCanvas.width, gh = gCanvas.height;
-  gctx.clearRect(0,0,gw,gh);
-  gctx.fillStyle = 'rgba(15,23,42,0.3)';
-  gctx.fillRect(0,0,gw,gh);
-  gctx.strokeStyle = 'rgba(148,163,184,0.3)';
-  gctx.beginPath(); gctx.moveTo(0, gh/2); gctx.lineTo(gw, gh/2); gctx.stroke();
-  if (state.graphHist.length < 2) return;
-  gctx.strokeStyle = '#22d3ee'; gctx.lineWidth = 2;
-  gctx.beginPath();
-  state.graphHist.forEach((p,i) => {
-    const x = (i/(state.graphHist.length-1)) * (gw-8) + 4;
-    const y = gh/2 - p.v * 4;
-    if (i===0) gctx.moveTo(x,y); else gctx.lineTo(x,y);
-  });
-  gctx.stroke();
-  gctx.fillStyle = '#67e8f9';
-  gctx.font = '10px Oxanium,monospace';
-  gctx.fillText('v–t', 8, 14);
+function roundRect(x,y,w,h,r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
 }
 
 function draw() {
-  drawBackground();
-  drawTrack();
-  drawPuck();
-  drawGraph();
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, '#0b1730'); g.addColorStop(1, '#0f172a');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+  // title formula
+  ctx.fillStyle = 'rgba(0,243,255,0.85)';
+  ctx.font = '700 16px Oxanium,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('p = m × v', W/2, 28);
+  ctx.textAlign = 'start';
+
+  drawLane(3.2, state.A, state.obsA, 'canvas_track_a', '#22d3ee');
+  drawLane(-3.2, state.B, state.obsB, 'canvas_track_b', '#fbbf24');
+
+  // center divider
+  ctx.strokeStyle = 'rgba(148,163,184,0.2)';
+  ctx.setLineDash([6,6]);
+  ctx.beginPath(); ctx.moveTo(X(-14), Y(0)); ctx.lineTo(X(14), Y(0)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  if (state.flash > 0) {
+    ctx.fillStyle = `rgba(255,255,255,${state.flash*0.18})`;
+    ctx.fillRect(0,0,W,H);
+  }
 }
 
 function loop(ts) {
-  const dt = Math.min(0.033, (ts - lastTs) / 1000 || 0.016);
+  const dt = Math.min(0.033, (ts - lastTs)/1000 || 0.016);
   lastTs = ts;
   stepPhysics(dt);
-  updateReadouts();
   draw();
   requestAnimationFrame(loop);
 }
 
 /* ============================================================
-   CANVAS FIT & INPUT
+   CANVAS INPUT
 ============================================================ */
 function fitCanvas() {
   const wrap = document.getElementById('sim-viewport');
   if (!wrap) return;
   const rect = wrap.getBoundingClientRect();
   W = Math.max(320, Math.floor(rect.width));
-  H = Math.max(240, Math.floor(rect.height));
+  H = Math.max(260, Math.floor(rect.height));
   canvas.width = W; canvas.height = H;
   canvas.style.width = W+'px'; canvas.style.height = H+'px';
-  if (fCanvas) {
-    fCanvas.setWidth(W);
-    fCanvas.setHeight(H);
-    fCanvas.calcOffset();
-  }
+  if (fCanvas) { fCanvas.setWidth(W); fCanvas.setHeight(H); fCanvas.calcOffset(); }
   fitBestZoom();
 }
 
@@ -1382,7 +1004,6 @@ function ptr(e) {
   const t = e.touches ? e.touches[0] : e;
   return { x: t.clientX - r.left, y: t.clientY - r.top };
 }
-
 function onDown(e) {
   if (isAnnoActive) return;
   e.preventDefault();
@@ -1390,13 +1011,10 @@ function onDown(e) {
     const r = canvas.getBoundingClientRect();
     const a = {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
     const b = {x:e.touches[1].clientX-r.left, y:e.touches[1].clientY-r.top};
-    pinch = { d: Math.hypot(a.x-b.x, a.y-b.y), z: state.zoom };
-    dragging = null;
-    return;
+    pinch = { d: Math.hypot(a.x-b.x,a.y-b.y), z: state.zoom };
+    dragging = null; return;
   }
-  dragging = 'pan';
-  lastP = ptr(e);
-  canvas.style.cursor = 'grabbing';
+  dragging = 'pan'; lastP = ptr(e); canvas.style.cursor = 'grabbing';
 }
 function onMove(e) {
   if (isAnnoActive) return;
@@ -1405,23 +1023,18 @@ function onMove(e) {
     const r = canvas.getBoundingClientRect();
     const a = {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
     const b = {x:e.touches[1].clientX-r.left, y:e.touches[1].clientY-r.top};
-    const d = Math.hypot(a.x-b.x, a.y-b.y);
-    const target = pinch.z * (d / pinch.d);
-    zoomBy(target / state.zoom, (a.x+b.x)/2, (a.y+b.y)/2);
+    const d = Math.hypot(a.x-b.x,a.y-b.y);
+    zoomBy((pinch.z * (d/pinch.d)) / state.zoom, (a.x+b.x)/2, (a.y+b.y)/2);
     return;
   }
   if (dragging === 'pan' && lastP) {
     e.preventDefault();
     const p = ptr(e);
-    state.panX += p.x - lastP.x;
-    state.panY += p.y - lastP.y;
+    state.panX += p.x - lastP.x; state.panY += p.y - lastP.y;
     lastP = p;
   }
 }
-function onUp() {
-  dragging = null; lastP = null; pinch = null;
-  canvas.style.cursor = 'grab';
-}
+function onUp() { dragging = null; lastP = null; pinch = null; canvas.style.cursor = 'grab'; }
 
 /* ============================================================
    QUIZ
@@ -1432,7 +1045,6 @@ function renderQuiz() {
   const body = document.getElementById('quiz-body');
   if (!body) return;
   const Q = LANG[cur].quiz;
-
   if (quiz.done) {
     const pct = Math.round((quiz.score/5)*100);
     let msg = T('score_msg_low');
@@ -1441,7 +1053,7 @@ function renderQuiz() {
     document.getElementById('quiz-progress').textContent = '';
     body.innerHTML = `
       <div class="text-center space-y-6 py-6">
-        <div class="text-slate-400" data-i18n="final_score">${T('final_score')}</div>
+        <div class="text-slate-400">${T('final_score')}</div>
         <div class="flex flex-col items-center gap-1">
           <span class="num text-5xl font-extrabold text-cyan-300">${quiz.score}/5</span>
           <span class="num text-lg text-slate-400">${pct}%</span>
@@ -1453,7 +1065,6 @@ function renderQuiz() {
       </div>`;
     return;
   }
-
   const q = Q[quiz.i];
   document.getElementById('quiz-progress').textContent = T('quiz_progress')(quiz.i+1, 5);
   const opts = q.opts.map((o, oi) => {
@@ -1468,7 +1079,6 @@ function renderQuiz() {
       <span>${o}</span>
     </button>`;
   }).join('');
-
   let fb = '';
   if (quiz.answered) {
     const ok = quiz.picked === q.a;
@@ -1480,24 +1090,18 @@ function renderQuiz() {
       ${quiz.i >= 4 ? T('see_result') : T('next_q')} <i class="fa-solid fa-arrow-right ms-2"></i>
     </button>`;
   }
-
-  body.innerHTML = `
-    <h3 class="text-lg md:text-xl font-bold text-white mb-4 leading-relaxed">${q.q}</h3>
-    <div class="space-y-3">${opts}</div>
-    ${fb}`;
+  body.innerHTML = `<h3 class="text-lg md:text-xl font-bold text-white mb-4 leading-relaxed">${q.q}</h3>
+    <div class="space-y-3">${opts}</div>${fb}`;
 }
-
 function answerQuiz(oi) {
   if (quiz.answered) return;
-  quiz.answered = true;
-  quiz.picked = oi;
+  quiz.answered = true; quiz.picked = oi;
   if (oi === LANG[cur].quiz[quiz.i].a) quiz.score++;
   renderQuiz();
 }
 function nextQuiz() {
   if (quiz.i >= 4) { quiz.done = true; renderQuiz(); return; }
-  quiz.i++; quiz.answered = false; quiz.picked = null;
-  renderQuiz();
+  quiz.i++; quiz.answered = false; quiz.picked = null; renderQuiz();
 }
 function restartQuiz() {
   quiz.i = 0; quiz.score = 0; quiz.answered = false; quiz.picked = null; quiz.done = false;
@@ -1510,13 +1114,12 @@ function restartQuiz() {
 function boot() {
   canvas = document.getElementById('sim-canvas');
   ctx = canvas.getContext('2d');
-  gCanvas = document.getElementById('graph-canvas');
-  gctx = gCanvas.getContext('2d');
-
   changeLanguage(cur);
-
+  state.A.r = 0.35 + state.A.m * 0.08;
+  state.B.r = 0.35 + state.B.m * 0.08;
   fitCanvas();
   initAnnotationCanvas(W, H);
+  updateReadouts();
 
   canvas.addEventListener('mousedown', onDown);
   window.addEventListener('mousemove', onMove);
@@ -1529,23 +1132,15 @@ function boot() {
     e.preventDefault();
     zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1, e.offsetX, e.offsetY);
   }, {passive:false});
+  window.addEventListener('resize', () => fitCanvas());
 
-  window.addEventListener('resize', () => { fitCanvas(); });
-
-  computeForces();
-  updateReadouts();
-  renderPredictOptions();
   requestAnimationFrame(loop);
 
-  // Intro ~5s
   setTimeout(() => {
     const intro = document.getElementById('intro');
     intro.style.opacity = '0';
     document.getElementById('app').style.opacity = '1';
-    setTimeout(() => {
-      intro.remove();
-      fitCanvas();
-    }, 700);
+    setTimeout(() => { intro.remove(); fitCanvas(); }, 700);
   }, 5000);
 }
 
