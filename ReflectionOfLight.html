@@ -70,9 +70,9 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   /* Jameel Noori Nastaliq (preferred Urdu) + Google Noto fallback */
   @font-face {
     font-family: 'Jameel Noori Nastaliq';
-    src: local('Jameel Noori Nastaleeq'), local('Jameel Noori Nastaliq'),
-         url('https://fonts.gstatic.com/s/notonastaliqurdu/v20/TuGJUVp97srt-x5wuZd7o-pWX5-w8KAMcKgmuInsq1mqmRQ.ttf') format('truetype');
-    font-weight: 400;
+    src: url('https://cdn.jsdelivr.net/gh/tariq-abdullah/urdu-web-font-CDN/JameelNooriNastaleeq.woff') format('woff'),
+         local('Jameel Noori Nastaleeq'), local('Jameel Noori Nastaliq');
+    font-weight: normal;
     font-style: normal;
     font-display: swap;
   }
