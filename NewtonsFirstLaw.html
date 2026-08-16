@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<script>
+if(window.top===window.self){
+document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Newton's First Law of Motion</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700;800&family=Manrope:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+
+<style>
+/* Jameel Noori Nastaliq (primary) + Noto Nastaliq Urdu (fallback) */
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://cdn.jsdelivr.net/gh/tariq-abdullah/urdu-web-font-CDN/JameelNooriNastaleeq.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+  font-size: 1.08em;
+}
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] select,
+[dir="rtl"] .urdu-ready {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan { box-shadow: 0 0 20px rgba(0, 243, 255, 0.35); }
+.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+.glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.35); }
+
+/* Canvas styling */
+canvas { touch-action: none; }
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+  width: 100%;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px; width: 20px; border-radius: 50%;
+  background: #00f3ff; cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=range]::-moz-range-thumb {
+  height: 20px; width: 20px; border-radius: 50%; border: none;
+  background: #00f3ff; cursor: pointer; box-shadow: 0 0 10px #00f3ff;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow: hidden;
+  margin: 0;
+}
+.font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
+[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important; }
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0,243,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,243,255,0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+#intro {
+  position: fixed; inset: 0; z-index: 100;
+  background: radial-gradient(ellipse at center, #10233f 0%, #0f172a 65%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .7s ease;
+}
+.intro-title {
+  font-family: 'Oxanium', sans-serif;
+  font-weight: 800; letter-spacing: .14em;
+  background: linear-gradient(92deg, #00f3ff, #7dd3fc, #00f3ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: introZoom 1.6s cubic-bezier(.2,.8,.2,1) both, glowPulse 2s ease-in-out infinite;
+}
+.intro-topic {
+  color: #94a3b8; letter-spacing: .22em;
+  animation: introFade 1.4s .35s ease both;
+  text-align: center;
+  max-width: 720px;
+  padding: 0 16px;
+  line-height: 1.6;
+}
+.intro-ring {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 2px solid rgba(0,243,255,.35);
+  box-shadow: 0 0 60px rgba(0,243,255,.25), inset 0 0 40px rgba(0,243,255,.12);
+  display:flex; align-items:center; justify-content:center;
+  animation: ringSpin 2.4s linear infinite, introZoom 1.2s ease both;
+  margin-bottom: 28px; position: relative;
+}
+.intro-ring::before {
+  content:''; position:absolute; inset:-10px; border-radius:50%;
+  border-top: 2px solid #00f3ff; border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent; border-left: 2px solid transparent;
+}
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+@keyframes introZoom { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes introFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 24px rgba(0,243,255,.55); }
+  50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
+}
+
+.tab-btn {
+  position: relative; transition: color .25s ease, background-color .25s ease;
+  border-radius: 12px;
+}
+.tab-btn.active {
+  color: #00f3ff; background: rgba(0,243,255,.08);
+  box-shadow: inset 0 0 0 1px rgba(0,243,255,.35), 0 0 18px rgba(0,243,255,.15);
+}
+.view { animation: viewIn .35s ease both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.ctrl-btn {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease, color .2s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.ctrl-btn:active { transform: scale(.96); }
+.ctrl-btn.active {
+  background: rgba(0,243,255,.12); color: #00f3ff;
+  border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
+}
+.ctrl-btn.on-green {
+  background: rgba(34,197,94,.14); color: #4ade80;
+  border-color: rgba(34,197,94,.5); box-shadow: 0 0 14px rgba(34,197,94,.25);
+}
+.ctrl-btn.on-amber {
+  background: rgba(245,158,11,.14); color: #fbbf24;
+  border-color: rgba(245,158,11,.45);
+}
+
+.opt-btn {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.opt-btn:not(.locked):hover { border-color: rgba(0,243,255,.45); background: rgba(0,243,255,.06); }
+.opt-btn:not(.locked):active { transform: scale(.98); }
+.opt-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; box-shadow: 0 0 18px rgba(34,197,94,.3); }
+.opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
+
+.zoom-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
+  color:#00f3ff; display:flex; align-items:center; justify-content:center;
+  backdrop-filter: blur(8px); cursor:pointer;
+  transition: background-color .2s ease, box-shadow .2s ease, transform .12s ease;
+}
+.zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
+.zoom-btn:active { transform: scale(.92); }
+
+.stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
+[dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
+.num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
+
+#fabricLayer, .canvas-container {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 20;
+  pointer-events: none;
+}
+.canvas-container canvas { width: 100% !important; height: 100% !important; }
+
+.law-card {
+  border: 1px solid rgba(0,243,255,.25);
+  background: linear-gradient(135deg, rgba(0,243,255,.08), rgba(15,23,42,.5));
+}
+</style>
+</head>
+<body class="bg-grid">
+
+<div id="intro">
+  <div class="intro-ring"><i class="fa-solid fa-cube text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
+  <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
+  <div class="intro-topic text-sm md:text-base mt-5 font-bold" id="intro-topic">NEWTON'S FIRST LAW OF MOTION</div>
+  <div class="mt-8 flex items-center gap-2 text-cyan-400/80 text-sm">
+    <i class="fa-solid fa-circle-notch animate-spin"></i>
+    <span id="intro-loading">Loading Interactive Engine...</span>
+  </div>
+</div>
+
+<div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
+
+  <header class="glass-panel flex items-center justify-between px-3 md:px-6 py-3 z-30 gap-2 flex-wrap">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-flask text-cyan-400"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
+      </div>
+    </div>
+
+    <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- SIMULATION -->
+  <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-3 p-3 min-h-0 overflow-hidden">
+
+    <!-- LEFT CONTROLS -->
+    <aside class="lg:w-80 shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0 order-2 lg:order-1">
+
+      <div class="glass-card law-card rounded-2xl p-4">
+        <div class="text-xs uppercase tracking-widest text-cyan-300/90 font-bold mb-2" data-i18n="law_title"></div>
+        <p class="text-sm text-slate-200 leading-relaxed" data-i18n="law_text"></p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="text-xs uppercase tracking-widest text-cyan-300/80 font-bold flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i><span data-i18n="ctrl_title"></span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button id="btn-start" onclick="startSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
+            <i class="fa-solid fa-play text-green-400"></i><span data-i18n="btn_start"></span>
+          </button>
+          <button id="btn-pause" onclick="pauseSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
+            <i class="fa-solid fa-pause text-amber-400"></i><span data-i18n="btn_pause"></span>
+          </button>
+          <button onclick="resetSim()" class="ctrl-btn rounded-xl px-2 py-3 text-xs font-bold text-slate-200 flex flex-col items-center gap-1">
+            <i class="fa-solid fa-rotate-left text-cyan-400"></i><span data-i18n="btn_reset"></span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-apply" onclick="applyForce()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bolt text-yellow-400"></i><span data-i18n="btn_apply"></span>
+          </button>
+          <button id="btn-remove" onclick="removeForce()" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-ban text-red-400"></i><span data-i18n="btn_remove"></span>
+          </button>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_force"></span>
+            <span class="stat-val text-sm num" id="val-force">10 N</span>
+          </div>
+          <input id="slider-force" type="range" min="0" max="40" value="10" step="1" oninput="onForce(this.value)">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-left" onclick="setDir(-1)" class="ctrl-btn rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-arrow-left"></i> <span data-i18n="btn_left"></span>
+          </button>
+          <button id="btn-right" onclick="setDir(1)" class="ctrl-btn active rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200">
+            <span data-i18n="btn_right"></span> <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400 font-bold" data-i18n="lbl_mass"></span>
+            <span class="stat-val text-sm num" id="val-mass">2.0 kg</span>
+          </div>
+          <input id="slider-mass" type="range" min="1" max="8" value="2" step="0.5" oninput="onMass(this.value)">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-smooth" onclick="setSurface('smooth')" class="ctrl-btn active rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-water"></i><span data-i18n="btn_smooth"></span>
+          </button>
+          <button id="btn-rough" onclick="setSurface('rough')" class="ctrl-btn rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-mountain"></i><span data-i18n="btn_rough"></span>
+          </button>
+        </div>
+
+        <button id="btn-space" onclick="toggleSpace()" class="ctrl-btn w-full rounded-xl px-3 py-3 text-xs font-bold text-slate-200 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rocket text-indigo-300"></i><span data-i18n="btn_space"></span>
+        </button>
+      </div>
+
+      <!-- Tiny essential readouts only -->
+      <div class="glass-card rounded-2xl p-4 space-y-2">
+        <div class="flex justify-between gap-2 text-sm"><span class="text-slate-400" data-i18n="d_vel"></span><span class="stat-val num" id="d-vel">0.00 m/s</span></div>
+        <div class="flex justify-between gap-2 text-sm"><span class="text-slate-400" data-i18n="d_net"></span><span class="stat-val num" id="d-net">0.0 N</span></div>
+        <div id="state-chip" class="rounded-xl px-3 py-2 text-center text-xs font-bold text-slate-300 glass-panel"></div>
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <section class="flex-1 flex flex-col gap-3 min-h-0 min-w-0 order-1 lg:order-2">
+      <div id="sim-viewport" class="glass-card rounded-2xl relative flex-1 min-h-[300px] overflow-hidden">
+        <canvas id="sim-canvas" class="absolute inset-0 w-full h-full cursor-grab"></canvas>
+        <canvas id="fabricLayer"></canvas>
+
+        <div class="absolute bottom-3 flex flex-col gap-2 z-30" style="inset-inline-end:12px" dir="ltr">
+          <button class="zoom-btn" onclick="zoomBy(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i></button>
+        </div>
+
+        <div id="insight" class="absolute top-3 left-3 right-3 z-10 pointer-events-none">
+          <div class="glass-panel rounded-xl px-4 py-3 text-sm text-center text-cyan-100" id="insight-text"></div>
+        </div>
+      </div>
+
+      <!-- Three discovery beats as compact chips (not separate panels) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <button onclick="demoRest()" class="glass-card rounded-xl px-4 py-3 text-start hover:border-cyan-400/40 transition border border-transparent">
+          <div class="text-cyan-300 text-xs font-bold mb-1" data-i18n="beat1_t"></div>
+          <div class="text-slate-400 text-xs leading-relaxed" data-i18n="beat1_d"></div>
+        </button>
+        <button onclick="demoCoast()" class="glass-card rounded-xl px-4 py-3 text-start hover:border-cyan-400/40 transition border border-transparent">
+          <div class="text-cyan-300 text-xs font-bold mb-1" data-i18n="beat2_t"></div>
+          <div class="text-slate-400 text-xs leading-relaxed" data-i18n="beat2_d"></div>
+        </button>
+        <button onclick="demoFriction()" class="glass-card rounded-xl px-4 py-3 text-start hover:border-cyan-400/40 transition border border-transparent">
+          <div class="text-cyan-300 text-xs font-bold mb-1" data-i18n="beat3_t"></div>
+          <div class="text-slate-400 text-xs leading-relaxed" data-i18n="beat3_d"></div>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- QUIZ -->
+  <main id="view-quiz" class="view flex-1 hidden overflow-y-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto">
+      <div class="glass-panel rounded-3xl p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center glow-cyan">
+            <i class="fa-solid fa-graduation-cap text-cyan-400 text-xl"></i>
+          </div>
+          <div>
+            <h2 class="font-display text-xl md:text-2xl font-bold text-white" data-i18n="quiz_title"></h2>
+            <p class="text-sm text-slate-400" id="quiz-progress"></p>
+          </div>
+        </div>
+        <div id="quiz-body"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const LANG = {
+en: {
+  topic: "Newton's First Law of Motion",
+  intro_topic: "An object remains at rest or in uniform motion unless an unbalanced force acts on it",
+  intro_loading: "Loading Interactive Engine...",
+  tab_sim: "Simulation",
+  tab_quiz: "Quiz",
+  law_title: "The Law of Inertia",
+  law_text: "An object continues to remain at rest or in a state of uniform motion along a straight line unless an external unbalanced force acts on it.",
+  ctrl_title: "Try It Yourself",
+  btn_start: "Start",
+  btn_pause: "Pause",
+  btn_reset: "Reset",
+  btn_apply: "Apply Force",
+  btn_remove: "Remove Force",
+  lbl_force: "Force",
+  lbl_mass: "Mass",
+  btn_left: "Left",
+  btn_right: "Right",
+  btn_smooth: "Smooth",
+  btn_rough: "Rough",
+  btn_space: "Space Mode",
+  d_vel: "Velocity",
+  d_net: "Net Force",
+  state_rest: "At rest — no change",
+  state_uniform: "Uniform motion — no change",
+  state_changing: "Motion is changing",
+  insight_start: "Watch carefully: motion changes only when net force is not zero.",
+  insight_rest: "No unbalanced force → the object stays at rest.",
+  insight_push: "Unbalanced force → velocity is changing.",
+  insight_remove: "Force removed, friction ≈ 0 → velocity stays constant. No net force ≠ no motion!",
+  insight_friction: "Friction is an unbalanced force → motion changes until the object stops.",
+  insight_space: "In space, almost no friction → once moving, it keeps moving in a straight line.",
+  beat1_t: "1. At Rest",
+  beat1_d: "Start with no force. Does it move by itself?",
+  beat2_t: "2. Remove Force",
+  beat2_d: "Push, then remove force on a smooth track.",
+  beat3_t: "3. Rough Track",
+  beat3_d: "Why does a moving object eventually stop?",
+  quiz_title: "Concept Quiz — Newton's First Law",
+  quiz_progress: (i,n)=>`Question ${i} of ${n}`,
+  correct_fb: "Correct!",
+  wrong_fb: "Not quite!",
+  next_q: "Next Question",
+  see_result: "See Result",
+  final_score: "Final Score",
+  restart: "Restart Quiz",
+  score_msg_great: "Excellent! You understand inertia.",
+  score_msg_good: "Good! Try the Remove Force demo once more.",
+  score_msg_low: "Experiment again: rest, push, then remove the force.",
+  quiz: [
+    { q: "Newton's First Law is also called the law of:", opts: ["Gravity", "Inertia", "Energy", "Power"], a: 1, ex: "Inertia is the natural tendency of objects to resist changes in their state of motion." },
+    { q: "An object at rest stays at rest unless:", opts: ["Time passes", "An unbalanced external force acts", "Its mass is large", "It is painted"], a: 1, ex: "Only an unbalanced external force can change the state of rest." },
+    { q: "You push a box on smooth ice, then stop pushing. The box:", opts: ["Stops instantly", "Continues at nearly constant velocity", "Moves backward", "Floats up"], a: 1, ex: "With nearly zero net force, velocity does not change — this is uniform motion." },
+    { q: "Why do objects stop on a rough floor?", opts: ["Moving things naturally stop", "Friction acts as an unbalanced force", "Velocity disappears alone", "Mass becomes zero"], a: 1, ex: "Friction is an external unbalanced force that changes (reduces) velocity." },
+    { q: "Zero net force means:", opts: ["The object cannot move", "No change in motion", "Acceleration is large", "Mass is zero"], a: 1, ex: "Zero net force means no change in motion: rest stays rest, constant velocity stays constant." }
+  ]
+},
+ur: {
+  topic: "نیوٹن کا پہلا قانونِ حرکت",
+  intro_topic: "جسم سکون یا یکساں حرکت میں رہتا ہے جب تک غیر متوازن قوت عمل نہ کرے",
+  intro_loading: "تعاملی انجن لوڈ ہو رہا ہے...",
+  tab_sim: "سمولیشن",
+  tab_quiz: "کوئز",
+  law_title: "جمود کا قانون",
+  law_text: "کوئی جسم سکون یا سیدھی لکیر میں یکساں حرکت کی حالت میں رہتا ہے جب تک اس پر کوئی بیرونی غیر متوازن قوت عمل نہ کرے۔",
+  ctrl_title: "خود آزمائیں",
+  btn_start: "شروع",
+  btn_pause: "وقفہ",
+  btn_reset: "ری سیٹ",
+  btn_apply: "قوت لگائیں",
+  btn_remove: "قوت ہٹائیں",
+  lbl_force: "قوت",
+  lbl_mass: "کمیت",
+  btn_left: "بائیں",
+  btn_right: "دائیں",
+  btn_smooth: "ہموار",
+  btn_rough: "کھردری",
+  btn_space: "خلائی موڈ",
+  d_vel: "سمتی رفتار",
+  d_net: "محصل قوت",
+  state_rest: "سکون — کوئی تبدیلی نہیں",
+  state_uniform: "یکساں حرکت — کوئی تبدیلی نہیں",
+  state_changing: "حرکت بدل رہی ہے",
+  insight_start: "غور سے دیکھیں: حرکت صرف تب بدلتی ہے جب محصل قوت صفر نہ ہو۔",
+  insight_rest: "غیر متوازن قوت نہیں → جسم سکون میں رہتا ہے۔",
+  insight_push: "غیر متوازن قوت → سمتی رفتار بدل رہی ہے۔",
+  insight_remove: "قوت ہٹا دی، رگڑ ≈ 0 → سمتی رفتار مستقل رہی۔ صفر قوت کا مطلب حرکت نہ ہونا نہیں!",
+  insight_friction: "رگڑ غیر متوازن قوت ہے → حرکت بدلتی ہے یہاں تک کہ جسم رک جائے۔",
+  insight_space: "خلا میں تقریباً بغیر رگڑ → ایک بار حرکت شروع ہو تو سیدھی لکیر میں جاری رہتی ہے۔",
+  beat1_t: "۱۔ سکون میں",
+  beat1_d: "بغیر قوت شروع کریں۔ کیا جسم خود چلتا ہے؟",
+  beat2_t: "۲۔ قوت ہٹائیں",
+  beat2_d: "دھکیلیں، پھر ہموار سطح پر قوت ہٹا دیں۔",
+  beat3_t: "۳۔ کھردری سطح",
+  beat3_d: "متحرک جسم آخر کار کیوں رک جاتا ہے؟",
+  quiz_title: "تصوراتی کوئز — نیوٹن کا پہلا قانون",
+  quiz_progress: (i,n)=>`سوال ${i} از ${n}`,
+  correct_fb: "درست جواب!",
+  wrong_fb: "غلط جواب!",
+  next_q: "اگلا سوال",
+  see_result: "نتیجہ دیکھیں",
+  final_score: "حتمی اسکور",
+  restart: "کوئز دوبارہ شروع کریں",
+  score_msg_great: "شاندار! آپ نے جمود سمجھ لیا۔",
+  score_msg_good: "اچھی کوشش! قوت ہٹانے والا تجربہ دوبارہ کریں۔",
+  score_msg_low: "دوبارہ آزمائیں: سکون، دھکا، پھر قوت ہٹائیں۔",
+  quiz: [
+    { q: "نیوٹن کے پہلے قانون کو کیا بھی کہتے ہیں؟", opts: ["ثقالت کا قانون", "جمود کا قانون", "توانائی کا قانون", "قدرت کا قانون"], a: 1, ex: "جمود اجسام کی وہ خاصیت ہے جو حرکت کی حالت میں تبدیلی کی مزاحمت کرتی ہے۔" },
+    { q: "سکون میں جسم سکون میں رہتا ہے جب تک:", opts: ["وقت گزرے", "غیر متوازن بیرونی قوت عمل کرے", "کمیت زیادہ ہو", "اسے رنگ دیا جائے"], a: 1, ex: "صرف غیر متوازن بیرونی قوت سکون کی حالت بدل سکتی ہے۔" },
+    { q: "آپ ہموار برف پر ڈبے کو دھکیلتے ہیں، پھر دھکیلنا بند کر دیتے ہیں۔ ڈبہ:", opts: ["فوراً رک جاتا ہے", "تقریباً یکساں سمتی رفتار سے چلتا رہتا ہے", "پیچھے جاتا ہے", "اوپر اڑتا ہے"], a: 1, ex: "تقریباً صفر محصل قوت پر سمتی رفتار نہیں بدلتی — یہ یکساں حرکت ہے۔" },
+    { q: "کھردری فرش پر اجسام کیوں رک جاتے ہیں؟", opts: ["متحرک چیزیں قدرتی طور پر رکتی ہیں", "رگڑ غیر متوازن قوت کے طور پر عمل کرتی ہے", "سمتی رفتار خود ختم ہو جاتی ہے", "کمیت صفر ہو جاتی ہے"], a: 1, ex: "رگڑ ایک بیرونی غیر متوازن قوت ہے جو سمتی رفتار گھٹاتی ہے۔" },
+    { q: "صفر محصل قوت کا مطلب ہے:", opts: ["جسم حرکت نہیں کر سکتا", "حرکت میں کوئی تبدیلی نہیں", "اسراع بہت زیادہ ہے", "کمیت صفر ہے"], a: 1, ex: "صفر محصل قوت = حرکت میں تبدیلی نہیں: سکون سکون رہتا ہے، یکساں رفتار یکساں رہتی ہے۔" }
+  ]
+}
+};
+
+let cur = localStorage.getItem('iqra_n1_lang') || 'en';
+const T = k => (LANG[cur] && LANG[cur][k] !== undefined) ? LANG[cur][k] : k;
+
+const WORLD = { half: 16, g: 9.8, muRough: 0.28 };
+const state = {
+  running: false,
+  mass: 2,
+  forceMag: 10,
+  forceDir: 1,
+  forceOn: false,
+  surface: 'smooth',
+  space: false,
+  x: 0,
+  v: 0,
+  a: 0,
+  applied: 0,
+  friction: 0,
+  net: 0,
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  insightKey: 'insight_start',
+  trail: [],
+  timer: null
+};
+
+let canvas, ctx, W = 900, H = 520, baseScale = 28;
+let lastTs = 0, dragging = null, lastP = null, pinch = null;
+let fCanvas, isAnnoActive = false;
+
+/* ===== Annotation ===== */
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas('fabricLayer', { isDrawingMode: false, width: w, height: h });
+  fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+  fCanvas.freeDrawingBrush.width = 4;
+  fCanvas.on('mouse:down', function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) fCanvas.remove(options.target);
+  });
+  const c = document.querySelector('.canvas-container');
+  if (c) c.style.pointerEvents = 'none';
+}
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById('btn-anno-toggle');
+  const toolbar = document.getElementById('anno-toolbar');
+  const fabricContainer = document.querySelector('.canvas-container');
+  if (isAnnoActive) {
+    btn.classList.replace('text-slate-400', 'text-cyan-400');
+    toolbar.classList.remove('max-w-0', 'opacity-0');
+    toolbar.classList.add('max-w-xs', 'opacity-100');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+    setAnnoMode('pen');
+  } else {
+    btn.classList.replace('text-cyan-400', 'text-slate-400');
+    toolbar.classList.remove('max-w-xs', 'opacity-100');
+    toolbar.classList.add('max-w-0', 'opacity-0');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+function setAnnoMode(mode) {
+  document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+  document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+  if (mode === 'pen') {
+    document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode('pen');
+}
+function clearAnnotations() { if (fCanvas) fCanvas.clear(); }
+
+/* ===== i18n / tabs ===== */
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = T(el.dataset.i18n);
+    if (typeof v === 'string') el.textContent = v;
+  });
+  const it = document.getElementById('intro-topic');
+  const il = document.getElementById('intro-loading');
+  if (it) it.textContent = T('intro_topic');
+  if (il) il.textContent = T('intro_loading');
+  setInsight(state.insightKey);
+  updateUI();
+  renderQuiz();
+}
+function changeLanguage(l) {
+  if (l !== 'en' && l !== 'ur') return;
+  cur = l;
+  localStorage.setItem('iqra_n1_lang', l);
+  document.documentElement.setAttribute('dir', l === 'ur' ? 'rtl' : 'ltr');
+  document.documentElement.setAttribute('lang', l);
+  document.body.classList.toggle('urdu-ready', l === 'ur');
+  document.getElementById('lang-select').value = l;
+  applyI18n();
+}
+function toggleFullScreen() {
+  const icon = document.getElementById('fs-icon');
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+    if (icon) icon.className = 'fa-solid fa-compress';
+  } else {
+    document.exitFullscreen();
+    if (icon) icon.className = 'fa-solid fa-expand';
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const icon = document.getElementById('fs-icon');
+  if (icon) icon.className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+});
+function switchTab(t) {
+  document.getElementById('view-sim').classList.toggle('hidden', t !== 'sim');
+  document.getElementById('view-quiz').classList.toggle('hidden', t !== 'quiz');
+  document.getElementById('tab-sim').classList.toggle('active', t === 'sim');
+  document.getElementById('tab-quiz').classList.toggle('active', t === 'quiz');
+  if (t === 'sim') fitCanvas();
+}
+
+function setInsight(key) {
+  state.insightKey = key;
+  document.getElementById('insight-text').textContent = T(key);
+}
+
+/* ===== Controls ===== */
+function onForce(v) {
+  state.forceMag = +v;
+  if (state.forceOn) state.applied = state.forceMag * state.forceDir;
+  updateUI();
+}
+function onMass(v) { state.mass = +v; updateUI(); }
+function setDir(d) {
+  state.forceDir = d;
+  if (state.forceOn) state.applied = state.forceMag * d;
+  document.getElementById('btn-left').classList.toggle('active', d < 0);
+  document.getElementById('btn-right').classList.toggle('active', d > 0);
+  updateUI();
+}
+function applyForce() {
+  state.forceOn = true;
+  state.applied = state.forceMag * state.forceDir;
+  document.getElementById('btn-apply').classList.add('on-green');
+  if (!state.running) startSim();
+  setInsight('insight_push');
+  updateUI();
+}
+function removeForce() {
+  state.forceOn = false;
+  state.applied = 0;
+  document.getElementById('btn-apply').classList.remove('on-green');
+  document.getElementById('btn-remove').classList.add('on-green');
+  setTimeout(() => document.getElementById('btn-remove').classList.remove('on-green'), 500);
+  if ((state.surface === 'smooth' || state.space) && Math.abs(state.v) > 0.08) setInsight('insight_remove');
+  else if (state.surface === 'rough') setInsight('insight_friction');
+  updateUI();
+}
+function setSurface(s) {
+  state.surface = s;
+  state.space = false;
+  document.getElementById('btn-space').classList.remove('active');
+  document.getElementById('btn-smooth').classList.toggle('active', s === 'smooth');
+  document.getElementById('btn-rough').classList.toggle('active', s === 'rough');
+  if (s === 'rough') setInsight('insight_friction');
+  updateUI();
+}
+function toggleSpace() {
+  state.space = !state.space;
+  document.getElementById('btn-space').classList.toggle('active', state.space);
+  if (state.space) {
+    document.getElementById('btn-smooth').classList.remove('active');
+    document.getElementById('btn-rough').classList.remove('active');
+    setInsight('insight_space');
+  } else setSurface('smooth');
+  updateUI();
+}
+function startSim() {
+  state.running = true;
+  document.getElementById('btn-start').classList.add('on-green');
+  document.getElementById('btn-pause').classList.remove('on-amber');
+}
+function pauseSim() {
+  state.running = false;
+  document.getElementById('btn-start').classList.remove('on-green');
+  document.getElementById('btn-pause').classList.add('on-amber');
+}
+function resetSim() {
+  if (state.timer) { clearTimeout(state.timer); state.timer = null; }
+  state.running = false;
+  state.x = 0; state.v = 0; state.a = 0;
+  state.forceOn = false; state.applied = 0; state.friction = 0; state.net = 0;
+  state.trail = [];
+  document.getElementById('btn-start').classList.remove('on-green');
+  document.getElementById('btn-pause').classList.remove('on-amber');
+  document.getElementById('btn-apply').classList.remove('on-green');
+  setInsight('insight_start');
+  updateUI();
+}
+
+/* Quick demos — still First Law, not a long experiment list */
+function demoRest() {
+  resetSim();
+  setSurface('smooth');
+  state.forceMag = 0;
+  document.getElementById('slider-force').value = 0;
+  setInsight('insight_rest');
+  startSim();
+  updateUI();
+}
+function demoCoast() {
+  resetSim();
+  setSurface('smooth');
+  state.forceMag = 14;
+  document.getElementById('slider-force').value = 14;
+  setDir(1);
+  applyForce();
+  state.timer = setTimeout(() => removeForce(), 1800);
+}
+function demoFriction() {
+  resetSim();
+  setSurface('rough');
+  state.v = 9;
+  state.forceOn = false;
+  setInsight('insight_friction');
+  startSim();
+  updateUI();
+}
+
+/* ===== Physics (First Law focus) ===== */
+function compute() {
+  state.applied = state.forceOn ? state.forceMag * state.forceDir : 0;
+  const mu = state.space ? 0 : (state.surface === 'rough' ? WORLD.muRough : 0);
+  const fMax = mu * state.mass * WORLD.g;
+  let fr = 0;
+  if (Math.abs(state.v) > 0.02) fr = -Math.sign(state.v) * fMax;
+  else {
+    if (Math.abs(state.applied) <= fMax) { fr = -state.applied; state.v = 0; }
+    else fr = -Math.sign(state.applied || 1) * fMax;
+  }
+  state.friction = fr;
+  state.net = state.applied + fr;
+  state.a = state.net / state.mass;
+}
+function step(dt) {
+  if (!state.running) return;
+  compute();
+  state.v += state.a * dt;
+  if (Math.abs(state.v) < 0.02 && Math.abs(state.net) < 0.05) state.v = 0;
+  state.x += state.v * dt;
+  if (state.x > WORLD.half - 1) state.x = -WORLD.half + 1;
+  if (state.x < -WORLD.half + 1) state.x = WORLD.half - 1;
+  state.trail.push(state.x);
+  if (state.trail.length > 70) state.trail.shift();
+  updateUI();
+}
+
+function updateUI() {
+  compute();
+  document.getElementById('val-force').textContent = state.forceMag.toFixed(0) + ' N';
+  document.getElementById('val-mass').textContent = state.mass.toFixed(1) + ' kg';
+  document.getElementById('d-vel').textContent = state.v.toFixed(2) + ' m/s';
+  document.getElementById('d-net').textContent = state.net.toFixed(1) + ' N';
+  const chip = document.getElementById('state-chip');
+  if (Math.abs(state.net) < 0.08) {
+    if (Math.abs(state.v) < 0.05) {
+      chip.textContent = T('state_rest');
+      chip.className = 'rounded-xl px-3 py-2 text-center text-xs font-bold text-slate-300 glass-panel';
+    } else {
+      chip.textContent = T('state_uniform');
+      chip.className = 'rounded-xl px-3 py-2 text-center text-xs font-bold text-cyan-200 glass-panel glow-cyan';
+    }
+  } else {
+    chip.textContent = T('state_changing');
+    chip.className = 'rounded-xl px-3 py-2 text-center text-xs font-bold text-amber-200 glass-panel on-amber';
+  }
+}
+
+/* ===== Draw ===== */
+function S() { return baseScale * state.zoom; }
+function X(wx) { return W/2 + wx * S() + state.panX; }
+function Y(wy) { return H * 0.58 - wy * S() + state.panY; }
+function zoomBy(k, cx, cy) {
+  cx = cx ?? W/2; cy = cy ?? H/2;
+  const old = state.zoom;
+  state.zoom = Math.min(3.2, Math.max(0.5, state.zoom * k));
+  const r = state.zoom / old;
+  state.panX = (state.panX + W/2 - cx) * r + cx - W/2;
+  state.panY = (state.panY + H/2 - cy) * r + cy - H/2;
+}
+function resetView() { state.zoom = 1; state.panX = 0; state.panY = 0; fitBestZoom(); }
+function fitBestZoom() {
+  state.zoom = Math.min(1.2, Math.max(0.55, (W - 40) / ((WORLD.half * 2 + 4) * baseScale)));
+  state.panX = 0; state.panY = 0;
+}
+
+function drawArrow(x1,y1,x2,y2,color,label) {
+  const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy);
+  if (len < 4) return;
+  const ang = Math.atan2(dy,dx);
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color;
+  ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-12*Math.cos(ang-0.4), y2-12*Math.sin(ang-0.4));
+  ctx.lineTo(x2-12*Math.cos(ang+0.4), y2-12*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+  if (label) {
+    ctx.font = '700 12px Oxanium,monospace';
+    ctx.fillText(label, (x1+x2)/2 - 8, (y1+y2)/2 - 10);
+  }
+  ctx.restore();
+}
+
+function draw() {
+  if (state.space) {
+    const g = ctx.createRadialGradient(W/2,H/2,20,W/2,H/2,Math.max(W,H));
+    g.addColorStop(0,'#0b1228'); g.addColorStop(1,'#020617');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#e2e8f0';
+    for (let i=0;i<60;i++) {
+      ctx.globalAlpha = 0.3 + (i%4)*0.15;
+      ctx.beginPath();
+      ctx.arc((i*97+11)%W, (i*53+17)%(H*0.72), (i%3)*0.5+0.5, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  } else {
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0b1730'); g.addColorStop(1,'#0f172a');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  }
+
+  const y = Y(0);
+  const x0 = X(-WORLD.half), x1 = X(WORLD.half);
+
+  ctx.fillStyle = state.space ? 'rgba(99,102,241,0.12)' :
+    (state.surface === 'rough' ? 'rgba(120,53,15,0.4)' : 'rgba(56,189,248,0.1)');
+  ctx.fillRect(x0, y-4, x1-x0, 26);
+  ctx.strokeStyle = state.space ? 'rgba(165,180,252,0.55)' :
+    (state.surface === 'rough' ? 'rgba(251,146,60,0.7)' : 'rgba(34,211,238,0.55)');
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+
+  if (state.surface === 'rough' && !state.space) {
+    ctx.strokeStyle = 'rgba(180,83,9,0.5)';
+    ctx.lineWidth = 1.5;
+    for (let i=-WORLD.half;i<WORLD.half;i+=0.8) {
+      const px = X(i);
+      ctx.beginPath(); ctx.moveTo(px,y+2); ctx.lineTo(px+5,y+11); ctx.stroke();
+    }
+  }
+
+  // trail
+  if (state.trail.length > 1) {
+    ctx.strokeStyle = 'rgba(0,243,255,0.22)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    state.trail.forEach((tx,i) => {
+      const px = X(tx), py = Y(0.15);
+      if (i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    });
+    ctx.stroke();
+  }
+
+  // puck
+  const px = X(state.x), r = (0.45 + state.mass*0.08) * S();
+  const py = Y(0.55);
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.beginPath(); ctx.ellipse(px, y+5, r*1.05, r*0.25, 0, 0, Math.PI*2); ctx.fill();
+  const grad = ctx.createRadialGradient(px-r*0.3, py-r*0.35, r*0.1, px, py, r);
+  grad.addColorStop(0,'#a5f3fc'); grad.addColorStop(0.5,'#06b6d4'); grad.addColorStop(1,'#155e75');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(207,250,254,0.85)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#ecfeff';
+  ctx.font = `700 ${Math.max(11,r*0.42)}px Oxanium,monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText(state.mass.toFixed(1)+' kg', px, py+4);
+  ctx.textAlign = 'start';
+
+  // force vector
+  if (Math.abs(state.applied) > 0.05) {
+    const len = Math.min(130, 20 + Math.abs(state.applied)*3);
+    drawArrow(px, py-r-14, px + Math.sign(state.applied)*len, py-r-14, '#fbbf24', Math.abs(state.applied).toFixed(0)+' N');
+  }
+  // friction vector
+  if (Math.abs(state.friction) > 0.05) {
+    const len = Math.min(110, 16 + Math.abs(state.friction)*4);
+    drawArrow(px, py+8, px + Math.sign(state.friction)*len, py+8, '#f87171', 'friction');
+  }
+  // velocity vector
+  if (Math.abs(state.v) > 0.05) {
+    const len = Math.min(120, 18 + Math.tanh(Math.abs(state.v)/10)*85);
+    drawArrow(px, py-r-36, px + Math.sign(state.v)*len, py-r-36, '#22d3ee', '|v| '+Math.abs(state.v).toFixed(1)+' m/s');
+  }
+
+  // net force badge
+  ctx.fillStyle = 'rgba(15,23,42,0.8)';
+  ctx.strokeStyle = Math.abs(state.net)<0.08 ? '#22d3ee' : '#fbbf24';
+  ctx.lineWidth = 1.5;
+  const bw = 150, bh = 28;
+  ctx.beginPath();
+  ctx.roundRect(W/2 - bw/2, H - 48, bw, bh, 10);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '700 13px Oxanium,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('F_net = ' + state.net.toFixed(1) + ' N', W/2, H - 29);
+  ctx.textAlign = 'start';
+}
+
+function loop(ts) {
+  const dt = Math.min(0.033, (ts - lastTs)/1000 || 0.016);
+  lastTs = ts;
+  step(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* ===== Input ===== */
+function fitCanvas() {
+  const wrap = document.getElementById('sim-viewport');
+  if (!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  W = Math.max(320, Math.floor(rect.width));
+  H = Math.max(260, Math.floor(rect.height));
+  canvas.width = W; canvas.height = H;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  if (fCanvas) { fCanvas.setWidth(W); fCanvas.setHeight(H); fCanvas.calcOffset(); }
+  fitBestZoom();
+}
+function ptr(e) {
+  const r = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - r.left, y: t.clientY - r.top };
+}
+function onDown(e) {
+  if (isAnnoActive) return;
+  e.preventDefault();
+  if (e.touches && e.touches.length === 2) {
+    const r = canvas.getBoundingClientRect();
+    const a = {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};
+    const b = {x:e.touches[1].clientX-r.left,y:e.touches[1].clientY-r.top};
+    pinch = { d: Math.hypot(a.x-b.x,a.y-b.y), z: state.zoom };
+    dragging = null; return;
+  }
+  dragging = 'pan'; lastP = ptr(e); canvas.style.cursor = 'grabbing';
+}
+function onMove(e) {
+  if (isAnnoActive) return;
+  if (e.touches && e.touches.length === 2 && pinch) {
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    const a = {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};
+    const b = {x:e.touches[1].clientX-r.left,y:e.touches[1].clientY-r.top};
+    const d = Math.hypot(a.x-b.x,a.y-b.y);
+    zoomBy((pinch.z*(d/pinch.d))/state.zoom, (a.x+b.x)/2, (a.y+b.y)/2);
+    return;
+  }
+  if (dragging==='pan' && lastP) {
+    e.preventDefault();
+    const p = ptr(e);
+    state.panX += p.x-lastP.x; state.panY += p.y-lastP.y;
+    lastP = p;
+  }
+}
+function onUp() { dragging=null; lastP=null; pinch=null; canvas.style.cursor='grab'; }
+
+/* ===== Quiz ===== */
+const quiz = { i:0, score:0, answered:false, picked:null, done:false };
+function renderQuiz() {
+  const body = document.getElementById('quiz-body');
+  if (!body) return;
+  const Q = LANG[cur].quiz;
+  if (quiz.done) {
+    const pct = Math.round((quiz.score/5)*100);
+    let msg = T('score_msg_low');
+    if (pct >= 80) msg = T('score_msg_great');
+    else if (pct >= 60) msg = T('score_msg_good');
+    document.getElementById('quiz-progress').textContent = '';
+    body.innerHTML = `<div class="text-center space-y-6 py-6">
+      <div class="text-slate-400">${T('final_score')}</div>
+      <div class="flex flex-col items-center gap-1">
+        <span class="num text-5xl font-extrabold text-cyan-300">${quiz.score}/5</span>
+        <span class="num text-lg text-slate-400">${pct}%</span>
+      </div>
+      <p class="text-slate-300">${msg}</p>
+      <button onclick="restartQuiz()" class="ctrl-btn active rounded-2xl px-8 py-4 font-bold text-cyan-300">
+        <i class="fa-solid fa-rotate-right me-2"></i>${T('restart')}
+      </button></div>`;
+    return;
+  }
+  const q = Q[quiz.i];
+  document.getElementById('quiz-progress').textContent = T('quiz_progress')(quiz.i+1,5);
+  const opts = q.opts.map((o,oi)=>{
+    let cls='opt-btn w-full text-start px-5 py-4 rounded-xl glass-panel text-sm md:text-base font-bold text-slate-200 flex items-center gap-3';
+    if (quiz.answered) {
+      cls += ' locked';
+      if (oi===q.a) cls+=' correct';
+      else if (oi===quiz.picked) cls+=' wrong';
+    }
+    return `<button onclick="answerQuiz(${oi})" class="${cls}">
+      <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center text-cyan-400 num shrink-0">${String.fromCharCode(65+oi)}</span>
+      <span>${o}</span></button>`;
+  }).join('');
+  let fb='';
+  if (quiz.answered) {
+    const ok = quiz.picked===q.a;
+    fb = `<div class="mt-4 glass-panel rounded-xl px-4 py-3 ${ok?'text-green-300 glow-green':'text-red-300 glow-red'}">
+      <div class="font-bold mb-1">${ok?T('correct_fb'):T('wrong_fb')}</div>
+      <div class="text-sm text-slate-300">${q.ex}</div></div>
+      <button onclick="nextQuiz()" class="mt-4 ctrl-btn active rounded-xl px-6 py-3 font-bold text-cyan-300">
+      ${quiz.i>=4?T('see_result'):T('next_q')} <i class="fa-solid fa-arrow-right ms-2"></i></button>`;
+  }
+  body.innerHTML = `<h3 class="text-lg md:text-xl font-bold text-white mb-4 leading-relaxed">${q.q}</h3>
+    <div class="space-y-3">${opts}</div>${fb}`;
+}
+function answerQuiz(oi) {
+  if (quiz.answered) return;
+  quiz.answered = true; quiz.picked = oi;
+  if (oi === LANG[cur].quiz[quiz.i].a) quiz.score++;
+  renderQuiz();
+}
+function nextQuiz() {
+  if (quiz.i >= 4) { quiz.done = true; renderQuiz(); return; }
+  quiz.i++; quiz.answered=false; quiz.picked=null; renderQuiz();
+}
+function restartQuiz() {
+  quiz.i=0; quiz.score=0; quiz.answered=false; quiz.picked=null; quiz.done=false;
+  renderQuiz();
+}
+
+/* ===== Boot ===== */
+function boot() {
+  canvas = document.getElementById('sim-canvas');
+  ctx = canvas.getContext('2d');
+  if (!ctx.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+      this.beginPath();
+      this.moveTo(x+r,y);
+      this.arcTo(x+w,y,x+w,y+h,r);
+      this.arcTo(x+w,y+h,x,y+h,r);
+      this.arcTo(x,y+h,x,y,r);
+      this.arcTo(x,y,x+w,y,r);
+      this.closePath();
+    };
+  }
+  changeLanguage(cur);
+  fitCanvas();
+  initAnnotationCanvas(W, H);
+  setInsight('insight_start');
+  updateUI();
+
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, {passive:false});
+  canvas.addEventListener('touchmove', onMove, {passive:false});
+  canvas.addEventListener('touchend', onUp);
+  canvas.addEventListener('wheel', e => {
+    if (isAnnoActive) return;
+    e.preventDefault();
+    zoomBy(e.deltaY < 0 ? 1.1 : 1/1.1, e.offsetX, e.offsetY);
+  }, {passive:false});
+  window.addEventListener('resize', () => fitCanvas());
+  requestAnimationFrame(loop);
+
+  setTimeout(() => {
+    const intro = document.getElementById('intro');
+    intro.style.opacity = '0';
+    document.getElementById('app').style.opacity = '1';
+    setTimeout(() => { intro.remove(); fitCanvas(); }, 700);
+  }, 5000);
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+else boot();
+</script>
+</body>
+</html>
