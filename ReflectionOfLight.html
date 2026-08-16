@@ -385,9 +385,10 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 
         <div id="surface-controls" class="space-y-3 hidden">
           <label class="text-sm font-bold text-slate-300 block" data-i18n="surface_type"></label>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="surf-smooth" onclick="setSurface('smooth')" class="mode-btn active px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="surf_smooth"></button>
-            <button id="surf-rough" onclick="setSurface('rough')" class="mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300" data-i18n="surf_rough"></button>
+          <div class="grid grid-cols-3 gap-2">
+            <button id="surf-smooth" onclick="setSurface('smooth')" class="mode-btn px-2 py-3 rounded-xl font-bold text-xs md:text-sm text-slate-300" data-i18n="surf_smooth"></button>
+            <button id="surf-rough" onclick="setSurface('rough')" class="mode-btn px-2 py-3 rounded-xl font-bold text-xs md:text-sm text-slate-300" data-i18n="surf_rough"></button>
+            <button id="surf-compare" onclick="setSurface('compare')" class="mode-btn active px-2 py-3 rounded-xl font-bold text-xs md:text-sm text-slate-300" data-i18n="surf_compare"></button>
           </div>
           <div id="rough-wrap" class="hidden">
             <div class="flex justify-between items-center mb-2">
@@ -396,6 +397,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
             </div>
             <input type="range" id="sl-rough" class="w-full" min="10" max="100" step="5" value="50" oninput="onRough()">
           </div>
+          <p class="text-[11px] text-amber-300/90 leading-relaxed" data-i18n="surface_note"></p>
         </div>
       </div>
 
@@ -467,9 +469,11 @@ en: {
   tog_labels: "Labels",
   tog_beam: "Ray Bundle",
   surface_type: "Reflecting Surface",
-  surf_smooth: "Smooth Mirror",
-  surf_rough: "Rough Surface",
+  surf_smooth: "(a) Smooth",
+  surf_rough: "(b) Rough",
+  surf_compare: "Compare Both",
   roughness: "Roughness",
+  surface_note: "Three parallel incident rays. On a rough surface each local normal tilts — i = r still holds at every point.",
   readings: "Live Observations",
   rd_i: "Angle of Incidence i",
   rd_r: "Angle of Reflection r",
@@ -478,21 +482,26 @@ en: {
   anno_title: "Annotation Tools",
   status_drag: "Drag the red handle to change the incident ray",
   status_equal: "Observe: i and r stay equal as you change the angle",
-  status_diffuse: "On a rough surface, reflected rays scatter in many directions",
-  status_specular: "On a smooth mirror, reflected rays stay orderly — clear image",
+  status_diffuse: "Rough surface: parallel incident rays scatter — irregular (diffuse) reflection",
+  status_specular: "Smooth surface: parallel incident rays stay parallel after reflection — regular (specular)",
+  status_compare: "Compare (a) smooth vs (b) rough — same incident rays, different reflected paths",
   status_laws: "Explore all three laws of reflection visually",
   tip_law: "Drag the incident ray. Watch the reflected ray mirror your move — the angle of reflection equals the angle of incidence.",
-  tip_smooth: "A polished surface reflects parallel rays as a parallel bundle. That is specular reflection — you see a sharp image.",
-  tip_rough: "Microscopic bumps tilt the local normal. Same incident ray produces many reflection directions — diffuse reflection.",
+  tip_smooth: "Regular reflection: on a smooth surface all local normals are parallel, so parallel incident rays remain parallel after reflection — a clear image forms.",
+  tip_rough: "Irregular (diffuse) reflection: bumps tilt each local normal. Law i = r still holds at every point, but reflected rays go in many directions — no sharp image.",
+  tip_compare: "Same three parallel incident rays hit both surfaces. Smooth → parallel reflected rays. Rough → scattered rays. At each hit, iₙ = rₙ still.",
   tip_laws: "Law 1: i = r. Law 2: incident ray, reflected ray and normal lie in one plane. Law 3: they are on opposite sides of the normal.",
   eq_hold: "Law holds: i = r ✓",
   eq_opp: "Incident & reflected rays are on opposite sides of the normal",
+  eq_local: "At every point: iₙ = rₙ (local law still true)",
   // canvas labels
   lbl_incident: "Incident ray",
   lbl_reflected: "Reflected ray",
   lbl_normal: "Normal",
   lbl_poi: "Point of incidence",
   lbl_mirror: "Reflecting surface",
+  lbl_smooth_cap: "(a) Smooth surface — regular reflection",
+  lbl_rough_cap: "(b) Rough surface — irregular reflection",
   lbl_i: "i",
   lbl_r: "r",
   lbl_law1: "1. Angle of reflection = angle of incidence",
@@ -559,9 +568,11 @@ ur: {
   tog_labels: "لیبلز",
   tog_beam: "شعاعوں کا دستہ",
   surface_type: "منعکس سطح",
-  surf_smooth: "ہموار آئینہ",
-  surf_rough: "کھردری سطح",
+  surf_smooth: "(الف) ہموار",
+  surf_rough: "(ب) غیر ہموار",
+  surf_compare: "موازنہ",
   roughness: "کھردراپن",
+  surface_note: "تین متوازی شعاعیںِ وقوع۔ کھردری سطح پر ہر مقامی عماد جھکتا ہے — پھر بھی ہر نقطے پر i = r صادق آتا ہے۔",
   readings: "براہِ راست مشاہدات",
   rd_i: "زاویہِ وقوع i",
   rd_r: "زاویہِ منعکسہ r",
@@ -570,20 +581,25 @@ ur: {
   anno_title: "تشریح کے اوزار",
   status_drag: "سرخ ہینڈل کھینچ کر شعاعِ وقوع تبدیل کریں",
   status_equal: "مشاہدہ کریں: زاویہ بدلنے پر i اور r برابر رہتے ہیں",
-  status_diffuse: "کھردری سطح پر منعکس شعاعیں کئی سمتوں میں بکھر جاتی ہیں",
-  status_specular: "ہموار آئینے پر منعکس شعاعیں منظم رہتی ہیں — واضح تصویر",
+  status_diffuse: "غیر ہموار سطح: متوازی شعاعیں بکھر جاتی ہیں — غیرمنتظم (منتشر) انعکاس",
+  status_specular: "ہموار سطح: متوازی شعاعیں انعکاس کے بعد بھی متوازی رہتی ہیں — منتظم انعکاس",
+  status_compare: "موازنہ (الف) ہموار بمقابلہ (ب) غیر ہموار — ایک جیسی شعاعیں، مختلف منعکس راستے",
   status_laws: "انعکاسِ نور کے تینوں قوانین کو بصری طور پر دریافت کریں",
   tip_law: "شعاعِ وقوع کھینچیں۔ شعاعِ منعکسہ آپ کی حرکت کا عکس بناتی ہے — زاویہِ منعکسہ = زاویہِ وقوع۔",
-  tip_smooth: "چمکدار سطح متوازی شعاعوں کو متوازی دستے کی صورت میں منعکس کرتی ہے — یہ آئینہ دار انعکاس ہے، واضح تصویر بنتی ہے۔",
-  tip_rough: "خورد بینی اونچائی نیچائی مقامی عماد جھکا دیتی ہے۔ ایک ہی شعاعِ وقوع سے کئی سمتوں میں انعکاس — منتشر انعکاس۔",
+  tip_smooth: "منتظم انعکاس: ہموار سطح پر تمام مقامی عماد متوازی ہوتے ہیں، اس لیے متوازی شعاعیںِ وقوع انعکاس کے بعد بھی متوازی رہتی ہیں — واضح تصویر بنتی ہے۔",
+  tip_rough: "غیرمنتظم (منتشر) انعکاس: اونچائی نیچائی ہر مقامی عماد جھکا دیتی ہے۔ ہر نقطے پر i = r پھر بھی درست ہے، مگر منعکس شعاعیں کئی سمتوں میں جاتی ہیں — تیز تصویر نہیں بنتی۔",
+  tip_compare: "ایک جیسی تین متوازی شعاعیں دونوں سطحوں سے ٹکراتی ہیں۔ ہموار → متوازی منعکس شعاعیں۔ غیر ہموار → بکھری ہوئی شعاعیں۔ ہر نقطے پر iₙ = rₙ۔",
   tip_laws: "قانون ۱: i = r۔ قانون ۲: شعاعِ وقوع، شعاعِ منعکسہ اور عماد ایک ہی مستوی میں۔ قانون ۳: دونوں شعاعیں عماد کی مخالف جانب۔",
   eq_hold: "قانون درست: i = r ✓",
   eq_opp: "شعاعِ وقوع اور شعاعِ منعکسہ عماد کی مخالف جانب ہیں",
+  eq_local: "ہر نقطے پر: iₙ = rₙ (مقامی قانون برقرار)",
   lbl_incident: "شعاعِ وقوع",
   lbl_reflected: "شعاعِ منعکسہ",
   lbl_normal: "عماد",
   lbl_poi: "نقطہِ وقوع",
   lbl_mirror: "منعکس سطح",
+  lbl_smooth_cap: "(الف) ہموار سطح — منتظم انعکاس",
+  lbl_rough_cap: "(ب) غیر ہموار سطح — غیرمنتظم انعکاس",
   lbl_i: "i",
   lbl_r: "r",
   lbl_law1: "۱۔ زاویہِ منعکسہ = زاویہِ وقوع",
@@ -645,7 +661,7 @@ const state = {
   showAngles: true,
   showLabels: true,
   showBeam: false,
-  surface: 'smooth',    // smooth | rough
+  surface: 'compare',    // smooth | rough | compare
   roughness: 50,
   zoom: 1, panX: 0, panY: 0
 };
@@ -717,17 +733,27 @@ function setViewMode(mode) {
   document.getElementById('mode-surface').classList.toggle('active', mode === 'surface');
   document.getElementById('mode-laws').classList.toggle('active', mode === 'laws');
   document.getElementById('surface-controls').classList.toggle('hidden', mode !== 'surface');
+  if (mode === 'surface') {
+    state.showNormal = true;
+    state.showAngles = true;
+    document.getElementById('tog-normal').classList.add('on');
+    document.getElementById('tog-angles').classList.add('on');
+    setSurface(state.surface || 'compare');
+  }
   updateTip();
   updateStatus();
+  updateUI();
 }
 
 function setSurface(s) {
   state.surface = s;
   document.getElementById('surf-smooth').classList.toggle('active', s === 'smooth');
   document.getElementById('surf-rough').classList.toggle('active', s === 'rough');
-  document.getElementById('rough-wrap').classList.toggle('hidden', s !== 'rough');
+  document.getElementById('surf-compare').classList.toggle('active', s === 'compare');
+  document.getElementById('rough-wrap').classList.toggle('hidden', s === 'smooth');
   updateTip();
   updateStatus();
+  updateUI();
 }
 
 function toggleFlag(key) {
@@ -755,8 +781,12 @@ function updateUI() {
   document.getElementById('val-i').textContent = state.angle + '°';
   document.getElementById('rd-i').textContent = state.angle + '°';
   document.getElementById('rd-r').textContent = state.angle + '°';
-  document.getElementById('rd-eq').textContent = 'i = r = ' + state.angle + '°';
-  document.getElementById('eq-panel').textContent = T('eq_hold') + '  ·  ' + T('eq_opp');
+  document.getElementById('rd-eq').textContent = state.mode === 'surface'
+    ? T('eq_local')
+    : ('i = r = ' + state.angle + '°');
+  document.getElementById('eq-panel').textContent = state.mode === 'surface'
+    ? T('eq_local')
+    : (T('eq_hold') + '  ·  ' + T('eq_opp'));
   document.getElementById('val-rough').textContent = state.roughness + '%';
   updateStatus();
 }
@@ -764,15 +794,22 @@ function updateUI() {
 function updateTip() {
   let key = 'tip_law';
   if (state.mode === 'laws') key = 'tip_laws';
-  else if (state.mode === 'surface') key = state.surface === 'rough' ? 'tip_rough' : 'tip_smooth';
+  else if (state.mode === 'surface') {
+    if (state.surface === 'rough') key = 'tip_rough';
+    else if (state.surface === 'compare') key = 'tip_compare';
+    else key = 'tip_smooth';
+  }
   document.getElementById('tip-text').textContent = T(key);
 }
 
 function updateStatus() {
   const b = document.getElementById('status-banner');
   if (state.mode === 'laws') b.textContent = T('status_laws');
-  else if (state.mode === 'surface') b.textContent = state.surface === 'rough' ? T('status_diffuse') : T('status_specular');
-  else b.textContent = T('status_drag') + ' — ' + T('status_equal');
+  else if (state.mode === 'surface') {
+    if (state.surface === 'rough') b.textContent = T('status_diffuse');
+    else if (state.surface === 'compare') b.textContent = T('status_compare');
+    else b.textContent = T('status_specular');
+  } else b.textContent = T('status_drag') + ' — ' + T('status_equal');
 }
 
 /* ============================================================
@@ -1217,43 +1254,172 @@ function drawRays() {
 }
 
 function drawDiffuse() {
-  const s = S();
-  const len = 260;
-  const { O, inc } = rayEnds(state.angle, len);
-  const Os = world(O.x, O.y);
-  const As = world(inc.x, inc.y);
+  // legacy stub — replaced by drawSurfaceReflection
+  drawSurfaceReflection(false, 0);
+}
 
-  drawArrow(As.x, As.y, Os.x, Os.y, '#ef4444', 3.2);
-  rayHandle = { x: As.x, y: As.y };
+/* ============================================================
+   SMOOTH vs ROUGH — textbook-style multi-ray reflection (16.4)
+============================================================ */
+function surfaceWave(x, amp) {
+  return amp * (Math.sin(x * 0.028) * 1.0 + Math.sin(x * 0.011 + 1.2) * 0.55);
+}
+
+function surfaceHeightAt(x, rough, amp, yBase) {
+  if (!rough) return yBase;
+  return yBase + surfaceWave(x, amp);
+}
+
+function surfaceSlopeAt(x, rough, amp) {
+  if (!rough) return 0;
+  return amp * (0.028 * Math.cos(x * 0.028) + 0.011 * Math.cos(x * 0.011 + 1.2) * 0.55);
+}
+
+function drawSurfaceStrip(yBase, rough, amp, xMin, xMax) {
+  const s = S();
+  const left = world(xMin, yBase);
+
+  // Fill under surface
   ctx.beginPath();
-  ctx.arc(As.x, As.y, 12 * s, 0, Math.PI * 2);
-  ctx.fillStyle = '#ef4444';
+  const p0 = world(xMin, surfaceHeightAt(xMin, rough, amp, yBase));
+  ctx.moveTo(p0.x, p0.y);
+  for (let x = xMin; x <= xMax; x += 6) {
+    const p = world(x, surfaceHeightAt(x, rough, amp, yBase));
+    ctx.lineTo(p.x, p.y);
+  }
+  const pEnd = world(xMax, surfaceHeightAt(xMax, rough, amp, yBase));
+  ctx.lineTo(pEnd.x, pEnd.y + 22 * s);
+  ctx.lineTo(left.x, left.y + 22 * s);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(100,116,139,0.45)';
   ctx.fill();
 
-  // Scattered rays
-  const n = 7;
-  const spread = (state.roughness / 100) * 55;
-  for (let i = 0; i < n; i++) {
-    const a = state.angle + (i - (n-1)/2) * (spread / ((n-1)/2 || 1));
-    const clamped = Math.max(5, Math.min(85, a));
-    const rad = clamped * Math.PI / 180;
-    const rx = O.x + Math.sin(rad) * (180 + (i%3)*20);
-    const ry = O.y - Math.cos(rad) * (180 + (i%3)*20);
-    const Bs = world(rx, ry);
-    ctx.globalAlpha = 0.45 + (i === Math.floor(n/2) ? 0.35 : 0);
-    drawArrow(Os.x, Os.y, Bs.x, Bs.y, '#4ade80', 2);
-    ctx.globalAlpha = 1;
+  // Surface edge
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y);
+  for (let x = xMin; x <= xMax; x += 4) {
+    const p = world(x, surfaceHeightAt(x, rough, amp, yBase));
+    ctx.lineTo(p.x, p.y);
   }
+  ctx.strokeStyle = rough ? '#94a3b8' : '#e2e8f0';
+  ctx.lineWidth = Math.max(2, 2.8 * s);
+  ctx.stroke();
+
+  // Hatch marks
+  ctx.strokeStyle = 'rgba(148,163,184,0.4)';
+  ctx.lineWidth = Math.max(1, 1.2 * s);
+  for (let x = xMin + 12; x < xMax; x += 18) {
+    const y = surfaceHeightAt(x, rough, amp, yBase);
+    const a = world(x, y);
+    const b = world(x - 10, y + 16);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y + 2 * s);
+    ctx.lineTo(b.x, b.y + 10 * s);
+    ctx.stroke();
+  }
+}
+
+function reflectDir(Ix, Iy, Nx, Ny) {
+  const dot = Ix * Nx + Iy * Ny;
+  return { x: Ix - 2 * dot * Nx, y: Iy - 2 * dot * Ny };
+}
+
+function drawSurfaceReflection(rough, panelOffsetY) {
+  const s = S();
+  const amp = rough ? (8 + (state.roughness / 100) * 22) : 0;
+  const xMin = -340, xMax = 340;
+  const yBase = 80 + panelOffsetY;
+  const rayLen = 185;
+  const theta = state.angle * Math.PI / 180;
+  // Parallel incident direction (down-right)
+  const Ix = Math.sin(theta);
+  const Iy = Math.cos(theta);
+
+  // Three hit points (textbook style); rough uses offsets for distinct local slopes
+  const hitXs = rough ? [-150, 20, 170] : [-160, 0, 160];
+
+  drawSurfaceStrip(yBase, rough, amp, xMin, xMax);
+
+  hitXs.forEach((hx, n) => {
+    const hy = surfaceHeightAt(hx, rough, amp, yBase);
+    const slope = surfaceSlopeAt(hx, rough, amp);
+    // Upward unit normal
+    let Nx = slope, Ny = -1;
+    const nLen = Math.hypot(Nx, Ny) || 1;
+    Nx /= nLen; Ny /= nLen;
+
+    const hit = { x: hx, y: hy };
+    const start = { x: hx - Ix * rayLen, y: hy - Iy * rayLen };
+    const R = reflectDir(Ix, Iy, Nx, Ny);
+    const end = { x: hx + R.x * rayLen * 0.95, y: hy + R.y * rayLen * 0.95 };
+
+    const Hs = world(hit.x, hit.y);
+    const As = world(start.x, start.y);
+    const Bs = world(end.x, end.y);
+    const Nn = world(hit.x + Nx * 70, hit.y + Ny * 70);
+
+    if (state.showNormal) {
+      ctx.save();
+      ctx.setLineDash([6 * s, 5 * s]);
+      ctx.strokeStyle = '#67e8f9';
+      ctx.lineWidth = Math.max(1.2, 1.8 * s);
+      ctx.beginPath();
+      ctx.moveTo(Hs.x, Hs.y);
+      ctx.lineTo(Nn.x, Nn.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    drawArrow(As.x, As.y, Hs.x, Hs.y, '#38bdf8', 2.6);
+    drawArrow(Hs.x, Hs.y, Bs.x, Bs.y, '#f472b6', 2.6);
+
+    ctx.beginPath();
+    ctx.arc(Hs.x, Hs.y, 4 * s, 0, Math.PI * 2);
+    ctx.fillStyle = '#fbbf24';
+    ctx.fill();
+
+    if (state.showAngles || state.showLabels) {
+      const idx = n + 1;
+      const iPos = world(hit.x - Ix * 55 - Nx * 18, hit.y - Iy * 55 - Ny * 18);
+      const rPos = world(hit.x + R.x * 55 + Nx * 12, hit.y + R.y * 55 + Ny * 12);
+      drawLabel('i' + idx, iPos.x, iPos.y, '#38bdf8', 11);
+      drawLabel('r' + idx, rPos.x, rPos.y, '#f472b6', 11);
+    }
+  });
 
   if (state.showLabels) {
-    drawLabel(T('lbl_incident'), As.x - 40*s, As.y - 24*s, '#fca5a5', 12);
-    drawLabel(T('surf_rough'), Os.x, Os.y + 100*s, '#fbbf24', 13);
+    const cap = rough ? T('lbl_rough_cap') : T('lbl_smooth_cap');
+    const c = world(0, yBase + 52);
+    drawLabel(cap, c.x, c.y, rough ? '#fbbf24' : '#86efac', 12);
   }
+
+  if (panelOffsetY === 0 && state.surface !== 'compare') {
+    const hx = hitXs[0];
+    const hy = surfaceHeightAt(hx, rough, amp, yBase);
+    const As = world(hx - Ix * rayLen, hy - Iy * rayLen);
+    rayHandle = { x: As.x, y: As.y };
+    ctx.beginPath();
+    ctx.arc(As.x, As.y, 11 * s, 0, Math.PI * 2);
+    ctx.fillStyle = '#38bdf8';
+    ctx.shadowColor = 'rgba(56,189,248,0.7)';
+    ctx.shadowBlur = 14;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+function drawSurfaceCompareView() {
+  // Stacked textbook figure: (a) smooth on top, (b) rough below
+  drawSurfaceReflection(false, -160);
+  drawSurfaceReflection(true, 120);
+  rayHandle = null; // disable drag in compare (use slider)
 }
 
 function drawLawsPanel() {
   const s = S();
-  // Still draw the geometry so laws are visible
   drawMirror(false);
   drawNormal();
   drawRays();
@@ -1277,8 +1443,8 @@ function drawLawsPanel() {
     ctx.font = Lfont(Math.max(11, 13 * s));
     ctx.textAlign = lang === 'ur' ? 'right' : 'left';
     ctx.textBaseline = 'middle';
-    const tx = lang === 'ur' ? start.x + 500*s : start.x + 16*s;
-    ctx.fillText(card.t, tx, y + 20*s);
+    const tx = lang === 'ur' ? start.x + 500 * s : start.x + 16 * s;
+    ctx.fillText(card.t, tx, y + 20 * s);
   });
 }
 
@@ -1296,10 +1462,14 @@ function drawFrame() {
 
   if (state.mode === 'laws') {
     drawLawsPanel();
-  } else if (state.mode === 'surface' && state.surface === 'rough') {
-    drawMirror(true);
-    if (state.showNormal) drawNormal();
-    drawDiffuse();
+  } else if (state.mode === 'surface') {
+    if (state.surface === 'compare') {
+      drawSurfaceCompareView();
+    } else if (state.surface === 'rough') {
+      drawSurfaceReflection(true, 0);
+    } else {
+      drawSurfaceReflection(false, 0);
+    }
   } else {
     drawMirror(false);
     drawNormal();
