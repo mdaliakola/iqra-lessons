@@ -49,6 +49,28 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
   line-height: 2.3 !important;
 }
+/* One Urdu typeface everywhere as soon as Urdu is selected */
+html[dir="rtl"],
+html[dir="rtl"] body {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+  font-size: 1.08em;
+}
+html[dir="rtl"] *:not(i):not(.fa):not(.fa-solid):not(.fa-regular):not(.fas):not(.far):not(.num):not(.stat-val):not(.brand-en):not(.intro-title) {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+}
+html[dir="rtl"] i,
+html[dir="rtl"] .fa,
+html[dir="rtl"] .fa-solid,
+html[dir="rtl"] .fa-regular,
+html[dir="rtl"] .fas,
+html[dir="rtl"] .far {
+  font-family: "Font Awesome 6 Free" !important;
+}
+html[dir="rtl"] #lang-select,
+html[dir="rtl"] #lang-select option {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+}
 
 /* Glassmorphism Classes */
 .glass-panel {
@@ -113,8 +135,9 @@ body {
   overflow: hidden;
 }
 .font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
-[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
-[dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
+html[dir="rtl"] .font-display {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+}
 
 .bg-grid {
   background-image:
@@ -202,7 +225,12 @@ body {
 .zoom-btn:active { transform: scale(.92); }
 
 .stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
-[dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
+html[dir="rtl"] .stat-val,
+html[dir="rtl"] .num,
+html[dir="rtl"] .brand-en {
+  font-family: 'Oxanium', monospace !important;
+  line-height: 1.4 !important;
+}
 .num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
 
 .fade-in { animation: viewIn .4s ease both; }
@@ -250,7 +278,7 @@ body {
         <i class="fa-solid fa-flask text-cyan-400"></i>
       </div>
       <div class="min-w-0">
-        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="brand-en font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
         <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
       </div>
     </div>
@@ -562,6 +590,9 @@ function changeLanguage(l) {
   localStorage.setItem('iqra_lang_series', l);
   document.documentElement.setAttribute('dir', l === 'ur' ? 'rtl' : 'ltr');
   document.documentElement.setAttribute('lang', l);
+  document.body.style.fontFamily = l === 'ur'
+    ? "'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif"
+    : "'Manrope', sans-serif";
   document.getElementById('lang-select').value = l;
   document.getElementById('intro-topic').textContent = T('intro_topic');
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -727,6 +758,13 @@ function fitCanvas() {
 function S() { return baseScale * state.zoom; }
 function TX(x) { return W/2 + x * S() + state.panX; }
 function TY(y) { return H/2 + y * S() + state.panY; }
+function latinFont(weight, size) {
+  return `${weight} ${size}px Oxanium, monospace`;
+}
+function labelFont(weight, size) {
+  if (cur === 'ur') return `${weight} ${size}px "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", serif`;
+  return latinFont(weight, size);
+}
 
 function roundRect(x,y,w,h,r) {
   ctx.beginPath();
@@ -749,6 +787,22 @@ function drawWire(x1,y1,x2,y2, glow) {
   ctx.lineTo(TX(x2), TY(y2));
   ctx.stroke();
   ctx.shadowBlur = 0;
+}
+
+function drawCurrentArrow(x, y, angle) {
+  if (!state.switchOn) return;
+  const px = TX(x), py = TY(y);
+  ctx.save();
+  ctx.translate(px, py);
+  ctx.rotate(angle);
+  ctx.fillStyle = '#67e8f9';
+  ctx.beginPath();
+  ctx.moveTo(10*S(), 0);
+  ctx.lineTo(-6*S(), -6*S());
+  ctx.lineTo(-6*S(), 6*S());
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
 function drawResistorSymbol(cx, cy, label, ohms, drop) {
@@ -775,11 +829,11 @@ function drawResistorSymbol(cx, cy, label, ohms, drop) {
   ctx.stroke();
 
   ctx.fillStyle = '#e2e8f0';
-  ctx.font = `700 ${Math.max(11, 12*S())}px Oxanium, monospace`;
+  ctx.font = latinFont(700, Math.max(11, 12*S()));
   ctx.textAlign = 'center';
   ctx.fillText(label, TX(cx), TY(cy - 28));
   ctx.fillStyle = '#94a3b8';
-  ctx.font = `600 ${Math.max(10, 11*S())}px Oxanium, monospace`;
+  ctx.font = latinFont(600, Math.max(10, 11*S()));
   ctx.fillText(ohms.toFixed(0) + ' Ω', TX(cx), TY(cy + 32));
   if (state.switchOn) {
     ctx.fillStyle = '#fbbf24';
@@ -789,42 +843,43 @@ function drawResistorSymbol(cx, cy, label, ohms, drop) {
 
 function drawBattery(cx, cy) {
   const x = TX(cx), y = TY(cy);
-  ctx.strokeStyle = '#f87171';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(x - 18*S(), y - 22*S());
-  ctx.lineTo(x - 18*S(), y + 22*S());
-  ctx.stroke();
   ctx.strokeStyle = '#fca5a5';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(x - 6*S(), y - 12*S());
-  ctx.lineTo(x - 6*S(), y + 12*S());
+  ctx.moveTo(x - 18*S(), y - 12*S());
+  ctx.lineTo(x - 18*S(), y + 12*S());
   ctx.stroke();
   ctx.strokeStyle = '#f87171';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(x + 6*S(), y - 22*S());
-  ctx.lineTo(x + 6*S(), y + 22*S());
+  ctx.moveTo(x - 6*S(), y - 22*S());
+  ctx.lineTo(x - 6*S(), y + 22*S());
   ctx.stroke();
   ctx.strokeStyle = '#fca5a5';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(x + 18*S(), y - 12*S());
-  ctx.lineTo(x + 18*S(), y + 12*S());
+  ctx.moveTo(x + 6*S(), y - 12*S());
+  ctx.lineTo(x + 6*S(), y + 12*S());
+  ctx.stroke();
+  ctx.strokeStyle = '#f87171';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x + 18*S(), y - 22*S());
+  ctx.lineTo(x + 18*S(), y + 22*S());
   ctx.stroke();
 
   ctx.fillStyle = '#fca5a5';
-  ctx.font = `700 ${Math.max(11,12*S())}px Oxanium,monospace`;
+  ctx.font = labelFont(700, Math.max(11,12*S()));
   ctx.textAlign = 'center';
   ctx.fillText(T('lbl_battery'), x, y - 38*S());
   ctx.fillStyle = '#00f3ff';
+  ctx.font = latinFont(700, Math.max(11,12*S()));
   ctx.fillText(state.V.toFixed(1)+' V', x, y + 42*S());
-  ctx.fillStyle = '#86efac';
-  ctx.font = `800 ${Math.max(12,14*S())}px Oxanium,monospace`;
-  ctx.fillText('+', x - 28*S(), y - 8*S());
   ctx.fillStyle = '#f87171';
-  ctx.fillText('−', x + 30*S(), y - 8*S());
+  ctx.font = latinFont(800, Math.max(12,14*S()));
+  ctx.fillText('−', x - 28*S(), y - 8*S());
+  ctx.fillStyle = '#86efac';
+  ctx.fillText('+', x + 30*S(), y - 8*S());
 }
 
 function drawSwitch(cx, cy) {
@@ -841,7 +896,7 @@ function drawSwitch(cx, cy) {
   else ctx.lineTo(x + 10*S(), y - 18*S());
   ctx.stroke();
   ctx.fillStyle = state.switchOn ? '#86efac' : '#fcd34d';
-  ctx.font = `700 ${Math.max(11,12*S())}px Oxanium,monospace`;
+  ctx.font = labelFont(700, Math.max(11,12*S()));
   ctx.textAlign = 'center';
   ctx.fillText(T('lbl_switch') + ' ' + (state.switchOn ? T('switch_on') : T('switch_off')), x, y + 30*S());
 }
@@ -860,12 +915,12 @@ function drawMeter(cx, cy, type, reading, color) {
   ctx.stroke();
   ctx.shadowBlur = 0;
   ctx.fillStyle = color;
-  ctx.font = `800 ${Math.max(13,15*S())}px Oxanium,monospace`;
+  ctx.font = latinFont(800, Math.max(13,15*S()));
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(type, x, y - 6*S());
   ctx.fillStyle = '#e2e8f0';
-  ctx.font = `700 ${Math.max(10,11*S())}px Oxanium,monospace`;
+  ctx.font = latinFont(700, Math.max(10,11*S()));
   ctx.fillText(reading, x, y + 12*S());
   ctx.textBaseline = 'alphabetic';
 }
@@ -964,7 +1019,7 @@ function draw() {
   drawWire(L.botEnd.x, L.botEnd.y, L.botStart.x, L.botStart.y, glow);
   drawWire(L.botStart.x, L.botStart.y, L.batL.x, L.batL.y, glow);
 
-  // electron path
+  // Conventional current: + terminal → switch → ammeter → resistors → return → −
   const path = [
     {x1:L.batR.x,y1:L.batR.y,x2:L.swL.x,y2:L.swL.y},
     {x1:L.swR.x,y1:L.swR.y,x2:L.am.x,y2:L.am.y},
@@ -980,6 +1035,10 @@ function draw() {
     {x1:L.botStart.x,y1:L.botStart.y,x2:L.batL.x,y2:L.batL.y}
   );
   drawElectrons(path, 0.35);
+  if (state.switchOn) {
+    drawCurrentArrow((L.swR.x + L.am.x)/2, L.am.y - 16, 0);
+    drawCurrentArrow((L.botEnd.x + L.botStart.x)/2, L.botStart.y + 16, Math.PI);
+  }
 
   drawBattery((L.batL.x+L.batR.x)/2, L.batL.y);
   drawSwitch((L.swL.x+L.swR.x)/2, L.swL.y);
@@ -1025,7 +1084,7 @@ function draw() {
   ctx.lineWidth = 1.5;
   ctx.stroke();
   ctx.fillStyle = '#67e8f9';
-  ctx.font = `700 ${Math.max(12, 14*S())}px Oxanium,monospace`;
+  ctx.font = latinFont(700, Math.max(12, 14*S()));
   ctx.textAlign = 'center';
   ctx.fillText('Req = ΣR   ·   I = V / Req   ·   Vₙ = I × Rₙ', TX(0), TY(162));
 
