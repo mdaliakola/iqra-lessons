@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Resistors in Parallel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://fonts.cdnfonts.com/s/14826/Jameel%20Noori%20Nastaleeq.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --cyan: #00f3ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #020617;
+  color: #f8fafc;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+  font-size: 1.05em;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+  touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+#fabricLayer, .canvas-container {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#intro-screen {
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(0, 243, 255, 0.18), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(99, 102, 241, 0.2), transparent 50%),
+    #020617;
+}
+
+.intro-glow {
+  text-shadow: 0 0 24px rgba(0, 243, 255, 0.55), 0 0 80px rgba(0, 243, 255, 0.25);
+}
+
+@keyframes introZoom {
+  0% { transform: scale(0.72); opacity: 0; filter: blur(12px); }
+  40% { transform: scale(1.06); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes introFadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.45); }
+  50% { box-shadow: 0 0 0 18px rgba(0, 243, 255, 0); }
+}
+
+.animate-intro { animation: introZoom 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.tab-active {
+  background: #00f3ff;
+  color: #020617;
+  font-weight: 700;
+}
+
+.hotspot-pulse { animation: pulseRing 1.6s ease-out infinite; }
+
+#anno-float {
+  transition: width 0.28s ease, height 0.28s ease, padding 0.28s ease, opacity 0.28s ease;
+}
+
+#sim-viewport:fullscreen, #sim-viewport:-webkit-full-screen {
+  background: #020617;
+  padding: 12px;
+}
+
+.quiz-opt.correct { background: rgba(34, 197, 94, 0.22) !important; border-color: #22c55e !important; color: #86efac !important; }
+.quiz-opt.wrong { background: rgba(239, 68, 68, 0.22) !important; border-color: #ef4444 !important; color: #fca5a5 !important; }
+
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 1px solid #334155; border-radius: 4px; }
+</style>
+</head>
+<body class="h-full flex flex-col">
+
+<!-- OPENING INTRO -->
+<div id="intro-screen" class="fixed inset-0 z-[80] flex flex-col items-center justify-center">
+  <div class="animate-intro text-center px-6">
+    <div class="mx-auto mb-6 w-20 h-20 rounded-2xl border border-cyan-400/40 bg-cyan-400/10 flex items-center justify-center glow-cyan hotspot-pulse">
+      <i class="fa-solid fa-bolt text-3xl text-cyan-300"></i>
+    </div>
+    <h1 class="intro-glow text-4xl md:text-6xl font-extrabold tracking-[0.18em] text-white">IQRA VIRTUAL LAB</h1>
+    <p id="intro-topic" class="mt-5 text-xl md:text-3xl font-semibold text-cyan-300 tracking-wide"></p>
+    <div class="mt-10 mx-auto h-1.5 w-56 rounded-full bg-slate-800 overflow-hidden">
+      <div id="intro-bar" class="h-full bg-cyan-400 glow-cyan" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell" class="flex flex-col h-full opacity-0 pointer-events-none">
+
+  <!-- TOP HEADER -->
+  <header class="glass-panel z-40 shrink-0 px-3 md:px-5 py-2.5 flex items-center justify-between gap-3 border-b border-white/10">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-cyan-400/15 border border-cyan-400/40 flex items-center justify-center text-cyan-300 glow-cyan shrink-0">
+        <i class="fa-solid fa-flask-vial"></i>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-sm md:text-base font-extrabold tracking-widest text-white leading-tight">IQRA VIRTUAL LAB</h1>
+        <p class="text-[11px] md:text-xs text-slate-400 truncate" data-i18n="topicName">Resistors in Parallel</p>
+      </div>
+    </div>
+
+    <nav class="hidden sm:flex items-center gap-1 bg-slate-900/80 rounded-xl p-1 border border-slate-700">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-active px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tabSim">Simulation</span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-list"></i><span data-i18n="tabQuiz">Quiz</span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile tabs -->
+  <div class="sm:hidden shrink-0 px-3 py-2 glass-panel flex gap-2">
+    <button onclick="switchTab('sim')" class="flex-1 py-2 rounded-lg tab-active text-sm" id="tab-sim-m"><i class="fa-solid fa-house me-1"></i><span data-i18n="tabSim">Simulation</span></button>
+    <button onclick="switchTab('quiz')" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm" id="tab-quiz-m"><i class="fa-solid fa-clipboard-list me-1"></i><span data-i18n="tabQuiz">Quiz</span></button>
+  </div>
+
+  <main class="flex-1 min-h-0 relative">
+
+    <!-- SIMULATION TAB -->
+    <section id="view-sim" class="absolute inset-0 flex flex-col lg:flex-row gap-3 p-3">
+
+      <!-- LEFT: instruments + branch controls -->
+      <aside class="lg:w-[300px] shrink-0 flex flex-col gap-3 overflow-y-auto">
+        <div class="glass-card rounded-2xl p-3">
+          <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold" data-i18n="instruments">Lab Instruments</p>
+          <p class="text-[11px] text-slate-400 mb-3 leading-relaxed" data-i18n="instrHint">Drag a meter onto a glowing probe on the circuit, or tap a meter then tap a probe.</p>
+          <div class="grid grid-cols-3 gap-2">
+            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="volt" onclick="selectTool('volt')">
+              <i class="fa-solid fa-gauge-high text-amber-300 text-lg"></i>
+              <div class="text-[11px] mt-1 text-amber-200 font-semibold" data-i18n="voltmeter">Voltmeter</div>
+              <div class="text-[10px] text-slate-500">V</div>
+            </button>
+            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="amm" onclick="selectTool('amm')">
+              <i class="fa-solid fa-bolt text-emerald-300 text-lg"></i>
+              <div class="text-[11px] mt-1 text-emerald-200 font-semibold" data-i18n="ammeter">Ammeter</div>
+              <div class="text-[10px] text-slate-500">A</div>
+            </button>
+            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="ohm" onclick="selectTool('ohm')">
+              <i class="fa-solid fa-omega text-fuchsia-300 text-lg" style="font-style:normal;font-family:serif;font-size:1.15rem;">Ω</i>
+              <div class="text-[11px] mt-1 text-fuchsia-200 font-semibold" data-i18n="ohmmeter">Ohmmeter</div>
+              <div class="text-[10px] text-slate-500">Ω</div>
+            </button>
+          </div>
+          <button onclick="clearMeters()" class="mt-3 w-full text-xs py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white">
+            <i class="fa-solid fa-unlink me-1"></i><span data-i18n="removeMeters">Remove meters</span>
+          </button>
+        </div>
+
+        <div class="glass-card rounded-2xl p-3">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold" data-i18n="source">Power Source</p>
+            <button id="pwr-btn" onclick="togglePower()" class="px-3 py-1.5 rounded-lg text-xs font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+              <i class="fa-solid fa-power-off me-1"></i><span id="pwr-label" data-i18n="powerOn">ON</span>
+            </button>
+          </div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="text-slate-300" data-i18n="voltage">Voltage</span>
+            <span class="mono text-cyan-300 font-bold"><span id="v-val">12.0</span> V</span>
+          </div>
+          <input id="v-slider" type="range" min="1.5" max="24" step="0.5" value="12" class="w-full" oninput="setVoltage(this.value)">
+        </div>
+
+        <div class="glass-card rounded-2xl p-3 flex-1">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold" data-i18n="branches">Parallel Branches</p>
+            <div class="flex gap-1">
+              <button onclick="addBranch()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-cyan-300"><i class="fa-solid fa-plus"></i></button>
+              <button onclick="removeBranch()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-rose-300"><i class="fa-solid fa-minus"></i></button>
+            </div>
+          </div>
+          <div id="branch-sliders" class="space-y-3"></div>
+        </div>
+      </aside>
+
+      <!-- CENTER: simulation viewport -->
+      <div class="flex-1 min-w-0 min-h-[320px] flex flex-col gap-3">
+        <div id="sim-viewport" class="relative flex-1 min-h-0 glass-panel rounded-2xl overflow-hidden">
+          <canvas id="circuitCanvas" class="absolute inset-0 w-full h-full z-10"></canvas>
+          <canvas id="fabricLayer"></canvas>
+
+          <!-- Zoom cluster -->
+          <div class="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 glass-panel rounded-xl p-1.5">
+            <button onclick="zoomBy(1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomIn" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="zoomBy(1/1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomOut" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
+            <button onclick="resetView()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200" data-i18n-title="resetView" title="Reset view"><i class="fa-solid fa-expand"></i></button>
+          </div>
+
+          <!-- Draggable floating annotation card -->
+          <div id="anno-float" class="absolute top-3 right-3 z-30 glass-panel rounded-2xl overflow-hidden shadow-xl" style="width:220px;">
+            <div id="anno-float-head" class="flex items-center justify-between px-3 py-2 cursor-move border-b border-white/10 bg-slate-900/70">
+              <span class="text-xs font-semibold text-cyan-300"><i class="fa-solid fa-pen-ruler me-1"></i><span data-i18n="annoCard">Annotate</span></span>
+              <button onclick="toggleAnnoFloat()" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300" data-i18n-title="minimize" title="Minimize">
+                <i id="anno-float-icon" class="fa-solid fa-minus"></i>
+              </button>
+            </div>
+            <div id="anno-float-body" class="p-3 flex items-center gap-2">
+              <input type="color" id="anno-color-float" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value;changeAnnoColor(this.value)" class="w-9 h-9 cursor-pointer bg-transparent border-0 p-0">
+              <button onclick="ensureAnnoOn();setAnnoMode('pen')" class="w-10 h-10 rounded-lg bg-slate-800 text-cyan-300"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="ensureAnnoOn();setAnnoMode('eraser')" class="w-10 h-10 rounded-lg bg-slate-800 text-slate-300"><i class="fa-solid fa-eraser"></i></button>
+              <button onclick="clearAnnotations()" class="w-10 h-10 rounded-lg bg-slate-800 text-rose-400"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live readout -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 shrink-0">
+          <div class="glass-card rounded-xl px-3 py-2">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="eqR">Equivalent R</div>
+            <div class="mono text-lg text-cyan-300 font-bold"><span id="out-req">30.0</span> Ω</div>
+          </div>
+          <div class="glass-card rounded-xl px-3 py-2">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="itot">Total Current</div>
+            <div class="mono text-lg text-emerald-300 font-bold"><span id="out-it">0.400</span> A</div>
+          </div>
+          <div class="glass-card rounded-xl px-3 py-2">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="sameV">Voltage (each branch)</div>
+            <div class="mono text-lg text-amber-300 font-bold"><span id="out-v">12.0</span> V</div>
+          </div>
+          <div class="glass-card rounded-xl px-3 py-2">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="observe">Observe</div>
+            <div id="out-hint" class="text-xs text-slate-200 leading-snug"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ TAB -->
+    <section id="view-quiz" class="hidden absolute inset-0 overflow-y-auto p-4 md:p-8">
+      <div class="max-w-3xl mx-auto glass-panel rounded-3xl p-5 md:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-clipboard-check text-cyan-400 me-2"></i><span data-i18n="quizTitle">Concept Check</span></h2>
+          <span id="quiz-progress" class="text-sm text-slate-400"></span>
+        </div>
+        <div id="quiz-body"></div>
+        <div id="quiz-result" class="hidden text-center py-6">
+          <div class="text-5xl font-extrabold text-cyan-300 glow-cyan inline-block px-6 py-2 rounded-2xl" id="quiz-score"></div>
+          <p id="quiz-pct" class="mt-3 text-slate-300 text-lg"></p>
+          <button onclick="startQuiz()" class="mt-6 px-6 py-3 rounded-xl bg-cyan-400 text-slate-950 font-bold hover:bg-cyan-300">
+            <i class="fa-solid fa-rotate-right me-2"></i><span data-i18n="restartQuiz">Restart Quiz</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const LANG = {
+  en: {
+    topicName: "Resistors in Parallel",
+    introTopic: "Resistors in Parallel",
+    tabSim: "Simulation",
+    tabQuiz: "Quiz",
+    instruments: "Lab Instruments",
+    instrHint: "Drag a meter onto a glowing probe on the circuit, or tap a meter then tap a probe.",
+    voltmeter: "Voltmeter",
+    ammeter: "Ammeter",
+    ohmmeter: "Ohmmeter",
+    removeMeters: "Remove meters",
+    source: "Power Source",
+    powerOn: "ON",
+    powerOff: "OFF",
+    voltage: "Voltage",
+    branches: "Parallel Branches",
+    branch: "Branch",
+    eqR: "Equivalent R",
+    itot: "Total Current",
+    sameV: "Voltage (each branch)",
+    observe: "Observe",
+    annoCard: "Annotate",
+    minimize: "Minimize",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    resetView: "Reset view",
+    quizTitle: "Concept Check",
+    restartQuiz: "Restart Quiz",
+    nextQ: "Next",
+    seeResults: "See results",
+    explanation: "Explanation",
+    finalScore: "Final Score",
+    percentage: "Percentage",
+    qOf: "Question",
+    of: "of",
+    hintOff: "Switch ON to watch current split. Voltage stays the same on every branch.",
+    hintOn: "Current prefers the easier path: smaller R carries larger I. Total I is the sum.",
+    hintOhm: "Ohmmeter reads resistance. Turn power OFF for a clean Ω reading.",
+    hintAdd: "Add a branch and watch Req fall while total current rises.",
+    probeVsrc: "V across source",
+    probeV: "V across R",
+    probeAmain: "A (total)",
+    probeA: "A in branch",
+    probeOhmEq: "Ω equivalent",
+    probeOhm: "Ω of R",
+    ohmNeedOff: "Power OFF to measure Ω",
+    quiz: [
+      {
+        q: "In a parallel circuit, the voltage across each resistor is…",
+        opts: ["The same as the source voltage", "Split equally among the resistors", "Largest across the smallest resistor", "Zero if more than two branches exist"],
+        a: 0,
+        exp: "Every parallel branch is connected directly across the same two points, so each feels the full source voltage."
+      },
+      {
+        q: "Two 60 Ω resistors are connected in parallel. What is the equivalent resistance?",
+        opts: ["120 Ω", "60 Ω", "30 Ω", "0 Ω"],
+        a: 2,
+        exp: "1/Req = 1/60 + 1/60 = 1/30, so Req = 30 Ω. Equal parallel resistors give Req = R/n."
+      },
+      {
+        q: "You add a third resistor in a new parallel branch. What happens to total current from the battery?",
+        opts: ["It decreases", "It stays exactly the same", "It increases", "It becomes zero"],
+        a: 2,
+        exp: "A new path lets extra current flow. Req decreases, so I_total = V/Req increases."
+      },
+      {
+        q: "In parallel, the branch with the smaller resistance carries…",
+        opts: ["Smaller current", "Larger current", "The same current as every other branch", "No current"],
+        a: 1,
+        exp: "I = V/R with the same V on every branch, so smaller R means larger I. Current takes the easier path."
+      },
+      {
+        q: "Which formula gives the equivalent resistance of parallel resistors?",
+        opts: ["Req = R1 + R2 + R3", "1/Req = 1/R1 + 1/R2 + 1/R3", "Req = R1 × R2 × R3", "Req = V × I"],
+        a: 1,
+        exp: "Conductances add in parallel. Invert the sum of the reciprocals to get Req, which is always smaller than the smallest resistor."
+      }
+    ]
+  },
+  ur: {
+    topicName: "متوازی مزاحم",
+    introTopic: "متوازی مزاحم",
+    tabSim: "محاکات",
+    tabQuiz: "امتحان",
+    instruments: "لیب کے آلات",
+    instrHint: "میٹر کو سرکٹ کے چمکدار نقطے پر گھسیٹیں، یا پہلے میٹر چنیں پھر نقطہ دبائیں۔",
+    voltmeter: "وولٹ میٹر",
+    ammeter: "ایم میٹر",
+    ohmmeter: "اوہم میٹر",
+    removeMeters: "میٹر ہٹائیں",
+    source: "بجلی کا منبع",
+    powerOn: "آن",
+    powerOff: "آف",
+    voltage: "وولٹیج",
+    branches: "متوازی شاخیں",
+    branch: "شاخ",
+    eqR: "مساوی مزاحمت",
+    itot: "کل برق رو",
+    sameV: "وولٹیج (ہر شاخ)",
+    observe: "مشاہدہ",
+    annoCard: "تشریح",
+    minimize: "چھوٹا کریں",
+    zoomIn: "بڑا کریں",
+    zoomOut: "چھوٹا کریں",
+    resetView: "منظر بحال",
+    quizTitle: "تصوری جانچ",
+    restartQuiz: "امتحان دوبارہ شروع",
+    nextQ: "اگلا",
+    seeResults: "نتائج دیکھیں",
+    explanation: "وضاحت",
+    finalScore: "حتمی نمبر",
+    percentage: "فی صد",
+    qOf: "سوال",
+    of: "از",
+    hintOff: "سوئچ آن کریں تاکہ برق رو کی تقسیم نظر آئے۔ ہر شاخ پر وولٹیج یکساں رہتی ہے۔",
+    hintOn: "برق رو آسان راستہ چنتی ہے: کم مزاحمت پر زیادہ رو۔ کل رو تمام شاخوں کا مجموعہ ہے۔",
+    hintOhm: "اوہم میٹر مزاحمت ناپتا ہے۔ صاف پڑھائی کے لیے پاور آف کریں۔",
+    hintAdd: "ایک شاخ بڑھائیں: مساوی مزاحمت گھٹتی ہے اور کل رو بڑھتی ہے۔",
+    probeVsrc: "منبع پر وولٹیج",
+    probeV: "مزاحم پر وولٹیج",
+    probeAmain: "کل رو",
+    probeA: "شاخ کی رو",
+    probeOhmEq: "مساوی Ω",
+    probeOhm: "مزاحم کا Ω",
+    ohmNeedOff: "Ω ناپنے کے لیے پاور آف",
+    quiz: [
+      {
+        q: "متوازی سرکٹ میں ہر مزاحم پر وولٹیج…",
+        opts: ["منبع کی وولٹیج کے برابر ہوتی ہے", "مزاحموں میں برابر بٹ جاتی ہے", "سب سے چھوٹے مزاحم پر سب سے زیادہ ہوتی ہے", "دو سے زیادہ شاخوں پر صفر ہو جاتی ہے"],
+        a: 0,
+        exp: "ہر متوازی شاخ ایک ہی دو نقطوں کے درمیان جڑی ہوتی ہے، اس لیے ہر شاخ پورا منبع وولٹیج محسوس کرتی ہے۔"
+      },
+      {
+        q: "دو 60 Ω مزاحم متوازی جوڑے گئے۔ مساوی مزاحمت کیا ہے؟",
+        opts: ["120 Ω", "60 Ω", "30 Ω", "0 Ω"],
+        a: 2,
+        exp: "1/Req = 1/60 + 1/60 = 1/30، لہٰذا Req = 30 Ω۔ برابر متوازی مزاحموں میں Req = R/n۔"
+      },
+      {
+        q: "ایک نئی متوازی شاخ میں تیسرا مزاحم جوڑنے سے بیٹری کی کل رو کیا ہوتی ہے؟",
+        opts: ["کم ہو جاتی ہے", "بالکل وہی رہتی ہے", "بڑھ جاتی ہے", "صفر ہو جاتی ہے"],
+        a: 2,
+        exp: "نیا راستہ اضافی رو گزرنے دیتا ہے۔ Req کم ہوتی ہے اس لیے I_total = V/Req بڑھتی ہے۔"
+      },
+      {
+        q: "متوازی میں کم مزاحمت والی شاخ پر…",
+        opts: ["کم برق رو ہوتی ہے", "زیادہ برق رو ہوتی ہے", "ہر شاخ جتنی ہی رو ہوتی ہے", "کوئی رو نہیں ہوتی"],
+        a: 1,
+        exp: "ہر شاخ پر V یکساں ہے اور I = V/R، اس لیے چھوٹی R پر بڑی I۔ برق رو آسان راستہ اختیار کرتی ہے۔"
+      },
+      {
+        q: "متوازی مزاحموں کی مساوی مزاحمت کا فارمولا کون سا ہے؟",
+        opts: ["Req = R1 + R2 + R3", "1/Req = 1/R1 + 1/R2 + 1/R3", "Req = R1 × R2 × R3", "Req = V × I"],
+        a: 1,
+        exp: "متوازی میں کنڈکٹنس جمع ہوتے ہیں۔ معکوس کا مجموعہ لے کر الٹ کریں۔ Req ہمیشہ سب سے چھوٹی مزاحمت سے کم ہوتی ہے۔"
+      }
+    ]
+  }
+};
+
+let currentLang = localStorage.getItem('iqra-lab-lang') || 'en';
+let selectedTool = null;
+let powerOn = true;
+let voltage = 12;
+let branches = [{ id: 1, R: 60 }, { id: 2, R: 40 }];
+let nextId = 3;
+let meters = [];
+let particles = [];
+let hotspots = [];
+let cam = { z: 1, x: 0, y: 0 };
+let draggingPan = false;
+let panStart = null;
+let pinchStart = null;
+let annoFloatMin = false;
+let world = { w: 980, h: 540 };
+let raf = 0;
+let t0 = 0;
+
+const canvas = () => document.getElementById('circuitCanvas');
+
+function t(key) {
+  const pack = LANG[currentLang] || LANG.en;
+  return pack[key] !== undefined ? pack[key] : (LANG.en[key] || key);
+}
+
+function applyLanguage() {
+  const html = document.documentElement;
+  html.lang = currentLang === 'ur' ? 'ur' : 'en';
+  html.dir = currentLang === 'ur' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+  });
+  const intro = document.getElementById('intro-topic');
+  if (intro) intro.textContent = t('introTopic');
+  document.getElementById('lang-select').value = currentLang;
+  document.getElementById('pwr-label').textContent = powerOn ? t('powerOn') : t('powerOff');
+  renderBranchSliders();
+  updateReadout();
+  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) {
+    renderQuiz();
+  }
+}
+
+function changeLanguage(val) {
+  if (val !== 'en' && val !== 'ur') return;
+  currentLang = val;
+  localStorage.setItem('iqra-lab-lang', val);
+  applyLanguage();
+}
+
+function physics() {
+  const inv = branches.reduce((s, b) => s + 1 / b.R, 0);
+  const Req = inv > 0 ? 1 / inv : 0;
+  const I_total = powerOn ? voltage / Req : 0;
+  const currents = branches.map(b => powerOn ? voltage / b.R : 0);
+  return { Req, I_total, currents };
+}
+
+function setVoltage(v) {
+  voltage = parseFloat(v);
+  document.getElementById('v-val').textContent = voltage.toFixed(1);
+  updateReadout();
+}
+
+function togglePower() {
+  powerOn = !powerOn;
+  const btn = document.getElementById('pwr-btn');
+  document.getElementById('pwr-label').textContent = powerOn ? t('powerOn') : t('powerOff');
+  if (powerOn) {
+    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
+  } else {
+    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold glow-red bg-rose-500/20 text-rose-300 border border-rose-400/40';
+  }
+  updateReadout();
+}
+
+function addBranch() {
+  if (branches.length >= 4) return;
+  branches.push({ id: nextId++, R: 80 });
+  renderBranchSliders();
+  fitView();
+  updateReadout();
+}
+
+function removeBranch() {
+  if (branches.length <= 2) return;
+  const gone = branches.pop();
+  meters = meters.filter(m => m.target !== 'R' + gone.id && m.target !== 'B' + gone.id && m.target !== 'O' + gone.id);
+  renderBranchSliders();
+  fitView();
+  updateReadout();
+}
+
+function renderBranchSliders() {
+  const wrap = document.getElementById('branch-sliders');
+  if (!wrap) return;
+  const colors = ['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24'];
+  wrap.innerHTML = branches.map((b, i) => `
+    <div>
+      <div class="flex justify-between text-sm mb-1">
+        <span class="font-semibold" style="color:${colors[i]}">${t('branch')} ${i + 1}</span>
+        <span class="mono text-cyan-200 font-bold">${b.R} Ω</span>
+      </div>
+      <input type="range" min="10" max="200" step="1" value="${b.R}" class="w-full"
+        oninput="setR(${b.id}, this.value)">
+    </div>`).join('');
+}
+
+function setR(id, val) {
+  const b = branches.find(x => x.id === id);
+  if (!b) return;
+  b.R = parseInt(val, 10);
+  renderBranchSliders();
+  updateReadout();
+}
+
+function selectTool(tool) {
+  selectedTool = selectedTool === tool ? null : tool;
+  document.querySelectorAll('.inst-btn').forEach(btn => {
+    const on = btn.getAttribute('data-tool') === selectedTool;
+    btn.classList.toggle('glow-cyan', on);
+    btn.classList.toggle('border-cyan-400', on);
+  });
+}
+
+function clearMeters() {
+  meters = [];
+}
+
+function updateReadout() {
+  const p = physics();
+  document.getElementById('out-req').textContent = p.Req.toFixed(2);
+  document.getElementById('out-it').textContent = p.I_total.toFixed(3);
+  document.getElementById('out-v').textContent = (powerOn ? voltage : 0).toFixed(1);
+  let hint = powerOn ? t('hintOn') : t('hintOff');
+  if (selectedTool === 'ohm') hint = t('hintOhm');
+  if (branches.length < 4 && powerOn) hint = t('hintAdd') + ' ' + t('hintOn');
+  document.getElementById('out-hint').textContent = hint;
+}
+
+function layout() {
+  const n = branches.length;
+  const left = 210, right = 900, top = 88, bot = 430;
+  const span = right - left;
+  const xs = branches.map((_, i) => left + span * (i + 1) / (n + 1));
+  return { left, right, top, bot, xs, batt: { x: 70, y: 230 }, sw: { x: 150, y: 88 } };
+}
+
+function buildHotspots() {
+  const L = layout();
+  const hs = [];
+  hs.push({ id: 'Vsrc', kind: 'volt', x: L.batt.x + 10, y: 250, label: t('probeVsrc') });
+  hs.push({ id: 'Amain', kind: 'amm', x: 168, y: L.top, label: t('probeAmain') });
+  hs.push({ id: 'Oeq', kind: 'ohm', x: (L.left + L.right) / 2, y: L.bot + 36, label: t('probeOhmEq') });
+  branches.forEach((b, i) => {
+    const x = L.xs[i];
+    hs.push({ id: 'R' + b.id, kind: 'volt', x, y: 268, label: t('probeV') + (i + 1) });
+    hs.push({ id: 'B' + b.id, kind: 'amm', x, y: L.top, label: t('probeA') + ' ' + (i + 1) });
+    hs.push({ id: 'O' + b.id, kind: 'ohm', x, y: 330, label: t('probeOhm') + (i + 1) });
+  });
+  hotspots = hs;
+}
+
+function meterReading(m) {
+  const p = physics();
+  if (m.kind === 'volt') {
+    if (!powerOn) return '0.00 V';
+    return voltage.toFixed(2) + ' V';
+  }
+  if (m.kind === 'amm') {
+    if (m.target === 'Amain') return p.I_total.toFixed(3) + ' A';
+    const id = parseInt(m.target.slice(1), 10);
+    const idx = branches.findIndex(b => b.id === id);
+    return (idx >= 0 ? p.currents[idx] : 0).toFixed(3) + ' A';
+  }
+  if (m.kind === 'ohm') {
+    if (powerOn) return t('ohmNeedOff');
+    if (m.target === 'Oeq') return p.Req.toFixed(2) + ' Ω';
+    const id = parseInt(m.target.slice(1), 10);
+    const b = branches.find(x => x.id === id);
+    return (b ? b.R.toFixed(0) : '—') + ' Ω';
+  }
+  return '—';
+}
+
+function resizeCanvas() {
+  const c = canvas();
+  const vp = document.getElementById('sim-viewport');
+  if (!c || !vp) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = vp.clientWidth;
+  const h = vp.clientHeight;
+  c.width = Math.max(1, w * dpr);
+  c.height = Math.max(1, h * dpr);
+  c.style.width = w + 'px';
+  c.style.height = h + 'px';
+  const ctx = c.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (fCanvas) {
+    fCanvas.setWidth(w);
+    fCanvas.setHeight(h);
+    fCanvas.calcOffset();
+  }
+}
+
+function fitView() {
+  const vp = document.getElementById('sim-viewport');
+  if (!vp) return;
+  const w = vp.clientWidth, h = vp.clientHeight;
+  cam.z = Math.min(w / world.w, h / world.h) * 0.96;
+  cam.x = (w - world.w * cam.z) / 2;
+  cam.y = (h - world.h * cam.z) / 2;
+}
+
+function zoomBy(f, cx, cy) {
+  const vp = document.getElementById('sim-viewport');
+  const px = cx != null ? cx : vp.clientWidth / 2;
+  const py = cy != null ? cy : vp.clientHeight / 2;
+  const nz = Math.min(3.2, Math.max(0.45, cam.z * f));
+  const wx = (px - cam.x) / cam.z;
+  const wy = (py - cam.y) / cam.z;
+  cam.z = nz;
+  cam.x = px - wx * cam.z;
+  cam.y = py - wy * cam.z;
+}
+
+function resetView() { fitView(); }
+
+function screenToWorld(sx, sy) {
+  return { x: (sx - cam.x) / cam.z, y: (sy - cam.y) / cam.z };
+}
+
+function canvasPos(e) {
+  const r = canvas().getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+
+function hitHotspot(wx, wy) {
+  let best = null, dmin = 28;
+  for (const h of hotspots) {
+    if (selectedTool && h.kind !== selectedTool) continue;
+    const d = Math.hypot(h.x - wx, h.y - wy);
+    if (d < dmin) { dmin = d; best = h; }
+  }
+  return best;
+}
+
+function placeMeter(h) {
+  meters = meters.filter(m => m.target !== h.id);
+  meters.push({ kind: h.kind, target: h.id, x: h.x, y: h.y - 48 });
+  selectedTool = null;
+  document.querySelectorAll('.inst-btn').forEach(btn => {
+    btn.classList.remove('glow-cyan', 'border-cyan-400');
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawResistor(ctx, x, y) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.moveTo(0, -36);
+  ctx.lineTo(0, -18);
+  const zig = 7, amp = 12;
+  let yy = -18;
+  ctx.lineTo(-amp, yy + zig * 0.5);
+  for (let i = 0; i < 6; i++) {
+    yy += zig;
+    ctx.lineTo(i % 2 === 0 ? amp : -amp, yy);
+  }
+  ctx.lineTo(0, 18);
+  ctx.lineTo(0, 36);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function draw() {
+  const c = canvas();
+  if (!c) return;
+  const vp = document.getElementById('sim-viewport');
+  const ctx = c.getContext('2d');
+  const w = vp.clientWidth, h = vp.clientHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.save();
+  ctx.translate(cam.x, cam.y);
+  ctx.scale(cam.z, cam.z);
+
+  ctx.strokeStyle = 'rgba(148,163,184,0.08)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < world.w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, world.h); ctx.stroke(); }
+  for (let y = 0; y < world.h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(world.w, y); ctx.stroke(); }
+
+  const L = layout();
+  const p = physics();
+  const glow = powerOn ? 'rgba(34,211,238,0.95)' : 'rgba(100,116,139,0.85)';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = glow;
+  ctx.shadowColor = powerOn ? '#22d3ee' : 'transparent';
+  ctx.shadowBlur = powerOn ? 10 : 0;
+  ctx.lineWidth = 4;
+
+  ctx.beginPath();
+  ctx.moveTo(L.batt.x + 24, L.top);
+  ctx.lineTo(L.right, L.top);
+  ctx.moveTo(L.batt.x + 24, L.bot);
+  ctx.lineTo(L.right, L.bot);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(L.batt.x + 24, L.top);
+  ctx.lineTo(L.batt.x + 24, 188);
+  ctx.moveTo(L.batt.x + 24, 272);
+  ctx.lineTo(L.batt.x + 24, L.bot);
+  ctx.stroke();
+
+  branches.forEach((b, i) => {
+    const x = L.xs[i];
+    ctx.beginPath();
+    ctx.moveTo(x, L.top);
+    ctx.lineTo(x, 222);
+    ctx.moveTo(x, 318);
+    ctx.lineTo(x, L.bot);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#f8fafc';
+    ctx.lineWidth = 3;
+    drawResistor(ctx, x, 270);
+    ctx.fillStyle = '#67e8f9';
+    ctx.font = '700 13px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('R' + (i + 1) + '  ' + b.R + ' Ω', x + 16, 266);
+    ctx.fillStyle = '#86efac';
+    ctx.fillText(p.currents[i].toFixed(3) + ' A', x + 16, 286);
+    ctx.strokeStyle = glow;
+    ctx.shadowBlur = powerOn ? 10 : 0;
+    ctx.lineWidth = 4;
+  });
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#1e293b';
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2;
+  roundRect(ctx, L.batt.x - 28, 188, 56, 84, 10);
+  ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(L.batt.x - 10, 214); ctx.lineTo(L.batt.x + 18, 214); ctx.stroke();
+  ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(L.batt.x - 4, 246); ctx.lineTo(L.batt.x + 12, 246); ctx.stroke();
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('+', L.batt.x, 204);
+  ctx.fillText('−', L.batt.x, 268);
+  ctx.fillStyle = '#fde68a';
+  ctx.font = '700 12px JetBrains Mono, monospace';
+  ctx.fillText(voltage.toFixed(1) + ' V', L.batt.x, 178);
+
+  const open = !powerOn;
+  ctx.strokeStyle = glow;
+  ctx.lineWidth = 4;
+  ctx.shadowBlur = powerOn ? 8 : 0;
+  ctx.beginPath();
+  ctx.moveTo(138, L.top);
+  ctx.lineTo(150, L.top);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(150, L.top);
+  ctx.lineTo(open ? 168 : 186, open ? L.top - 22 : L.top);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(186, L.top, 5, 0, Math.PI * 2);
+  ctx.fillStyle = powerOn ? '#22c55e' : '#64748b';
+  ctx.fill();
+
+  buildHotspots();
+  const showProbes = !!selectedTool;
+  if (showProbes) {
+    hotspots.filter(hs => hs.kind === selectedTool).forEach(hs => {
+      ctx.beginPath();
+      ctx.arc(hs.x, hs.y, 11, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,243,255,0.18)';
+      ctx.fill();
+      ctx.strokeStyle = '#00f3ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(hs.label, hs.x, hs.y - 16);
+    });
+  }
+
+  meters.forEach(m => {
+    const hs = hotspots.find(h => h.id === m.target);
+    if (!hs) return;
+    const colors = { volt: '#fbbf24', amm: '#34d399', ohm: '#e879f9' };
+    const titles = { volt: t('voltmeter'), amm: t('ammeter'), ohm: t('ohmmeter') };
+    const x = hs.x - 54, y = hs.y - 70, ww = 108, hh = 44;
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(15,23,42,0.92)';
+    ctx.strokeStyle = colors[m.kind];
+    ctx.lineWidth = 2;
+    roundRect(ctx, x, y, ww, hh, 8);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = colors[m.kind];
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(titles[m.kind], x + 8, y + 14);
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '700 13px JetBrains Mono, monospace';
+    ctx.fillText(meterReading(m), x + 8, y + 34);
+    ctx.beginPath();
+    ctx.moveTo(hs.x, y + hh);
+    ctx.lineTo(hs.x, hs.y);
+    ctx.strokeStyle = colors[m.kind];
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  if (powerOn) {
+    spawnAndDrawParticles(ctx, L, p);
+  }
+
+  ctx.restore();
+  raf = requestAnimationFrame(draw);
+}
+
+function spawnAndDrawParticles(ctx, L, p) {
+  const now = performance.now();
+  if (!t0) t0 = now;
+  if (particles.length < 80) {
+    particles.push({ s: Math.random(), lane: 'main' });
+    branches.forEach((b, i) => particles.push({ s: Math.random(), lane: 'b' + i }));
+  }
+  const maxI = Math.max(p.I_total, 0.01);
+  ctx.fillStyle = '#67e8f9';
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = '#22d3ee';
+  particles.forEach(pt => {
+    const speed = 0.004 + 0.01 * (p.I_total / (maxI + 0.2));
+    pt.s = (pt.s + speed) % 1;
+    let xy;
+    if (pt.lane === 'main') xy = pathMain(L, pt.s);
+    else {
+      const i = parseInt(pt.lane.slice(1), 10);
+      const frac = p.I_total > 0 ? p.currents[i] / p.I_total : 1 / branches.length;
+      if (Math.random() > frac * 0.15 + 0.02 && pt.s < 0.02) return;
+      xy = pathBranch(L, i, pt.s);
+    }
+    if (!xy) return;
+    ctx.beginPath();
+    ctx.arc(xy.x, xy.y, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  if (particles.length > 120) particles.length = 90;
+}
+
+function pathMain(L, s) {
+  const pts = [
+    [L.batt.x + 24, 200], [L.batt.x + 24, L.top], [L.right, L.top],
+    [L.right, L.bot], [L.batt.x + 24, L.bot], [L.batt.x + 24, 272]
+  ];
+  return along(pts, s);
+}
+function pathBranch(L, i, s) {
+  const x = L.xs[i];
+  const pts = [[x, L.top], [x, L.bot]];
+  return along(pts, s);
+}
+function along(pts, s) {
+  let len = 0;
+  const segs = [];
+  for (let i = 1; i < pts.length; i++) {
+    const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    segs.push(d); len += d;
+  }
+  let d = s * len;
+  for (let i = 1; i < pts.length; i++) {
+    if (d <= segs[i - 1]) {
+      const t = d / segs[i - 1];
+      return { x: pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * t, y: pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t };
+    }
+    d -= segs[i - 1];
+  }
+  return { x: pts[pts.length - 1][0], y: pts[pts.length - 1][1] };
+}
+
+function onPointerDown(e) {
+  if (isAnnoActive) return;
+  if (e.touches && e.touches.length === 2) {
+    pinchStart = {
+      d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY),
+      z: cam.z
+    };
+    return;
+  }
+  const p = canvasPos(e);
+  const w = screenToWorld(p.x, p.y);
+  const hs = hitHotspot(w.x, w.y);
+  if (hs && selectedTool === hs.kind) {
+    placeMeter(hs);
+    e.preventDefault();
+    return;
+  }
+  const mhit = meters.find(m => {
+    const h = hotspots.find(x => x.id === m.target);
+    if (!h) return false;
+    return w.x > h.x - 54 && w.x < h.x + 54 && w.y > h.y - 70 && w.y < h.y - 26;
+  });
+  if (mhit && !selectedTool) {
+    meters = meters.filter(m => m !== mhit);
+    return;
+  }
+  draggingPan = true;
+  panStart = { x: p.x, y: p.y, cx: cam.x, cy: cam.y };
+}
+
+function onPointerMove(e) {
+  if (e.touches && e.touches.length === 2 && pinchStart) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    const r = canvas().getBoundingClientRect();
+    const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
+    const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
+    const factor = d / pinchStart.d;
+    const target = pinchStart.z * factor;
+    zoomBy(target / cam.z, cx, cy);
+    e.preventDefault();
+    return;
+  }
+  if (!draggingPan || !panStart) return;
+  const p = canvasPos(e);
+  cam.x = panStart.cx + (p.x - panStart.x);
+  cam.y = panStart.cy + (p.y - panStart.y);
+}
+
+function onPointerUp() {
+  draggingPan = false;
+  panStart = null;
+  pinchStart = null;
+}
+
+function bindSimInput() {
+  const c = canvas();
+  c.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+  c.addEventListener('touchstart', onPointerDown, { passive: false });
+  c.addEventListener('touchmove', onPointerMove, { passive: false });
+  c.addEventListener('touchend', onPointerUp);
+  c.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const p = canvasPos(e);
+    zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, p.x, p.y);
+  }, { passive: false });
+
+  document.querySelectorAll('.inst-btn').forEach(btn => {
+    btn.addEventListener('dragstart', e => {
+      selectedTool = btn.getAttribute('data-tool');
+      e.dataTransfer.setData('text/plain', selectedTool);
+    });
+    btn.setAttribute('draggable', 'true');
+  });
+  c.addEventListener('dragover', e => e.preventDefault());
+  c.addEventListener('drop', e => {
+    e.preventDefault();
+    const tool = e.dataTransfer.getData('text/plain') || selectedTool;
+    selectedTool = tool;
+    const r = c.getBoundingClientRect();
+    const wpt = screenToWorld(e.clientX - r.left, e.clientY - r.top);
+    const hs = hitHotspot(wpt.x, wpt.y);
+    if (hs) placeMeter(hs);
+  });
+}
+
+/* ================= ANNOTATION (exact logic) ================= */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+    fCanvas = new fabric.Canvas('fabricLayer', {
+        isDrawingMode: false,
+        width: w,
+        height: h
+    });
+    fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+    fCanvas.freeDrawingBrush.width = 4;
+
+    fCanvas.on('mouse:down', function(options) {
+        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+            fCanvas.remove(options.target);
+        }
+    });
+}
+
+function toggleAnnotationMode() {
+    isAnnoActive = !isAnnoActive;
+    const btn = document.getElementById('btn-anno-toggle');
+    const toolbar = document.getElementById('anno-toolbar');
+
+    const fabricContainer = document.querySelector('.canvas-container');
+
+    if (isAnnoActive) {
+        btn.classList.replace('text-slate-400', 'text-cyan-400');
+        toolbar.classList.remove('max-w-0', 'opacity-0');
+        toolbar.classList.add('max-w-xs', 'opacity-100');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+        setAnnoMode('pen');
+    } else {
+        btn.classList.replace('text-cyan-400', 'text-slate-400');
+        toolbar.classList.remove('max-w-xs', 'opacity-100');
+        toolbar.classList.add('max-w-0', 'opacity-0');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'none';
+        if (fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function setAnnoMode(mode) {
+    document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+    document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+
+    if (mode === 'pen') {
+        document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = true;
+    } else {
+        document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function changeAnnoColor(color) {
+    if(fCanvas) fCanvas.freeDrawingBrush.color = color;
+    setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+    if(fCanvas) fCanvas.clear();
+}
+
+function ensureAnnoOn() {
+  if (!isAnnoActive) toggleAnnotationMode();
+}
+
+function toggleAnnoFloat() {
+  annoFloatMin = !annoFloatMin;
+  const el = document.getElementById('anno-float');
+  const body = document.getElementById('anno-float-body');
+  const icon = document.getElementById('anno-float-icon');
+  if (annoFloatMin) {
+    body.classList.add('hidden');
+    el.style.width = '52px';
+    icon.className = 'fa-solid fa-pen-nib';
+  } else {
+    body.classList.remove('hidden');
+    el.style.width = '220px';
+    icon.className = 'fa-solid fa-minus';
+  }
+}
+
+function makeAnnoFloatDraggable() {
+  const card = document.getElementById('anno-float');
+  const head = document.getElementById('anno-float-head');
+  let drag = false, ox = 0, oy = 0;
+  head.addEventListener('mousedown', e => {
+    if (e.target.closest('button')) return;
+    drag = true;
+    const r = card.getBoundingClientRect();
+    const vp = document.getElementById('sim-viewport').getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    card.style.right = 'auto';
+    card.style.top = (r.top - vp.top) + 'px';
+    card.style.left = (r.left - vp.left) + 'px';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    const vp = document.getElementById('sim-viewport').getBoundingClientRect();
+    card.style.left = Math.max(8, Math.min(vp.width - 56, e.clientX - vp.left - ox)) + 'px';
+    card.style.top = Math.max(8, Math.min(vp.height - 48, e.clientY - vp.top - oy)) + 'px';
+  });
+  window.addEventListener('mouseup', () => { drag = false; });
+}
+
+function toggleFullScreen() {
+  const el = document.getElementById('sim-viewport');
+  const icon = document.getElementById('fs-icon');
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    icon.className = 'fa-solid fa-compress';
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    icon.className = 'fa-solid fa-expand';
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  setTimeout(() => { resizeCanvas(); fitView(); }, 80);
+  if (!document.fullscreenElement) {
+    document.getElementById('fs-icon').className = 'fa-solid fa-expand';
+  }
+});
+
+function switchTab(name) {
+  const sim = document.getElementById('view-sim');
+  const quiz = document.getElementById('view-quiz');
+  const bs = document.getElementById('tab-sim');
+  const bq = document.getElementById('tab-quiz');
+  const bsm = document.getElementById('tab-sim-m');
+  const bqm = document.getElementById('tab-quiz-m');
+  if (name === 'sim') {
+    sim.classList.remove('hidden');
+    quiz.classList.add('hidden');
+    bs.className = 'tab-active px-4 py-2 rounded-lg text-sm flex items-center gap-2';
+    bq.className = 'px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2';
+    if (bsm) { bsm.className = 'flex-1 py-2 rounded-lg tab-active text-sm'; bqm.className = 'flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm'; }
+    setTimeout(() => { resizeCanvas(); }, 40);
+  } else {
+    sim.classList.add('hidden');
+    quiz.classList.remove('hidden');
+    bq.className = 'tab-active px-4 py-2 rounded-lg text-sm flex items-center gap-2';
+    bs.className = 'px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2';
+    if (bqm) { bqm.className = 'flex-1 py-2 rounded-lg tab-active text-sm'; bsm.className = 'flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm'; }
+    renderQuiz();
+  }
+}
+
+let quizIndex = 0, quizScore = 0, quizLocked = false, quizAnswers = [];
+
+function startQuiz() {
+  quizIndex = 0; quizScore = 0; quizLocked = false; quizAnswers = [];
+  document.getElementById('quiz-result').classList.add('hidden');
+  document.getElementById('quiz-body').classList.remove('hidden');
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const questions = t('quiz');
+  const result = document.getElementById('quiz-result');
+  const body = document.getElementById('quiz-body');
+  if (quizIndex >= questions.length) {
+    body.classList.add('hidden');
+    result.classList.remove('hidden');
+    document.getElementById('quiz-score').textContent = quizScore + ' / 5';
+    const pct = Math.round((quizScore / 5) * 100);
+    document.getElementById('quiz-pct').textContent = t('percentage') + ': ' + pct + '%';
+    document.getElementById('quiz-progress').textContent = t('finalScore');
+    return;
+  }
+  result.classList.add('hidden');
+  body.classList.remove('hidden');
+  const q = questions[quizIndex];
+  document.getElementById('quiz-progress').textContent = t('qOf') + ' ' + (quizIndex + 1) + ' ' + t('of') + ' 5';
+  const letters = ['A', 'B', 'C', 'D'];
+  body.innerHTML = `
+    <p class="text-lg md:text-xl font-semibold text-white mb-5 leading-relaxed">${q.q}</p>
+    <div class="space-y-3" id="quiz-opts">
+      ${q.opts.map((opt, i) => `
+        <button class="quiz-opt w-full text-start glass-card rounded-xl px-4 py-3 border border-slate-600 hover:border-cyan-400/60 transition"
+          onclick="answerQuiz(${i})">
+          <span class="mono text-cyan-400 me-2">${letters[i]}</span>${opt}
+        </button>`).join('')}
+    </div>
+    <div id="quiz-exp" class="hidden mt-4 p-4 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-200 text-sm"></div>
+    <div class="mt-5 flex justify-end">
+      <button id="quiz-next" onclick="nextQuiz()" class="hidden px-5 py-2.5 rounded-xl bg-cyan-400 text-slate-950 font-bold">${quizIndex === 4 ? t('seeResults') : t('nextQ')}</button>
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (quizLocked) return;
+  quizLocked = true;
+  const q = t('quiz')[quizIndex];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((el, idx) => {
+    if (idx === q.a) el.classList.add('correct');
+    if (idx === i && i !== q.a) el.classList.add('wrong');
+  });
+  if (i === q.a) quizScore++;
+  const exp = document.getElementById('quiz-exp');
+  exp.classList.remove('hidden');
+  exp.innerHTML = '<strong class="text-cyan-300">' + t('explanation') + ':</strong> ' + q.exp;
+  document.getElementById('quiz-next').classList.remove('hidden');
+}
+
+function nextQuiz() {
+  quizIndex++;
+  quizLocked = false;
+  renderQuiz();
+}
+
+function playIntro() {
+  const bar = document.getElementById('intro-bar');
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / 5000);
+    bar.style.width = (p * 100) + '%';
+    if (p < 1) requestAnimationFrame(tick);
+    else {
+      const intro = document.getElementById('intro-screen');
+      intro.style.transition = 'opacity 0.6s ease';
+      intro.style.opacity = '0';
+      setTimeout(() => {
+        intro.style.display = 'none';
+        const app = document.getElementById('app-shell');
+        app.classList.remove('opacity-0', 'pointer-events-none');
+        bootSim();
+      }, 620);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function bootSim() {
+  applyLanguage();
+  renderBranchSliders();
+  updateReadout();
+  resizeCanvas();
+  fitView();
+  const vp = document.getElementById('sim-viewport');
+  initAnnotationCanvas(vp.clientWidth, vp.clientHeight);
+  const fabricContainer = document.querySelector('.canvas-container');
+  if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+  bindSimInput();
+  makeAnnoFloatDraggable();
+  startQuiz();
+  window.addEventListener('resize', () => { resizeCanvas(); });
+  new ResizeObserver(() => { resizeCanvas(); }).observe(vp);
+  requestAnimationFrame(draw);
+}
+
+document.getElementById('intro-topic').textContent = (LANG[currentLang] || LANG.en).introTopic;
+if (currentLang === 'ur') {
+  document.documentElement.lang = 'ur';
+  document.documentElement.dir = 'rtl';
+}
+playIntro();
+</script>
+</body>
+</html>
