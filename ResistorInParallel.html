@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IQRA VIRTUAL LAB — Resistors in Parallel</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -20,12 +20,6 @@
   font-display: swap;
 }
 
-:root {
-  --cyan: #00f3ff;
-}
-
-* { box-sizing: border-box; }
-
 body {
   font-family: 'Inter', sans-serif;
   background: #020617;
@@ -37,82 +31,86 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+width: 6px;
+height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+background: #0f172a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+background: #334155;
+border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+background: #475569;
 }
 
 /* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
 [dir="rtl"] .rtl-flip {
-  transform: scaleX(-1);
+transform: scaleX(-1);
 }
 [dir="rtl"] {
-  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
-  line-height: 2.3 !important;
-  font-size: 1.05em;
+font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+line-height: 2.3 !important;
 }
 
 /* Glassmorphism Classes */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+background: rgba(15, 23, 42, 0.75);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(30, 41, 59, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Pulse Glow Effects */
 .glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
 }
 .glow-red {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
 .glow-green {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
 }
 
 /* Canvas styling */
 canvas {
-  touch-action: none;
+touch-action: none;
 }
 
 /* Custom Slider Styling */
 input[type=range] {
-  -webkit-appearance: none;
-  background: #334155;
-  border-radius: 8px;
-  height: 8px;
+-webkit-appearance: none;
+background: #334155;
+border-radius: 8px;
+height: 8px;
 }
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #00f3ff;
-  cursor: pointer;
-  box-shadow: 0 0 10px #00f3ff;
-  transition: transform 0.1s ease;
+-webkit-appearance: none;
+height: 20px;
+width: 20px;
+border-radius: 50%;
+background: #00f3ff;
+cursor: pointer;
+box-shadow: 0 0 10px #00f3ff;
+transition: transform 0.1s ease;
 }
 input[type=range]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
+transform: scale(1.2);
 }
 
 .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+[dir="rtl"] body, [dir="rtl"] button, [dir="rtl"] input, [dir="rtl"] select {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+}
+[dir="rtl"] { font-size: 1.06em; }
 
 #fabricLayer, .canvas-container {
   position: absolute !important;
@@ -122,49 +120,22 @@ input[type=range]::-webkit-slider-thumb:hover {
   pointer-events: none;
   z-index: 20;
 }
-
-.canvas-container canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
+.canvas-container canvas { width: 100% !important; height: 100% !important; }
 
 #intro-screen {
   background:
-    radial-gradient(ellipse at 50% 40%, rgba(0, 243, 255, 0.18), transparent 55%),
-    radial-gradient(ellipse at 80% 80%, rgba(99, 102, 241, 0.2), transparent 50%),
+    radial-gradient(ellipse at 50% 38%, rgba(0, 243, 255, 0.16), transparent 55%),
+    radial-gradient(ellipse at 70% 90%, rgba(99, 102, 241, 0.18), transparent 50%),
     #020617;
 }
-
-.intro-glow {
-  text-shadow: 0 0 24px rgba(0, 243, 255, 0.55), 0 0 80px rgba(0, 243, 255, 0.25);
-}
-
+.intro-glow { text-shadow: 0 0 28px rgba(0, 243, 255, 0.55), 0 0 80px rgba(0, 243, 255, 0.22); }
 @keyframes introZoom {
-  0% { transform: scale(0.72); opacity: 0; filter: blur(12px); }
-  40% { transform: scale(1.06); opacity: 1; filter: blur(0); }
-  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+  0% { transform: scale(0.75); opacity: 0; }
+  45% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
-@keyframes introFadeOut {
-  to { opacity: 0; visibility: hidden; }
-}
-@keyframes pulseRing {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.45); }
-  50% { box-shadow: 0 0 0 18px rgba(0, 243, 255, 0); }
-}
-
-.animate-intro { animation: introZoom 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-.tab-active {
-  background: #00f3ff;
-  color: #020617;
-  font-weight: 700;
-}
-
-.hotspot-pulse { animation: pulseRing 1.6s ease-out infinite; }
-
-#anno-float {
-  transition: width 0.28s ease, height 0.28s ease, padding 0.28s ease, opacity 0.28s ease;
-}
+.animate-intro { animation: introZoom 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.tab-active { background: #00f3ff; color: #020617; font-weight: 700; }
 
 #sim-viewport:fullscreen, #sim-viewport:-webkit-full-screen {
   background: #020617;
@@ -174,30 +145,46 @@ input[type=range]::-webkit-slider-thumb:hover {
 .quiz-opt.correct { background: rgba(34, 197, 94, 0.22) !important; border-color: #22c55e !important; color: #86efac !important; }
 .quiz-opt.wrong { background: rgba(239, 68, 68, 0.22) !important; border-color: #ef4444 !important; color: #fca5a5 !important; }
 
+.chip {
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+}
+.chip.on { border-color: #00f3ff; color: #00f3ff; background: rgba(0, 243, 255, 0.12); box-shadow: 0 0 12px rgba(0, 243, 255, 0.2); }
+
+.meter-face {
+  background: #020617;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  min-height: 64px;
+}
+
+#anno-float { transition: width 0.28s ease; }
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
 input[type="color"]::-webkit-color-swatch { border: 1px solid #334155; border-radius: 4px; }
 </style>
 </head>
 <body class="h-full flex flex-col">
 
-<!-- OPENING INTRO -->
 <div id="intro-screen" class="fixed inset-0 z-[80] flex flex-col items-center justify-center">
   <div class="animate-intro text-center px-6">
-    <div class="mx-auto mb-6 w-20 h-20 rounded-2xl border border-cyan-400/40 bg-cyan-400/10 flex items-center justify-center glow-cyan hotspot-pulse">
+    <div class="mx-auto mb-6 w-20 h-20 rounded-2xl border border-cyan-400/40 bg-cyan-400/10 flex items-center justify-center glow-cyan">
       <i class="fa-solid fa-bolt text-3xl text-cyan-300"></i>
     </div>
     <h1 class="intro-glow text-4xl md:text-6xl font-extrabold tracking-[0.18em] text-white">IQRA VIRTUAL LAB</h1>
-    <p id="intro-topic" class="mt-5 text-xl md:text-3xl font-semibold text-cyan-300 tracking-wide"></p>
+    <p id="intro-topic" class="mt-5 text-xl md:text-3xl font-semibold text-cyan-300"></p>
     <div class="mt-10 mx-auto h-1.5 w-56 rounded-full bg-slate-800 overflow-hidden">
       <div id="intro-bar" class="h-full bg-cyan-400 glow-cyan" style="width:0%"></div>
     </div>
   </div>
 </div>
 
-<!-- APP SHELL -->
 <div id="app-shell" class="flex flex-col h-full opacity-0 pointer-events-none">
-
-  <!-- TOP HEADER -->
   <header class="glass-panel z-40 shrink-0 px-3 md:px-5 py-2.5 flex items-center justify-between gap-3 border-b border-white/10">
     <div class="flex items-center gap-3 min-w-0">
       <div class="w-10 h-10 rounded-xl bg-cyan-400/15 border border-cyan-400/40 flex items-center justify-center text-cyan-300 glow-cyan shrink-0">
@@ -250,123 +237,102 @@ input[type="color"]::-webkit-color-swatch { border: 1px solid #334155; border-ra
     </div>
   </header>
 
-  <!-- Mobile tabs -->
   <div class="sm:hidden shrink-0 px-3 py-2 glass-panel flex gap-2">
     <button onclick="switchTab('sim')" class="flex-1 py-2 rounded-lg tab-active text-sm" id="tab-sim-m"><i class="fa-solid fa-house me-1"></i><span data-i18n="tabSim">Simulation</span></button>
     <button onclick="switchTab('quiz')" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm" id="tab-quiz-m"><i class="fa-solid fa-clipboard-list me-1"></i><span data-i18n="tabQuiz">Quiz</span></button>
   </div>
 
   <main class="flex-1 min-h-0 relative">
+    <section id="view-sim" class="absolute inset-0 flex flex-col p-3 gap-3">
 
-    <!-- SIMULATION TAB -->
-    <section id="view-sim" class="absolute inset-0 flex flex-col lg:flex-row gap-3 p-3">
-
-      <!-- LEFT: instruments + branch controls -->
-      <aside class="lg:w-[300px] shrink-0 flex flex-col gap-3 overflow-y-auto">
-        <div class="glass-card rounded-2xl p-3">
-          <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold" data-i18n="instruments">Lab Instruments</p>
-          <p class="text-[11px] text-slate-400 mb-3 leading-relaxed" data-i18n="instrHint">Drag a meter onto a glowing probe on the circuit, or tap a meter then tap a probe.</p>
-          <div class="grid grid-cols-3 gap-2">
-            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="volt" onclick="selectTool('volt')">
-              <i class="fa-solid fa-gauge-high text-amber-300 text-lg"></i>
-              <div class="text-[11px] mt-1 text-amber-200 font-semibold" data-i18n="voltmeter">Voltmeter</div>
-              <div class="text-[10px] text-slate-500">V</div>
-            </button>
-            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="amm" onclick="selectTool('amm')">
-              <i class="fa-solid fa-bolt text-emerald-300 text-lg"></i>
-              <div class="text-[11px] mt-1 text-emerald-200 font-semibold" data-i18n="ammeter">Ammeter</div>
-              <div class="text-[10px] text-slate-500">A</div>
-            </button>
-            <button class="inst-btn glass-panel rounded-xl p-2 text-center hover:border-cyan-400/50 transition" data-tool="ohm" onclick="selectTool('ohm')">
-              <i class="fa-solid fa-omega text-fuchsia-300 text-lg" style="font-style:normal;font-family:serif;font-size:1.15rem;">Ω</i>
-              <div class="text-[11px] mt-1 text-fuchsia-200 font-semibold" data-i18n="ohmmeter">Ohmmeter</div>
-              <div class="text-[10px] text-slate-500">Ω</div>
-            </button>
-          </div>
-          <button onclick="clearMeters()" class="mt-3 w-full text-xs py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white">
-            <i class="fa-solid fa-unlink me-1"></i><span data-i18n="removeMeters">Remove meters</span>
-          </button>
+      <div id="sim-viewport" class="relative flex-1 min-h-[240px] glass-panel rounded-2xl overflow-hidden">
+        <canvas id="circuitCanvas" class="absolute inset-0 w-full h-full z-10"></canvas>
+        <canvas id="fabricLayer"></canvas>
+        <div class="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 glass-panel rounded-xl p-1.5">
+          <button onclick="zoomBy(1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomIn" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
+          <button onclick="zoomBy(1/1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomOut" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
+          <button onclick="resetView()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200" data-i18n-title="resetView" title="Reset view"><i class="fa-solid fa-expand"></i></button>
         </div>
-
-        <div class="glass-card rounded-2xl p-3">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold" data-i18n="source">Power Source</p>
-            <button id="pwr-btn" onclick="togglePower()" class="px-3 py-1.5 rounded-lg text-xs font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
-              <i class="fa-solid fa-power-off me-1"></i><span id="pwr-label" data-i18n="powerOn">ON</span>
+        <div id="anno-float" class="absolute top-3 right-3 z-30 glass-panel rounded-2xl overflow-hidden shadow-xl" style="width:220px;">
+          <div id="anno-float-head" class="flex items-center justify-between px-3 py-2 cursor-move border-b border-white/10 bg-slate-900/70">
+            <span class="text-xs font-semibold text-cyan-300"><i class="fa-solid fa-pen-ruler me-1"></i><span data-i18n="annoCard">Annotate</span></span>
+            <button onclick="toggleAnnoFloat()" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300" data-i18n-title="minimize" title="Minimize">
+              <i id="anno-float-icon" class="fa-solid fa-minus"></i>
             </button>
           </div>
-          <div class="flex justify-between text-sm mb-1">
-            <span class="text-slate-300" data-i18n="voltage">Voltage</span>
-            <span class="mono text-cyan-300 font-bold"><span id="v-val">12.0</span> V</span>
+          <div id="anno-float-body" class="p-3 flex items-center gap-2">
+            <input type="color" id="anno-color-float" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value;changeAnnoColor(this.value)" class="w-9 h-9 cursor-pointer bg-transparent border-0 p-0">
+            <button onclick="ensureAnnoOn();setAnnoMode('pen')" class="w-10 h-10 rounded-lg bg-slate-800 text-cyan-300"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="ensureAnnoOn();setAnnoMode('eraser')" class="w-10 h-10 rounded-lg bg-slate-800 text-slate-300"><i class="fa-solid fa-eraser"></i></button>
+            <button onclick="clearAnnotations()" class="w-10 h-10 rounded-lg bg-slate-800 text-rose-400"><i class="fa-solid fa-trash-can"></i></button>
           </div>
-          <input id="v-slider" type="range" min="1.5" max="24" step="0.5" value="12" class="w-full" oninput="setVoltage(this.value)">
         </div>
+      </div>
 
-        <div class="glass-card rounded-2xl p-3 flex-1">
+      <div class="shrink-0 grid grid-cols-1 xl:grid-cols-2 gap-3 max-h-[46vh] overflow-y-auto">
+        <!-- CHANGE -->
+        <div class="glass-card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold tracking-wide text-cyan-300 uppercase" data-i18n="changeTitle">Change</h2>
+            <button id="pwr-btn" onclick="togglePower()" class="px-4 py-2 rounded-xl text-sm font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+              <i class="fa-solid fa-power-off me-1"></i><span id="pwr-label">ON</span>
+            </button>
+          </div>
+          <p class="text-xs text-slate-400 mb-3" data-i18n="changeHint">Move a slider or press a button. Then look at the meters.</p>
+
+          <div class="mb-4">
+            <div class="flex justify-between text-sm mb-1">
+              <span data-i18n="voltage">Battery voltage</span>
+              <span class="mono text-amber-300 font-bold"><span id="v-val">12.0</span> V</span>
+            </div>
+            <input id="v-slider" type="range" min="3" max="24" step="0.5" value="12" class="w-full" oninput="onChangeV(this.value)">
+          </div>
+
           <div class="flex items-center justify-between mb-2">
-            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold" data-i18n="branches">Parallel Branches</p>
+            <span class="text-sm font-semibold" data-i18n="resistors">Resistors</span>
             <div class="flex gap-1">
-              <button onclick="addBranch()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-cyan-300"><i class="fa-solid fa-plus"></i></button>
-              <button onclick="removeBranch()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-rose-300"><i class="fa-solid fa-minus"></i></button>
+              <button onclick="addBranch()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-600 text-cyan-300 text-lg">+</button>
+              <button onclick="removeBranch()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-600 text-rose-300 text-lg">−</button>
             </div>
           </div>
-          <div id="branch-sliders" class="space-y-3"></div>
-        </div>
-      </aside>
-
-      <!-- CENTER: simulation viewport -->
-      <div class="flex-1 min-w-0 min-h-[320px] flex flex-col gap-3">
-        <div id="sim-viewport" class="relative flex-1 min-h-0 glass-panel rounded-2xl overflow-hidden">
-          <canvas id="circuitCanvas" class="absolute inset-0 w-full h-full z-10"></canvas>
-          <canvas id="fabricLayer"></canvas>
-
-          <!-- Zoom cluster -->
-          <div class="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 glass-panel rounded-xl p-1.5">
-            <button onclick="zoomBy(1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomIn" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
-            <button onclick="zoomBy(1/1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300" data-i18n-title="zoomOut" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
-            <button onclick="resetView()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200" data-i18n-title="resetView" title="Reset view"><i class="fa-solid fa-expand"></i></button>
-          </div>
-
-          <!-- Draggable floating annotation card -->
-          <div id="anno-float" class="absolute top-3 right-3 z-30 glass-panel rounded-2xl overflow-hidden shadow-xl" style="width:220px;">
-            <div id="anno-float-head" class="flex items-center justify-between px-3 py-2 cursor-move border-b border-white/10 bg-slate-900/70">
-              <span class="text-xs font-semibold text-cyan-300"><i class="fa-solid fa-pen-ruler me-1"></i><span data-i18n="annoCard">Annotate</span></span>
-              <button onclick="toggleAnnoFloat()" class="w-8 h-8 rounded-lg hover:bg-slate-700 text-slate-300" data-i18n-title="minimize" title="Minimize">
-                <i id="anno-float-icon" class="fa-solid fa-minus"></i>
-              </button>
-            </div>
-            <div id="anno-float-body" class="p-3 flex items-center gap-2">
-              <input type="color" id="anno-color-float" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value;changeAnnoColor(this.value)" class="w-9 h-9 cursor-pointer bg-transparent border-0 p-0">
-              <button onclick="ensureAnnoOn();setAnnoMode('pen')" class="w-10 h-10 rounded-lg bg-slate-800 text-cyan-300"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="ensureAnnoOn();setAnnoMode('eraser')" class="w-10 h-10 rounded-lg bg-slate-800 text-slate-300"><i class="fa-solid fa-eraser"></i></button>
-              <button onclick="clearAnnotations()" class="w-10 h-10 rounded-lg bg-slate-800 text-rose-400"><i class="fa-solid fa-trash-can"></i></button>
-            </div>
-          </div>
+          <div id="r-sliders" class="space-y-3"></div>
         </div>
 
-        <!-- Live readout -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 shrink-0">
-          <div class="glass-card rounded-xl px-3 py-2">
-            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="eqR">Equivalent R</div>
-            <div class="mono text-lg text-cyan-300 font-bold"><span id="out-req">30.0</span> Ω</div>
-          </div>
-          <div class="glass-card rounded-xl px-3 py-2">
-            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="itot">Total Current</div>
-            <div class="mono text-lg text-emerald-300 font-bold"><span id="out-it">0.400</span> A</div>
-          </div>
-          <div class="glass-card rounded-xl px-3 py-2">
-            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="sameV">Voltage (each branch)</div>
-            <div class="mono text-lg text-amber-300 font-bold"><span id="out-v">12.0</span> V</div>
-          </div>
-          <div class="glass-card rounded-xl px-3 py-2">
-            <div class="text-[10px] uppercase tracking-wider text-slate-400" data-i18n="observe">Observe</div>
-            <div id="out-hint" class="text-xs text-slate-200 leading-snug"></div>
+        <!-- OUTPUT -->
+        <div class="glass-card rounded-2xl p-4">
+          <h2 class="text-sm font-bold tracking-wide text-emerald-300 uppercase mb-1" data-i18n="readTitle">Output</h2>
+          <p class="text-xs text-slate-400 mb-3" data-i18n="readHint">Put a meter. Change a value. Watch this number.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="rounded-2xl p-3 border border-amber-400/30 bg-slate-950/40">
+              <div class="text-amber-300 text-xs font-bold mb-2"><i class="fa-solid fa-gauge-high me-1"></i><span data-i18n="voltmeter">Voltmeter</span></div>
+              <div class="meter-face px-3 py-2 mb-2 text-center">
+                <div id="out-v" class="mono text-2xl font-bold text-amber-300">— —</div>
+                <div id="where-v" class="text-[11px] text-slate-500 mt-0.5"> </div>
+              </div>
+              <div id="chips-v" class="flex flex-wrap gap-1"></div>
+            </div>
+            <div class="rounded-2xl p-3 border border-emerald-400/30 bg-slate-950/40">
+              <div class="text-emerald-300 text-xs font-bold mb-2"><i class="fa-solid fa-bolt me-1"></i><span data-i18n="ammeter">Ammeter</span></div>
+              <div class="meter-face px-3 py-2 mb-2 text-center">
+                <div id="out-a" class="mono text-2xl font-bold text-emerald-300">— —</div>
+                <div id="where-a" class="text-[11px] text-slate-500 mt-0.5"> </div>
+              </div>
+              <div id="chips-a" class="flex flex-wrap gap-1"></div>
+            </div>
+            <div class="rounded-2xl p-3 border border-fuchsia-400/30 bg-slate-950/40">
+              <div class="text-fuchsia-300 text-xs font-bold mb-2"><span class="me-1">Ω</span><span data-i18n="ohmmeter">Ohmmeter</span></div>
+              <div class="meter-face px-3 py-2 mb-2 text-center">
+                <div id="out-o" class="mono text-2xl font-bold text-fuchsia-300">— —</div>
+                <div id="where-o" class="text-[11px] text-slate-500 mt-0.5"> </div>
+              </div>
+              <div id="chips-o" class="flex flex-wrap gap-1"></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- QUIZ TAB -->
     <section id="view-quiz" class="hidden absolute inset-0 overflow-y-auto p-4 md:p-8">
       <div class="max-w-3xl mx-auto glass-panel rounded-3xl p-5 md:p-8">
         <div class="flex items-center justify-between mb-6">
@@ -393,22 +359,22 @@ const LANG = {
     introTopic: "Resistors in Parallel",
     tabSim: "Simulation",
     tabQuiz: "Quiz",
-    instruments: "Lab Instruments",
-    instrHint: "Drag a meter onto a glowing probe on the circuit, or tap a meter then tap a probe.",
+    changeTitle: "Change",
+    changeHint: "Move a slider or press a button. Then look at the meters.",
+    readTitle: "Output",
+    readHint: "Put a meter. Change a value. Watch this number.",
+    voltage: "Battery voltage",
+    resistors: "Resistors",
     voltmeter: "Voltmeter",
     ammeter: "Ammeter",
     ohmmeter: "Ohmmeter",
-    removeMeters: "Remove meters",
-    source: "Power Source",
     powerOn: "ON",
     powerOff: "OFF",
-    voltage: "Voltage",
-    branches: "Parallel Branches",
-    branch: "Branch",
-    eqR: "Equivalent R",
-    itot: "Total Current",
-    sameV: "Voltage (each branch)",
-    observe: "Observe",
+    off: "Off",
+    battery: "Battery",
+    total: "Total",
+    rN: "R",
+    blank: "— —",
     annoCard: "Annotate",
     minimize: "Minimize",
     zoomIn: "Zoom in",
@@ -423,47 +389,36 @@ const LANG = {
     percentage: "Percentage",
     qOf: "Question",
     of: "of",
-    hintOff: "Switch ON to watch current split. Voltage stays the same on every branch.",
-    hintOn: "Current prefers the easier path: smaller R carries larger I. Total I is the sum.",
-    hintOhm: "Ohmmeter reads resistance. Turn power OFF for a clean Ω reading.",
-    hintAdd: "Add a branch and watch Req fall while total current rises.",
-    probeVsrc: "V across source",
-    probeV: "V across R",
-    probeAmain: "A (total)",
-    probeA: "A in branch",
-    probeOhmEq: "Ω equivalent",
-    probeOhm: "Ω of R",
-    ohmNeedOff: "Power OFF to measure Ω",
     quiz: [
       {
-        q: "In a parallel circuit, the voltage across each resistor is…",
-        opts: ["The same as the source voltage", "Split equally among the resistors", "Largest across the smallest resistor", "Zero if more than two branches exist"],
+        q: "You put a voltmeter on R1, then on R2. The two readings are almost the same. What did you find?",
+        opts: ["In parallel, voltage on each branch is the same", "Voltage is always 12 V in every circuit", "The smaller resistor has more voltage", "The ammeter is broken"],
         a: 0,
-        exp: "Every parallel branch is connected directly across the same two points, so each feels the full source voltage."
+        exp: "Each parallel branch is joined to the same two points, so the voltmeter shows the same value on every branch."
       },
       {
-        q: "Two 60 Ω resistors are connected in parallel. What is the equivalent resistance?",
-        opts: ["120 Ω", "60 Ω", "30 Ω", "0 Ω"],
-        a: 2,
-        exp: "1/Req = 1/60 + 1/60 = 1/30, so Req = 30 Ω. Equal parallel resistors give Req = R/n."
+        q: "You lower R1 with the slider. The ammeter on R1 shows a bigger number. Why?",
+        opts: ["Smaller resistance lets more current through that branch", "Voltage on R1 became zero", "Total current always falls", "Ohmmeters measure current"],
+        a: 0,
+        exp: "With the same voltage, I = V/R. Make R smaller and that branch’s current grows. Try it on the meters."
       },
       {
-        q: "You add a third resistor in a new parallel branch. What happens to total current from the battery?",
-        opts: ["It decreases", "It stays exactly the same", "It increases", "It becomes zero"],
-        a: 2,
-        exp: "A new path lets extra current flow. Req decreases, so I_total = V/Req increases."
+        q: "You add one more resistor in a new parallel branch. The ammeter on TOTAL goes up. What happened?",
+        opts: ["A new path was added, so more current leaves the battery", "The battery voltage increased by itself", "Resistance always adds in parallel", "The switch turned off"],
+        a: 0,
+        exp: "Another branch is another path. More paths mean more total current from the battery."
       },
       {
-        q: "In parallel, the branch with the smaller resistance carries…",
-        opts: ["Smaller current", "Larger current", "The same current as every other branch", "No current"],
-        a: 1,
-        exp: "I = V/R with the same V on every branch, so smaller R means larger I. Current takes the easier path."
+        q: "The ohmmeter on TOTAL shows a number smaller than R1 and smaller than R2. What is that number?",
+        opts: ["The equivalent resistance of the parallel group", "The voltage of the battery", "The current in R1 only", "A broken reading"],
+        a: 0,
+        exp: "In parallel, the combined resistance is less than the smallest single resistor. The ohmmeter on Total shows that combined value."
       },
       {
-        q: "Which formula gives the equivalent resistance of parallel resistors?",
-        opts: ["Req = R1 + R2 + R3", "1/Req = 1/R1 + 1/R2 + 1/R3", "Req = R1 × R2 × R3", "Req = V × I"],
-        a: 1,
-        exp: "Conductances add in parallel. Invert the sum of the reciprocals to get Req, which is always smaller than the smallest resistor."
+        q: "Ammeter on TOTAL = 0.30 A. Ammeter on R1 = 0.10 A. Ammeter on R2 = 0.20 A. What did you notice?",
+        opts: ["Total current is the sum of the branch currents", "Total current is the average of the branches", "Total current is always the larger branch", "Currents cancel in parallel"],
+        a: 0,
+        exp: "0.10 + 0.20 = 0.30. In parallel, branch currents add to make the total current."
       }
     ]
   },
@@ -472,22 +427,22 @@ const LANG = {
     introTopic: "متوازی مزاحم",
     tabSim: "محاکات",
     tabQuiz: "امتحان",
-    instruments: "لیب کے آلات",
-    instrHint: "میٹر کو سرکٹ کے چمکدار نقطے پر گھسیٹیں، یا پہلے میٹر چنیں پھر نقطہ دبائیں۔",
+    changeTitle: "بدلیں",
+    changeHint: "سلائیڈر ہلائیں یا بٹن دبائیں۔ پھر میٹر دیکھیں۔",
+    readTitle: "آؤٹ پٹ",
+    readHint: "میٹر لگائیں۔ قیمت بدلیں۔ یہ عدد دیکھیں۔",
+    voltage: "بیٹری وولٹیج",
+    resistors: "مزاحم",
     voltmeter: "وولٹ میٹر",
     ammeter: "ایم میٹر",
     ohmmeter: "اوہم میٹر",
-    removeMeters: "میٹر ہٹائیں",
-    source: "بجلی کا منبع",
     powerOn: "آن",
     powerOff: "آف",
-    voltage: "وولٹیج",
-    branches: "متوازی شاخیں",
-    branch: "شاخ",
-    eqR: "مساوی مزاحمت",
-    itot: "کل برق رو",
-    sameV: "وولٹیج (ہر شاخ)",
-    observe: "مشاہدہ",
+    off: "بند",
+    battery: "بیٹری",
+    total: "کل",
+    rN: "R",
+    blank: "— —",
     annoCard: "تشریح",
     minimize: "چھوٹا کریں",
     zoomIn: "بڑا کریں",
@@ -502,97 +457,82 @@ const LANG = {
     percentage: "فی صد",
     qOf: "سوال",
     of: "از",
-    hintOff: "سوئچ آن کریں تاکہ برق رو کی تقسیم نظر آئے۔ ہر شاخ پر وولٹیج یکساں رہتی ہے۔",
-    hintOn: "برق رو آسان راستہ چنتی ہے: کم مزاحمت پر زیادہ رو۔ کل رو تمام شاخوں کا مجموعہ ہے۔",
-    hintOhm: "اوہم میٹر مزاحمت ناپتا ہے۔ صاف پڑھائی کے لیے پاور آف کریں۔",
-    hintAdd: "ایک شاخ بڑھائیں: مساوی مزاحمت گھٹتی ہے اور کل رو بڑھتی ہے۔",
-    probeVsrc: "منبع پر وولٹیج",
-    probeV: "مزاحم پر وولٹیج",
-    probeAmain: "کل رو",
-    probeA: "شاخ کی رو",
-    probeOhmEq: "مساوی Ω",
-    probeOhm: "مزاحم کا Ω",
-    ohmNeedOff: "Ω ناپنے کے لیے پاور آف",
     quiz: [
       {
-        q: "متوازی سرکٹ میں ہر مزاحم پر وولٹیج…",
-        opts: ["منبع کی وولٹیج کے برابر ہوتی ہے", "مزاحموں میں برابر بٹ جاتی ہے", "سب سے چھوٹے مزاحم پر سب سے زیادہ ہوتی ہے", "دو سے زیادہ شاخوں پر صفر ہو جاتی ہے"],
+        q: "آپ نے وولٹ میٹر پہلے R1 پر پھر R2 پر لگایا۔ دونوں پڑھائیاں تقریباً ایک جیسی ہیں۔ آپ نے کیا پایا؟",
+        opts: ["متوازی میں ہر شاخ پر وولٹیج یکساں ہوتی ہے", "ہر سرکٹ میں وولٹیج ہمیشہ 12 V ہوتی ہے", "چھوٹے مزاحم پر وولٹیج زیادہ ہوتی ہے", "ایم میٹر خراب ہے"],
         a: 0,
-        exp: "ہر متوازی شاخ ایک ہی دو نقطوں کے درمیان جڑی ہوتی ہے، اس لیے ہر شاخ پورا منبع وولٹیج محسوس کرتی ہے۔"
+        exp: "ہر متوازی شاخ ایک ہی دو نقطوں سے جڑی ہوتی ہے، اس لیے وولٹ میٹر ہر شاخ پر ایک جیسی قیمت دکھاتا ہے۔"
       },
       {
-        q: "دو 60 Ω مزاحم متوازی جوڑے گئے۔ مساوی مزاحمت کیا ہے؟",
-        opts: ["120 Ω", "60 Ω", "30 Ω", "0 Ω"],
-        a: 2,
-        exp: "1/Req = 1/60 + 1/60 = 1/30، لہٰذا Req = 30 Ω۔ برابر متوازی مزاحموں میں Req = R/n۔"
+        q: "آپ نے R1 کم کیا۔ R1 پر ایم میٹر بڑی قیمت دکھاتا ہے۔ کیوں؟",
+        opts: ["کم مزاحمت اس شاخ میں زیادہ رو گزرنے دیتی ہے", "R1 پر وولٹیج صفر ہو گئی", "کل رو ہمیشہ گھٹتی ہے", "اوہم میٹر رو ناپتا ہے"],
+        a: 0,
+        exp: "وولٹیج یکساں رہتی ہے اور I = V/R۔ R چھوٹی کریں تو اس شاخ کی رو بڑھتی ہے۔ میٹر پر خود آزمائیں۔"
       },
       {
-        q: "ایک نئی متوازی شاخ میں تیسرا مزاحم جوڑنے سے بیٹری کی کل رو کیا ہوتی ہے؟",
-        opts: ["کم ہو جاتی ہے", "بالکل وہی رہتی ہے", "بڑھ جاتی ہے", "صفر ہو جاتی ہے"],
-        a: 2,
-        exp: "نیا راستہ اضافی رو گزرنے دیتا ہے۔ Req کم ہوتی ہے اس لیے I_total = V/Req بڑھتی ہے۔"
+        q: "آپ نے نئی متوازی شاخ میں مزاحم بڑھایا۔ کل ایم میٹر کی قیمت بڑھ گئی۔ کیا ہوا؟",
+        opts: ["نیا راستہ بن گیا اس لیے بیٹری سے زیادہ رو نکلتی ہے", "بیٹری کی وولٹیج خود بڑھ گئی", "متوازی میں مزاحمت ہمیشہ جمع ہوتی ہے", "سوئچ بند ہو گیا"],
+        a: 0,
+        exp: "نئی شاخ نیا راستہ ہے۔ زیادہ راستے ہوں تو بیٹری سے کل رو بڑھتی ہے۔"
       },
       {
-        q: "متوازی میں کم مزاحمت والی شاخ پر…",
-        opts: ["کم برق رو ہوتی ہے", "زیادہ برق رو ہوتی ہے", "ہر شاخ جتنی ہی رو ہوتی ہے", "کوئی رو نہیں ہوتی"],
-        a: 1,
-        exp: "ہر شاخ پر V یکساں ہے اور I = V/R، اس لیے چھوٹی R پر بڑی I۔ برق رو آسان راستہ اختیار کرتی ہے۔"
+        q: "کل پر اوہم میٹر ایسی قیمت دکھاتا ہے جو R1 اور R2 دونوں سے چھوٹی ہے۔ یہ عدد کیا ہے؟",
+        opts: ["متوازی گروپ کی مساوی مزاحمت", "بیٹری کی وولٹیج", "صرف R1 کی رو", "غلط پڑھائی"],
+        a: 0,
+        exp: "متوازی میں مشترکہ مزاحمت سب سے چھوٹے ایک مزاحم سے بھی کم ہوتی ہے۔ کل پر اوہم میٹر وہی مشترکہ قیمت دکھاتا ہے۔"
       },
       {
-        q: "متوازی مزاحموں کی مساوی مزاحمت کا فارمولا کون سا ہے؟",
-        opts: ["Req = R1 + R2 + R3", "1/Req = 1/R1 + 1/R2 + 1/R3", "Req = R1 × R2 × R3", "Req = V × I"],
-        a: 1,
-        exp: "متوازی میں کنڈکٹنس جمع ہوتے ہیں۔ معکوس کا مجموعہ لے کر الٹ کریں۔ Req ہمیشہ سب سے چھوٹی مزاحمت سے کم ہوتی ہے۔"
+        q: "کل ایم میٹر = 0.30 A، R1 = 0.10 A، R2 = 0.20 A۔ آپ نے کیا دیکھا؟",
+        opts: ["کل رو شاخوں کی رو کا مجموعہ ہے", "کل رو شاخوں کی اوسط ہے", "کل رو ہمیشہ بڑی شاخ کے برابر ہے", "متوازی میں رو ختم ہو جاتی ہے"],
+        a: 0,
+        exp: "0.10 + 0.20 = 0.30۔ متوازی میں شاخوں کی رو جمع ہو کر کل رو بناتی ہے۔"
       }
     ]
   }
 };
 
 let currentLang = localStorage.getItem('iqra-lab-lang') || 'en';
-let selectedTool = null;
 let powerOn = true;
 let voltage = 12;
-let branches = [{ id: 1, R: 60 }, { id: 2, R: 40 }];
-let nextId = 3;
-let meters = [];
-let particles = [];
-let hotspots = [];
+let R = [60, 40];
+let probe = { v: 'batt', a: 'total', o: null };
 let cam = { z: 1, x: 0, y: 0 };
-let draggingPan = false;
-let panStart = null;
-let pinchStart = null;
+let world = { w: 980, h: 500 };
+let draggingPan = false, panStart = null, pinchStart = null;
+let particles = [];
 let annoFloatMin = false;
-let world = { w: 980, h: 540 };
-let raf = 0;
-let t0 = 0;
-
-const canvas = () => document.getElementById('circuitCanvas');
 
 function t(key) {
   const pack = LANG[currentLang] || LANG.en;
-  return pack[key] !== undefined ? pack[key] : (LANG.en[key] || key);
+  return pack[key] !== undefined ? pack[key] : LANG.en[key];
+}
+
+function physics() {
+  const inv = R.reduce((s, r) => s + 1 / r, 0);
+  const Req = 1 / inv;
+  const I = powerOn ? R.map(r => voltage / r) : R.map(() => 0);
+  const It = I.reduce((s, x) => s + x, 0);
+  return { Req, I, It };
 }
 
 function applyLanguage() {
-  const html = document.documentElement;
-  html.lang = currentLang === 'ur' ? 'ur' : 'en';
-  html.dir = currentLang === 'ur' ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang === 'ur' ? 'ur' : 'en';
+  document.documentElement.dir = currentLang === 'ur' ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    const k = el.getAttribute('data-i18n');
-    el.textContent = t(k);
+    el.textContent = t(el.getAttribute('data-i18n'));
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
   });
-  const intro = document.getElementById('intro-topic');
-  if (intro) intro.textContent = t('introTopic');
+  document.getElementById('intro-topic').textContent = t('introTopic');
   document.getElementById('lang-select').value = currentLang;
   document.getElementById('pwr-label').textContent = powerOn ? t('powerOn') : t('powerOff');
-  renderBranchSliders();
-  updateReadout();
-  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) {
-    renderQuiz();
-  }
+  renderSliders();
+  renderChips();
+  updateMeters();
+  const quiz = document.getElementById('view-quiz');
+  if (quiz && !quiz.classList.contains('hidden')) renderQuiz();
 }
 
 function changeLanguage(val) {
@@ -602,154 +542,142 @@ function changeLanguage(val) {
   applyLanguage();
 }
 
-function physics() {
-  const inv = branches.reduce((s, b) => s + 1 / b.R, 0);
-  const Req = inv > 0 ? 1 / inv : 0;
-  const I_total = powerOn ? voltage / Req : 0;
-  const currents = branches.map(b => powerOn ? voltage / b.R : 0);
-  return { Req, I_total, currents };
-}
-
-function setVoltage(v) {
+function onChangeV(v) {
   voltage = parseFloat(v);
   document.getElementById('v-val').textContent = voltage.toFixed(1);
-  updateReadout();
+  updateMeters();
 }
 
 function togglePower() {
   powerOn = !powerOn;
   const btn = document.getElementById('pwr-btn');
   document.getElementById('pwr-label').textContent = powerOn ? t('powerOn') : t('powerOff');
-  if (powerOn) {
-    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
-  } else {
-    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold glow-red bg-rose-500/20 text-rose-300 border border-rose-400/40';
-  }
-  updateReadout();
+  btn.className = powerOn
+    ? 'px-4 py-2 rounded-xl text-sm font-bold glow-green bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+    : 'px-4 py-2 rounded-xl text-sm font-bold glow-red bg-rose-500/20 text-rose-300 border border-rose-400/40';
+  updateMeters();
 }
 
 function addBranch() {
-  if (branches.length >= 4) return;
-  branches.push({ id: nextId++, R: 80 });
-  renderBranchSliders();
+  if (R.length >= 4) return;
+  R.push(80);
+  if (probe.v && probe.v.startsWith('r') && parseInt(probe.v.slice(1), 10) >= R.length) probe.v = 'batt';
+  renderSliders();
+  renderChips();
+  updateMeters();
   fitView();
-  updateReadout();
 }
 
 function removeBranch() {
-  if (branches.length <= 2) return;
-  const gone = branches.pop();
-  meters = meters.filter(m => m.target !== 'R' + gone.id && m.target !== 'B' + gone.id && m.target !== 'O' + gone.id);
-  renderBranchSliders();
+  if (R.length <= 2) return;
+  R.pop();
+  ['v', 'a', 'o'].forEach(k => {
+    const p = probe[k];
+    if (p && p.startsWith('r') && parseInt(p.slice(1), 10) >= R.length) probe[k] = k === 'a' ? 'total' : (k === 'v' ? 'batt' : null);
+  });
+  renderSliders();
+  renderChips();
+  updateMeters();
   fitView();
-  updateReadout();
 }
 
-function renderBranchSliders() {
-  const wrap = document.getElementById('branch-sliders');
-  if (!wrap) return;
+function setR(i, val) {
+  R[i] = parseInt(val, 10);
+  renderSliders();
+  updateMeters();
+}
+
+function renderSliders() {
   const colors = ['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24'];
-  wrap.innerHTML = branches.map((b, i) => `
+  document.getElementById('r-sliders').innerHTML = R.map((r, i) => `
     <div>
       <div class="flex justify-between text-sm mb-1">
-        <span class="font-semibold" style="color:${colors[i]}">${t('branch')} ${i + 1}</span>
-        <span class="mono text-cyan-200 font-bold">${b.R} Ω</span>
+        <span class="font-semibold" style="color:${colors[i]}">${t('rN')}${i + 1}</span>
+        <span class="mono font-bold text-slate-100">${r} Ω</span>
       </div>
-      <input type="range" min="10" max="200" step="1" value="${b.R}" class="w-full"
-        oninput="setR(${b.id}, this.value)">
+      <input type="range" min="10" max="200" value="${r}" class="w-full" oninput="setR(${i}, this.value)">
     </div>`).join('');
 }
 
-function setR(id, val) {
-  const b = branches.find(x => x.id === id);
-  if (!b) return;
-  b.R = parseInt(val, 10);
-  renderBranchSliders();
-  updateReadout();
+function chipBtn(group, id, label) {
+  const on = probe[group] === id ? 'on' : '';
+  return `<button class="chip ${on}" onclick="setProbe('${group}','${id}')">${label}</button>`;
 }
 
-function selectTool(tool) {
-  selectedTool = selectedTool === tool ? null : tool;
-  document.querySelectorAll('.inst-btn').forEach(btn => {
-    const on = btn.getAttribute('data-tool') === selectedTool;
-    btn.classList.toggle('glow-cyan', on);
-    btn.classList.toggle('border-cyan-400', on);
-  });
+function renderChips() {
+  const rChips = (g) => R.map((_, i) => chipBtn(g, 'r' + i, t('rN') + (i + 1))).join('');
+  document.getElementById('chips-v').innerHTML =
+    chipBtn('v', null, t('off')) + chipBtn('v', 'batt', t('battery')) + rChips('v');
+  document.getElementById('chips-a').innerHTML =
+    chipBtn('a', null, t('off')) + chipBtn('a', 'total', t('total')) + rChips('a');
+  document.getElementById('chips-o').innerHTML =
+    chipBtn('o', null, t('off')) + chipBtn('o', 'total', t('total')) + rChips('o');
 }
 
-function clearMeters() {
-  meters = [];
+function setProbe(group, id) {
+  probe[group] = (id === 'null' || id === null) ? null : id;
+  renderChips();
+  updateMeters();
 }
 
-function updateReadout() {
+function whereLabel(id) {
+  if (!id) return '';
+  if (id === 'batt') return t('battery');
+  if (id === 'total') return t('total');
+  if (id.startsWith('r')) return t('rN') + (parseInt(id.slice(1), 10) + 1);
+  return '';
+}
+
+function updateMeters() {
   const p = physics();
-  document.getElementById('out-req').textContent = p.Req.toFixed(2);
-  document.getElementById('out-it').textContent = p.I_total.toFixed(3);
-  document.getElementById('out-v').textContent = (powerOn ? voltage : 0).toFixed(1);
-  let hint = powerOn ? t('hintOn') : t('hintOff');
-  if (selectedTool === 'ohm') hint = t('hintOhm');
-  if (branches.length < 4 && powerOn) hint = t('hintAdd') + ' ' + t('hintOn');
-  document.getElementById('out-hint').textContent = hint;
+  const blank = t('blank');
+
+  if (!probe.v) {
+    document.getElementById('out-v').textContent = blank;
+    document.getElementById('where-v').textContent = '';
+  } else {
+    const val = powerOn ? voltage : 0;
+    document.getElementById('out-v').textContent = val.toFixed(2) + ' V';
+    document.getElementById('where-v').textContent = whereLabel(probe.v);
+  }
+
+  if (!probe.a) {
+    document.getElementById('out-a').textContent = blank;
+    document.getElementById('where-a').textContent = '';
+  } else if (probe.a === 'total') {
+    document.getElementById('out-a').textContent = p.It.toFixed(3) + ' A';
+    document.getElementById('where-a').textContent = whereLabel('total');
+  } else {
+    const i = parseInt(probe.a.slice(1), 10);
+    document.getElementById('out-a').textContent = (p.I[i] || 0).toFixed(3) + ' A';
+    document.getElementById('where-a').textContent = whereLabel(probe.a);
+  }
+
+  if (!probe.o) {
+    document.getElementById('out-o').textContent = blank;
+    document.getElementById('where-o').textContent = '';
+  } else if (probe.o === 'total') {
+    document.getElementById('out-o').textContent = p.Req.toFixed(2) + ' Ω';
+    document.getElementById('where-o').textContent = whereLabel('total');
+  } else {
+    const i = parseInt(probe.o.slice(1), 10);
+    document.getElementById('out-o').textContent = (R[i] || 0) + ' Ω';
+    document.getElementById('where-o').textContent = whereLabel(probe.o);
+  }
 }
 
-function layout() {
-  const n = branches.length;
-  const left = 210, right = 900, top = 88, bot = 430;
-  const span = right - left;
-  const xs = branches.map((_, i) => left + span * (i + 1) / (n + 1));
-  return { left, right, top, bot, xs, batt: { x: 70, y: 230 }, sw: { x: 150, y: 88 } };
-}
-
-function buildHotspots() {
-  const L = layout();
-  const hs = [];
-  hs.push({ id: 'Vsrc', kind: 'volt', x: L.batt.x + 10, y: 250, label: t('probeVsrc') });
-  hs.push({ id: 'Amain', kind: 'amm', x: 168, y: L.top, label: t('probeAmain') });
-  hs.push({ id: 'Oeq', kind: 'ohm', x: (L.left + L.right) / 2, y: L.bot + 36, label: t('probeOhmEq') });
-  branches.forEach((b, i) => {
-    const x = L.xs[i];
-    hs.push({ id: 'R' + b.id, kind: 'volt', x, y: 268, label: t('probeV') + (i + 1) });
-    hs.push({ id: 'B' + b.id, kind: 'amm', x, y: L.top, label: t('probeA') + ' ' + (i + 1) });
-    hs.push({ id: 'O' + b.id, kind: 'ohm', x, y: 330, label: t('probeOhm') + (i + 1) });
-  });
-  hotspots = hs;
-}
-
-function meterReading(m) {
-  const p = physics();
-  if (m.kind === 'volt') {
-    if (!powerOn) return '0.00 V';
-    return voltage.toFixed(2) + ' V';
-  }
-  if (m.kind === 'amm') {
-    if (m.target === 'Amain') return p.I_total.toFixed(3) + ' A';
-    const id = parseInt(m.target.slice(1), 10);
-    const idx = branches.findIndex(b => b.id === id);
-    return (idx >= 0 ? p.currents[idx] : 0).toFixed(3) + ' A';
-  }
-  if (m.kind === 'ohm') {
-    if (powerOn) return t('ohmNeedOff');
-    if (m.target === 'Oeq') return p.Req.toFixed(2) + ' Ω';
-    const id = parseInt(m.target.slice(1), 10);
-    const b = branches.find(x => x.id === id);
-    return (b ? b.R.toFixed(0) : '—') + ' Ω';
-  }
-  return '—';
-}
+function canvas() { return document.getElementById('circuitCanvas'); }
 
 function resizeCanvas() {
   const c = canvas();
   const vp = document.getElementById('sim-viewport');
   if (!c || !vp) return;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const w = vp.clientWidth;
-  const h = vp.clientHeight;
+  const w = vp.clientWidth, h = vp.clientHeight;
   c.width = Math.max(1, w * dpr);
   c.height = Math.max(1, h * dpr);
   c.style.width = w + 'px';
   c.style.height = h + 'px';
-  const ctx = c.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   if (fCanvas) {
     fCanvas.setWidth(w);
     fCanvas.setHeight(h);
@@ -760,53 +688,27 @@ function resizeCanvas() {
 function fitView() {
   const vp = document.getElementById('sim-viewport');
   if (!vp) return;
-  const w = vp.clientWidth, h = vp.clientHeight;
-  cam.z = Math.min(w / world.w, h / world.h) * 0.96;
-  cam.x = (w - world.w * cam.z) / 2;
-  cam.y = (h - world.h * cam.z) / 2;
+  cam.z = Math.min(vp.clientWidth / world.w, vp.clientHeight / world.h) * 0.95;
+  cam.x = (vp.clientWidth - world.w * cam.z) / 2;
+  cam.y = (vp.clientHeight - world.h * cam.z) / 2;
 }
-
 function zoomBy(f, cx, cy) {
   const vp = document.getElementById('sim-viewport');
   const px = cx != null ? cx : vp.clientWidth / 2;
   const py = cy != null ? cy : vp.clientHeight / 2;
   const nz = Math.min(3.2, Math.max(0.45, cam.z * f));
-  const wx = (px - cam.x) / cam.z;
-  const wy = (py - cam.y) / cam.z;
+  const wx = (px - cam.x) / cam.z, wy = (py - cam.y) / cam.z;
   cam.z = nz;
   cam.x = px - wx * cam.z;
   cam.y = py - wy * cam.z;
 }
-
 function resetView() { fitView(); }
 
-function screenToWorld(sx, sy) {
-  return { x: (sx - cam.x) / cam.z, y: (sy - cam.y) / cam.z };
-}
-
-function canvasPos(e) {
-  const r = canvas().getBoundingClientRect();
-  const src = e.touches ? e.touches[0] : e;
-  return { x: src.clientX - r.left, y: src.clientY - r.top };
-}
-
-function hitHotspot(wx, wy) {
-  let best = null, dmin = 28;
-  for (const h of hotspots) {
-    if (selectedTool && h.kind !== selectedTool) continue;
-    const d = Math.hypot(h.x - wx, h.y - wy);
-    if (d < dmin) { dmin = d; best = h; }
-  }
-  return best;
-}
-
-function placeMeter(h) {
-  meters = meters.filter(m => m.target !== h.id);
-  meters.push({ kind: h.kind, target: h.id, x: h.x, y: h.y - 48 });
-  selectedTool = null;
-  document.querySelectorAll('.inst-btn').forEach(btn => {
-    btn.classList.remove('glow-cyan', 'border-cyan-400');
-  });
+function layout() {
+  const n = R.length;
+  const left = 250, right = 900, top = 90, bot = 400;
+  const xs = R.map((_, i) => left + (right - left) * (i + 1) / (n + 1));
+  return { left, right, top, bot, xs };
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -820,28 +722,24 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 function drawResistor(ctx, x, y) {
-  ctx.save();
-  ctx.translate(x, y);
   ctx.beginPath();
-  ctx.moveTo(0, -36);
-  ctx.lineTo(0, -18);
-  const zig = 7, amp = 12;
-  let yy = -18;
-  ctx.lineTo(-amp, yy + zig * 0.5);
+  ctx.moveTo(x, y - 40);
+  ctx.lineTo(x, y - 22);
+  let yy = -22;
+  ctx.lineTo(x - 14, y + yy + 6);
   for (let i = 0; i < 6; i++) {
-    yy += zig;
-    ctx.lineTo(i % 2 === 0 ? amp : -amp, yy);
+    yy += 8;
+    ctx.lineTo(x + (i % 2 === 0 ? 14 : -14), y + yy);
   }
-  ctx.lineTo(0, 18);
-  ctx.lineTo(0, 36);
+  ctx.lineTo(x, y + 22);
+  ctx.lineTo(x, y + 40);
   ctx.stroke();
-  ctx.restore();
 }
 
 function draw() {
   const c = canvas();
-  if (!c) return;
   const vp = document.getElementById('sim-viewport');
+  if (!c || !vp) return;
   const ctx = c.getContext('2d');
   const w = vp.clientWidth, h = vp.clientHeight;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -854,194 +752,118 @@ function draw() {
   ctx.translate(cam.x, cam.y);
   ctx.scale(cam.z, cam.z);
 
-  ctx.strokeStyle = 'rgba(148,163,184,0.08)';
+  ctx.strokeStyle = 'rgba(148,163,184,0.07)';
   ctx.lineWidth = 1;
-  for (let x = 0; x < world.w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, world.h); ctx.stroke(); }
-  for (let y = 0; y < world.h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(world.w, y); ctx.stroke(); }
+  for (let x = 0; x < world.w; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, world.h); ctx.stroke(); }
+  for (let y = 0; y < world.h; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(world.w, y); ctx.stroke(); }
 
   const L = layout();
   const p = physics();
-  const glow = powerOn ? 'rgba(34,211,238,0.95)' : 'rgba(100,116,139,0.85)';
+  const wire = powerOn ? '#22d3ee' : '#64748b';
   ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.strokeStyle = glow;
+  ctx.strokeStyle = wire;
   ctx.shadowColor = powerOn ? '#22d3ee' : 'transparent';
-  ctx.shadowBlur = powerOn ? 10 : 0;
-  ctx.lineWidth = 4;
+  ctx.shadowBlur = powerOn ? 12 : 0;
+  ctx.lineWidth = 5;
 
   ctx.beginPath();
-  ctx.moveTo(L.batt.x + 24, L.top);
-  ctx.lineTo(L.right, L.top);
-  ctx.moveTo(L.batt.x + 24, L.bot);
-  ctx.lineTo(L.right, L.bot);
+  ctx.moveTo(118, L.top); ctx.lineTo(L.right, L.top);
+  ctx.moveTo(118, L.bot); ctx.lineTo(L.right, L.bot);
+  ctx.moveTo(L.right, L.top); ctx.lineTo(L.right, L.bot);
+  ctx.moveTo(118, L.top); ctx.lineTo(118, 188);
+  ctx.moveTo(118, 292); ctx.lineTo(118, L.bot);
   ctx.stroke();
 
-  ctx.beginPath();
-  ctx.moveTo(L.batt.x + 24, L.top);
-  ctx.lineTo(L.batt.x + 24, 188);
-  ctx.moveTo(L.batt.x + 24, 272);
-  ctx.lineTo(L.batt.x + 24, L.bot);
-  ctx.stroke();
-
-  branches.forEach((b, i) => {
+  R.forEach((_, i) => {
     const x = L.xs[i];
     ctx.beginPath();
-    ctx.moveTo(x, L.top);
-    ctx.lineTo(x, 222);
-    ctx.moveTo(x, 318);
-    ctx.lineTo(x, L.bot);
+    ctx.moveTo(x, L.top); ctx.lineTo(x, 210);
+    ctx.moveTo(x, 290); ctx.lineTo(x, L.bot);
     ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = '#f8fafc';
-    ctx.lineWidth = 3;
-    drawResistor(ctx, x, 270);
-    ctx.fillStyle = '#67e8f9';
-    ctx.font = '700 13px Inter, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('R' + (i + 1) + '  ' + b.R + ' Ω', x + 16, 266);
-    ctx.fillStyle = '#86efac';
-    ctx.fillText(p.currents[i].toFixed(3) + ' A', x + 16, 286);
-    ctx.strokeStyle = glow;
-    ctx.shadowBlur = powerOn ? 10 : 0;
-    ctx.lineWidth = 4;
   });
 
   ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 3.5;
+  R.forEach((_, i) => drawResistor(ctx, L.xs[i], 250));
+
+  const colors = ['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24'];
+  ctx.textAlign = 'left';
+  ctx.font = '700 16px Inter, sans-serif';
+  R.forEach((_, i) => {
+    ctx.fillStyle = colors[i];
+    ctx.fillText('R' + (i + 1), L.xs[i] + 18, 246);
+  });
+
   ctx.fillStyle = '#1e293b';
-  ctx.strokeStyle = '#334155';
+  ctx.strokeStyle = '#475569';
   ctx.lineWidth = 2;
-  roundRect(ctx, L.batt.x - 28, 188, 56, 84, 10);
+  roundRect(ctx, 78, 188, 80, 104, 12);
   ctx.fill(); ctx.stroke();
   ctx.strokeStyle = '#f8fafc';
-  ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(L.batt.x - 10, 214); ctx.lineTo(L.batt.x + 18, 214); ctx.stroke();
-  ctx.lineWidth = 8;
-  ctx.beginPath(); ctx.moveTo(L.batt.x - 4, 246); ctx.lineTo(L.batt.x + 12, 246); ctx.stroke();
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(96, 218); ctx.lineTo(140, 218); ctx.stroke();
+  ctx.lineWidth = 10;
+  ctx.beginPath(); ctx.moveTo(104, 258); ctx.lineTo(132, 258); ctx.stroke();
   ctx.fillStyle = '#94a3b8';
-  ctx.font = '11px Inter, sans-serif';
+  ctx.font = '12px Inter, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('+', L.batt.x, 204);
-  ctx.fillText('−', L.batt.x, 268);
-  ctx.fillStyle = '#fde68a';
-  ctx.font = '700 12px JetBrains Mono, monospace';
-  ctx.fillText(voltage.toFixed(1) + ' V', L.batt.x, 178);
+  ctx.fillText('+', 118, 208);
+  ctx.fillText('−', 118, 280);
 
-  const open = !powerOn;
-  ctx.strokeStyle = glow;
-  ctx.lineWidth = 4;
-  ctx.shadowBlur = powerOn ? 8 : 0;
+  ctx.strokeStyle = wire;
+  ctx.lineWidth = 5;
+  ctx.shadowBlur = powerOn ? 10 : 0;
   ctx.beginPath();
-  ctx.moveTo(138, L.top);
-  ctx.lineTo(150, L.top);
+  ctx.moveTo(170, L.top);
+  ctx.lineTo(powerOn ? 210 : 198, powerOn ? L.top : L.top - 24);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(150, L.top);
-  ctx.lineTo(open ? 168 : 186, open ? L.top - 22 : L.top);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(186, L.top, 5, 0, Math.PI * 2);
+  ctx.arc(210, L.top, 6, 0, Math.PI * 2);
   ctx.fillStyle = powerOn ? '#22c55e' : '#64748b';
   ctx.fill();
 
-  buildHotspots();
-  const showProbes = !!selectedTool;
-  if (showProbes) {
-    hotspots.filter(hs => hs.kind === selectedTool).forEach(hs => {
-      ctx.beginPath();
-      ctx.arc(hs.x, hs.y, 11, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,243,255,0.18)';
-      ctx.fill();
-      ctx.strokeStyle = '#00f3ff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.fillStyle = '#e2e8f0';
-      ctx.font = '11px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(hs.label, hs.x, hs.y - 16);
-    });
-  }
+  drawProbeMarks(ctx, L);
 
-  meters.forEach(m => {
-    const hs = hotspots.find(h => h.id === m.target);
-    if (!hs) return;
-    const colors = { volt: '#fbbf24', amm: '#34d399', ohm: '#e879f9' };
-    const titles = { volt: t('voltmeter'), amm: t('ammeter'), ohm: t('ohmmeter') };
-    const x = hs.x - 54, y = hs.y - 70, ww = 108, hh = 44;
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(15,23,42,0.92)';
-    ctx.strokeStyle = colors[m.kind];
-    ctx.lineWidth = 2;
-    roundRect(ctx, x, y, ww, hh, 8);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = colors[m.kind];
-    ctx.font = '10px Inter, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(titles[m.kind], x + 8, y + 14);
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '700 13px JetBrains Mono, monospace';
-    ctx.fillText(meterReading(m), x + 8, y + 34);
-    ctx.beginPath();
-    ctx.moveTo(hs.x, y + hh);
-    ctx.lineTo(hs.x, hs.y);
-    ctx.strokeStyle = colors[m.kind];
-    ctx.setLineDash([3, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  });
-
-  if (powerOn) {
-    spawnAndDrawParticles(ctx, L, p);
-  }
+  if (powerOn) drawFlow(ctx, L, p);
 
   ctx.restore();
-  raf = requestAnimationFrame(draw);
+  requestAnimationFrame(draw);
 }
 
-function spawnAndDrawParticles(ctx, L, p) {
-  const now = performance.now();
-  if (!t0) t0 = now;
-  if (particles.length < 80) {
-    particles.push({ s: Math.random(), lane: 'main' });
-    branches.forEach((b, i) => particles.push({ s: Math.random(), lane: 'b' + i }));
+function drawProbeMarks(ctx, L) {
+  const marks = [];
+  if (probe.v === 'batt') marks.push({ x: 118, y: 250, c: '#fbbf24', tag: 'V' });
+  if (probe.v && probe.v.startsWith('r')) {
+    const i = parseInt(probe.v.slice(1), 10);
+    marks.push({ x: L.xs[i], y: 250, c: '#fbbf24', tag: 'V' });
   }
-  const maxI = Math.max(p.I_total, 0.01);
-  ctx.fillStyle = '#67e8f9';
-  ctx.shadowBlur = 8;
-  ctx.shadowColor = '#22d3ee';
-  particles.forEach(pt => {
-    const speed = 0.004 + 0.01 * (p.I_total / (maxI + 0.2));
-    pt.s = (pt.s + speed) % 1;
-    let xy;
-    if (pt.lane === 'main') xy = pathMain(L, pt.s);
-    else {
-      const i = parseInt(pt.lane.slice(1), 10);
-      const frac = p.I_total > 0 ? p.currents[i] / p.I_total : 1 / branches.length;
-      if (Math.random() > frac * 0.15 + 0.02 && pt.s < 0.02) return;
-      xy = pathBranch(L, i, pt.s);
-    }
-    if (!xy) return;
+  if (probe.a === 'total') marks.push({ x: 240, y: L.top, c: '#34d399', tag: 'A' });
+  if (probe.a && probe.a.startsWith('r')) {
+    const i = parseInt(probe.a.slice(1), 10);
+    marks.push({ x: L.xs[i], y: L.top, c: '#34d399', tag: 'A' });
+  }
+  if (probe.o === 'total') marks.push({ x: (L.left + L.right) / 2, y: L.bot, c: '#e879f9', tag: 'Ω' });
+  if (probe.o && probe.o.startsWith('r')) {
+    const i = parseInt(probe.o.slice(1), 10);
+    marks.push({ x: L.xs[i], y: 318, c: '#e879f9', tag: 'Ω' });
+  }
+  marks.forEach(m => {
     ctx.beginPath();
-    ctx.arc(xy.x, xy.y, 3.2, 0, Math.PI * 2);
+    ctx.arc(m.x, m.y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = m.c;
     ctx.fill();
+    ctx.fillStyle = '#020617';
+    ctx.font = '700 11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(m.tag, m.x, m.y + 0.5);
+    ctx.textBaseline = 'alphabetic';
   });
-  if (particles.length > 120) particles.length = 90;
 }
 
-function pathMain(L, s) {
-  const pts = [
-    [L.batt.x + 24, 200], [L.batt.x + 24, L.top], [L.right, L.top],
-    [L.right, L.bot], [L.batt.x + 24, L.bot], [L.batt.x + 24, 272]
-  ];
-  return along(pts, s);
-}
-function pathBranch(L, i, s) {
-  const x = L.xs[i];
-  const pts = [[x, L.top], [x, L.bot]];
-  return along(pts, s);
-}
 function along(pts, s) {
-  let len = 0;
-  const segs = [];
+  let len = 0, segs = [];
   for (let i = 1; i < pts.length; i++) {
     const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
     segs.push(d); len += d;
@@ -1049,12 +871,47 @@ function along(pts, s) {
   let d = s * len;
   for (let i = 1; i < pts.length; i++) {
     if (d <= segs[i - 1]) {
-      const t = d / segs[i - 1];
-      return { x: pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * t, y: pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t };
+      const u = d / segs[i - 1];
+      return { x: pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, y: pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u };
     }
     d -= segs[i - 1];
   }
   return { x: pts[pts.length - 1][0], y: pts[pts.length - 1][1] };
+}
+
+function drawFlow(ctx, L, p) {
+  if (particles.length < 50) {
+    for (let i = 0; i < 8; i++) particles.push({ s: Math.random(), lane: 'loop' });
+    R.forEach((_, i) => particles.push({ s: Math.random(), lane: 'b' + i }));
+  }
+  ctx.fillStyle = '#67e8f9';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#22d3ee';
+  const speed = 0.003 + Math.min(0.012, p.It * 0.008);
+  particles.forEach(pt => {
+    pt.s = (pt.s + speed) % 1;
+    let xy;
+    if (pt.lane === 'loop') {
+      xy = along([[118, 200], [118, L.top], [L.right, L.top], [L.right, L.bot], [118, L.bot], [118, 292]], pt.s);
+    } else {
+      const i = parseInt(pt.lane.slice(1), 10);
+      const x = L.xs[i];
+      const share = p.It > 0 ? p.I[i] / p.It : 0.5;
+      pt.s = (pt.s + speed * (0.4 + share)) % 1;
+      xy = along([[x, L.top], [x, L.bot]], pt.s);
+    }
+    if (!xy) return;
+    ctx.beginPath();
+    ctx.arc(xy.x, xy.y, 3.4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  if (particles.length > 90) particles.length = 55;
+}
+
+function canvasPos(e) {
+  const r = canvas().getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
 }
 
 function onPointerDown(e) {
@@ -1067,22 +924,6 @@ function onPointerDown(e) {
     return;
   }
   const p = canvasPos(e);
-  const w = screenToWorld(p.x, p.y);
-  const hs = hitHotspot(w.x, w.y);
-  if (hs && selectedTool === hs.kind) {
-    placeMeter(hs);
-    e.preventDefault();
-    return;
-  }
-  const mhit = meters.find(m => {
-    const h = hotspots.find(x => x.id === m.target);
-    if (!h) return false;
-    return w.x > h.x - 54 && w.x < h.x + 54 && w.y > h.y - 70 && w.y < h.y - 26;
-  });
-  if (mhit && !selectedTool) {
-    meters = meters.filter(m => m !== mhit);
-    return;
-  }
   draggingPan = true;
   panStart = { x: p.x, y: p.y, cx: cam.x, cy: cam.y };
 }
@@ -1093,9 +934,7 @@ function onPointerMove(e) {
     const r = canvas().getBoundingClientRect();
     const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
     const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
-    const factor = d / pinchStart.d;
-    const target = pinchStart.z * factor;
-    zoomBy(target / cam.z, cx, cy);
+    zoomBy((pinchStart.z * d / pinchStart.d) / cam.z, cx, cy);
     e.preventDefault();
     return;
   }
@@ -1105,11 +944,7 @@ function onPointerMove(e) {
   cam.y = panStart.cy + (p.y - panStart.y);
 }
 
-function onPointerUp() {
-  draggingPan = false;
-  panStart = null;
-  pinchStart = null;
-}
+function onPointerUp() { draggingPan = false; panStart = null; pinchStart = null; }
 
 function bindSimInput() {
   const c = canvas();
@@ -1124,27 +959,8 @@ function bindSimInput() {
     const p = canvasPos(e);
     zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, p.x, p.y);
   }, { passive: false });
-
-  document.querySelectorAll('.inst-btn').forEach(btn => {
-    btn.addEventListener('dragstart', e => {
-      selectedTool = btn.getAttribute('data-tool');
-      e.dataTransfer.setData('text/plain', selectedTool);
-    });
-    btn.setAttribute('draggable', 'true');
-  });
-  c.addEventListener('dragover', e => e.preventDefault());
-  c.addEventListener('drop', e => {
-    e.preventDefault();
-    const tool = e.dataTransfer.getData('text/plain') || selectedTool;
-    selectedTool = tool;
-    const r = c.getBoundingClientRect();
-    const wpt = screenToWorld(e.clientX - r.left, e.clientY - r.top);
-    const hs = hitHotspot(wpt.x, wpt.y);
-    if (hs) placeMeter(hs);
-  });
 }
 
-/* ================= ANNOTATION (exact logic) ================= */
 let fCanvas;
 let isAnnoActive = false;
 
@@ -1208,9 +1024,7 @@ function clearAnnotations() {
     if(fCanvas) fCanvas.clear();
 }
 
-function ensureAnnoOn() {
-  if (!isAnnoActive) toggleAnnotationMode();
-}
+function ensureAnnoOn() { if (!isAnnoActive) toggleAnnotationMode(); }
 
 function toggleAnnoFloat() {
   annoFloatMin = !annoFloatMin;
@@ -1237,8 +1051,7 @@ function makeAnnoFloatDraggable() {
     drag = true;
     const r = card.getBoundingClientRect();
     const vp = document.getElementById('sim-viewport').getBoundingClientRect();
-    ox = e.clientX - r.left;
-    oy = e.clientY - r.top;
+    ox = e.clientX - r.left; oy = e.clientY - r.top;
     card.style.right = 'auto';
     card.style.top = (r.top - vp.top) + 'px';
     card.style.left = (r.left - vp.left) + 'px';
@@ -1265,9 +1078,7 @@ function toggleFullScreen() {
 }
 document.addEventListener('fullscreenchange', () => {
   setTimeout(() => { resizeCanvas(); fitView(); }, 80);
-  if (!document.fullscreenElement) {
-    document.getElementById('fs-icon').className = 'fa-solid fa-expand';
-  }
+  if (!document.fullscreenElement) document.getElementById('fs-icon').className = 'fa-solid fa-expand';
 });
 
 function switchTab(name) {
@@ -1283,7 +1094,7 @@ function switchTab(name) {
     bs.className = 'tab-active px-4 py-2 rounded-lg text-sm flex items-center gap-2';
     bq.className = 'px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2';
     if (bsm) { bsm.className = 'flex-1 py-2 rounded-lg tab-active text-sm'; bqm.className = 'flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm'; }
-    setTimeout(() => { resizeCanvas(); }, 40);
+    setTimeout(() => { resizeCanvas(); fitView(); }, 40);
   } else {
     sim.classList.add('hidden');
     quiz.classList.remove('hidden');
@@ -1294,10 +1105,10 @@ function switchTab(name) {
   }
 }
 
-let quizIndex = 0, quizScore = 0, quizLocked = false, quizAnswers = [];
+let quizIndex = 0, quizScore = 0, quizLocked = false;
 
 function startQuiz() {
-  quizIndex = 0; quizScore = 0; quizLocked = false; quizAnswers = [];
+  quizIndex = 0; quizScore = 0; quizLocked = false;
   document.getElementById('quiz-result').classList.add('hidden');
   document.getElementById('quiz-body').classList.remove('hidden');
   renderQuiz();
@@ -1311,8 +1122,7 @@ function renderQuiz() {
     body.classList.add('hidden');
     result.classList.remove('hidden');
     document.getElementById('quiz-score').textContent = quizScore + ' / 5';
-    const pct = Math.round((quizScore / 5) * 100);
-    document.getElementById('quiz-pct').textContent = t('percentage') + ': ' + pct + '%';
+    document.getElementById('quiz-pct').textContent = t('percentage') + ': ' + Math.round((quizScore / 5) * 100) + '%';
     document.getElementById('quiz-progress').textContent = t('finalScore');
     return;
   }
@@ -1323,7 +1133,7 @@ function renderQuiz() {
   const letters = ['A', 'B', 'C', 'D'];
   body.innerHTML = `
     <p class="text-lg md:text-xl font-semibold text-white mb-5 leading-relaxed">${q.q}</p>
-    <div class="space-y-3" id="quiz-opts">
+    <div class="space-y-3">
       ${q.opts.map((opt, i) => `
         <button class="quiz-opt w-full text-start glass-card rounded-xl px-4 py-3 border border-slate-600 hover:border-cyan-400/60 transition"
           onclick="answerQuiz(${i})">
@@ -1340,8 +1150,7 @@ function answerQuiz(i) {
   if (quizLocked) return;
   quizLocked = true;
   const q = t('quiz')[quizIndex];
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts.forEach((el, idx) => {
+  document.querySelectorAll('.quiz-opt').forEach((el, idx) => {
     if (idx === q.a) el.classList.add('correct');
     if (idx === i && i !== q.a) el.classList.add('wrong');
   });
@@ -1361,29 +1170,25 @@ function nextQuiz() {
 function playIntro() {
   const bar = document.getElementById('intro-bar');
   const start = performance.now();
-  function tick(now) {
+  (function tick(now) {
     const p = Math.min(1, (now - start) / 5000);
     bar.style.width = (p * 100) + '%';
     if (p < 1) requestAnimationFrame(tick);
     else {
       const intro = document.getElementById('intro-screen');
-      intro.style.transition = 'opacity 0.6s ease';
+      intro.style.transition = 'opacity 0.55s ease';
       intro.style.opacity = '0';
       setTimeout(() => {
         intro.style.display = 'none';
-        const app = document.getElementById('app-shell');
-        app.classList.remove('opacity-0', 'pointer-events-none');
+        document.getElementById('app-shell').classList.remove('opacity-0', 'pointer-events-none');
         bootSim();
-      }, 620);
+      }, 560);
     }
-  }
-  requestAnimationFrame(tick);
+  })(start);
 }
 
 function bootSim() {
   applyLanguage();
-  renderBranchSliders();
-  updateReadout();
   resizeCanvas();
   fitView();
   const vp = document.getElementById('sim-viewport');
@@ -1394,7 +1199,7 @@ function bootSim() {
   makeAnnoFloatDraggable();
   startQuiz();
   window.addEventListener('resize', () => { resizeCanvas(); });
-  new ResizeObserver(() => { resizeCanvas(); }).observe(vp);
+  new ResizeObserver(() => resizeCanvas()).observe(vp);
   requestAnimationFrame(draw);
 }
 
