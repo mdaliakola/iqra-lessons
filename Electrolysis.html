@@ -183,7 +183,8 @@
   .opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
 
   .zoom-btn {
-    width: 42px; height: 42px; border-radius: 12px;
+    width: 52px; height: 52px; border-radius: 14px;
+    font-size: 1.25rem;
     background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
     color:#00f3ff; display:flex; align-items:center; justify-content:center;
     backdrop-filter: blur(8px); cursor:pointer;
@@ -192,9 +193,13 @@
   .zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
   .zoom-btn:active { transform: scale(.92); }
 
-  .stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
+  .stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; font-size: 1.35rem; }
   [dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
   .num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
+  .board-ui { font-size: 1.15rem; }
+  .board-ui .font-bold, aside .font-bold { font-size: 1.2rem; }
+  #observe-text, #test-feedback, #power-label { font-size: 1.2rem; line-height: 1.55; }
+  [dir="rtl"] #observe-text, [dir="rtl"] #test-feedback { font-size: 1.35rem; line-height: 2.2; }
 
   #fabricLayer, .canvas-container {
     position: absolute !important;
@@ -258,8 +263,8 @@
         <i class="fa-solid fa-flask-vial text-cyan-400"></i>
       </div>
       <div class="min-w-0">
-        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
-        <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
+        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-base md:text-xl truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="text-sm md:text-base text-slate-200 truncate font-bold" data-i18n="topic"></div>
       </div>
     </div>
 
@@ -333,12 +338,12 @@
       </div>
     </section>
 
-    <aside class="w-full lg:w-[360px] xl:w-[400px] flex flex-col gap-3 min-h-0 overflow-y-auto shrink-0">
+    <aside class="w-full lg:w-[380px] xl:w-[420px] flex flex-col gap-3 min-h-0 overflow-y-auto shrink-0 board-ui">
       <div class="glass-card rounded-2xl p-4">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <div class="text-xs uppercase tracking-widest text-slate-400 font-bold" data-i18n="circuit"></div>
-            <div id="power-label" class="text-lg font-extrabold text-slate-200"></div>
+            <div class="text-base uppercase tracking-widest text-slate-300 font-extrabold" data-i18n="circuit"></div>
+            <div id="power-label" class="font-extrabold text-white"></div>
           </div>
           <button id="power-btn" onclick="togglePower()" class="power-knob flex items-center justify-center text-slate-400" title="Power">
             <i class="fa-solid fa-power-off text-2xl"></i>
@@ -348,55 +353,40 @@
 
       <div class="glass-card rounded-2xl p-4 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="font-bold text-slate-200" data-i18n="voltage"></span>
-          <span class="stat-val text-lg num" id="volt-val">6.0 V</span>
+          <span class="font-extrabold text-white" data-i18n="voltage"></span>
+          <span class="stat-val num" id="volt-val">9.0 V</span>
         </div>
-        <input id="volt-slider" type="range" min="0" max="12" step="0.1" value="6" oninput="setVoltage(this.value)">
-        <div class="flex justify-between text-[11px] text-slate-500 font-bold"><span class="num">0 V</span><span class="num">12 V</span></div>
+        <input id="volt-slider" type="range" min="0" max="12" step="0.1" value="9" oninput="setVoltage(this.value)">
+        <div class="flex justify-between text-base text-slate-300 font-bold"><span class="num">0 V</span><span class="num">9–12 V</span></div>
       </div>
 
       <div class="glass-card rounded-2xl p-4 space-y-3">
-        <div class="font-bold text-slate-200" data-i18n="electrolyte"></div>
-        <div class="grid grid-cols-2 gap-2">
-          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="none" onclick="setElectrolyte('none')"><span data-i18n="el_none"></span></button>
-          <button class="seg-btn active rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="h2so4" onclick="setElectrolyte('h2so4')"><span data-i18n="el_acid"></span></button>
-          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="naoh" onclick="setElectrolyte('naoh')"><span data-i18n="el_alkali"></span></button>
-          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="nacl" onclick="setElectrolyte('nacl')"><span data-i18n="el_salt"></span></button>
-        </div>
-        <div class="flex items-center justify-between pt-1">
-          <span class="text-sm font-bold text-slate-300" data-i18n="concentration"></span>
-          <span class="stat-val num" id="conc-val">0.50 M</span>
-        </div>
-        <input id="conc-slider" type="range" min="0.05" max="1" step="0.05" value="0.5" oninput="setConc(this.value)">
-      </div>
-
-      <div class="glass-card rounded-2xl p-4 space-y-3">
-        <div class="font-bold text-slate-200" data-i18n="collected"></div>
+        <div class="font-extrabold text-white" data-i18n="collected"></div>
         <div>
-          <div class="flex justify-between text-sm mb-1"><span id="h2-name" class="text-sky-300 font-bold"></span><span class="stat-val num" id="h2-ml">0.0 mL</span></div>
-          <div class="gas-bar"><span id="h2-bar" style="width:0%;background:linear-gradient(90deg,#38bdf8,#7dd3fc)"></span></div>
+          <div class="flex justify-between mb-1"><span id="h2-name" class="text-sky-300 font-extrabold"></span><span class="stat-val num" id="h2-ml">0.0 mL</span></div>
+          <div class="gas-bar"><span id="h2-bar" style="width:0%;background:#38bdf8"></span></div>
         </div>
         <div>
-          <div class="flex justify-between text-sm mb-1"><span id="ox-name" class="text-amber-300 font-bold"></span><span class="stat-val num" id="ox-ml">0.0 mL</span></div>
-          <div class="gas-bar"><span id="ox-bar" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></span></div>
+          <div class="flex justify-between mb-1"><span id="ox-name" class="text-red-400 font-extrabold"></span><span class="stat-val num" id="ox-ml">0.0 mL</span></div>
+          <div class="gas-bar"><span id="ox-bar" style="width:0%;background:#f87171"></span></div>
         </div>
-        <div class="flex justify-between text-sm pt-1">
-          <span class="text-slate-400" data-i18n="ratio"></span>
+        <div class="flex justify-between pt-1">
+          <span class="text-slate-200 font-bold" data-i18n="ratio"></span>
           <span class="stat-val num" id="ratio-val">—</span>
         </div>
       </div>
 
       <div class="glass-card rounded-2xl p-4 space-y-2">
-        <div class="font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-eye text-cyan-400"></i><span data-i18n="observe"></span></div>
-        <p id="observe-text" class="text-sm text-slate-300 leading-relaxed"></p>
+        <div class="font-extrabold text-white flex items-center gap-2"><i class="fa-solid fa-eye text-cyan-400"></i><span data-i18n="observe"></span></div>
+        <p id="observe-text" class="text-slate-100"></p>
         <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="runPopTest()" class="rounded-xl px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-sm text-sky-300"><i class="fa-solid fa-burst ml-1"></i> <span data-i18n="pop_test"></span></button>
-          <button onclick="runSplintTest()" class="rounded-xl px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-sm text-amber-300"><i class="fa-solid fa-fire ml-1"></i> <span data-i18n="splint_test"></span></button>
+          <button onclick="runPopTest()" class="rounded-xl px-3 py-4 bg-slate-800 hover:bg-slate-700 border border-sky-400 font-extrabold text-sky-300"><i class="fa-solid fa-burst ml-1"></i> <span data-i18n="pop_test"></span></button>
+          <button onclick="runSplintTest()" class="rounded-xl px-3 py-4 bg-slate-800 hover:bg-slate-700 border border-red-400 font-extrabold text-red-300"><i class="fa-solid fa-fire ml-1"></i> <span data-i18n="splint_test"></span></button>
         </div>
-        <p id="test-feedback" class="text-sm min-h-[1.5em] text-cyan-300"></p>
+        <p id="test-feedback" class="min-h-[1.6em] text-cyan-200 font-bold"></p>
       </div>
 
-      <button onclick="resetExperiment()" class="rounded-2xl px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-slate-200 flex items-center justify-center gap-2">
+      <button onclick="resetExperiment()" class="rounded-2xl px-4 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-500 font-extrabold text-white flex items-center justify-center gap-2">
         <i class="fa-solid fa-rotate-right text-cyan-400"></i><span data-i18n="reset"></span>
       </button>
     </aside>
@@ -423,39 +413,36 @@ const LANG = {
     power_on: "Current flowing",
     power_off: "Circuit open",
     voltage: "Voltage",
-    electrolyte: "Electrolyte",
-    el_none: "Pure water",
-    el_acid: "Dilute H₂SO₄",
-    el_alkali: "Dilute NaOH",
-    el_salt: "Aqueous NaCl",
-    concentration: "Concentration",
     collected: "Collected gases",
-    ratio: "H₂ : anode gas",
+    ratio: "H₂ : O₂",
     observe: "Observe",
     pop_test: "Pop test",
     splint_test: "Glowing splint",
-    reset: "Reset experiment",
-    beaker: "Beaker",
-    test_tubes: "Test tubes",
-    battery: "Battery",
-    cathode: "Cathode (−)",
-    anode: "Anode (+)",
+    reset: "Reset",
+    water: "Water (H₂O)",
+    platinum: "Platinum electrodes",
+    o2_bubbles: "Oxygen bubbles",
+    h2_bubbles: "Hydrogen bubbles",
+    power_supply: "Power supply 9 to 12 V",
+    anode: "Anode",
+    cathode: "Cathode",
+    anode_ox: "Anode (oxidation)",
+    cathode_red: "Cathode (reduction)",
+    eq_anode: "2H₂O(l) → O₂(g) + 4H⁺(aq) + 4e⁻",
+    eq_cathode: "2H⁺(aq) + 2e⁻ → H₂(g)",
+    e_anode: "E° = +1.23 V",
+    e_cathode: "E° = 0.00 V",
     h2: "Hydrogen  H₂",
     o2: "Oxygen  O₂",
-    cl2: "Chlorine  Cl₂",
-    hint_off: "Close the circuit. Watch both tubes — do not assume which gas forms where.",
-    hint_pure: "Almost nothing happens. Pure water is a very poor conductor. Try an electrolyte.",
-    hint_low: "Voltage is below about 1.5 V. Ions are present, but water is not decomposing yet.",
-    hint_run: "Bubbles rise from both electrodes. Compare how fast the two tubes fill.",
-    hint_ratio: "The left tube (negative electrode) holds about twice the volume of the right tube.",
-    hint_ions: "H⁺ ions gain electrons at the cathode → H₂. Water / OH⁻ lose electrons at the anode → O₂.",
-    hint_salt: "The anode gas looks green-yellow. Chloride is easier to oxidize than water, so Cl₂ forms instead of O₂.",
-    hint_full: "A tube is full. Reset, or test the gases to identify them.",
-    pop_need: "Collect more gas in the left tube first.",
-    pop_ok: "A sharp pop! That is hydrogen burning in air: 2H₂ + O₂ → 2H₂O.",
-    splint_need: "Collect more anode gas first.",
-    splint_o2: "The glowing splint relights. That is the test for oxygen.",
-    splint_cl2: "The splint does not relight. This green-yellow gas is chlorine, not oxygen.",
+    hint_off: "Close the switch. Current must flow before any gas appears.",
+    hint_low: "Need more than 1.23 V. Raise voltage toward 9–12 V.",
+    hint_run: "O₂ forms at the anode (+). H₂ forms at the cathode (−). Watch the volumes.",
+    hint_ratio: "The cathode tube fills twice as fast: 2H₂O → 2H₂ + O₂.",
+    hint_full: "A tube is full. Reset, or test the gases.",
+    pop_need: "Collect more H₂ in the right tube first.",
+    pop_ok: "A sharp pop! Hydrogen: 2H₂ + O₂ → 2H₂O.",
+    splint_need: "Collect more O₂ in the left tube first.",
+    splint_o2: "The glowing splint relights. That is oxygen.",
     quiz_title: "Concept Check",
     q_of: "Question",
     next: "Next question",
@@ -492,10 +479,15 @@ const LANG = {
         explain: "Water is decomposed. Sulfuric acid is the electrolyte; it is not used up in the overall reaction."
       },
       {
-        q: "If aqueous NaCl is used instead of dilute acid, the anode often gives",
-        options: ["More hydrogen", "Oxygen only", "Chlorine gas", "Solid sodium"],
-        a: 2,
-        explain: "Chloride ions are easier to oxidize than water, so Cl₂ is discharged at the anode instead of O₂."
+        q: "The anode half-reaction in this experiment is",
+        options: [
+          "2H⁺(aq) + 2e⁻ → H₂(g)",
+          "2H₂O(l) → O₂(g) + 4H⁺(aq) + 4e⁻",
+          "H₂ + O₂ → 2H₂O",
+          "Na⁺ + e⁻ → Na"
+        ],
+        a: 1,
+        explain: "Oxidation happens at the anode. Water loses electrons and O₂ is released. E° = +1.23 V."
       }
     ]
   },
@@ -507,39 +499,36 @@ const LANG = {
     power_on: "رو بہہ رہی ہے",
     power_off: "دور کھلا ہے",
     voltage: "برق دباؤ",
-    electrolyte: "برق پاشیدہ",
-    el_none: "خالص پانی",
-    el_acid: "رقیق H₂SO₄",
-    el_alkali: "رقیق NaOH",
-    el_salt: "آبی NaCl",
-    concentration: "ارتکاز",
     collected: "جمع شدہ گیسیں",
-    ratio: "H₂ : اینوڈ گیس",
+    ratio: "H₂ : O₂",
     observe: "مشاہدہ",
     pop_test: "پاپ ٹیسٹ",
     splint_test: "جلتی سلاخ",
-    reset: "تجربہ ازسرنو",
-    beaker: "بیکر",
-    test_tubes: "امتحانی نلیاں",
-    battery: "بیٹری",
-    cathode: "کیتھوڈ (−)",
-    anode: "اینوڈ (+)",
+    reset: "ازسرنو",
+    water: "پانی (H₂O)",
+    platinum: "پلاٹینم الیکٹروڈز",
+    o2_bubbles: "آکسیجن کے بلبلے",
+    h2_bubbles: "ہائیڈروجن کے بلبلے",
+    power_supply: "بجلی کی فراہمی 9 تا 12 V",
+    anode: "اینوڈ",
+    cathode: "کیتھوڈ",
+    anode_ox: "اینوڈ (تکسید)",
+    cathode_red: "کیتھوڈ (تخفیف)",
+    eq_anode: "2H₂O(l) → O₂(g) + 4H⁺(aq) + 4e⁻",
+    eq_cathode: "2H⁺(aq) + 2e⁻ → H₂(g)",
+    e_anode: "E° = +1.23 V",
+    e_cathode: "E° = 0.00 V",
     h2: "ہائیڈروجن  H₂",
     o2: "آکسیجن  O₂",
-    cl2: "کلورین  Cl₂",
-    hint_off: "دور بند کریں۔ دونوں نلیوں کو دیکھیں — پہلے سے یہ نہ مان لیں کہ گیس کہاں بنے گی۔",
-    hint_pure: "تقریباً کچھ نہیں ہوتا۔ خالص پانی بہت کم برق رسان ہے۔ کوئی برق پاشیدہ آزمائیں۔",
-    hint_low: "وولٹیج تقریباً 1.5 V سے کم ہے۔ آئن موجود ہیں مگر پانی ابھی نہیں ٹوٹ رہا۔",
-    hint_run: "دونوں الیکٹروڈز سے بلبلے اٹھ رہے ہیں۔ دیکھیے کون سی نلی تیزی سے بھرتی ہے۔",
-    hint_ratio: "بائیں نلی (منفی الیکٹروڈ) میں گیس دائیں نلی سے تقریباً دوگنی ہے۔",
-    hint_ions: "کیتھوڈ پر H⁺ الیکٹران لیتا ہے → H₂۔ اینوڈ پر پانی / OH⁻ الیکٹران کھوتا ہے → O₂۔",
-    hint_salt: "اینوڈ کی گیس سبز زرد دکھائی دیتی ہے۔ کلورائیڈ پانی سے آسان سے تکسید ہوتا ہے اس لیے Cl₂ بنتی ہے۔",
-    hint_full: "ایک نلی بھر گئی۔ ازسرنو کریں یا گیسوں کی پہچان کے ٹیسٹ کریں۔",
-    pop_need: "پہلے بائیں نلی میں مزید گیس جمع کریں۔",
-    pop_ok: "تیز پاپ! یہ ہوا میں ہائیڈروجن کا جلنا ہے: 2H₂ + O₂ → 2H₂O۔",
-    splint_need: "پہلے اینوڈ والی گیس مزید جمع کریں۔",
-    splint_o2: "مدھم سلاخ پھر سے بھڑک اٹھی۔ یہ آکسیجن کی پہچان ہے۔",
-    splint_cl2: "سلاخ نہیں بھڑکی۔ یہ سبز زرد گیس کلورین ہے، آکسیجن نہیں۔",
+    hint_off: "سوئچ بند کریں۔ گیس تب بنے گی جب رو بہے گی۔",
+    hint_low: "1.23 V سے زیادہ درکار ہے۔ وولٹیج 9 تا 12 V تک بڑھائیں۔",
+    hint_run: "اینوڈ (+) پر O₂ بنتی ہے۔ کیتھوڈ (−) پر H₂ بنتی ہے۔ حجم دیکھیے۔",
+    hint_ratio: "کیتھوڈ والی نلی دوگنی تیزی سے بھرتی ہے: 2H₂O → 2H₂ + O₂۔",
+    hint_full: "ایک نلی بھر گئی۔ ازسرنو کریں یا گیسوں کا ٹیسٹ کریں۔",
+    pop_need: "پہلے دائیں نلی میں مزید H₂ جمع کریں۔",
+    pop_ok: "تیز پاپ! ہائیڈروجن: 2H₂ + O₂ → 2H₂O۔",
+    splint_need: "پہلے بائیں نلی میں مزید O₂ جمع کریں۔",
+    splint_o2: "مدھم سلاخ پھر سے بھڑک اٹھی۔ یہ آکسیجن ہے۔",
     quiz_title: "تصور کی جانچ",
     q_of: "سوال",
     next: "اگلا سوال",
@@ -576,10 +565,15 @@ const LANG = {
         explain: "پانی ٹوٹتا ہے۔ سلفیورک تیزاب برق پاشیدہ ہے؛ مجموعی عمل میں وہ خرچ نہیں ہوتا。"
       },
       {
-        q: "اگر رقیق تیزاب کی جگہ آبی NaCl استعمال ہو تو اینوڈ پر اکثر بنتی ہے",
-        options: ["زیادہ ہائیڈروجن", "صرف آکسیجن", "کلورین گیس", "ٹھوس سوڈیم"],
-        a: 2,
-        explain: "کلورائیڈ آئن پانی سے آسان سے تکسید ہوتے ہیں، اس لیے اینوڈ پر O₂ کے بجائے Cl₂ خارج ہوتی ہے۔"
+        q: "اس تجربے میں اینوڈ کی نصف مساوات ہے",
+        options: [
+          "2H⁺(aq) + 2e⁻ → H₂(g)",
+          "2H₂O(l) → O₂(g) + 4H⁺(aq) + 4e⁻",
+          "H₂ + O₂ → 2H₂O",
+          "Na⁺ + e⁻ → Na"
+        ],
+        a: 1,
+        explain: "اینوڈ پر تکسید ہوتی ہے۔ پانی الیکٹران کھوتا ہے اور O₂ خارج ہوتی ہے۔ E° = +1.23 V."
       }
     ]
   }
@@ -588,24 +582,24 @@ const LANG = {
 let cur = localStorage.getItem('iqra-lang') || 'en';
 const T = () => LANG[cur];
 
-const WORLD_W = 1040;
-const WORLD_H = 720;
+const WORLD_W = 1700;
+const WORLD_H = 1000;
+const ANODE = { x: 625, y: 175, w: 140, h: 400 }; // left tube O2
+const CATHODE = { x: 935, y: 175, w: 140, h: 400 }; // right tube H2
+const SWITCH_BOX = { x: 1088, y: 812, w: 130, h: 70 };
+
 const state = {
   power: false,
-  voltage: 6,
-  electrolyte: 'h2so4',
-  conc: 0.5,
+  voltage: 9,
   h2: 0,
   ox: 0,
   maxH2: 48,
   maxOx: 24,
   dash: 0,
   flash: 0,
-  splint: 0,
-  testMsg: ''
+  splint: 0
 };
 const bubbles = [];
-const ions = [];
 
 let cam = { x: 0, y: 0, s: 1 };
 let baseScale = 1;
@@ -738,17 +732,8 @@ function toggleAnnoFloat() {
   if (annoFloatOpen && !isAnnoActive) toggleAnnotationMode();
 }
 
-function conductivity() {
-  if (state.electrolyte === 'none') return 0.012;
-  return 0.35 + state.conc * 0.85;
-}
-
 function producing() {
-  return state.power && state.voltage >= 1.5 && conductivity() > 0.05;
-}
-
-function anodeIsChlorine() {
-  return state.electrolyte === 'nacl';
+  return state.power && state.voltage >= 1.23;
 }
 
 function togglePower() {
@@ -771,23 +756,9 @@ function setVoltage(v) {
   updateObserve();
 }
 
-function setConc(v) {
-  state.conc = parseFloat(v);
-  document.getElementById('conc-val').textContent = state.conc.toFixed(2) + ' M';
-  updateObserve();
-}
-
-function setElectrolyte(id) {
-  state.electrolyte = id;
-  document.querySelectorAll('[data-el]').forEach(b => b.classList.toggle('active', b.getAttribute('data-el') === id));
-  updateMeters();
-  updateObserve();
-}
-
 function resetExperiment() {
   state.h2 = 0;
   state.ox = 0;
-  state.testMsg = '';
   bubbles.length = 0;
   document.getElementById('test-feedback').textContent = '';
   updateMeters();
@@ -796,7 +767,7 @@ function resetExperiment() {
 
 function updateMeters() {
   document.getElementById('h2-name').textContent = t('h2');
-  document.getElementById('ox-name').textContent = anodeIsChlorine() ? t('cl2') : t('o2');
+  document.getElementById('ox-name').textContent = t('o2');
   document.getElementById('h2-ml').textContent = state.h2.toFixed(1) + ' mL';
   document.getElementById('ox-ml').textContent = state.ox.toFixed(1) + ' mL';
   document.getElementById('h2-bar').style.width = (100 * state.h2 / state.maxH2) + '%';
@@ -811,32 +782,30 @@ function updateMeters() {
 function updateObserve() {
   let msg = t('hint_off');
   if (!state.power) msg = t('hint_off');
-  else if (state.electrolyte === 'none') msg = t('hint_pure');
-  else if (state.voltage < 1.5) msg = t('hint_low');
+  else if (state.voltage < 1.23) msg = t('hint_low');
   else if (state.h2 >= state.maxH2 - 0.2 || state.ox >= state.maxOx - 0.2) msg = t('hint_full');
-  else if (anodeIsChlorine()) msg = t('hint_salt');
-  else if (state.h2 > 12) msg = t('hint_ratio') + ' ' + t('hint_ions');
+  else if (state.h2 > 12) msg = t('hint_ratio');
   else msg = t('hint_run');
   document.getElementById('observe-text').textContent = msg;
 }
 
 function runPopTest() {
   const el = document.getElementById('test-feedback');
-  if (state.h2 < 8) { el.textContent = t('pop_need'); el.className = 'text-sm min-h-[1.5em] text-amber-300'; return; }
+  if (state.h2 < 8) { el.textContent = t('pop_need'); el.className = 'min-h-[1.6em] text-sky-300 font-bold'; return; }
   state.flash = 1;
   state.h2 = Math.max(0, state.h2 - 6);
   el.textContent = t('pop_ok');
-  el.className = 'text-sm min-h-[1.5em] text-emerald-300';
+  el.className = 'min-h-[1.6em] text-emerald-300 font-bold';
   updateMeters();
 }
 
 function runSplintTest() {
   const el = document.getElementById('test-feedback');
-  if (state.ox < 5) { el.textContent = t('splint_need'); el.className = 'text-sm min-h-[1.5em] text-amber-300'; return; }
+  if (state.ox < 5) { el.textContent = t('splint_need'); el.className = 'min-h-[1.6em] text-red-300 font-bold'; return; }
   state.splint = 1;
   state.ox = Math.max(0, state.ox - 4);
-  el.textContent = anodeIsChlorine() ? t('splint_cl2') : t('splint_o2');
-  el.className = 'text-sm min-h-[1.5em] ' + (anodeIsChlorine() ? 'text-amber-300' : 'text-emerald-300');
+  el.textContent = t('splint_o2');
+  el.className = 'min-h-[1.6em] text-emerald-300 font-bold';
   updateMeters();
 }
 
@@ -896,11 +865,24 @@ function bindZoomPan() {
     zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, p.x, p.y);
   }, { passive: false });
 
+  wrap.addEventListener('click', e => {
+    if (isAnnoActive || e.target.closest('#anno-float') || e.target.closest('.zoom-btn')) return;
+    const p = worldFromEvent(e);
+    const wx = (p.x - cam.x) / cam.s;
+    const wy = (p.y - cam.y) / cam.s;
+    if (wx >= SWITCH_BOX.x && wx <= SWITCH_BOX.x + SWITCH_BOX.w && wy >= SWITCH_BOX.y && wy <= SWITCH_BOX.y + SWITCH_BOX.h) {
+      togglePower();
+    }
+  });
+
   wrap.addEventListener('mousedown', e => {
     if (isAnnoActive || e.target.closest('#anno-float') || e.target.closest('.zoom-btn')) return;
+    const p = worldFromEvent(e);
+    const wx = (p.x - cam.x) / cam.s;
+    const wy = (p.y - cam.y) / cam.s;
+    if (wx >= SWITCH_BOX.x && wx <= SWITCH_BOX.x + SWITCH_BOX.w && wy >= SWITCH_BOX.y && wy <= SWITCH_BOX.y + SWITCH_BOX.h) return;
     panning = true;
     wrap.classList.add('panning');
-    const p = worldFromEvent(e);
     panStart = { x: p.x, y: p.y, cx: cam.x, cy: cam.y };
   });
   window.addEventListener('mousemove', e => {
@@ -955,252 +937,307 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-function label(ctx, text, x, y, opt) {
-  const ur = cur === 'ur';
+function boardText(ctx, text, x, y, opt) {
+  opt = opt || {};
+  const ur = cur === 'ur' && !opt.chem;
+  const size = opt.size || (ur ? 36 : 32);
   ctx.save();
-  ctx.font = ur ? "22px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif" : "16px Manrope,sans-serif";
-  ctx.fillStyle = opt && opt.color ? opt.color : '#cbd5e1';
-  ctx.textAlign = opt && opt.align ? opt.align : 'center';
+  ctx.font = opt.chem
+    ? `800 ${size}px Oxanium, Manrope, sans-serif`
+    : (ur ? `700 ${size}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif` : `800 ${size}px Manrope, sans-serif`);
+  ctx.textAlign = opt.align || 'center';
   ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = opt.stroke || Math.max(5, size / 6);
+  ctx.strokeStyle = '#020617';
+  ctx.strokeText(text, x, y);
+  ctx.fillStyle = opt.color || '#f8fafc';
   ctx.fillText(text, x, y);
   ctx.restore();
 }
 
 function spawnBubbles(dt) {
   if (!producing()) return;
-  const rate = (0.8 + state.voltage * 0.35) * conductivity();
-  const n = Math.min(4, rate * dt * 14);
+  const rate = (0.6 + state.voltage * 0.28);
+  const n = Math.min(5, rate * dt * 12);
+  const ax = ANODE.x + ANODE.w / 2;
+  const cx = CATHODE.x + CATHODE.w / 2;
+  const ey = 555;
   for (let i = 0; i < n; i++) {
-    bubbles.push({ side: 'L', x: 268 + (Math.random() - 0.5) * 18, y: 478, r: 2.2 + Math.random() * 2.2, v: 28 + Math.random() * 40 });
-    if (Math.random() < 0.55) {
-      bubbles.push({ side: 'R', x: 418 + (Math.random() - 0.5) * 18, y: 478, r: 2 + Math.random() * 2, v: 24 + Math.random() * 36 });
+    bubbles.push({ side: 'H', x: cx + (Math.random() - 0.5) * 36, y: ey, r: 3.2 + Math.random() * 3.2, v: 36 + Math.random() * 48 });
+    if (Math.random() < 0.52) {
+      bubbles.push({ side: 'O', x: ax + (Math.random() - 0.5) * 36, y: ey, r: 3 + Math.random() * 3, v: 30 + Math.random() * 40 });
     }
-  }
-  if (Math.random() < dt * 8) {
-    ions.push({ x: 200 + Math.random() * 300, y: 430 + Math.random() * 80, q: Math.random() < 0.5 ? '+' : '−', life: 1 });
   }
 }
 
 function step(dt) {
   spawnBubbles(dt);
   if (producing()) {
-    const k = 0.55 * (state.voltage - 1.4) * conductivity();
-    const dh = k * dt * 3.2;
-    const dox = dh / 2;
+    const k = 0.5 * (state.voltage - 1.2);
+    const dh = k * dt * 3.1;
     state.h2 = Math.min(state.maxH2, state.h2 + dh);
-    state.ox = Math.min(state.maxOx, state.ox + dox);
+    state.ox = Math.min(state.maxOx, state.ox + dh / 2);
   }
   for (let i = bubbles.length - 1; i >= 0; i--) {
     const b = bubbles[i];
     b.y -= b.v * dt;
-    const top = 250 + (b.side === 'L' ? (state.maxH2 - state.h2) / state.maxH2 * 210 : (state.maxOx - state.ox) / state.maxOx * 210);
-    if (b.y < top + 20) bubbles.splice(i, 1);
+    const tube = b.side === 'H' ? CATHODE : ANODE;
+    const fill = b.side === 'H' ? state.h2 / state.maxH2 : state.ox / state.maxOx;
+    const top = tube.y + 16 + (1 - fill) * (tube.h - 40);
+    if (b.y < top + 18) bubbles.splice(i, 1);
   }
-  for (let i = ions.length - 1; i >= 0; i--) {
-    ions[i].life -= dt * 0.7;
-    ions[i].x += (ions[i].q === '+' ? -1 : 1) * 18 * dt;
-    if (ions[i].life <= 0) ions.splice(i, 1);
-  }
-  state.dash += dt * (state.power ? 40 : 0);
+  state.dash += dt * (state.power ? 48 : 0);
   if (state.flash > 0) state.flash = Math.max(0, state.flash - dt * 2.2);
   if (state.splint > 0) state.splint = Math.max(0, state.splint - dt * 1.4);
 }
 
 function drawApparatus(ctx) {
   const L = T();
-  ctx.save();
+  const RED = '#ff6b6b';
+  const BLUE = '#5ec8ff';
+  const WHITE = '#f8fafc';
 
-  const waterColor = state.electrolyte === 'nacl' ? 'rgba(125, 211, 252, 0.45)'
-    : state.electrolyte === 'naoh' ? 'rgba(125, 211, 252, 0.42)'
-    : state.electrolyte === 'h2so4' ? 'rgba(56, 189, 248, 0.48)'
-    : 'rgba(186, 230, 253, 0.35)';
-
-  ctx.fillStyle = '#0b1220';
-  roundRect(ctx, 40, 70, 620, 580, 28);
+  ctx.fillStyle = '#07101c';
+  roundRect(ctx, 20, 20, WORLD_W - 40, WORLD_H - 40, 28);
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(148,163,184,.55)';
-  ctx.lineWidth = 6;
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(90, 160);
-  ctx.lineTo(90, 590);
-  ctx.quadraticCurveTo(90, 630, 130, 630);
-  ctx.lineTo(560, 630);
-  ctx.quadraticCurveTo(600, 630, 600, 590);
-  ctx.lineTo(600, 160);
-  ctx.stroke();
+  drawHalfPanel(ctx, 36, 70, 400, 620, RED, L.anode_ox, L.eq_anode, L.e_anode);
+  drawHalfPanel(ctx, 1264, 70, 400, 620, BLUE, L.cathode_red, L.eq_cathode, L.e_cathode);
 
-  ctx.beginPath();
-  ctx.strokeStyle = 'rgba(226,232,240,.35)';
+  const bx = 470, by = 110, bw = 760, bh = 620;
+  ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 8;
-  ctx.moveTo(78, 158);
-  ctx.lineTo(612, 158);
+  ctx.beginPath();
+  ctx.moveTo(bx, by + 50);
+  ctx.lineTo(bx, by + bh - 40);
+  ctx.quadraticCurveTo(bx, by + bh, bx + 40, by + bh);
+  ctx.lineTo(bx + bw - 40, by + bh);
+  ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw, by + bh - 40);
+  ctx.lineTo(bx + bw, by + 50);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.lineWidth = 10;
+  ctx.moveTo(bx - 12, by + 48);
+  ctx.lineTo(bx + bw + 12, by + 48);
   ctx.stroke();
 
   ctx.save();
   ctx.beginPath();
-  ctx.moveTo(96, 200);
-  ctx.lineTo(96, 586);
-  ctx.quadraticCurveTo(96, 618, 132, 618);
-  ctx.lineTo(558, 618);
-  ctx.quadraticCurveTo(594, 618, 594, 586);
-  ctx.lineTo(594, 200);
+  ctx.moveTo(bx + 10, by + 90);
+  ctx.lineTo(bx + 10, by + bh - 44);
+  ctx.quadraticCurveTo(bx + 10, by + bh - 14, bx + 40, by + bh - 14);
+  ctx.lineTo(bx + bw - 40, by + bh - 14);
+  ctx.quadraticCurveTo(bx + bw - 10, by + bh - 14, bx + bw - 10, by + bh - 44);
+  ctx.lineTo(bx + bw - 10, by + 90);
   ctx.closePath();
   ctx.clip();
-  const wg = ctx.createLinearGradient(0, 200, 0, 620);
-  wg.addColorStop(0, waterColor);
-  wg.addColorStop(1, 'rgba(14, 116, 144, 0.55)');
+  const wg = ctx.createLinearGradient(0, by + 90, 0, by + bh);
+  wg.addColorStop(0, 'rgba(56, 189, 248, 0.38)');
+  wg.addColorStop(1, 'rgba(12, 74, 110, 0.72)');
   ctx.fillStyle = wg;
-  ctx.fillRect(90, 200, 510, 430);
+  ctx.fillRect(bx, by + 88, bw, bh);
   ctx.restore();
+  ctx.fillStyle = 'rgba(186,230,253,0.28)';
+  ctx.fillRect(bx + 10, by + 86, bw - 20, 14);
 
-  ctx.fillStyle = 'rgba(186,230,253,.25)';
-  ctx.fillRect(96, 198, 498, 10);
+  drawTube(ctx, ANODE.x, ANODE.y, ANODE.w, ANODE.h, state.ox / state.maxOx, 'rgba(255,255,255,0.55)');
+  drawTube(ctx, CATHODE.x, CATHODE.y, CATHODE.w, CATHODE.h, state.h2 / state.maxH2, 'rgba(125,211,252,0.55)');
 
-  drawTube(ctx, 230, 220, 76, 280, state.h2 / state.maxH2, '#7dd3fc', false);
-  drawTube(ctx, 380, 220, 76, 280, state.ox / state.maxOx, anodeIsChlorine() ? '#a3e635' : '#fbbf24', anodeIsChlorine());
-
-  drawElectrode(ctx, 268, 470, false);
-  drawElectrode(ctx, 418, 470, true);
+  drawPlatinum(ctx, ANODE.x + ANODE.w / 2, 530);
+  drawPlatinum(ctx, CATHODE.x + CATHODE.w / 2, 530);
 
   bubbles.forEach(b => {
     ctx.beginPath();
-    ctx.fillStyle = b.side === 'R' && anodeIsChlorine() ? 'rgba(190,242,100,.85)' : 'rgba(255,255,255,.85)';
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = b.side === 'O' ? RED : BLUE;
+    ctx.lineWidth = 2;
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
+    ctx.stroke();
   });
 
-  if (state.power && conductivity() > 0.05) {
-    ions.forEach(ion => {
-      ctx.globalAlpha = Math.max(0, ion.life);
-      ctx.fillStyle = ion.q === '+' ? '#fca5a5' : '#93c5fd';
-      ctx.font = 'bold 14px Oxanium';
-      ctx.textAlign = 'center';
-      ctx.fillText(ion.q, ion.x, ion.y);
-      ctx.globalAlpha = 1;
-    });
-  }
+  boardText(ctx, 'O₂', ANODE.x + ANODE.w / 2, ANODE.y - 38, { color: WHITE, size: 48, chem: true });
+  boardText(ctx, 'H₂', CATHODE.x + CATHODE.w / 2, CATHODE.y - 38, { color: WHITE, size: 48, chem: true });
+  boardText(ctx, L.o2_bubbles, ANODE.x + ANODE.w / 2, 430, { color: RED, size: 28 });
+  boardText(ctx, L.h2_bubbles, CATHODE.x + CATHODE.w / 2, 430, { color: BLUE, size: 28 });
+  boardText(ctx, L.anode + '  (+)', ANODE.x + ANODE.w / 2, 640, { color: RED, size: 34 });
+  boardText(ctx, L.cathode + '  (−)', CATHODE.x + CATHODE.w / 2, 640, { color: BLUE, size: 34 });
+  boardText(ctx, L.platinum, 850, 690, { color: WHITE, size: 30 });
+  boardText(ctx, L.water, 850, 748, { color: WHITE, size: 34 });
 
-  label(ctx, L.test_tubes, 343, 128, { color: '#e2e8f0' });
-  label(ctx, L.beaker, 140, 658, { color: '#94a3b8' });
-  label(ctx, 'H₂', 268, 200, { color: '#7dd3fc' });
-  label(ctx, anodeIsChlorine() ? 'Cl₂' : 'O₂', 418, 200, { color: anodeIsChlorine() ? '#a3e635' : '#fbbf24' });
-  label(ctx, '−', 268, 545, { color: '#38bdf8' });
-  label(ctx, '+', 418, 545, { color: '#f87171' });
-  label(ctx, L.cathode, 268, 568, { color: '#7dd3fc' });
-  label(ctx, L.anode, 418, 568, { color: '#fca5a5' });
+  ctx.strokeStyle = WHITE;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(ANODE.x + ANODE.w / 2 + 40, 615);
+  ctx.lineTo(820, 690);
+  ctx.lineTo(CATHODE.x + 20, 615);
+  ctx.stroke();
 
-  drawBattery(ctx, 740, 300);
-  drawWires(ctx);
+  drawCircuit(ctx, L);
 
   if (state.flash > 0) {
-    ctx.fillStyle = `rgba(253, 224, 71, ${state.flash * 0.55})`;
+    ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.45})`;
     ctx.beginPath();
-    ctx.arc(268, 300, 70 * state.flash, 0, Math.PI * 2);
+    ctx.arc(CATHODE.x + CATHODE.w / 2, 280, 80 * state.flash, 0, Math.PI * 2);
     ctx.fill();
   }
   if (state.splint > 0) {
-    ctx.strokeStyle = anodeIsChlorine() ? `rgba(163,230,53,${state.splint})` : `rgba(251,191,36,${state.splint})`;
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = `rgba(248,113,113,${state.splint})`;
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(418, 210);
-    ctx.lineTo(480, 140);
+    ctx.moveTo(ANODE.x + ANODE.w / 2, 200);
+    ctx.lineTo(ANODE.x + ANODE.w / 2 + 70, 120);
     ctx.stroke();
-    ctx.fillStyle = anodeIsChlorine() ? `rgba(163,230,53,${state.splint})` : `rgba(248,113,113,${state.splint})`;
+    ctx.fillStyle = `rgba(248,113,113,${state.splint})`;
     ctx.beginPath();
-    ctx.arc(480, 140, 10 + 8 * state.splint, 0, Math.PI * 2);
+    ctx.arc(ANODE.x + ANODE.w / 2 + 70, 120, 14, 0, Math.PI * 2);
     ctx.fill();
   }
-
-  ctx.restore();
 }
 
-function drawTube(ctx, x, y, w, h, fillFrac, gasColor, chlorine) {
+function drawHalfPanel(ctx, x, y, w, h, color, title, eq, e) {
   ctx.save();
-  roundRect(ctx, x, y, w, h, 28);
-  ctx.clip();
-  ctx.fillStyle = 'rgba(15,23,42,0.25)';
-  ctx.fillRect(x, y, w, h);
-  const gasH = Math.max(0, fillFrac) * (h - 18);
-  ctx.fillStyle = chlorine ? 'rgba(163,230,53,.42)' : (gasColor === '#7dd3fc' ? 'rgba(125,211,252,.42)' : 'rgba(251,191,36,.40)');
-  ctx.fillRect(x, y, w, gasH);
-  ctx.fillStyle = chlorine ? 'rgba(190,242,100,.25)' : 'rgba(255,255,255,.12)';
-  ctx.fillRect(x + 8, y + 8, 10, Math.max(0, gasH - 12));
-  ctx.restore();
-  ctx.strokeStyle = 'rgba(226,232,240,.75)';
+  ctx.fillStyle = 'rgba(15,23,42,0.72)';
+  ctx.strokeStyle = color;
   ctx.lineWidth = 4;
-  roundRect(ctx, x, y, w, h, 28);
+  roundRect(ctx, x, y, w, h, 22);
+  ctx.fill();
   ctx.stroke();
+  boardText(ctx, title, x + w / 2, y + 70, { color, size: 36 });
+  wrapChem(ctx, eq, x + 22, y + 200, w - 44, color);
+  boardText(ctx, e, x + w / 2, y + 470, { color, size: 40, chem: true });
+  ctx.restore();
 }
 
-function drawElectrode(ctx, cx, cy, plus) {
+function wrapChem(ctx, text, x, y, maxW, color) {
+  const size = 30;
   ctx.save();
-  ctx.fillStyle = plus ? '#94a3b8' : '#cbd5e1';
+  ctx.font = `800 ${size}px Oxanium, Manrope, sans-serif`;
+  const words = text.split(' ');
+  let line = '', ly = y;
+  const lines = [];
+  words.forEach(word => {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) {
+      lines.push(line);
+      line = word;
+    } else line = test;
+  });
+  if (line) lines.push(line);
+  ctx.restore();
+  lines.forEach((ln, i) => boardText(ctx, ln, x + maxW / 2, ly + i * 46, { color, size, chem: true }));
+}
+
+function drawTube(ctx, x, y, w, h, fillFrac, gas) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x, y + h);
+  ctx.lineTo(x, y + 40);
+  ctx.quadraticCurveTo(x, y, x + w / 2, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + 40);
+  ctx.lineTo(x + w, y + h);
+  ctx.strokeStyle = '#f1f5f9';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x + 4, y + h);
+  ctx.lineTo(x + 4, y + 40);
+  ctx.quadraticCurveTo(x + 4, y + 4, x + w / 2, y + 4);
+  ctx.quadraticCurveTo(x + w - 4, y + 4, x + w - 4, y + 40);
+  ctx.lineTo(x + w - 4, y + h);
+  ctx.clip();
+  const gasH = Math.max(0, fillFrac) * (h - 28);
+  ctx.fillStyle = gas;
+  ctx.fillRect(x, y, w, gasH);
+  ctx.restore();
+  ctx.restore();
+}
+
+function drawPlatinum(ctx, cx, cy) {
+  const g = ctx.createLinearGradient(cx - 28, cy, cx + 28, cy);
+  g.addColorStop(0, '#64748b');
+  g.addColorStop(0.45, '#e2e8f0');
+  g.addColorStop(1, '#475569');
+  ctx.fillStyle = g;
   ctx.strokeStyle = '#0f172a';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(cx - 22, cy + 18);
-  ctx.lineTo(cx + 10, cy + 18);
-  ctx.lineTo(cx + 10, cy - 8);
-  ctx.lineTo(cx + 2, cy - 8);
-  ctx.lineTo(cx + 2, cy + 10);
-  ctx.lineTo(cx - 22, cy + 10);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawBattery(ctx, x, y) {
-  const L = T();
-  ctx.save();
-  roundRect(ctx, x, y, 210, 130, 16);
-  ctx.fillStyle = '#7c4a2a';
-  ctx.fill();
-  ctx.strokeStyle = '#d6a06a';
   ctx.lineWidth = 3;
+  roundRect(ctx, cx - 28, cy - 55, 56, 110, 6);
+  ctx.fill();
   ctx.stroke();
-  ctx.fillStyle = '#5c3317';
-  roundRect(ctx, x + 10, y + 10, 190, 70, 10);
-  ctx.fill();
-  label(ctx, L.battery, x + 105, y + 48, { color: '#f8fafc' });
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#f87171';
-  ctx.font = 'bold 28px Oxanium';
-  ctx.fillText('+', x + 48, y + 108);
-  ctx.fillStyle = '#38bdf8';
-  ctx.fillText('−', x + 162, y + 108);
-  ctx.beginPath();
-  ctx.fillStyle = '#e2e8f0';
-  ctx.arc(x + 48, y - 2, 8, 0, Math.PI * 2);
-  ctx.arc(x + 162, y - 2, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
 }
 
-function drawWires(ctx) {
+function drawCircuit(ctx, L) {
+  const ax = ANODE.x + ANODE.w / 2;
+  const cx = CATHODE.x + CATHODE.w / 2;
+  const ey = 585;
+  const wy = 850;
   ctx.save();
   ctx.lineCap = 'round';
-  ctx.setLineDash([10, 8]);
+  ctx.lineWidth = 6;
+  ctx.setLineDash([14, 10]);
   ctx.lineDashOffset = -state.dash;
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = state.power ? '#f87171' : '#64748b';
+
+  ctx.strokeStyle = state.power ? '#ff6b6b' : '#94a3b8';
   ctx.beginPath();
-  ctx.moveTo(788, 298);
-  ctx.lineTo(788, 250);
-  ctx.lineTo(428, 250);
-  ctx.lineTo(428, 478);
+  ctx.moveTo(ax, ey);
+  ctx.lineTo(ax, wy);
+  ctx.lineTo(720, wy);
   ctx.stroke();
-  ctx.strokeStyle = state.power ? '#38bdf8' : '#64748b';
+
+  ctx.strokeStyle = state.power ? '#5ec8ff' : '#94a3b8';
   ctx.beginPath();
-  ctx.moveTo(902, 298);
-  ctx.lineTo(902, 200);
-  ctx.lineTo(278, 200);
-  ctx.lineTo(278, 478);
+  ctx.moveTo(cx, ey);
+  ctx.lineTo(cx, wy);
+  ctx.lineTo(SWITCH_BOX.x + SWITCH_BOX.w, wy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(970, wy);
+  ctx.lineTo(SWITCH_BOX.x, wy);
   ctx.stroke();
   ctx.setLineDash([]);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 4;
+  roundRect(ctx, 730, 800, 240, 100, 14);
+  ctx.fill();
+  ctx.stroke();
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(770, 850); ctx.lineTo(790, 850);
+  ctx.moveTo(800, 830); ctx.lineTo(800, 870);
+  ctx.moveTo(812, 822); ctx.lineTo(812, 878);
+  ctx.moveTo(824, 830); ctx.lineTo(824, 870);
+  ctx.moveTo(848, 850); ctx.lineTo(868, 850);
+  ctx.stroke();
+  ctx.fillStyle = '#ff6b6b';
+  ctx.font = '800 28px Oxanium';
+  ctx.textAlign = 'left';
+  ctx.fillText('+', 748, 858);
+  ctx.fillStyle = '#5ec8ff';
+  ctx.fillText('−', 880, 858);
+  boardText(ctx, L.power_supply, 850, 930, { color: '#f8fafc', size: 28 });
+
+  const sx = SWITCH_BOX.x, sy = SWITCH_BOX.y, sw = SWITCH_BOX.w, sh = SWITCH_BOX.h;
+  roundRect(ctx, sx, sy, sw, sh, 12);
+  ctx.fillStyle = state.power ? 'rgba(34,197,94,0.25)' : 'rgba(15,23,42,0.9)';
+  ctx.fill();
+  ctx.strokeStyle = state.power ? '#4ade80' : '#f8fafc';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath(); ctx.arc(sx + 28, sy + sh / 2, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(sx + sw - 28, sy + sh / 2, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(sx + 28, sy + sh / 2);
+  if (state.power) ctx.lineTo(sx + sw - 28, sy + sh / 2);
+  else ctx.lineTo(sx + sw - 34, sy + 16);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -1243,9 +1280,9 @@ function renderQuiz() {
   document.getElementById('q-progress').textContent = `${t('q_of')} ${quizIndex + 1} / ${Q.length}`;
   const letters = ['A', 'B', 'C', 'D'];
   box.innerHTML = `
-    <p class="text-xl md:text-2xl font-bold text-slate-100 mb-6 leading-relaxed">${item.q}</p>
+    <p class="text-2xl md:text-3xl font-bold text-white mb-6 leading-relaxed">${item.q}</p>
     <div class="space-y-3" id="opts"></div>
-    <p id="explain" class="mt-5 text-sm text-slate-300 min-h-[2.5em]"></p>
+    <p id="explain" class="mt-5 text-lg text-slate-100 min-h-[2.5em] font-bold"></p>
     <div class="mt-4 flex justify-end">
       <button id="next-q" class="hidden px-6 py-3 rounded-xl bg-slate-800 border border-cyan-500/40 text-cyan-300 font-bold">${quizIndex === Q.length - 1 ? t('see_score') : t('next')}</button>
     </div>`;
@@ -1285,8 +1322,6 @@ function restartQuiz() {
 function boot() {
   applyI18n();
   setVoltage(state.voltage);
-  setConc(state.conc);
-  setElectrolyte(state.electrolyte);
   updateMeters();
   const wrap = document.getElementById('sim-viewport');
   resizeCanvases();
