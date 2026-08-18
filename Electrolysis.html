@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Electrolysis of Water</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700;800&family=Manrope:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+  @font-face {
+    font-family: 'Jameel Noori Nastaliq';
+    src: url('https://fonts.cdnfonts.com/s/15794/Jameel Noori Nastaleeq.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  /* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  [dir="rtl"] {
+    font-family: 'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+    line-height: 2.3 !important;
+  }
+
+  /* Glassmorphism Classes */
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .glass-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Pulse Glow Effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+  }
+  .glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  .glow-green {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+  }
+
+  /* Canvas styling */
+  canvas {
+    touch-action: none;
+  }
+
+  /* Custom Slider Styling */
+  input[type=range] {
+    -webkit-appearance: none;
+    background: #334155;
+    border-radius: 8px;
+    height: 8px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00f3ff;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00f3ff;
+    transition: transform 0.1s ease;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    overflow: hidden;
+  }
+  .font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
+  [dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif; }
+  [dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(0,243,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,243,255,0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  #intro {
+    position: fixed; inset: 0; z-index: 100;
+    background: radial-gradient(ellipse at center, #10233f 0%, #0f172a 65%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity .7s ease;
+  }
+  .intro-title {
+    font-family: 'Oxanium', sans-serif;
+    font-weight: 800; letter-spacing: .14em;
+    background: linear-gradient(92deg, #00f3ff, #7dd3fc, #00f3ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: introZoom 1.6s cubic-bezier(.2,.8,.2,1) both, glowPulse 2s ease-in-out infinite;
+  }
+  .intro-topic {
+    color: #94a3b8; letter-spacing: .28em;
+    animation: introFade 1.4s .35s ease both;
+  }
+  .intro-ring {
+    width: 168px; height: 168px; border-radius: 50%;
+    border: 2px solid rgba(0,243,255,.35);
+    box-shadow: 0 0 60px rgba(0,243,255,.25), inset 0 0 40px rgba(0,243,255,.12);
+    display:flex; align-items:center; justify-content:center;
+    animation: ringSpin 2.4s linear infinite, introZoom 1.2s ease both;
+    margin-bottom: 28px; position: relative;
+  }
+  .intro-ring::before {
+    content:''; position:absolute; inset:-10px; border-radius:50%;
+    border-top: 2px solid #00f3ff; border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent; border-left: 2px solid transparent;
+    animation: ringSpin 1.4s linear infinite;
+  }
+  @keyframes ringSpin { to { transform: rotate(360deg); } }
+  @keyframes introZoom { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes introFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes glowPulse {
+    0%,100% { text-shadow: 0 0 24px rgba(0,243,255,.55); }
+    50% { text-shadow: 0 0 54px rgba(0,243,255,.9); }
+  }
+
+  .tab-btn {
+    position: relative; transition: color .25s ease, background-color .25s ease;
+    border-radius: 12px;
+  }
+  .tab-btn.active {
+    color: #00f3ff;
+    background: rgba(0,243,255,.08);
+    box-shadow: inset 0 0 0 1px rgba(0,243,255,.35), 0 0 18px rgba(0,243,255,.15);
+  }
+  .view { animation: viewIn .35s ease both; }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .seg-btn {
+    transition: background-color .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .seg-btn:active { transform: scale(.96); }
+  .seg-btn.active {
+    background: rgba(0,243,255,.12); color: #00f3ff;
+    border-color: rgba(0,243,255,.5); box-shadow: 0 0 16px rgba(0,243,255,.25);
+  }
+
+  .opt-btn {
+    transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .opt-btn:not(.locked):hover { border-color: rgba(0,243,255,.45); background: rgba(0,243,255,.06); }
+  .opt-btn:not(.locked):active { transform: scale(.98); }
+  .opt-btn.correct { background: rgba(34,197,94,.16); border-color:#22c55e; box-shadow: 0 0 18px rgba(34,197,94,.3); }
+  .opt-btn.wrong { background: rgba(239,68,68,.14); border-color:#ef4444; box-shadow: 0 0 18px rgba(239,68,68,.3); }
+
+  .zoom-btn {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.12);
+    color:#00f3ff; display:flex; align-items:center; justify-content:center;
+    backdrop-filter: blur(8px); cursor:pointer;
+    transition: background-color .2s ease, box-shadow .2s ease, transform .12s ease;
+  }
+  .zoom-btn:hover { background: rgba(0,243,255,.12); box-shadow: 0 0 14px rgba(0,243,255,.25); }
+  .zoom-btn:active { transform: scale(.92); }
+
+  .stat-val { font-family: 'Oxanium', monospace; color:#00f3ff; }
+  [dir="rtl"] .stat-val { font-family: 'Oxanium', monospace !important; line-height: 1.4 !important; }
+  .num { font-family:'Oxanium', monospace !important; line-height:1.4 !important; direction:ltr; unicode-bidi:embed; }
+
+  #fabricLayer, .canvas-container {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+  }
+  .canvas-container canvas { position: absolute !important; left: 0; top: 0; }
+
+  #anno-float {
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 64px;
+    z-index: 20;
+    transition: max-width .35s ease, max-height .35s ease, opacity .25s ease, padding .25s ease;
+    overflow: hidden;
+  }
+  #anno-float.collapsed {
+    max-width: 48px;
+    max-height: 48px;
+    padding: 0;
+  }
+  #anno-float.collapsed #anno-float-body { opacity: 0; pointer-events: none; height: 0; }
+
+  .power-knob {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 3px solid #334155;
+    background: radial-gradient(circle at 35% 30%, #475569, #0f172a);
+    box-shadow: inset 0 0 12px rgba(0,0,0,.6);
+    transition: box-shadow .3s ease, border-color .3s ease;
+  }
+  .power-knob.on {
+    border-color: #22c55e;
+    box-shadow: 0 0 22px rgba(34,197,94,.45), inset 0 0 12px rgba(34,197,94,.2);
+  }
+
+  #sim-viewport { cursor: grab; }
+  #sim-viewport.panning { cursor: grabbing; }
+
+  .gas-bar {
+    height: 10px; border-radius: 999px; background: #1e293b; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .gas-bar > span { display:block; height:100%; border-radius:999px; transition: width .2s linear; }
+</style>
+</head>
+<body class="bg-grid">
+
+<div id="intro">
+  <div class="intro-ring"><i class="fa-solid fa-bolt text-5xl text-cyan-300" style="filter:drop-shadow(0 0 14px rgba(0,243,255,.8))"></i></div>
+  <div class="intro-title text-4xl sm:text-5xl lg:text-6xl">IQRA VIRTUAL LAB</div>
+  <div class="intro-topic text-base md:text-lg mt-5 font-bold uppercase tracking-widest" id="intro-topic">ELECTROLYSIS OF WATER</div>
+</div>
+
+<div id="app" class="h-screen flex flex-col opacity-0 transition-opacity duration-700">
+
+  <header class="glass-panel flex items-center justify-between px-3 md:px-6 py-3 z-30 gap-2">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-flask-vial text-cyan-400"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="font-display font-extrabold tracking-widest text-cyan-400 text-sm md:text-base truncate" style="font-family:'Oxanium',sans-serif !important;">IQRA VIRTUAL LAB</div>
+        <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
+      </div>
+    </div>
+
+    <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5 shrink-0">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-3 md:p-4 min-h-0 overflow-hidden">
+
+    <section class="flex-1 flex flex-col min-h-0 min-w-0">
+      <div id="sim-viewport" class="glass-card rounded-2xl relative flex-1 min-h-[340px] overflow-hidden">
+        <canvas id="simCanvas" class="absolute inset-0 w-full h-full"></canvas>
+        <canvas id="fabricLayer"></canvas>
+
+        <div class="absolute bottom-3 flex flex-col gap-2 z-10" style="inset-inline-end:12px" dir="ltr">
+          <button class="zoom-btn" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)" title="−"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+        </div>
+
+        <div id="anno-float" class="glass-panel rounded-2xl p-2 glow-cyan collapsed">
+          <div class="flex items-center gap-1">
+            <button onclick="toggleAnnoFloat()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700" id="anno-float-min" title="Annotation">
+              <i class="fa-solid fa-pencil" id="anno-float-icon"></i>
+            </button>
+            <div id="anno-float-body" class="flex items-center gap-1 pr-1 transition-opacity duration-200">
+              <input type="color" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value; changeAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0 rounded">
+              <button onclick="setAnnoMode('pen')" class="w-10 h-10 rounded-xl text-cyan-400 hover:bg-slate-700"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="setAnnoMode('eraser')" class="w-10 h-10 rounded-xl text-slate-300 hover:bg-slate-700"><i class="fa-solid fa-eraser"></i></button>
+              <button onclick="clearAnnotations()" class="w-10 h-10 rounded-xl text-red-400 hover:bg-slate-700"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="w-full lg:w-[360px] xl:w-[400px] flex flex-col gap-3 min-h-0 overflow-y-auto shrink-0">
+      <div class="glass-card rounded-2xl p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <div class="text-xs uppercase tracking-widest text-slate-400 font-bold" data-i18n="circuit"></div>
+            <div id="power-label" class="text-lg font-extrabold text-slate-200"></div>
+          </div>
+          <button id="power-btn" onclick="togglePower()" class="power-knob flex items-center justify-center text-slate-400" title="Power">
+            <i class="fa-solid fa-power-off text-2xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-200" data-i18n="voltage"></span>
+          <span class="stat-val text-lg num" id="volt-val">6.0 V</span>
+        </div>
+        <input id="volt-slider" type="range" min="0" max="12" step="0.1" value="6" oninput="setVoltage(this.value)">
+        <div class="flex justify-between text-[11px] text-slate-500 font-bold"><span class="num">0 V</span><span class="num">12 V</span></div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="font-bold text-slate-200" data-i18n="electrolyte"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="none" onclick="setElectrolyte('none')"><span data-i18n="el_none"></span></button>
+          <button class="seg-btn active rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="h2so4" onclick="setElectrolyte('h2so4')"><span data-i18n="el_acid"></span></button>
+          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="naoh" onclick="setElectrolyte('naoh')"><span data-i18n="el_alkali"></span></button>
+          <button class="seg-btn rounded-xl px-3 py-3 text-sm font-bold text-slate-300" data-el="nacl" onclick="setElectrolyte('nacl')"><span data-i18n="el_salt"></span></button>
+        </div>
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-sm font-bold text-slate-300" data-i18n="concentration"></span>
+          <span class="stat-val num" id="conc-val">0.50 M</span>
+        </div>
+        <input id="conc-slider" type="range" min="0.05" max="1" step="0.05" value="0.5" oninput="setConc(this.value)">
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="font-bold text-slate-200" data-i18n="collected"></div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span id="h2-name" class="text-sky-300 font-bold"></span><span class="stat-val num" id="h2-ml">0.0 mL</span></div>
+          <div class="gas-bar"><span id="h2-bar" style="width:0%;background:linear-gradient(90deg,#38bdf8,#7dd3fc)"></span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span id="ox-name" class="text-amber-300 font-bold"></span><span class="stat-val num" id="ox-ml">0.0 mL</span></div>
+          <div class="gas-bar"><span id="ox-bar" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></span></div>
+        </div>
+        <div class="flex justify-between text-sm pt-1">
+          <span class="text-slate-400" data-i18n="ratio"></span>
+          <span class="stat-val num" id="ratio-val">—</span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 space-y-2">
+        <div class="font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-eye text-cyan-400"></i><span data-i18n="observe"></span></div>
+        <p id="observe-text" class="text-sm text-slate-300 leading-relaxed"></p>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="runPopTest()" class="rounded-xl px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-sm text-sky-300"><i class="fa-solid fa-burst ml-1"></i> <span data-i18n="pop_test"></span></button>
+          <button onclick="runSplintTest()" class="rounded-xl px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-sm text-amber-300"><i class="fa-solid fa-fire ml-1"></i> <span data-i18n="splint_test"></span></button>
+        </div>
+        <p id="test-feedback" class="text-sm min-h-[1.5em] text-cyan-300"></p>
+      </div>
+
+      <button onclick="resetExperiment()" class="rounded-2xl px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 font-bold text-slate-200 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate-right text-cyan-400"></i><span data-i18n="reset"></span>
+      </button>
+    </aside>
+  </main>
+
+  <main id="view-quiz" class="view hidden flex-1 min-h-0 overflow-y-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto glass-card rounded-3xl p-6 md:p-10">
+      <div class="flex items-center justify-between gap-3 mb-6">
+        <h2 class="font-display text-2xl font-extrabold text-cyan-400" data-i18n="quiz_title"></h2>
+        <div class="text-slate-400 font-bold"><span id="q-progress" class="num"></span></div>
+      </div>
+      <div id="quiz-body"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const LANG = {
+  en: {
+    topic: "Electrolysis of Water",
+    tab_sim: "Simulation",
+    tab_quiz: "Quiz",
+    circuit: "Circuit",
+    power_on: "Current flowing",
+    power_off: "Circuit open",
+    voltage: "Voltage",
+    electrolyte: "Electrolyte",
+    el_none: "Pure water",
+    el_acid: "Dilute H₂SO₄",
+    el_alkali: "Dilute NaOH",
+    el_salt: "Aqueous NaCl",
+    concentration: "Concentration",
+    collected: "Collected gases",
+    ratio: "H₂ : anode gas",
+    observe: "Observe",
+    pop_test: "Pop test",
+    splint_test: "Glowing splint",
+    reset: "Reset experiment",
+    beaker: "Beaker",
+    test_tubes: "Test tubes",
+    battery: "Battery",
+    cathode: "Cathode (−)",
+    anode: "Anode (+)",
+    h2: "Hydrogen  H₂",
+    o2: "Oxygen  O₂",
+    cl2: "Chlorine  Cl₂",
+    hint_off: "Close the circuit. Watch both tubes — do not assume which gas forms where.",
+    hint_pure: "Almost nothing happens. Pure water is a very poor conductor. Try an electrolyte.",
+    hint_low: "Voltage is below about 1.5 V. Ions are present, but water is not decomposing yet.",
+    hint_run: "Bubbles rise from both electrodes. Compare how fast the two tubes fill.",
+    hint_ratio: "The left tube (negative electrode) holds about twice the volume of the right tube.",
+    hint_ions: "H⁺ ions gain electrons at the cathode → H₂. Water / OH⁻ lose electrons at the anode → O₂.",
+    hint_salt: "The anode gas looks green-yellow. Chloride is easier to oxidize than water, so Cl₂ forms instead of O₂.",
+    hint_full: "A tube is full. Reset, or test the gases to identify them.",
+    pop_need: "Collect more gas in the left tube first.",
+    pop_ok: "A sharp pop! That is hydrogen burning in air: 2H₂ + O₂ → 2H₂O.",
+    splint_need: "Collect more anode gas first.",
+    splint_o2: "The glowing splint relights. That is the test for oxygen.",
+    splint_cl2: "The splint does not relight. This green-yellow gas is chlorine, not oxygen.",
+    quiz_title: "Concept Check",
+    q_of: "Question",
+    next: "Next question",
+    see_score: "See score",
+    restart: "Restart quiz",
+    score: "Final score",
+    percent: "Percentage",
+    explain: "Why",
+    perfect: "You read the experiment, not just the labels.",
+    retry: "Run the lab again and watch the volumes and polarities.",
+    quiz: [
+      {
+        q: "Hydrogen gas collects at which electrode?",
+        options: ["Anode (positive)", "Cathode (negative)", "Both equally", "The battery terminal only"],
+        a: 1,
+        explain: "H⁺ ions gain electrons (reduction) at the cathode, so H₂ forms there."
+      },
+      {
+        q: "In the electrolysis of acidified water, the collected volumes of H₂ and O₂ are about",
+        options: ["1 : 1", "1 : 2", "2 : 1", "4 : 1"],
+        a: 2,
+        explain: "The equation 2H₂O → 2H₂ + O₂ produces twice as many H₂ molecules as O₂ molecules, so the volume ratio is 2 : 1."
+      },
+      {
+        q: "Why is a little dilute sulfuric acid (or alkali) added to the water?",
+        options: ["To colour the water", "To make water a better conductor", "To stop hydrogen forming", "To heat the beaker"],
+        a: 1,
+        explain: "Pure water has very few ions. The acid or alkali supplies ions so current can flow."
+      },
+      {
+        q: "The overall chemical change in this experiment is",
+        options: ["H₂O → H₂ + O", "2H₂O → 2H₂ + O₂", "H₂ + O₂ → 2H₂O", "2H₂SO₄ → 2H₂ + 2SO₄"],
+        a: 1,
+        explain: "Water is decomposed. Sulfuric acid is the electrolyte; it is not used up in the overall reaction."
+      },
+      {
+        q: "If aqueous NaCl is used instead of dilute acid, the anode often gives",
+        options: ["More hydrogen", "Oxygen only", "Chlorine gas", "Solid sodium"],
+        a: 2,
+        explain: "Chloride ions are easier to oxidize than water, so Cl₂ is discharged at the anode instead of O₂."
+      }
+    ]
+  },
+  ur: {
+    topic: "پانی کی برق پاشیدگی",
+    tab_sim: "تجربہ",
+    tab_quiz: "سوالات",
+    circuit: "برقی دور",
+    power_on: "رو بہہ رہی ہے",
+    power_off: "دور کھلا ہے",
+    voltage: "برق دباؤ",
+    electrolyte: "برق پاشیدہ",
+    el_none: "خالص پانی",
+    el_acid: "رقیق H₂SO₄",
+    el_alkali: "رقیق NaOH",
+    el_salt: "آبی NaCl",
+    concentration: "ارتکاز",
+    collected: "جمع شدہ گیسیں",
+    ratio: "H₂ : اینوڈ گیس",
+    observe: "مشاہدہ",
+    pop_test: "پاپ ٹیسٹ",
+    splint_test: "جلتی سلاخ",
+    reset: "تجربہ ازسرنو",
+    beaker: "بیکر",
+    test_tubes: "امتحانی نلیاں",
+    battery: "بیٹری",
+    cathode: "کیتھوڈ (−)",
+    anode: "اینوڈ (+)",
+    h2: "ہائیڈروجن  H₂",
+    o2: "آکسیجن  O₂",
+    cl2: "کلورین  Cl₂",
+    hint_off: "دور بند کریں۔ دونوں نلیوں کو دیکھیں — پہلے سے یہ نہ مان لیں کہ گیس کہاں بنے گی۔",
+    hint_pure: "تقریباً کچھ نہیں ہوتا۔ خالص پانی بہت کم برق رسان ہے۔ کوئی برق پاشیدہ آزمائیں۔",
+    hint_low: "وولٹیج تقریباً 1.5 V سے کم ہے۔ آئن موجود ہیں مگر پانی ابھی نہیں ٹوٹ رہا۔",
+    hint_run: "دونوں الیکٹروڈز سے بلبلے اٹھ رہے ہیں۔ دیکھیے کون سی نلی تیزی سے بھرتی ہے۔",
+    hint_ratio: "بائیں نلی (منفی الیکٹروڈ) میں گیس دائیں نلی سے تقریباً دوگنی ہے۔",
+    hint_ions: "کیتھوڈ پر H⁺ الیکٹران لیتا ہے → H₂۔ اینوڈ پر پانی / OH⁻ الیکٹران کھوتا ہے → O₂۔",
+    hint_salt: "اینوڈ کی گیس سبز زرد دکھائی دیتی ہے۔ کلورائیڈ پانی سے آسان سے تکسید ہوتا ہے اس لیے Cl₂ بنتی ہے۔",
+    hint_full: "ایک نلی بھر گئی۔ ازسرنو کریں یا گیسوں کی پہچان کے ٹیسٹ کریں۔",
+    pop_need: "پہلے بائیں نلی میں مزید گیس جمع کریں۔",
+    pop_ok: "تیز پاپ! یہ ہوا میں ہائیڈروجن کا جلنا ہے: 2H₂ + O₂ → 2H₂O۔",
+    splint_need: "پہلے اینوڈ والی گیس مزید جمع کریں۔",
+    splint_o2: "مدھم سلاخ پھر سے بھڑک اٹھی۔ یہ آکسیجن کی پہچان ہے۔",
+    splint_cl2: "سلاخ نہیں بھڑکی۔ یہ سبز زرد گیس کلورین ہے، آکسیجن نہیں۔",
+    quiz_title: "تصور کی جانچ",
+    q_of: "سوال",
+    next: "اگلا سوال",
+    see_score: "نمرہ دیکھیں",
+    restart: "سوالات دوبارہ",
+    score: "حتمی نمرہ",
+    percent: "فیصد",
+    explain: "وجہ",
+    perfect: "آپ نے لیبل نہیں، خود تجربہ پڑھا۔",
+    retry: "لیب دوبارہ چلائیں اور حجم و قطبیت دیکھیں۔",
+    quiz: [
+      {
+        q: "ہائیڈروجن گیس کس الیکٹروڈ پر جمع ہوتی ہے؟",
+        options: ["اینوڈ (مثبت)", "کیتھوڈ (منفی)", "دونوں برابر", "صرف بیٹری کا سرا"],
+        a: 1,
+        explain: "H⁺ آئن کیتھوڈ پر الیکٹران لیتے ہیں (تحویل)، اس لیے وہیں H₂ بنتی ہے۔"
+      },
+      {
+        q: "تیزابی پانی کی برق پاشیدگی میں H₂ اور O₂ کے حجم تقریباً ہوتے ہیں",
+        options: ["1 : 1", "1 : 2", "2 : 1", "4 : 1"],
+        a: 2,
+        explain: "مساوات 2H₂O → 2H₂ + O₂ کے مطابق H₂ کے مالیکیول O₂ سے دوگنے ہیں، اس لیے حجم 2 : 1 ہے۔"
+      },
+      {
+        q: "پانی میں تھوڑا رقیق سلفیورک تیزاب (یا القلی) کیوں ملایا جاتا ہے؟",
+        options: ["پانی رنگین کرنے کے لیے", "پانی کو بہتر برق رسان بنانے کے لیے", "ہائیڈروجن روکنے کے لیے", "بیکر گرم کرنے کے لیے"],
+        a: 1,
+        explain: "خالص پانی میں آئن بہت کم ہوتے ہیں۔ تیزاب یا القلی آئن مہیا کرتا ہے تاکہ رو بہہ سکے۔"
+      },
+      {
+        q: "اس تجربے میں مجموعی کیمیائی تبدیلی ہے",
+        options: ["H₂O → H₂ + O", "2H₂O → 2H₂ + O₂", "H₂ + O₂ → 2H₂O", "2H₂SO₄ → 2H₂ + 2SO₄"],
+        a: 1,
+        explain: "پانی ٹوٹتا ہے۔ سلفیورک تیزاب برق پاشیدہ ہے؛ مجموعی عمل میں وہ خرچ نہیں ہوتا。"
+      },
+      {
+        q: "اگر رقیق تیزاب کی جگہ آبی NaCl استعمال ہو تو اینوڈ پر اکثر بنتی ہے",
+        options: ["زیادہ ہائیڈروجن", "صرف آکسیجن", "کلورین گیس", "ٹھوس سوڈیم"],
+        a: 2,
+        explain: "کلورائیڈ آئن پانی سے آسان سے تکسید ہوتے ہیں، اس لیے اینوڈ پر O₂ کے بجائے Cl₂ خارج ہوتی ہے۔"
+      }
+    ]
+  }
+};
+
+let cur = localStorage.getItem('iqra-lang') || 'en';
+const T = () => LANG[cur];
+
+const WORLD_W = 1040;
+const WORLD_H = 720;
+const state = {
+  power: false,
+  voltage: 6,
+  electrolyte: 'h2so4',
+  conc: 0.5,
+  h2: 0,
+  ox: 0,
+  maxH2: 48,
+  maxOx: 24,
+  dash: 0,
+  flash: 0,
+  splint: 0,
+  testMsg: ''
+};
+const bubbles = [];
+const ions = [];
+
+let cam = { x: 0, y: 0, s: 1 };
+let baseScale = 1;
+let panning = false, panStart = { x: 0, y: 0, cx: 0, cy: 0 };
+let pinch = null;
+let lastTs = 0;
+let meterAcc = 0;
+let simReady = false;
+
+let fCanvas;
+let isAnnoActive = false;
+let annoFloatOpen = false;
+let quizIndex = 0, quizScore = 0, quizLocked = false;
+
+function t(key) { return T()[key]; }
+
+function applyI18n() {
+  document.documentElement.lang = cur === 'ur' ? 'ur' : 'en';
+  document.documentElement.dir = cur === 'ur' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (T()[k] != null) el.textContent = T()[k];
+  });
+  document.getElementById('lang-select').value = cur;
+  document.getElementById('anno-color').title = cur === 'ur' ? 'رنگ' : 'Color';
+  document.getElementById('anno-pen').title = cur === 'ur' ? 'قلم' : 'Pen';
+  document.getElementById('anno-eraser').title = cur === 'ur' ? 'مٹانے والا' : 'Eraser';
+  document.getElementById('btn-anno-toggle').title = cur === 'ur' ? 'اشارہ کاری' : 'Toggle Annotation';
+  updatePowerLabel();
+  updateMeters();
+  updateObserve();
+  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
+}
+
+function changeLanguage(v) {
+  if (v !== 'en' && v !== 'ur') return;
+  cur = v;
+  localStorage.setItem('iqra-lang', cur);
+  applyI18n();
+}
+
+function switchTab(name) {
+  document.getElementById('view-sim').classList.toggle('hidden', name !== 'sim');
+  document.getElementById('view-quiz').classList.toggle('hidden', name !== 'quiz');
+  document.getElementById('tab-sim').classList.toggle('active', name === 'sim');
+  document.getElementById('tab-quiz').classList.toggle('active', name === 'quiz');
+  if (name === 'quiz') renderQuiz();
+  if (name === 'sim') requestAnimationFrame(() => { fitView(); resizeCanvases(); });
+}
+
+function toggleFullScreen() {
+  const root = document.documentElement;
+  if (!document.fullscreenElement) {
+    (root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen).call(root);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const icon = document.getElementById('fs-icon');
+  if (icon) icon.className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+});
+
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas('fabricLayer', {
+    isDrawingMode: false,
+    width: w,
+    height: h
+  });
+  fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+  fCanvas.freeDrawingBrush.width = 4;
+  fCanvas.on('mouse:down', function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+      fCanvas.remove(options.target);
+    }
+  });
+  const fabricContainer = document.querySelector('.canvas-container');
+  if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+}
+
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById('btn-anno-toggle');
+  const toolbar = document.getElementById('anno-toolbar');
+  const fabricContainer = document.querySelector('.canvas-container');
+
+  if (isAnnoActive) {
+    btn.classList.replace('text-slate-400', 'text-cyan-400');
+    toolbar.classList.remove('max-w-0', 'opacity-0');
+    toolbar.classList.add('max-w-xs', 'opacity-100');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+    setAnnoMode('pen');
+    const box = document.getElementById('anno-float');
+    box.classList.remove('collapsed');
+    annoFloatOpen = true;
+  } else {
+    btn.classList.replace('text-cyan-400', 'text-slate-400');
+    toolbar.classList.remove('max-w-xs', 'opacity-100');
+    toolbar.classList.add('max-w-0', 'opacity-0');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function setAnnoMode(mode) {
+  document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+  document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+  if (mode === 'pen') {
+    document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+  if (fCanvas) fCanvas.clear();
+}
+
+function toggleAnnoFloat() {
+  annoFloatOpen = !annoFloatOpen;
+  document.getElementById('anno-float').classList.toggle('collapsed', !annoFloatOpen);
+  document.getElementById('anno-float-icon').className = annoFloatOpen ? 'fa-solid fa-minus' : 'fa-solid fa-pencil';
+  if (annoFloatOpen && !isAnnoActive) toggleAnnotationMode();
+}
+
+function conductivity() {
+  if (state.electrolyte === 'none') return 0.012;
+  return 0.35 + state.conc * 0.85;
+}
+
+function producing() {
+  return state.power && state.voltage >= 1.5 && conductivity() > 0.05;
+}
+
+function anodeIsChlorine() {
+  return state.electrolyte === 'nacl';
+}
+
+function togglePower() {
+  state.power = !state.power;
+  const btn = document.getElementById('power-btn');
+  btn.classList.toggle('on', state.power);
+  btn.classList.toggle('text-emerald-400', state.power);
+  btn.classList.toggle('text-slate-400', !state.power);
+  updatePowerLabel();
+  updateObserve();
+}
+
+function updatePowerLabel() {
+  document.getElementById('power-label').textContent = state.power ? t('power_on') : t('power_off');
+}
+
+function setVoltage(v) {
+  state.voltage = parseFloat(v);
+  document.getElementById('volt-val').textContent = state.voltage.toFixed(1) + ' V';
+  updateObserve();
+}
+
+function setConc(v) {
+  state.conc = parseFloat(v);
+  document.getElementById('conc-val').textContent = state.conc.toFixed(2) + ' M';
+  updateObserve();
+}
+
+function setElectrolyte(id) {
+  state.electrolyte = id;
+  document.querySelectorAll('[data-el]').forEach(b => b.classList.toggle('active', b.getAttribute('data-el') === id));
+  updateMeters();
+  updateObserve();
+}
+
+function resetExperiment() {
+  state.h2 = 0;
+  state.ox = 0;
+  state.testMsg = '';
+  bubbles.length = 0;
+  document.getElementById('test-feedback').textContent = '';
+  updateMeters();
+  updateObserve();
+}
+
+function updateMeters() {
+  document.getElementById('h2-name').textContent = t('h2');
+  document.getElementById('ox-name').textContent = anodeIsChlorine() ? t('cl2') : t('o2');
+  document.getElementById('h2-ml').textContent = state.h2.toFixed(1) + ' mL';
+  document.getElementById('ox-ml').textContent = state.ox.toFixed(1) + ' mL';
+  document.getElementById('h2-bar').style.width = (100 * state.h2 / state.maxH2) + '%';
+  document.getElementById('ox-bar').style.width = (100 * state.ox / state.maxOx) + '%';
+  if (state.ox > 0.4) {
+    document.getElementById('ratio-val').textContent = (state.h2 / state.ox).toFixed(2) + ' : 1';
+  } else {
+    document.getElementById('ratio-val').textContent = '—';
+  }
+}
+
+function updateObserve() {
+  let msg = t('hint_off');
+  if (!state.power) msg = t('hint_off');
+  else if (state.electrolyte === 'none') msg = t('hint_pure');
+  else if (state.voltage < 1.5) msg = t('hint_low');
+  else if (state.h2 >= state.maxH2 - 0.2 || state.ox >= state.maxOx - 0.2) msg = t('hint_full');
+  else if (anodeIsChlorine()) msg = t('hint_salt');
+  else if (state.h2 > 12) msg = t('hint_ratio') + ' ' + t('hint_ions');
+  else msg = t('hint_run');
+  document.getElementById('observe-text').textContent = msg;
+}
+
+function runPopTest() {
+  const el = document.getElementById('test-feedback');
+  if (state.h2 < 8) { el.textContent = t('pop_need'); el.className = 'text-sm min-h-[1.5em] text-amber-300'; return; }
+  state.flash = 1;
+  state.h2 = Math.max(0, state.h2 - 6);
+  el.textContent = t('pop_ok');
+  el.className = 'text-sm min-h-[1.5em] text-emerald-300';
+  updateMeters();
+}
+
+function runSplintTest() {
+  const el = document.getElementById('test-feedback');
+  if (state.ox < 5) { el.textContent = t('splint_need'); el.className = 'text-sm min-h-[1.5em] text-amber-300'; return; }
+  state.splint = 1;
+  state.ox = Math.max(0, state.ox - 4);
+  el.textContent = anodeIsChlorine() ? t('splint_cl2') : t('splint_o2');
+  el.className = 'text-sm min-h-[1.5em] ' + (anodeIsChlorine() ? 'text-amber-300' : 'text-emerald-300');
+  updateMeters();
+}
+
+function resizeCanvases() {
+  const wrap = document.getElementById('sim-viewport');
+  if (!wrap) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  const canvas = document.getElementById('simCanvas');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.max(1, w * dpr);
+  canvas.height = Math.max(1, h * dpr);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  if (fCanvas) {
+    fCanvas.setWidth(w);
+    fCanvas.setHeight(h);
+    fCanvas.renderAll();
+  }
+}
+
+function fitView() {
+  const wrap = document.getElementById('sim-viewport');
+  if (!wrap) return;
+  const pad = 28;
+  baseScale = Math.min((wrap.clientWidth - pad) / WORLD_W, (wrap.clientHeight - pad) / WORLD_H);
+  cam.s = baseScale;
+  cam.x = (wrap.clientWidth - WORLD_W * cam.s) / 2;
+  cam.y = (wrap.clientHeight - WORLD_H * cam.s) / 2;
+}
+
+function zoomBy(f, cx, cy) {
+  const wrap = document.getElementById('sim-viewport');
+  const px = cx != null ? cx : wrap.clientWidth / 2;
+  const py = cy != null ? cy : wrap.clientHeight / 2;
+  const wx = (px - cam.x) / cam.s;
+  const wy = (py - cam.y) / cam.s;
+  cam.s = Math.max(baseScale * 0.8, Math.min(baseScale * 4.2, cam.s * f));
+  cam.x = px - wx * cam.s;
+  cam.y = py - wy * cam.s;
+}
+
+function resetView() { fitView(); }
+
+function worldFromEvent(e) {
+  const r = document.getElementById('sim-viewport').getBoundingClientRect();
+  const x = (e.clientX ?? e.touches[0].clientX) - r.left;
+  const y = (e.clientY ?? e.touches[0].clientY) - r.top;
+  return { x, y };
+}
+
+function bindZoomPan() {
+  const wrap = document.getElementById('sim-viewport');
+  wrap.addEventListener('wheel', e => {
+    if (isAnnoActive) return;
+    e.preventDefault();
+    const p = worldFromEvent(e);
+    zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, p.x, p.y);
+  }, { passive: false });
+
+  wrap.addEventListener('mousedown', e => {
+    if (isAnnoActive || e.target.closest('#anno-float') || e.target.closest('.zoom-btn')) return;
+    panning = true;
+    wrap.classList.add('panning');
+    const p = worldFromEvent(e);
+    panStart = { x: p.x, y: p.y, cx: cam.x, cy: cam.y };
+  });
+  window.addEventListener('mousemove', e => {
+    if (!panning) return;
+    const p = worldFromEvent(e);
+    cam.x = panStart.cx + (p.x - panStart.x);
+    cam.y = panStart.cy + (p.y - panStart.y);
+  });
+  window.addEventListener('mouseup', () => { panning = false; wrap.classList.remove('panning'); });
+
+  wrap.addEventListener('touchstart', e => {
+    if (isAnnoActive) return;
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinch = { dist: Math.hypot(dx, dy), s: cam.s };
+    } else if (e.touches.length === 1) {
+      panning = true;
+      const p = worldFromEvent(e);
+      panStart = { x: p.x, y: p.y, cx: cam.x, cy: cam.y };
+    }
+  }, { passive: true });
+  wrap.addEventListener('touchmove', e => {
+    if (isAnnoActive) return;
+    if (e.touches.length === 2 && pinch) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      const r = wrap.getBoundingClientRect();
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
+      zoomBy(dist / pinch.dist, mx, my);
+      pinch.dist = dist;
+    } else if (panning && e.touches.length === 1) {
+      const p = worldFromEvent(e);
+      cam.x = panStart.cx + (p.x - panStart.x);
+      cam.y = panStart.cy + (p.y - panStart.y);
+    }
+  }, { passive: false });
+  wrap.addEventListener('touchend', () => { panning = false; pinch = null; });
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function label(ctx, text, x, y, opt) {
+  const ur = cur === 'ur';
+  ctx.save();
+  ctx.font = ur ? "22px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif" : "16px Manrope,sans-serif";
+  ctx.fillStyle = opt && opt.color ? opt.color : '#cbd5e1';
+  ctx.textAlign = opt && opt.align ? opt.align : 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function spawnBubbles(dt) {
+  if (!producing()) return;
+  const rate = (0.8 + state.voltage * 0.35) * conductivity();
+  const n = Math.min(4, rate * dt * 14);
+  for (let i = 0; i < n; i++) {
+    bubbles.push({ side: 'L', x: 268 + (Math.random() - 0.5) * 18, y: 478, r: 2.2 + Math.random() * 2.2, v: 28 + Math.random() * 40 });
+    if (Math.random() < 0.55) {
+      bubbles.push({ side: 'R', x: 418 + (Math.random() - 0.5) * 18, y: 478, r: 2 + Math.random() * 2, v: 24 + Math.random() * 36 });
+    }
+  }
+  if (Math.random() < dt * 8) {
+    ions.push({ x: 200 + Math.random() * 300, y: 430 + Math.random() * 80, q: Math.random() < 0.5 ? '+' : '−', life: 1 });
+  }
+}
+
+function step(dt) {
+  spawnBubbles(dt);
+  if (producing()) {
+    const k = 0.55 * (state.voltage - 1.4) * conductivity();
+    const dh = k * dt * 3.2;
+    const dox = dh / 2;
+    state.h2 = Math.min(state.maxH2, state.h2 + dh);
+    state.ox = Math.min(state.maxOx, state.ox + dox);
+  }
+  for (let i = bubbles.length - 1; i >= 0; i--) {
+    const b = bubbles[i];
+    b.y -= b.v * dt;
+    const top = 250 + (b.side === 'L' ? (state.maxH2 - state.h2) / state.maxH2 * 210 : (state.maxOx - state.ox) / state.maxOx * 210);
+    if (b.y < top + 20) bubbles.splice(i, 1);
+  }
+  for (let i = ions.length - 1; i >= 0; i--) {
+    ions[i].life -= dt * 0.7;
+    ions[i].x += (ions[i].q === '+' ? -1 : 1) * 18 * dt;
+    if (ions[i].life <= 0) ions.splice(i, 1);
+  }
+  state.dash += dt * (state.power ? 40 : 0);
+  if (state.flash > 0) state.flash = Math.max(0, state.flash - dt * 2.2);
+  if (state.splint > 0) state.splint = Math.max(0, state.splint - dt * 1.4);
+}
+
+function drawApparatus(ctx) {
+  const L = T();
+  ctx.save();
+
+  const waterColor = state.electrolyte === 'nacl' ? 'rgba(125, 211, 252, 0.45)'
+    : state.electrolyte === 'naoh' ? 'rgba(125, 211, 252, 0.42)'
+    : state.electrolyte === 'h2so4' ? 'rgba(56, 189, 248, 0.48)'
+    : 'rgba(186, 230, 253, 0.35)';
+
+  ctx.fillStyle = '#0b1220';
+  roundRect(ctx, 40, 70, 620, 580, 28);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(148,163,184,.55)';
+  ctx.lineWidth = 6;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(90, 160);
+  ctx.lineTo(90, 590);
+  ctx.quadraticCurveTo(90, 630, 130, 630);
+  ctx.lineTo(560, 630);
+  ctx.quadraticCurveTo(600, 630, 600, 590);
+  ctx.lineTo(600, 160);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(226,232,240,.35)';
+  ctx.lineWidth = 8;
+  ctx.moveTo(78, 158);
+  ctx.lineTo(612, 158);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(96, 200);
+  ctx.lineTo(96, 586);
+  ctx.quadraticCurveTo(96, 618, 132, 618);
+  ctx.lineTo(558, 618);
+  ctx.quadraticCurveTo(594, 618, 594, 586);
+  ctx.lineTo(594, 200);
+  ctx.closePath();
+  ctx.clip();
+  const wg = ctx.createLinearGradient(0, 200, 0, 620);
+  wg.addColorStop(0, waterColor);
+  wg.addColorStop(1, 'rgba(14, 116, 144, 0.55)');
+  ctx.fillStyle = wg;
+  ctx.fillRect(90, 200, 510, 430);
+  ctx.restore();
+
+  ctx.fillStyle = 'rgba(186,230,253,.25)';
+  ctx.fillRect(96, 198, 498, 10);
+
+  drawTube(ctx, 230, 220, 76, 280, state.h2 / state.maxH2, '#7dd3fc', false);
+  drawTube(ctx, 380, 220, 76, 280, state.ox / state.maxOx, anodeIsChlorine() ? '#a3e635' : '#fbbf24', anodeIsChlorine());
+
+  drawElectrode(ctx, 268, 470, false);
+  drawElectrode(ctx, 418, 470, true);
+
+  bubbles.forEach(b => {
+    ctx.beginPath();
+    ctx.fillStyle = b.side === 'R' && anodeIsChlorine() ? 'rgba(190,242,100,.85)' : 'rgba(255,255,255,.85)';
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  if (state.power && conductivity() > 0.05) {
+    ions.forEach(ion => {
+      ctx.globalAlpha = Math.max(0, ion.life);
+      ctx.fillStyle = ion.q === '+' ? '#fca5a5' : '#93c5fd';
+      ctx.font = 'bold 14px Oxanium';
+      ctx.textAlign = 'center';
+      ctx.fillText(ion.q, ion.x, ion.y);
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  label(ctx, L.test_tubes, 343, 128, { color: '#e2e8f0' });
+  label(ctx, L.beaker, 140, 658, { color: '#94a3b8' });
+  label(ctx, 'H₂', 268, 200, { color: '#7dd3fc' });
+  label(ctx, anodeIsChlorine() ? 'Cl₂' : 'O₂', 418, 200, { color: anodeIsChlorine() ? '#a3e635' : '#fbbf24' });
+  label(ctx, '−', 268, 545, { color: '#38bdf8' });
+  label(ctx, '+', 418, 545, { color: '#f87171' });
+  label(ctx, L.cathode, 268, 568, { color: '#7dd3fc' });
+  label(ctx, L.anode, 418, 568, { color: '#fca5a5' });
+
+  drawBattery(ctx, 740, 300);
+  drawWires(ctx);
+
+  if (state.flash > 0) {
+    ctx.fillStyle = `rgba(253, 224, 71, ${state.flash * 0.55})`;
+    ctx.beginPath();
+    ctx.arc(268, 300, 70 * state.flash, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (state.splint > 0) {
+    ctx.strokeStyle = anodeIsChlorine() ? `rgba(163,230,53,${state.splint})` : `rgba(251,191,36,${state.splint})`;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(418, 210);
+    ctx.lineTo(480, 140);
+    ctx.stroke();
+    ctx.fillStyle = anodeIsChlorine() ? `rgba(163,230,53,${state.splint})` : `rgba(248,113,113,${state.splint})`;
+    ctx.beginPath();
+    ctx.arc(480, 140, 10 + 8 * state.splint, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawTube(ctx, x, y, w, h, fillFrac, gasColor, chlorine) {
+  ctx.save();
+  roundRect(ctx, x, y, w, h, 28);
+  ctx.clip();
+  ctx.fillStyle = 'rgba(15,23,42,0.25)';
+  ctx.fillRect(x, y, w, h);
+  const gasH = Math.max(0, fillFrac) * (h - 18);
+  ctx.fillStyle = chlorine ? 'rgba(163,230,53,.42)' : (gasColor === '#7dd3fc' ? 'rgba(125,211,252,.42)' : 'rgba(251,191,36,.40)');
+  ctx.fillRect(x, y, w, gasH);
+  ctx.fillStyle = chlorine ? 'rgba(190,242,100,.25)' : 'rgba(255,255,255,.12)';
+  ctx.fillRect(x + 8, y + 8, 10, Math.max(0, gasH - 12));
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(226,232,240,.75)';
+  ctx.lineWidth = 4;
+  roundRect(ctx, x, y, w, h, 28);
+  ctx.stroke();
+}
+
+function drawElectrode(ctx, cx, cy, plus) {
+  ctx.save();
+  ctx.fillStyle = plus ? '#94a3b8' : '#cbd5e1';
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 22, cy + 18);
+  ctx.lineTo(cx + 10, cy + 18);
+  ctx.lineTo(cx + 10, cy - 8);
+  ctx.lineTo(cx + 2, cy - 8);
+  ctx.lineTo(cx + 2, cy + 10);
+  ctx.lineTo(cx - 22, cy + 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBattery(ctx, x, y) {
+  const L = T();
+  ctx.save();
+  roundRect(ctx, x, y, 210, 130, 16);
+  ctx.fillStyle = '#7c4a2a';
+  ctx.fill();
+  ctx.strokeStyle = '#d6a06a';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = '#5c3317';
+  roundRect(ctx, x + 10, y + 10, 190, 70, 10);
+  ctx.fill();
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = "bold 22px Oxanium";
+  ctx.textAlign = 'center';
+  ctx.fillText(L.battery, x + 105, y + 48);
+  ctx.fillStyle = '#f87171';
+  ctx.font = 'bold 28px Oxanium';
+  ctx.fillText('+', x + 48, y + 108);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillText('−', x + 162, y + 108);
+  ctx.beginPath();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.arc(x + 48, y - 2, 8, 0, Math.PI * 2);
+  ctx.arc(x + 162, y - 2, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawWires(ctx) {
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.setLineDash([10, 8]);
+  ctx.lineDashOffset = -state.dash;
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = state.power ? '#f87171' : '#64748b';
+  ctx.beginPath();
+  ctx.moveTo(788, 298);
+  ctx.lineTo(788, 250);
+  ctx.lineTo(428, 250);
+  ctx.lineTo(428, 478);
+  ctx.stroke();
+  ctx.strokeStyle = state.power ? '#38bdf8' : '#64748b';
+  ctx.beginPath();
+  ctx.moveTo(902, 298);
+  ctx.lineTo(902, 200);
+  ctx.lineTo(278, 200);
+  ctx.lineTo(278, 478);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min(0.05, (ts - lastTs) / 1000);
+  lastTs = ts;
+  if (simReady) {
+    step(dt);
+    meterAcc += dt;
+    if (meterAcc > 0.12) { meterAcc = 0; updateMeters(); updateObserve(); }
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(dpr * cam.s, 0, 0, dpr * cam.s, dpr * cam.x, dpr * cam.y);
+    drawApparatus(ctx);
+  }
+  requestAnimationFrame(loop);
+}
+
+function renderQuiz() {
+  const box = document.getElementById('quiz-body');
+  const Q = T().quiz;
+  if (quizIndex >= Q.length) {
+    const pct = Math.round(100 * quizScore / Q.length);
+    box.innerHTML = `
+      <div class="text-center space-y-4 fade-in">
+        <div class="text-slate-400 font-bold" data-keep>${t('score')}</div>
+        <div class="text-6xl font-black text-cyan-400 font-display num">${quizScore} / ${Q.length}</div>
+        <div class="text-xl text-slate-300">${t('percent')}: <span class="stat-val num">${pct}%</span></div>
+        <p class="text-slate-400">${pct === 100 ? t('perfect') : t('retry')}</p>
+        <button onclick="restartQuiz()" class="mt-4 px-8 py-3 rounded-2xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold glow-cyan">${t('restart')}</button>
+      </div>`;
+    document.getElementById('q-progress').textContent = '';
+    return;
+  }
+  const item = Q[quizIndex];
+  document.getElementById('q-progress').textContent = `${t('q_of')} ${quizIndex + 1} / ${Q.length}`;
+  const letters = ['A', 'B', 'C', 'D'];
+  box.innerHTML = `
+    <p class="text-xl md:text-2xl font-bold text-slate-100 mb-6 leading-relaxed">${item.q}</p>
+    <div class="space-y-3" id="opts"></div>
+    <p id="explain" class="mt-5 text-sm text-slate-300 min-h-[2.5em]"></p>
+    <div class="mt-4 flex justify-end">
+      <button id="next-q" class="hidden px-6 py-3 rounded-xl bg-slate-800 border border-cyan-500/40 text-cyan-300 font-bold">${quizIndex === Q.length - 1 ? t('see_score') : t('next')}</button>
+    </div>`;
+  const opts = document.getElementById('opts');
+  item.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn w-full text-start rounded-2xl px-4 py-4 font-bold text-slate-200 bg-slate-900/40 flex items-center gap-3';
+    b.innerHTML = `<span class="num w-9 h-9 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center text-cyan-400">${letters[i]}</span><span>${opt}</span>`;
+    b.onclick = () => pickOpt(i, item, b, opts);
+    opts.appendChild(b);
+  });
+  document.getElementById('next-q').onclick = () => { quizIndex++; quizLocked = false; renderQuiz(); };
+}
+
+function pickOpt(i, item, btn, opts) {
+  if (quizLocked) return;
+  quizLocked = true;
+  [...opts.children].forEach(c => c.classList.add('locked'));
+  if (i === item.a) {
+    btn.classList.add('correct');
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    opts.children[item.a].classList.add('correct');
+  }
+  document.getElementById('explain').textContent = t('explain') + ': ' + item.explain;
+  document.getElementById('next-q').classList.remove('hidden');
+}
+
+function restartQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizLocked = false;
+  renderQuiz();
+}
+
+function boot() {
+  applyI18n();
+  setVoltage(state.voltage);
+  setConc(state.conc);
+  setElectrolyte(state.electrolyte);
+  updateMeters();
+  const wrap = document.getElementById('sim-viewport');
+  resizeCanvases();
+  fitView();
+  initAnnotationCanvas(wrap.clientWidth, wrap.clientHeight);
+  bindZoomPan();
+  simReady = true;
+  window.addEventListener('resize', () => { resizeCanvases(); fitView(); });
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const intro = document.getElementById('intro');
+    intro.style.opacity = '0';
+    setTimeout(() => {
+      intro.style.display = 'none';
+      document.getElementById('app').classList.add('opacity-100');
+      boot();
+    }, 700);
+  }, 5000);
+});
+</script>
+</body>
+</html>
