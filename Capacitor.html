@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>IQRA VIRTUAL LAB — Capacitor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.cdnfonts.com/s/14877/Jameel Noori Nastaleeq.woff') format('woff');
+  font-display: swap;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+  touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+input[type=range]::-moz-range-track {
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+  border: none;
+}
+input[type=range]::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px #00f3ff;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #020617;
+  color: #e2e8f0;
+  font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+}
+[dir="rtl"] body,
+[dir="rtl"] {
+  font-size: 1.08em;
+}
+.font-display { font-family: 'Outfit', sans-serif; letter-spacing: 0.12em; }
+[dir="rtl"] .font-display {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif;
+  letter-spacing: 0;
+}
+.mono, .num { font-family: 'JetBrains Mono', ui-monospace, monospace !important; line-height: 1.4 !important; }
+
+body {
+  background:
+    radial-gradient(1200px 700px at 12% 0%, rgba(0, 243, 255, 0.08), transparent 55%),
+    radial-gradient(900px 600px at 100% 100%, rgba(168, 85, 247, 0.10), transparent 50%),
+    #020617;
+}
+
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%, #0b1220 0%, #020617 68%);
+}
+.intro-title {
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  font-size: clamp(2.2rem, 6vw, 4.4rem);
+  background: linear-gradient(90deg, #22d3ee, #a855f7, #22d3ee);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.4s linear infinite, zoomGlow 1s ease-out;
+  text-shadow: 0 0 40px rgba(0, 243, 255, 0.25);
+}
+.intro-topic {
+  margin-top: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  font-size: clamp(1.05rem, 2.4vw, 1.7rem);
+  color: #e2e8f0;
+  opacity: 0;
+  animation: fadeUp 0.85s ease-out 0.45s forwards;
+}
+.intro-ring {
+  position: absolute;
+  width: 58vmin;
+  height: 58vmin;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 243, 255, 0.22);
+  animation: pulseRing 2.2s ease-out infinite;
+}
+.intro-ring.r2 {
+  width: 78vmin;
+  height: 78vmin;
+  animation-delay: 0.35s;
+  border-color: rgba(168, 85, 247, 0.16);
+}
+@keyframes shimmer { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+@keyframes zoomGlow {
+  0% { transform: scale(0.88); opacity: 0; filter: blur(8px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes fadeUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.86); opacity: 0.7; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+.intro-fadeout { animation: fadeOut 0.55s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+.tab-btn { border-radius: 999px; transition: all 0.2s ease; }
+.tab-btn.active {
+  background: linear-gradient(180deg, rgba(0, 243, 255, 0.22), rgba(0, 243, 255, 0.06));
+  color: #a5f3fc;
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  box-shadow: 0 0 22px rgba(0, 243, 255, 0.2);
+}
+
+.btn-lab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 12px;
+  padding: 0.7rem 0.95rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.15s ease;
+}
+.btn-lab:hover { transform: translateY(-1px); }
+.btn-lab:active { transform: translateY(0); }
+.btn-charge { background: rgba(34, 197, 94, 0.14); color: #86efac; border-color: rgba(34, 197, 94, 0.35); }
+.btn-discharge { background: rgba(245, 158, 11, 0.14); color: #fcd34d; border-color: rgba(245, 158, 11, 0.35); }
+.btn-hold { background: rgba(51, 65, 85, 0.7); color: #e2e8f0; }
+.btn-reset { background: rgba(239, 68, 68, 0.12); color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
+.btn-on { box-shadow: 0 0 16px rgba(0, 243, 255, 0.28); border-color: #00f3ff; color: #a5f3fc; background: rgba(0, 243, 255, 0.16); }
+.sys-btn.btn-on { border-color: #00f3ff; }
+
+#sim-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1rem;
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    #070d1a;
+  background-size: 28px 28px, 28px 28px, auto;
+}
+#sim-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 720px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+#simCanvas { display: block; width: 1200px; height: 720px; }
+
+#sim-viewport .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 30;
+}
+#sim-viewport .canvas-container.upper-canvas,
+#sim-viewport .upper-canvas {
+  z-index: 31;
+}
+
+#float-tools {
+  position: absolute;
+  z-index: 40;
+  right: 14px;
+  top: 14px;
+  width: 228px;
+  transition: width 0.28s ease, height 0.28s ease, padding 0.28s ease;
+}
+#float-tools.collapsed {
+  width: 48px;
+  height: 48px;
+  padding: 0 !important;
+  overflow: hidden;
+}
+#float-tools.collapsed #float-body,
+#float-tools.collapsed #float-title { display: none; }
+
+.quiz-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: start;
+}
+.quiz-choice:hover { background: rgba(51, 65, 85, 0.8); border-color: rgba(0, 243, 255, 0.25); }
+.quiz-choice.correct { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #bbf7d0; }
+.quiz-choice.wrong { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #fecaca; }
+.quiz-choice.disabled { pointer-events: none; }
+
+.meter-bar {
+  height: 8px;
+  border-radius: 99px;
+  background: #1e293b;
+  overflow: hidden;
+}
+.meter-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #22d3ee, #a855f7);
+  width: 0%;
+  transition: width 0.12s linear;
+}
+
+#anno-toolbar.max-w-xs { max-width: 18rem; }
+</style>
+</head>
+<body>
+<div id="intro">
+  <div class="intro-ring"></div>
+  <div class="intro-ring r2"></div>
+  <div class="intro-title font-display">IQRA VIRTUAL LAB</div>
+  <div class="intro-topic font-display" id="intro-topic">CAPACITOR</div>
+</div>
+
+<div id="app" class="h-screen flex flex-col opacity-0 pointer-events-none">
+  <header class="glass-panel flex items-center justify-between px-3 md:px-5 py-2.5 z-30 shrink-0 gap-2">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/40 glow-cyan flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-bolt text-cyan-400"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="font-display font-extrabold text-cyan-400 text-sm md:text-base truncate">IQRA VIRTUAL LAB</div>
+        <div class="text-xs text-slate-400 truncate" data-i18n="topic"></div>
+      </div>
+    </div>
+
+    <nav class="flex items-center gap-1 glass-card rounded-2xl p-1">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-5 py-2 font-bold text-sm text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-5 py-2 font-bold text-sm text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main id="view-sim" class="flex-1 min-h-0 flex flex-col xl:flex-row gap-3 p-3">
+    <aside class="w-full xl:w-[300px] shrink-0 flex flex-col gap-3 overflow-y-auto xl:max-h-full">
+      <section class="glass-card rounded-2xl p-4 space-y-4">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm tracking-wide">
+          <i class="fa-solid fa-layer-group"></i><span data-i18n="systems"></span>
+        </h2>
+        <div class="grid grid-cols-1 gap-2">
+          <button class="btn-lab btn-hold sys-btn" id="sys-charge" onclick="setSystem('charge')"><i class="fa-solid fa-battery-full"></i><span data-i18n="sys_charge"></span></button>
+          <button class="btn-lab btn-hold sys-btn" id="sys-discharge" onclick="setSystem('discharge')"><i class="fa-solid fa-lightbulb"></i><span data-i18n="sys_discharge"></span></button>
+          <button class="btn-lab btn-hold sys-btn" id="sys-acdc" onclick="setSystem('acdc')"><i class="fa-solid fa-wave-square"></i><span data-i18n="sys_acdc"></span></button>
+        </div>
+      </section>
+
+      <section class="glass-card rounded-2xl p-4 space-y-4">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm tracking-wide">
+          <i class="fa-solid fa-sliders"></i><span data-i18n="controls"></span>
+        </h2>
+        <div id="acdc-toggle" class="hidden grid grid-cols-2 gap-2">
+          <button class="btn-lab btn-hold" id="btn-dc" onclick="setSource('dc')"><i class="fa-solid fa-equals"></i><span data-i18n="src_dc"></span></button>
+          <button class="btn-lab btn-hold" id="btn-ac" onclick="setSource('ac')"><i class="fa-solid fa-wave-square"></i><span data-i18n="src_ac"></span></button>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs text-slate-400 mb-2">
+            <span id="lbl-vname" data-i18n="vbat"></span>
+            <span class="num text-cyan-300" id="lbl-v">9.0 V</span>
+          </div>
+          <input type="range" id="rng-v" min="3" max="12" step="0.1" value="9" class="w-full" oninput="onParamChange()" />
+        </div>
+        <div>
+          <div class="flex justify-between text-xs text-slate-400 mb-2">
+            <span data-i18n="res"></span>
+            <span class="num text-cyan-300" id="lbl-r">1000 Ω</span>
+          </div>
+          <input type="range" id="rng-r" min="200" max="4000" step="10" value="1000" class="w-full" oninput="onParamChange()" />
+        </div>
+        <div>
+          <div class="flex justify-between text-xs text-slate-400 mb-2">
+            <span data-i18n="cap"></span>
+            <span class="num text-cyan-300" id="lbl-c">1000 µF</span>
+          </div>
+          <input type="range" id="rng-c" min="200" max="2500" step="10" value="1000" class="w-full" oninput="onParamChange()" />
+        </div>
+        <div id="freq-wrap" class="hidden">
+          <div class="flex justify-between text-xs text-slate-400 mb-2">
+            <span data-i18n="freq"></span>
+            <span class="num text-cyan-300" id="lbl-f">0.8 Hz</span>
+          </div>
+          <input type="range" id="rng-f" min="0.2" max="2.5" step="0.05" value="0.8" class="w-full" oninput="onParamChange()" />
+        </div>
+        <div id="run-btns" class="grid grid-cols-2 gap-2">
+          <button class="btn-lab btn-charge" id="btn-charge" onclick="setSwitch('closed')"><i class="fa-solid fa-toggle-on"></i><span data-i18n="btn_sw_on"></span></button>
+          <button class="btn-lab btn-hold" id="btn-hold" onclick="setSwitch('open')"><i class="fa-solid fa-toggle-off"></i><span data-i18n="btn_sw_off"></span></button>
+          <button class="btn-lab btn-reset col-span-2" onclick="resetSim()"><i class="fa-solid fa-rotate-left"></i><span data-i18n="btn_reset"></span></button>
+        </div>
+      </section>
+
+      <section class="glass-card rounded-2xl p-4 space-y-3">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-book-open"></i><span id="story-title"></span>
+        </h2>
+        <p id="story-text" class="text-sm text-slate-300 leading-relaxed"></p>
+        <p id="obs-text" class="text-sm text-cyan-200/90 leading-relaxed"></p>
+        <div class="glass-panel rounded-xl p-3 text-xs space-y-1">
+          <div class="flex justify-between"><span class="text-slate-400">τ = RC</span><span class="num text-cyan-300" id="lbl-tau">1.00 s</span></div>
+          <div class="text-slate-500" data-i18n="tau_hint"></div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="flex-1 min-h-[420px] min-w-0 relative">
+      <div id="sim-viewport" class="glass-card">
+        <div id="sim-world">
+          <canvas id="simCanvas" width="1200" height="720"></canvas>
+        </div>
+        <canvas id="fabricLayer"></canvas>
+
+        <div id="float-tools" class="glass-panel rounded-2xl p-3 glow-cyan">
+          <div id="float-head" class="flex items-center justify-between cursor-move select-none">
+            <span id="float-title" class="text-xs font-bold text-cyan-300 tracking-wide" data-i18n="view_tools"></span>
+            <button onclick="toggleFloatTools()" class="w-8 h-8 rounded-lg bg-slate-800 text-cyan-400 flex items-center justify-center hover:bg-slate-700" title="Minimize">
+              <i id="float-min-icon" class="fa-solid fa-minus"></i>
+            </button>
+          </div>
+          <div id="float-body" class="mt-3 grid grid-cols-3 gap-2">
+            <button class="btn-lab btn-hold py-2" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
+            <button class="btn-lab btn-hold py-2" onclick="zoomBy(1/1.2)" title="−"><i class="fa-solid fa-minus"></i></button>
+            <button class="btn-lab btn-hold py-2" onclick="fitView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="w-full xl:w-[280px] shrink-0 flex flex-col gap-3 overflow-y-auto">
+      <section class="glass-card rounded-2xl p-4 space-y-3">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-gauge-high"></i><span data-i18n="live"></span>
+        </h2>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span class="text-slate-400">V<sub>c</sub></span><span class="num text-cyan-300" id="m-vc">0.00 V</span></div>
+          <div class="meter-bar"><span id="bar-vc"></span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span class="text-slate-400">Q</span><span class="num text-cyan-300" id="m-q">0.00 mC</span></div>
+          <div class="meter-bar"><span id="bar-q"></span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span class="text-slate-400">I</span><span class="num text-amber-300" id="m-i">0.00 mA</span></div>
+          <div class="meter-bar"><span id="bar-i" style="background:linear-gradient(90deg,#f59e0b,#ef4444)"></span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span class="text-slate-400">E</span><span class="num text-fuchsia-300" id="m-e">0.00 mJ</span></div>
+          <div class="meter-bar"><span id="bar-e" style="background:linear-gradient(90deg,#a855f7,#22d3ee)"></span></div>
+        </div>
+      </section>
+      <section class="glass-card rounded-2xl p-4 space-y-2">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-square-root-variable"></i><span data-i18n="formulas"></span>
+        </h2>
+        <div class="glass-panel rounded-xl p-3 text-sm">
+          <div class="text-slate-400 text-xs mb-1">Q = C V</div>
+          <div class="num text-cyan-200" id="f-q">Q = (1000 µF)(0.00 V) = 0.00 mC</div>
+        </div>
+        <div class="glass-panel rounded-xl p-3 text-sm">
+          <div class="text-slate-400 text-xs mb-1">E = ½ C V²</div>
+          <div class="num text-fuchsia-200" id="f-e">E = 0.00 mJ</div>
+        </div>
+        <p class="text-xs text-slate-500" data-i18n="formula_hint"></p>
+      </section>
+    </aside>
+  </main>
+
+  <main id="view-quiz" class="hidden flex-1 min-h-0 overflow-y-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto glass-card rounded-2xl p-6 md:p-8">
+      <div class="flex items-center justify-between gap-3 mb-6">
+        <h2 class="text-xl font-bold text-cyan-400" data-i18n="quiz_title"></h2>
+        <div class="text-sm text-slate-400"><span id="quiz-progress" class="num">1 / 5</span></div>
+      </div>
+      <div id="quiz-body"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const LANG = {
+  en: {
+    topic: "Capacitor — Charge, Field & Energy",
+    intro_topic: "CAPACITOR",
+    tab_sim: "Simulation",
+    tab_quiz: "Quiz",
+    controls: "Experiment controls",
+    systems: "Choose a lab system",
+    sys_charge: "Charging system",
+    sys_discharge: "Discharging system",
+    sys_acdc: "AC vs DC",
+    src_dc: "DC source",
+    src_ac: "AC source",
+    vbat: "Battery voltage",
+    vpeak: "Peak voltage",
+    res: "Resistance",
+    cap: "Capacitance",
+    freq: "AC frequency",
+    btn_sw_on: "Switch ON",
+    btn_sw_off: "Switch OFF",
+    btn_reset: "Reset",
+    tau_hint: "Larger τ = R C means slower filling or emptying.",
+    story_charge_t: "Practical: charging a camera flash",
+    story_charge: "A photographer connects the flash capacitor to a DC battery. The switch must sit on the BATTERY contact. Electrons pile onto one plate, the electric field grows, and voltage climbs toward the battery. After a few time-constants the flash is “ready”. Because this is DC, current then almost stops — a charged capacitor behaves like an open circuit.",
+    story_discharge_t: "Practical: firing the flash",
+    story_discharge: "This is a different circuit. The switch leaves the battery and locks onto the LAMP contact. The battery is out of the loop. The capacitor alone dumps its stored energy into the bulb — a bright burst, then darkness. A capacitor is not a torch battery; it only holds a short pulse.",
+    story_dc_t: "Practical: DC in the mains adaptor / battery pack",
+    story_dc: "Steady DC is a one-way push. The capacitor fills like a tank. When Vc equals the source, the voltage across the resistor is zero, so current is zero. That is why capacitors block DC — used so a wrong DC bias cannot wander into the next stage.",
+    story_ac_t: "Practical: AC coupling / the “passing” capacitor",
+    story_ac: "AC keeps reversing, like pushing water back and forth. The plates never stay full. Charge rushes in, then out, every half-cycle, so current keeps flowing. Capacitors pass AC. Radios and amplifiers use this to send the sound signal while blocking the DC bias.",
+    obs_idle: "Switch is OFF (open). No path — charge on the plates stays put.",
+    obs_charging: "Switch ON to the battery. Current is large at first; Vc is catching up.",
+    obs_full: "Flash ready: Vc ≈ battery, I ≈ 0. In DC the capacitor has blocked further current.",
+    obs_discharge: "Switch ON to the lamp. Battery isolated. The burst is brightest at the first instant.",
+    obs_empty: "Burst over. Field collapsed, lamp dark. Charge the charging system again to refill.",
+    obs_hold: "Switch open. Energy stays stored until a path exists.",
+    obs_ac: "Watch polarity flip: field arrows reverse and current never settles to zero.",
+    obs_dc_block: "DC path is complete, but after charging the current has died. DC is blocked.",
+    banner_charge: "CHARGING LAB  ·  switch on BATTERY contact",
+    banner_discharge: "DISCHARGING LAB  ·  switch on LAMP contact  ·  battery isolated",
+    banner_dc: "DC SOURCE  ·  fills, then blocks",
+    banner_ac: "AC SOURCE  ·  polarity flips  ·  current continues",
+    sw_bat: "to battery",
+    sw_lamp: "to lamp",
+    sw_open: "OPEN",
+    isolated: "isolated",
+    acsrc: "AC SOURCE",
+    live: "Live meters",
+    formulas: "Living formulae",
+    formula_hint: "Raise V: energy grows with V². Raise C: more charge stored.",
+    view_tools: "Zoom & pan",
+    quiz_title: "Concept check",
+    restart: "Restart quiz",
+    score: "Final score",
+    explain: "Why",
+    next: "Next question",
+    bat: "BATTERY",
+    sw: "SWITCH",
+    rlab: "RESISTOR",
+    clab: "CAPACITOR",
+    lamp: "LAMP",
+    graph_v: "Voltage vs time",
+    graph_i: "Current vs time",
+    efield: "Electric field",
+    electrons: "Electrons",
+    pos: "positive plate",
+    neg: "negative plate",
+    anno: "Annotation",
+    pen: "Pen",
+    eraser: "Eraser",
+    clear: "Clear all",
+    fs: "Fullscreen",
+    q: [
+      {
+        q: "After a capacitor is fully charged in a DC circuit, the current through it is…",
+        a: ["As large as at the first instant", "Almost zero", "Equal to the battery voltage", "Infinite"],
+        c: 1,
+        e: "As Vc approaches the battery voltage, the voltage across the resistor vanishes, so I = (Vbat − Vc)/R → 0. The capacitor then blocks steady DC."
+      },
+      {
+        q: "If capacitance C is doubled while the voltage on the plates stays the same, the stored charge Q…",
+        a: ["Halves", "Stays the same", "Doubles", "Becomes four times larger"],
+        c: 2,
+        e: "Q = C V. With V fixed, doubling C doubles the charge the plates can hold."
+      },
+      {
+        q: "Stored energy is E = ½ C V². If voltage is doubled (C unchanged), energy…",
+        a: ["Doubles", "Halves", "Becomes four times larger", "Does not change"],
+        c: 2,
+        e: "Energy depends on V squared. Double V and E becomes 4×. That is why the energy meter races faster than the voltage meter."
+      },
+      {
+        q: "Increasing resistance R in this RC circuit…",
+        a: ["Makes charging faster", "Makes charging slower", "Raises the final voltage", "Lowers the final charge"],
+        c: 1,
+        e: "The time constant is τ = R C. Larger R means a larger τ, so Vc climbs more slowly. The final voltage is still the battery voltage."
+      },
+      {
+        q: "In a real circuit a capacitor typically…",
+        a: ["Blocks AC and passes DC", "Blocks DC and passes AC", "Blocks both AC and DC", "Passes both equally once charged"],
+        c: 1,
+        e: "In DC the capacitor fills and current falls to zero (open circuit). In AC the polarity keeps reversing so charge never settles and current continues — that is AC coupling."
+      }
+    ]
+  },
+  ur: {
+    topic: "برق گیر — بار، میدان اور توانائی",
+    intro_topic: "برق گیر",
+    tab_sim: "مشابہت",
+    tab_quiz: "کوئز",
+    controls: "تجرباتی کنٹرول",
+    systems: "لیب نظام چنیں",
+    sys_charge: "چارجنگ نظام",
+    sys_discharge: "ڈسچارج نظام",
+    sys_acdc: "AC بمقابلہ DC",
+    src_dc: "DC منبع",
+    src_ac: "AC منبع",
+    vbat: "بیٹری وولٹیج",
+    vpeak: "چوٹی وولٹیج",
+    res: "مزاحمت",
+    cap: "گنجائش",
+    freq: "AC تعدد",
+    btn_sw_on: "سوئچ آن",
+    btn_sw_off: "سوئچ آف",
+    btn_reset: "ازسرنو",
+    tau_hint: "بڑا τ = R C بھرنے یا خالی ہونے کو سست کر دیتا ہے۔",
+    story_charge_t: "عملی مثال: کیمرہ فلیش چارج کرنا",
+    story_charge: "فوٹوگرافر فلیش کے برق گیر کو DC بیٹری سے جوڑتا ہے۔ سوئچ بیٹری کے کانٹیکٹ پر ہونا چاہیے۔ الیکٹران ایک پلیٹ پر جمع ہوتے ہیں، میدان بڑھتا ہے، وولٹیج بیٹری تک چڑھتی ہے۔ چند وقتی مستقل بعد فلیش تیار ہے۔ یہ DC ہے اس لیے رو تقریباً رک جاتی ہے — چارج شدہ برق گیر کھلے سرکٹ جیسا برتاؤ کرتا ہے۔",
+    story_discharge_t: "عملی مثال: فلیش چلانا",
+    story_discharge: "یہ الگ سرکٹ ہے۔ سوئچ بیٹری چھوڑ کر بلب کے کانٹیکٹ پر لگتا ہے۔ بیٹری لوپ سے باہر ہے۔ صرف برق گیر بلب میں توانائی ڈالتا ہے — تیز چمک، پھر اندھیرا۔ برق گیر ٹارچ کی بیٹری نہیں؛ صرف مختصر دھماکہ رکھتا ہے۔",
+    story_dc_t: "عملی مثال: DC بیٹری / اڈاپٹر",
+    story_dc: "مستقل DC ایک طرفہ دھکا ہے۔ برق گیر ٹینکی کی طرح بھرتا ہے۔ جب Vc منبع جتنی ہو، ریزسٹر پر وولٹیج صفر، رو صفر۔ اسی لیے برق گیر DC روکتا ہے تاکہ غلط DC بائیس اگلی سٹیج میں نہ جائے۔",
+    story_ac_t: "عملی مثال: AC کپلنگ",
+    story_ac: "AC پلٹتا رہتا ہے، جیسے پانی آگے پیچھے۔ پلیٹیں کبھی بھری نہیں رہتیں۔ ہر نصف چکر بار اندر باہر ہوتا ہے اس لیے رو جاری رہتی ہے۔ برق گیر AC گزارتا ہے۔ ریڈیو اور ایمپلیفائر آواز کی سگنل بھیجتے ہیں اور DC بائیس روکتے ہیں۔",
+    obs_idle: "سوئچ آف (کھلا) ہے۔ کوئی راستہ نہیں — پلیٹوں پر بار ٹھہرا رہتا ہے۔",
+    obs_charging: "سوئچ بیٹری پر آن ہے۔ شروع میں رو زیادہ؛ Vc بیٹری کا پیچھا کر رہی ہے۔",
+    obs_full: "فلیش تیار: Vc ≈ بیٹری، I ≈ 0۔ DC میں برق گیر نے مزید رو روک دی۔",
+    obs_discharge: "سوئچ بلب پر آن۔ بیٹری الگ۔ چمک پہلے لمحے سب سے تیز۔",
+    obs_empty: "دھماکہ ختم۔ میدان گرا، بلب بجھا۔ دوبارہ بھرنے کے لیے چارجنگ نظام کھولیں۔",
+    obs_hold: "سوئچ کھلا۔ توانائی تب تک ذخیرہ رہتی ہے جب تک راستہ نہ بنے۔",
+    obs_ac: "قطبیت پلٹتی ہے: میدان کے تیر الٹتے ہیں اور رو صفر پر نہیں ٹھہرتی۔",
+    obs_dc_block: "DC راستہ مکمل ہے، مگر چارج کے بعد رو مر چکی ہے۔ DC رک گئی۔",
+    banner_charge: "چارجنگ لیب  ·  سوئچ بیٹری کانٹیکٹ پر",
+    banner_discharge: "ڈسچارج لیب  ·  سوئچ بلب کانٹیکٹ پر  ·  بیٹری الگ",
+    banner_dc: "DC منبع  ·  بھرتا ہے، پھر روکتا ہے",
+    banner_ac: "AC منبع  ·  قطبیت پلٹتی ہے  ·  رو جاری رہتی ہے",
+    sw_bat: "بیٹری کی طرف",
+    sw_lamp: "بلب کی طرف",
+    sw_open: "کھلا",
+    isolated: "الگ",
+    acsrc: "AC منبع",
+    live: "براہِ راست پیمائش",
+    formulas: "زندہ کلیے",
+    formula_hint: "وولٹیج بڑھائیں: توانائی V² سے بڑھتی ہے۔ گنجائش بڑھائیں: زیادہ بار ذخیرہ ہوتا ہے۔",
+    view_tools: "زوم اور پین",
+    quiz_title: "تصوری جانچ",
+    restart: "کوئز دوبارہ شروع کریں",
+    score: "حتمی اسکور",
+    explain: "وجہ",
+    next: "اگلا سوال",
+    bat: "بیٹری",
+    sw: "سوئچ",
+    rlab: "ریزسٹر",
+    clab: "برق گیر",
+    lamp: "بلب",
+    graph_v: "وولٹیج بمقابلہ وقت",
+    graph_i: "برقی رو بمقابلہ وقت",
+    efield: "برقی میدان",
+    electrons: "الیکٹران",
+    pos: "مثبت پلیٹ",
+    neg: "منفی پلیٹ",
+    anno: "تشریح",
+    pen: "قلم",
+    eraser: "مٹانے والا",
+    clear: "سب صاف",
+    fs: "پوری اسکرین",
+    q: [
+      {
+        q: "ڈی سی سرکٹ میں برق گیر مکمل چارج ہونے کے بعد اس میں برقی رو…",
+        a: ["پہلے لمحے جتنی زیادہ ہوتی ہے", "تقریباً صفر ہو جاتی ہے", "بیٹری وولٹیج کے برابر ہوتی ہے", "لامحدود ہو جاتی ہے"],
+        c: 1,
+        e: "جب Vc بیٹری وولٹیج کے قریب پہنچتی ہے تو ریزسٹر پر وولٹیج ختم ہو جاتی ہے، اس لیے I = (Vbat − Vc)/R → 0۔ پھر برق گیر مستقل ڈی سی رو روک دیتا ہے۔"
+      },
+      {
+        q: "اگر پلیٹوں کی وولٹیج وہی رہے اور گنجائش C دوگنی کر دی جائے تو ذخیرہ شدہ بار Q…",
+        a: ["آدھا ہو جاتا ہے", "وہی رہتا ہے", "دوگنا ہو جاتا ہے", "چار گنا ہو جاتا ہے"],
+        c: 2,
+        e: "Q = C V۔ وولٹیج مقرر ہو تو C دوگنی کرنے سے بار بھی دوگنا ہو جاتا ہے۔"
+      },
+      {
+        q: "ذخیرہ شدہ توانائی E = ½ C V² ہے۔ اگر وولٹیج دوگنی ہو (C وہی) تو توانائی…",
+        a: ["دوگنی ہو جاتی ہے", "آدھی ہو جاتی ہے", "چار گنا ہو جاتی ہے", "تبدیل نہیں ہوتی"],
+        c: 2,
+        e: "توانائی وولٹیج کے مربع پر منحصر ہے۔ V دوگنی ہو تو E چار گنا۔ اسی لیے توانائی میٹر وولٹیج سے تیز دوڑتا ہے۔"
+      },
+      {
+        q: "اس RC سرکٹ میں مزاحمت R بڑھانے سے…",
+        a: ["چارج تیز ہو جاتا ہے", "چارج سست ہو جاتا ہے", "حتمی وولٹیج بڑھ جاتی ہے", "حتمی بار کم ہو جاتا ہے"],
+        c: 1,
+        e: "وقتی مستقل τ = R C ہے۔ بڑی R سے τ بڑا ہوتا ہے اس لیے Vc آہستہ چڑھتی ہے۔ حتمی وولٹیج پھر بھی بیٹری وولٹیج ہی رہتی ہے۔"
+      },
+      {
+        q: "حقیقی سرکٹ میں برق گیر عموماً…",
+        a: ["AC روکتا ہے اور DC گزارتا ہے", "DC روکتا ہے اور AC گزارتا ہے", "AC اور DC دونوں روکتا ہے", "چارج کے بعد دونوں برابر گزارتا ہے"],
+        c: 1,
+        e: "DC میں برق گیر بھر جاتا ہے اور رو صفر ہو جاتی ہے (کھلا سرکٹ)۔ AC میں قطبیت پلٹتی رہتی ہے اس لیے بار ٹھہرتا نہیں اور رو جاری رہتی ہے — یہی AC کپلنگ ہے۔"
+      }
+    ]
+  }
+};
+
+let cur = localStorage.getItem('iqra-vl-lang') || 'en';
+const T = (k) => (LANG[cur] && LANG[cur][k] != null) ? LANG[cur][k] : k;
+
+const sim = {
+  Vbat: 9,
+  R: 1000,
+  C: 1000e-6,
+  f: 0.8,
+  Q: 0,
+  Vc: 0,
+  I: 0,
+  Vac: 0,
+  system: 'charge',
+  sw: 'closed',
+  source: 'dc',
+  t: 0,
+  hist: [],
+  electrons: [],
+  lastTs: 0
+};
+
+const view = { scale: 1, x: 0, y: 0, min: 0.45, max: 2.8, panning: false, px: 0, py: 0, vx: 0, vy: 0 };
+
+const WORLD_W = 1200, WORLD_H = 720;
+const CAP = { Lx: 702, Rx: 818, top: 198, bot: 402 };
+
+function metaFrom(pts) {
+  const segs = [];
+  let L = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const d = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    segs.push({ i, d, acc: L + d, a: pts[i - 1], b: pts[i] });
+    L += d;
+  }
+  return { pts, L, segs };
+}
+
+function activePath() {
+  if (sim.system === 'discharge') {
+    return metaFrom([
+      { x: 210, y: 168 }, { x: 330, y: 168 }, { x: 470, y: 168 }, { x: 620, y: 168 },
+      { x: 818, y: 168 }, { x: 818, y: 198 }, { x: 702, y: 402 }, { x: 702, y: 432 },
+      { x: 210, y: 432 }, { x: 210, y: 168 }
+    ]);
+  }
+  return metaFrom([
+    { x: 118, y: 168 }, { x: 260, y: 168 }, { x: 330, y: 168 }, { x: 470, y: 168 },
+    { x: 620, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }, { x: 702, y: 402 },
+    { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 168 }
+  ]);
+}
+
+let pathMeta = activePath();
+let canvas, ctx, dpr = 1;
+
+function applyLanguage() {
+  const html = document.documentElement;
+  html.lang = cur === 'ur' ? 'ur' : 'en';
+  html.dir = cur === 'ur' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (LANG[cur][k] != null) el.textContent = LANG[cur][k];
+  });
+  const intro = document.getElementById('intro-topic');
+  if (intro) intro.textContent = T('intro_topic');
+  const titles = {
+    'btn-anno-toggle': T('anno'),
+    'anno-pen': T('pen'),
+    'anno-eraser': T('eraser'),
+    'fs-icon': T('fs')
+  };
+  Object.keys(titles).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.closest('button')) el.closest('button').title = titles[id];
+  });
+  refreshStory();
+  if (document.getElementById('view-quiz').classList.contains('hidden') === false) renderQuiz();
+}
+
+function changeLanguage(l) {
+  if (l !== 'en' && l !== 'ur') return;
+  cur = l;
+  localStorage.setItem('iqra-vl-lang', cur);
+  document.getElementById('lang-select').value = cur;
+  applyLanguage();
+}
+
+function refreshStory() {
+  let tk = 'story_charge_t', sk = 'story_charge';
+  if (sim.system === 'discharge') { tk = 'story_discharge_t'; sk = 'story_discharge'; }
+  if (sim.system === 'acdc') {
+    if (sim.source === 'ac') { tk = 'story_ac_t'; sk = 'story_ac'; }
+    else { tk = 'story_dc_t'; sk = 'story_dc'; }
+  }
+  document.getElementById('story-title').textContent = T(tk);
+  document.getElementById('story-text').textContent = T(sk);
+  document.getElementById('obs-text').textContent = T(observationKey());
+  const vname = document.getElementById('lbl-vname');
+  if (vname) vname.textContent = (sim.system === 'acdc' && sim.source === 'ac') ? T('vpeak') : T('vbat');
+}
+
+function observationKey() {
+  if (sim.sw !== 'closed') return Math.abs(sim.Q) > 2e-6 ? 'obs_hold' : 'obs_idle';
+  if (sim.system === 'discharge') {
+    if (Math.abs(sim.I) < 0.0004 && Math.abs(sim.Vc) < 0.08) return 'obs_empty';
+    return 'obs_discharge';
+  }
+  if (sim.system === 'acdc' && sim.source === 'ac') return 'obs_ac';
+  if (Math.abs(sim.I) < 0.0005 && Math.abs(sim.Vc - sim.Vbat) < 0.08) return sim.system === 'acdc' ? 'obs_dc_block' : 'obs_full';
+  return 'obs_charging';
+}
+
+function syncSysButtons() {
+  ['charge', 'discharge', 'acdc'].forEach(s => {
+    document.getElementById('sys-' + s).classList.toggle('btn-on', sim.system === s);
+  });
+  document.getElementById('acdc-toggle').classList.toggle('hidden', sim.system !== 'acdc');
+  document.getElementById('freq-wrap').classList.toggle('hidden', !(sim.system === 'acdc' && sim.source === 'ac'));
+  document.getElementById('btn-dc')?.classList.toggle('btn-on', sim.source === 'dc');
+  document.getElementById('btn-ac')?.classList.toggle('btn-on', sim.source === 'ac');
+  document.getElementById('btn-charge').classList.toggle('btn-on', sim.sw === 'closed');
+  document.getElementById('btn-hold').classList.toggle('btn-on', sim.sw !== 'closed');
+}
+
+function setSystem(s) {
+  const prev = sim.system;
+  sim.system = s;
+  sim.sw = 'closed';
+  sim.hist = [];
+  if (s === 'discharge') {
+    if (Math.abs(sim.Q) < sim.C * sim.Vbat * 0.15) {
+      sim.Vc = sim.Vbat;
+      sim.Q = sim.C * sim.Vc;
+    }
+    sim.source = 'dc';
+  } else if (s === 'charge') {
+    sim.source = 'dc';
+    if (prev === 'discharge' && Math.abs(sim.Vc) < 0.2) {
+      sim.Q = 0; sim.Vc = 0;
+    }
+  } else {
+    if (sim.source !== 'ac') sim.source = 'dc';
+    if (sim.source === 'dc') { sim.Q = 0; sim.Vc = 0; }
+  }
+  pathMeta = activePath();
+  initElectrons();
+  syncSysButtons();
+  refreshStory();
+}
+
+function setSource(src) {
+  sim.source = src;
+  sim.sw = 'closed';
+  sim.hist = [];
+  if (src === 'dc') { sim.Q = 0; sim.Vc = 0; sim.I = 0; }
+  syncSysButtons();
+  refreshStory();
+  onParamChange();
+}
+
+function setSwitch(pos) {
+  sim.sw = pos;
+  syncSysButtons();
+  refreshStory();
+}
+
+function resetSim() {
+  sim.Q = 0;
+  sim.Vc = 0;
+  sim.I = 0;
+  sim.t = 0;
+  sim.hist = [];
+  if (sim.system === 'discharge') {
+    sim.Vc = sim.Vbat;
+    sim.Q = sim.C * sim.Vc;
+  }
+  sim.sw = sim.system === 'acdc' ? 'closed' : 'open';
+  if (sim.system === 'charge' || sim.system === 'discharge') sim.sw = 'open';
+  pathMeta = activePath();
+  initElectrons();
+  syncSysButtons();
+  refreshStory();
+}
+
+function onParamChange() {
+  const oldC = sim.C;
+  sim.Vbat = parseFloat(document.getElementById('rng-v').value);
+  sim.R = parseFloat(document.getElementById('rng-r').value);
+  const uF = parseFloat(document.getElementById('rng-c').value);
+  sim.C = uF * 1e-6;
+  sim.f = parseFloat(document.getElementById('rng-f').value);
+  if (oldC > 0 && sim.sw !== 'closed') sim.Vc = sim.Q / sim.C;
+  document.getElementById('lbl-v').textContent = sim.Vbat.toFixed(1) + ' V';
+  document.getElementById('lbl-r').textContent = Math.round(sim.R) + ' Ω';
+  document.getElementById('lbl-c').textContent = Math.round(uF) + ' µF';
+  document.getElementById('lbl-f').textContent = sim.f.toFixed(2) + ' Hz';
+  document.getElementById('lbl-tau').textContent = (sim.R * sim.C).toFixed(2) + ' s';
+  refreshStory();
+}
+
+function stepPhysics(dt) {
+  dt = Math.min(dt, 0.05);
+  const closed = sim.sw === 'closed';
+  if (sim.system === 'acdc' && sim.source === 'ac' && closed) {
+    sim.Vac = sim.Vbat * Math.sin(2 * Math.PI * sim.f * sim.t);
+    sim.I = (sim.Vac - sim.Vc) / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+  } else if (closed && sim.system === 'discharge') {
+    sim.Vac = 0;
+    sim.I = -sim.Vc / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+    if (Math.abs(sim.Q) < 1e-9) { sim.Q = 0; sim.Vc = 0; sim.I = 0; }
+  } else if (closed && (sim.system === 'charge' || (sim.system === 'acdc' && sim.source === 'dc'))) {
+    sim.Vac = sim.Vbat;
+    sim.I = (sim.Vbat - sim.Vc) / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+  } else {
+    sim.I = 0;
+    if (!(sim.system === 'acdc' && sim.source === 'ac')) sim.Vac = 0;
+  }
+  sim.t += dt;
+  if (sim.hist.length === 0 || sim.t - sim.hist[sim.hist.length - 1].t > 0.016) {
+    sim.hist.push({ t: sim.t, v: sim.Vc, i: sim.I, vs: sim.Vac });
+    if (sim.hist.length > 520) sim.hist.shift();
+  }
+}
+
+function pointOnPath(s, meta) {
+  const M = meta || pathMeta;
+  if (!M.L) return { x: 0, y: 0 };
+  s = ((s % M.L) + M.L) % M.L;
+  let prev = 0;
+  for (const seg of M.segs) {
+    if (s <= seg.acc) {
+      const u = seg.d ? (s - prev) / seg.d : 0;
+      return { x: seg.a.x + (seg.b.x - seg.a.x) * u, y: seg.a.y + (seg.b.y - seg.a.y) * u };
+    }
+    prev = seg.acc;
+  }
+  return { ...M.pts[0] };
+}
+
+function initElectrons() {
+  pathMeta = activePath();
+  sim.electrons = [];
+  const n = 26;
+  for (let i = 0; i < n; i++) sim.electrons.push({ s: (i / n) * (pathMeta.L || 1) });
+}
+
+function switchTab(name) {
+  const simV = document.getElementById('view-sim');
+  const quizV = document.getElementById('view-quiz');
+  document.getElementById('tab-sim').classList.toggle('active', name === 'sim');
+  document.getElementById('tab-quiz').classList.toggle('active', name === 'quiz');
+  if (name === 'sim') {
+    simV.classList.remove('hidden');
+    simV.classList.add('flex');
+    quizV.classList.add('hidden');
+    quizV.classList.remove('flex');
+    requestAnimationFrame(() => { fitView(); resizeAnno(); });
+  } else {
+    simV.classList.add('hidden');
+    simV.classList.remove('flex');
+    quizV.classList.remove('hidden');
+    quizV.classList.add('flex');
+    renderQuiz();
+  }
+}
+
+function toggleFullScreen() {
+  const root = document.documentElement;
+  if (!document.fullscreenElement) {
+    (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const ic = document.getElementById('fs-icon');
+  ic.className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+  setTimeout(() => { fitView(); resizeAnno(); }, 80);
+});
+
+function updateMeters() {
+  const Imax = sim.Vbat / sim.R;
+  const Qmax = sim.C * 12;
+  const E = 0.5 * sim.C * sim.Vc * sim.Vc;
+  const Emax = 0.5 * sim.C * 12 * 12;
+  document.getElementById('m-vc').textContent = sim.Vc.toFixed(2) + ' V';
+  document.getElementById('m-q').textContent = (sim.Q * 1000).toFixed(2) + ' mC';
+  document.getElementById('m-i').textContent = (sim.I * 1000).toFixed(2) + ' mA';
+  document.getElementById('m-e').textContent = (E * 1000).toFixed(2) + ' mJ';
+  document.getElementById('bar-vc').style.width = (Math.min(100, Math.abs(sim.Vc) / 12 * 100)) + '%';
+  document.getElementById('bar-q').style.width = (Math.min(100, Math.abs(sim.Q) / Qmax * 100)) + '%';
+  document.getElementById('bar-i').style.width = (Math.min(100, Math.abs(sim.I) / Math.max(Imax, 1e-9) * 100)) + '%';
+  document.getElementById('bar-e').style.width = (Math.min(100, E / Math.max(Emax, 1e-12) * 100)) + '%';
+  const uF = sim.C * 1e6;
+  document.getElementById('f-q').textContent =
+    'Q = (' + Math.round(uF) + ' µF)(' + sim.Vc.toFixed(2) + ' V) = ' + (sim.Q * 1000).toFixed(2) + ' mC';
+  document.getElementById('f-e').textContent =
+    'E = ½(' + Math.round(uF) + ' µF)(' + sim.Vc.toFixed(2) + ' V)² = ' + (E * 1000).toFixed(2) + ' mJ';
+  document.getElementById('obs-text').textContent = T(observationKey());
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function strokePath(points, live) {
+  const on = live && Math.abs(sim.I) > 0.0002;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = on ? '#22d3ee' : '#475569';
+  ctx.lineWidth = 5;
+  ctx.shadowColor = on ? 'rgba(0,243,255,0.45)' : 'transparent';
+  ctx.shadowBlur = on ? 12 : 0;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function drawBatteryAt(x, y, isolated) {
+  roundRect(x, y, 60, 190, 10);
+  ctx.fillStyle = 'rgba(15,23,42,0.9)';
+  ctx.fill();
+  ctx.strokeStyle = isolated ? '#64748b' : '#f59e0b';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = isolated ? '#94a3b8' : '#fbbf24';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('bat'), x + 30, y + 22);
+  ctx.fillStyle = '#f87171';
+  ctx.fillRect(x + 18, y + 40, 24, 8);
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(x + 22, y + 58, 16, 6);
+  ctx.fillStyle = '#f87171';
+  ctx.fillRect(x + 18, y + 78, 24, 8);
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(x + 22, y + 96, 16, 6);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '700 16px JetBrains Mono, monospace';
+  ctx.fillText(sim.Vbat.toFixed(1) + ' V', x + 30, y + 150);
+  ctx.fillStyle = '#86efac';
+  ctx.font = '700 14px Outfit, sans-serif';
+  ctx.fillText('+', x + 30, y + 36);
+  ctx.fillStyle = '#fca5a5';
+  ctx.fillText('−', x + 30, y + 178);
+  if (isolated) {
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y + 28);
+    ctx.lineTo(x + 52, y + 172);
+    ctx.moveTo(x + 52, y + 28);
+    ctx.lineTo(x + 8, y + 172);
+    ctx.stroke();
+    ctx.fillStyle = '#fca5a5';
+    ctx.font = '700 11px Outfit, sans-serif';
+    ctx.fillText(T('isolated'), x + 30, y + 204);
+  }
+}
+
+function drawACSource(x, y) {
+  ctx.beginPath();
+  ctx.arc(x + 30, y + 95, 42, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(15,23,42,0.92)';
+  ctx.fill();
+  ctx.strokeStyle = '#a855f7';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.strokeStyle = '#e879f9';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(x + 8, y + 95);
+  for (let i = 0; i <= 40; i++) {
+    const px = x + 8 + i * 1.1;
+    const py = y + 95 - Math.sin(i / 40 * Math.PI * 2) * 14;
+    ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#e9d5ff';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('acsrc'), x + 30, y + 22);
+  ctx.font = '700 14px JetBrains Mono, monospace';
+  ctx.fillStyle = '#f5d0fe';
+  ctx.fillText(sim.Vac.toFixed(1) + ' V', x + 30, y + 160);
+}
+
+function drawSPDT(kind) {
+  const pivot = { x: 250, y: 168 };
+  const batC = { x: 250, y: 118 };
+  const lampC = { x: 250, y: 218 };
+  const common = { x: 330, y: 168 };
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('sw'), pivot.x + 20, 86);
+
+  const contact = (p, label, active) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = active ? '#22d3ee' : '#1e293b';
+    ctx.fill();
+    ctx.strokeStyle = active ? '#67e8f9' : '#64748b';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = active ? '#a5f3fc' : '#64748b';
+    ctx.font = '600 10px Outfit, sans-serif';
+    ctx.fillText(label, p.x - 48, p.y + 4);
+  };
+
+  let target = null;
+  if (sim.sw === 'closed') {
+    if (kind === 'charge' || kind === 'dc' || kind === 'ac') target = batC;
+    if (kind === 'discharge') target = lampC;
+  }
+
+  contact(batC, kind === 'discharge' ? T('isolated') : T('sw_bat'), target === batC);
+  contact(lampC, kind === 'charge' || kind === 'dc' || kind === 'ac' ? T('sw_open') : T('sw_lamp'), target === lampC);
+  ctx.beginPath();
+  ctx.arc(pivot.x, pivot.y, 9, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.strokeStyle = target ? '#22d3ee' : '#64748b';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(pivot.x, pivot.y);
+  if (target) ctx.lineTo(target.x, target.y);
+  else ctx.lineTo(pivot.x + 36, pivot.y - 28);
+  ctx.stroke();
+
+  strokePath([{ x: pivot.x, y: pivot.y }, common], !!target);
+}
+
+function drawResistor() {
+  const x = 400, y = 168;
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  for (let i = 0; i < 6; i++) {
+    ctx.lineTo(x + 12 + i * 14, y + (i % 2 === 0 ? -16 : 16));
+  }
+  ctx.lineTo(x + 100, y);
+  ctx.stroke();
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('rlab') + '  ' + Math.round(sim.R) + ' Ω', x + 50, y - 28);
+}
+
+function drawLampAt(x, y, lit) {
+  const Imax = sim.Vbat / Math.max(sim.R, 1);
+  const b = lit ? Math.min(1, Math.abs(sim.I) / Math.max(Imax, 1e-9)) : 0;
+  ctx.beginPath();
+  ctx.arc(x, y, 18, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(251, 191, 36, ${0.08 + b * 0.55})`;
+  ctx.shadowColor = `rgba(251, 191, 36, ${b})`;
+  ctx.shadowBlur = 8 + b * 28;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = lit ? '#fbbf24' : '#64748b';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x - 8, y - 8);
+  ctx.lineTo(x + 8, y + 8);
+  ctx.moveTo(x + 8, y - 8);
+  ctx.lineTo(x - 8, y + 8);
+  ctx.stroke();
+  ctx.fillStyle = lit ? '#fde68a' : '#64748b';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('lamp'), x, y - 30);
+}
+
+function drawCapacitor() {
+  const { Lx, Rx, top, bot } = CAP;
+  const field = Math.min(1, Math.abs(sim.Vc) / Math.max(sim.Vbat, 0.01));
+  ctx.fillStyle = '#cbd5e1';
+  roundRect(Lx - 10, top, 14, bot - top, 3);
+  ctx.fill();
+  roundRect(Rx - 4, top, 14, bot - top, 3);
+  ctx.fill();
+  const n = 7;
+  for (let i = 0; i < n; i++) {
+    const yy = top + 18 + i * ((bot - top - 36) / (n - 1));
+    ctx.strokeStyle = `rgba(250, 204, 21, ${0.15 + field * 0.75})`;
+    ctx.lineWidth = 1.5 + field * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(Lx + 12, yy);
+    ctx.lineTo(Rx - 12, yy);
+    ctx.stroke();
+    const dir = sim.Vc >= 0 ? 1 : -1;
+    const ax = dir > 0 ? Rx - 18 : Lx + 18;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.25 + field * 0.7})`;
+    ctx.beginPath();
+    if (dir > 0) {
+      ctx.moveTo(ax, yy);
+      ctx.lineTo(ax - 8, yy - 4);
+      ctx.lineTo(ax - 8, yy + 4);
+    } else {
+      ctx.moveTo(ax, yy);
+      ctx.lineTo(ax + 8, yy - 4);
+      ctx.lineTo(ax + 8, yy + 4);
+    }
+    ctx.fill();
+  }
+  const dots = Math.round(4 + Math.min(22, Math.abs(sim.Q) / Math.max(sim.C * sim.Vbat, 1e-9) * 22));
+  for (let i = 0; i < dots; i++) {
+    const yy = top + 16 + (i % 12) * 15;
+    const ox = Math.floor(i / 12) * 7;
+    ctx.fillStyle = sim.Vc >= 0 ? '#22d3ee' : '#f87171';
+    ctx.beginPath();
+    ctx.arc(Lx - 22 - ox, yy, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = sim.Vc >= 0 ? '#f87171' : '#22d3ee';
+    ctx.font = '700 14px Outfit, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(sim.Vc >= 0 ? '+' : '−', Rx + 22 + ox, yy + 5);
+  }
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '700 12px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('clab'), (Lx + Rx) / 2, top - 18);
+  ctx.fillStyle = '#7dd3fc';
+  ctx.font = '600 11px Outfit, sans-serif';
+  ctx.fillText(sim.Vc >= 0 ? T('neg') : T('pos'), Lx - 8, bot + 22);
+  ctx.fillStyle = '#fca5a5';
+  ctx.fillText(sim.Vc >= 0 ? T('pos') : T('neg'), Rx + 8, bot + 22);
+  ctx.fillStyle = '#fde68a';
+  ctx.fillText(T('efield'), (Lx + Rx) / 2, top + (bot - top) / 2 - 8);
+}
+
+function drawElectrons(dt) {
+  const speed = sim.I * 180000;
+  const moving = sim.sw === 'closed' && Math.abs(sim.I) > 0.00005;
+  ctx.fillStyle = '#22d3ee';
+  for (const e of sim.electrons) {
+    if (moving) e.s += -speed * dt;
+    const p = pointOnPath(e.s, pathMeta);
+    if (p.x > 690 && p.x < 830 && p.y > 190 && p.y < 410) continue;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawBanner(text) {
+  roundRect(40, 18, 1120, 36, 10);
+  ctx.fillStyle = 'rgba(15,23,42,0.82)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,243,255,0.25)';
+  ctx.stroke();
+  ctx.fillStyle = '#67e8f9';
+  ctx.font = '700 14px Outfit, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(text, 58, 42);
+}
+
+function drawGraph(x, y, w, h, key, color, label, ymin, ymax) {
+  roundRect(x, y, w, h, 12);
+  ctx.fillStyle = 'rgba(15,23,42,0.82)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.font = '700 12px Outfit, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(label, x + 12, y + 20);
+  if (sim.hist.length < 2) return;
+  const t0 = sim.hist[0].t;
+  const t1 = sim.hist[sim.hist.length - 1].t;
+  const span = Math.max(1.5, t1 - t0);
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  sim.hist.forEach((s, i) => {
+    const px = x + 10 + ((s.t - t0) / span) * (w - 20);
+    const py = y + h - 12 - ((s[key] - ymin) / (ymax - ymin || 1)) * (h - 32);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  });
+  ctx.stroke();
+}
+
+function drawChargeSystem() {
+  drawBanner(T('banner_charge'));
+  const live = sim.sw === 'closed';
+  strokePath([{ x: 118, y: 300 }, { x: 118, y: 168 }, { x: 250, y: 118 }], live);
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 400 }], live);
+  drawBatteryAt(88, 210, false);
+  drawSPDT('charge');
+  drawResistor();
+  drawCapacitor();
+}
+
+function drawDischargeSystem() {
+  drawBanner(T('banner_discharge'));
+  const live = sim.sw === 'closed';
+  drawBatteryAt(40, 210, true);
+  strokePath([{ x: 210, y: 218 }, { x: 210, y: 168 }, { x: 250, y: 218 }], live);
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 210, y: 432 }, { x: 210, y: 218 }], live);
+  drawSPDT('discharge');
+  drawLampAt(210, 168, live);
+  drawResistor();
+  drawCapacitor();
+}
+
+function drawACDCSystem() {
+  const ac = sim.source === 'ac';
+  drawBanner(ac ? T('banner_ac') : T('banner_dc'));
+  const live = sim.sw === 'closed';
+  if (ac) {
+    drawACSource(70, 200);
+    strokePath([{ x: 100, y: 253 }, { x: 100, y: 118 }, { x: 250, y: 118 }], live);
+    strokePath([{ x: 100, y: 337 }, { x: 100, y: 432 }, { x: 702, y: 432 }, { x: 702, y: 402 }], live);
+  } else {
+    drawBatteryAt(88, 210, false);
+    strokePath([{ x: 118, y: 300 }, { x: 118, y: 168 }, { x: 250, y: 118 }], live);
+    strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 400 }], live);
+  }
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  drawSPDT(ac ? 'ac' : 'dc');
+  drawResistor();
+  drawCapacitor();
+}
+
+function drawScene(dt) {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, WORLD_W, WORLD_H);
+  ctx.fillStyle = '#07101f';
+  ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+  if (sim.system === 'discharge') drawDischargeSystem();
+  else if (sim.system === 'acdc') drawACDCSystem();
+  else drawChargeSystem();
+  drawElectrons(dt);
+  const Imax = Math.max(sim.Vbat / sim.R, 0.002);
+  const vmax = sim.system === 'acdc' && sim.source === 'ac' ? sim.Vbat + 0.5 : sim.Vbat + 0.5;
+  const vmin = sim.system === 'acdc' && sim.source === 'ac' ? -sim.Vbat - 0.5 : -0.2;
+  drawGraph(40, 500, 540, 190, 'v', '#22d3ee', T('graph_v') + '   Vc', vmin, vmax);
+  drawGraph(620, 500, 540, 190, 'i', '#f59e0b', T('graph_i') + '   I', -Imax * 1.05, Imax * 1.05);
+}
+
+function loop(ts) {
+  if (!sim.lastTs) sim.lastTs = ts;
+  const dt = Math.min(0.05, (ts - sim.lastTs) / 1000);
+  sim.lastTs = ts;
+  stepPhysics(dt);
+  drawScene(dt);
+  updateMeters();
+  requestAnimationFrame(loop);
+}
+
+function applyView() {
+  document.getElementById('sim-world').style.transform =
+    `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+}
+
+function fitView() {
+  const vp = document.getElementById('sim-viewport');
+  if (!vp) return;
+  const r = vp.getBoundingClientRect();
+  if (r.width < 10 || r.height < 10) return;
+  view.scale = Math.min(r.width / WORLD_W, r.height / WORLD_H) * 0.98;
+  view.scale = Math.max(view.min, Math.min(view.max, view.scale));
+  view.x = (r.width - WORLD_W * view.scale) / 2;
+  view.y = (r.height - WORLD_H * view.scale) / 2;
+  applyView();
+}
+
+function zoomAt(cx, cy, factor) {
+  const vp = document.getElementById('sim-viewport').getBoundingClientRect();
+  const px = cx - vp.left, py = cy - vp.top;
+  const wx = (px - view.x) / view.scale;
+  const wy = (py - view.y) / view.scale;
+  view.scale = Math.max(view.min, Math.min(view.max, view.scale * factor));
+  view.x = px - wx * view.scale;
+  view.y = py - wy * view.scale;
+  applyView();
+}
+function zoomBy(f) {
+  const r = document.getElementById('sim-viewport').getBoundingClientRect();
+  zoomAt(r.left + r.width / 2, r.top + r.height / 2, f);
+}
+
+function setupPanZoom() {
+  const vp = document.getElementById('sim-viewport');
+  vp.addEventListener('wheel', (e) => {
+    if (isAnnoActive) return;
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+  }, { passive: false });
+
+  vp.addEventListener('pointerdown', (e) => {
+    if (isAnnoActive) return;
+    if (e.target.closest('#float-tools')) return;
+    const r = vp.getBoundingClientRect();
+    const wx = (e.clientX - r.left - view.x) / view.scale;
+    const wy = (e.clientY - r.top - view.y) / view.scale;
+    if (Math.hypot(wx - 250, wy - 168) < 55 || Math.hypot(wx - 250, wy - 118) < 22 || Math.hypot(wx - 250, wy - 218) < 22) {
+      setSwitch(sim.sw === 'closed' ? 'open' : 'closed');
+      return;
+    }
+    view.panning = true;
+    view.px = e.clientX; view.py = e.clientY;
+    view.vx = view.x; view.vy = view.y;
+    vp.setPointerCapture(e.pointerId);
+  });
+  vp.addEventListener('pointermove', (e) => {
+    if (!view.panning || isAnnoActive) return;
+    view.x = view.vx + (e.clientX - view.px);
+    view.y = view.vy + (e.clientY - view.py);
+    applyView();
+  });
+  vp.addEventListener('pointerup', () => { view.panning = false; });
+  vp.addEventListener('pointercancel', () => { view.panning = false; });
+
+  let pinch = 0;
+  vp.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  vp.addEventListener('touchmove', (e) => {
+    if (isAnnoActive || e.touches.length !== 2) return;
+    e.preventDefault();
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    if (pinch > 0) {
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      zoomAt(mx, my, d / pinch);
+    }
+    pinch = d;
+  }, { passive: false });
+}
+
+function toggleFloatTools() {
+  const el = document.getElementById('float-tools');
+  el.classList.toggle('collapsed');
+  const ic = document.getElementById('float-min-icon');
+  ic.className = el.classList.contains('collapsed') ? 'fa-solid fa-up-right-and-down-left-from-center' : 'fa-solid fa-minus';
+}
+
+function setupDragFloat() {
+  const el = document.getElementById('float-tools');
+  const head = document.getElementById('float-head');
+  let drag = false, ox = 0, oy = 0, sl = 0, st = 0;
+  head.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('button')) return;
+    drag = true;
+    const r = el.getBoundingClientRect();
+    const vp = document.getElementById('sim-viewport').getBoundingClientRect();
+    ox = e.clientX; oy = e.clientY;
+    sl = r.left - vp.left; st = r.top - vp.top;
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    el.style.left = (sl + e.clientX - ox) + 'px';
+    el.style.top = (st + e.clientY - oy) + 'px';
+    el.style.right = 'auto';
+  });
+  head.addEventListener('pointerup', () => { drag = false; });
+}
+
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+    fCanvas = new fabric.Canvas('fabricLayer', {
+        isDrawingMode: false,
+        width: w,
+        height: h
+    });
+    fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+    fCanvas.freeDrawingBrush.width = 4;
+
+    // Eraser logic via click
+    fCanvas.on('mouse:down', function(options) {
+        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+            fCanvas.remove(options.target);
+        }
+    });
+}
+
+function toggleAnnotationMode() {
+    isAnnoActive = !isAnnoActive;
+    const btn = document.getElementById('btn-anno-toggle');
+    const toolbar = document.getElementById('anno-toolbar');
+
+    // Assumes the container of the canvas has class/id handling pointer-events
+    const fabricContainer = document.querySelector('.canvas-container');
+
+    if (isAnnoActive) {
+        btn.classList.replace('text-slate-400', 'text-cyan-400');
+        toolbar.classList.remove('max-w-0', 'opacity-0');
+        toolbar.classList.add('max-w-xs', 'opacity-100');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+        setAnnoMode('pen');
+    } else {
+        btn.classList.replace('text-cyan-400', 'text-slate-400');
+        toolbar.classList.remove('max-w-xs', 'opacity-100');
+        toolbar.classList.add('max-w-0', 'opacity-0');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'none';
+        if (fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function setAnnoMode(mode) {
+    document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+    document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+
+    if (mode === 'pen') {
+        document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = true;
+    } else {
+        document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function changeAnnoColor(color) {
+    if(fCanvas) fCanvas.freeDrawingBrush.color = color;
+    setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+    if(fCanvas) fCanvas.clear();
+}
+
+function resizeAnno() {
+  const vp = document.getElementById('sim-viewport');
+  if (!vp || !fCanvas) return;
+  const r = vp.getBoundingClientRect();
+  fCanvas.setWidth(r.width);
+  fCanvas.setHeight(r.height);
+  fCanvas.renderAll();
+}
+
+const quizState = { i: 0, picked: null, score: 0, done: false };
+
+function renderQuiz() {
+  const box = document.getElementById('quiz-body');
+  const Q = LANG[cur].q;
+  if (quizState.done) {
+    const pct = Math.round((quizState.score / Q.length) * 100);
+    box.innerHTML = `
+      <div class="text-center py-6">
+        <div class="text-slate-400 mb-2">${T('score')}</div>
+        <div class="text-5xl font-extrabold text-cyan-300 num glow-cyan inline-block px-6 py-3 rounded-2xl">${quizState.score} / ${Q.length}</div>
+        <div class="text-2xl text-fuchsia-300 mt-4 num">${pct}%</div>
+        <button class="btn-lab btn-charge mt-8 px-6 py-3" onclick="restartQuiz()"><i class="fa-solid fa-rotate-right"></i><span>${T('restart')}</span></button>
+      </div>`;
+    document.getElementById('quiz-progress').textContent = Q.length + ' / ' + Q.length;
+    return;
+  }
+  const item = Q[quizState.i];
+  document.getElementById('quiz-progress').textContent = (quizState.i + 1) + ' / ' + Q.length;
+  const letters = ['A', 'B', 'C', 'D'];
+  box.innerHTML = `
+    <p class="text-lg md:text-xl font-semibold mb-5 leading-relaxed">${item.q}</p>
+    <div class="space-y-3" id="quiz-choices"></div>
+    <div id="quiz-explain" class="hidden mt-4 glass-panel rounded-xl p-4 text-sm text-slate-300"></div>
+    <div class="mt-5 flex justify-end">
+      <button id="quiz-next" class="btn-lab btn-charge hidden px-5 py-3" onclick="quizNext()">${T('next')}</button>
+    </div>`;
+  const wrap = document.getElementById('quiz-choices');
+  item.a.forEach((txt, idx) => {
+    const b = document.createElement('button');
+    b.className = 'quiz-choice w-full';
+    b.innerHTML = `<span class="num text-cyan-400 font-bold">${letters[idx]}</span><span>${txt}</span>`;
+    b.onclick = () => pickQuiz(idx);
+    wrap.appendChild(b);
+  });
+}
+
+function pickQuiz(idx) {
+  if (quizState.picked != null) return;
+  quizState.picked = idx;
+  const item = LANG[cur].q[quizState.i];
+  const choices = document.querySelectorAll('#quiz-choices .quiz-choice');
+  choices.forEach((el, i) => {
+    el.classList.add('disabled');
+    if (i === item.c) el.classList.add('correct');
+    if (i === idx && idx !== item.c) el.classList.add('wrong');
+  });
+  if (idx === item.c) quizState.score++;
+  const ex = document.getElementById('quiz-explain');
+  ex.classList.remove('hidden');
+  ex.innerHTML = `<span class="text-cyan-400 font-bold">${T('explain')}:</span> ${item.e}`;
+  const nxt = document.getElementById('quiz-next');
+  nxt.classList.remove('hidden');
+  if (quizState.i === LANG[cur].q.length - 1) nxt.textContent = T('score');
+}
+
+function quizNext() {
+  if (quizState.i >= LANG[cur].q.length - 1) {
+    quizState.done = true;
+  } else {
+    quizState.i++;
+    quizState.picked = null;
+  }
+  renderQuiz();
+}
+function restartQuiz() {
+  quizState.i = 0;
+  quizState.picked = null;
+  quizState.score = 0;
+  quizState.done = false;
+  renderQuiz();
+}
+
+function setupCanvas() {
+  canvas = document.getElementById('simCanvas');
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = WORLD_W * dpr;
+  canvas.height = WORLD_H * dpr;
+  canvas.style.width = WORLD_W + 'px';
+  canvas.style.height = WORLD_H + 'px';
+  ctx = canvas.getContext('2d');
+}
+
+function bootApp() {
+  setupCanvas();
+  initElectrons();
+  onParamChange();
+  setSystem('charge');
+  const vp = document.getElementById('sim-viewport');
+  initAnnotationCanvas(vp.clientWidth || 800, vp.clientHeight || 500);
+  resizeAnno();
+  const fabricContainer = document.querySelector('.canvas-container');
+  if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+  setupPanZoom();
+  setupDragFloat();
+  fitView();
+  applyLanguage();
+  requestAnimationFrame(loop);
+  window.addEventListener('resize', () => { fitView(); resizeAnno(); });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (cur !== 'en' && cur !== 'ur') cur = 'en';
+  document.getElementById('lang-select').value = cur;
+  document.getElementById('intro-topic').textContent = (LANG[cur] || LANG.en).intro_topic;
+  setTimeout(() => {
+    document.getElementById('intro').classList.add('intro-fadeout');
+    const app = document.getElementById('app');
+    app.classList.remove('opacity-0', 'pointer-events-none');
+    app.classList.add('opacity-100');
+    bootApp();
+    setTimeout(() => document.getElementById('intro').remove(), 600);
+  }, 5000);
+});
+</script>
+</body>
+</html>
