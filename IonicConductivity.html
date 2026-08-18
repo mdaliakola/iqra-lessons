@@ -649,7 +649,7 @@ let sim = {
   voltage: 6, eSpeed: 1, ionSpeed: 1, pCount: 12,
   showE: true, showIons: true,
   ions: [], waters: [], electrons: [], bubbles: [], deposits: [], sparks: [],
-  follow: null, tick: 0, flashC: 0, flashA: 0, anodeCool: 0, cathodeCool: 0
+  follow: null, tick: 0, flashC: 0, flashA: 0, anodeCool: 0, cathodeCool: 0, anodeMerge: null
 };
 
 const canvas = () => document.getElementById('simCanvas');
@@ -668,26 +668,28 @@ function currentAmps() {
 
 function spawnParticles() {
   sim.ions = []; sim.waters = []; sim.bubbles = []; sim.deposits = []; sim.sparks = []; sim.follow = null;
+  sim.anodeMerge = null;
   if (sim.substance === 'water') {
-    spawnWaters(14);
+    spawnWaters(10);
     return;
   }
-  for (let i = 0; i < 6; i++) {
-    sim.ions.push({ id:'na'+i, kind:'Na+', q:1, x:rndX(), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
-    sim.ions.push({ id:'cl'+i, kind:'Cl-', q:-1, x:rndX(), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
+  for (let i = 0; i < 5; i++) {
+    sim.ions.push({ id:'na'+i, kind:'Na+', q:1, x:LIQ.x+80+Math.random()*(LIQ.w*0.45), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
+    sim.ions.push({ id:'cl'+i, kind:'Cl-', q:-1, x:LIQ.x+LIQ.w*0.45+Math.random()*(LIQ.w*0.4), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
   }
 }
 function spawnWaters(n) {
   sim.waters = [];
   for (let i=0;i<n;i++) sim.waters.push({ x:rndX(), y:rndY(), vx:rndV()*0.4, vy:rndV()*0.4 });
 }
-function rndX(){ return LIQ.x+24+Math.random()*(LIQ.w-48); }
-function rndY(){ return LIQ.y+24+Math.random()*(LIQ.h-48); }
+function rndX(){ return LIQ.x+40+Math.random()*(LIQ.w-80); }
+function rndY(){ return LIQ.y+40+Math.random()*(LIQ.h-80); }
 function rndV(){ return (Math.random()-0.5)*0.7; }
 
 function spawnElectrons() {
   sim.electrons = [];
-  for (let i=0;i<32;i++) sim.electrons.push({ id:'e'+i, kind:'e', s:i*22, seg: i<16?0:1 });
+  for (let i=0;i<18;i++) sim.electrons.push({ id:'eb'+i, kind:'e', side:'blue', s:i*28 });
+  for (let i=0;i<14;i++) sim.electrons.push({ id:'er'+i, kind:'e', side:'red', s:i*30, active:false });
 }
 
 function wireBlue() {
@@ -701,27 +703,39 @@ function wireBlue() {
     {x: CAT.x, y: CAT.y1}
   ];
 }
-function wireRedParts() {
+function wireRed() {
   const px = BATT.x + 138, py = BATT.y;
-  const toSwitch = [
-    {x: px, y: py},
-    {x: 1295, y: py},
-    {x: 1295, y: SW.y},
-    {x: SW.x + 78, y: SW.y}
-  ];
-  const fromSwitch = [
-    {x: SW.x + 12, y: SW.y},
-    {x: BULB.x + 40, y: SW.y},
-    {x: BULB.x + 40, y: AMM.y},
-    {x: AMM.x, y: AMM.y},
+  return [
+    {x: ANO.x, y: ANO.y1},
     {x: ANO.x, y: AMM.y},
-    {x: ANO.x, y: ANO.y1}
+    {x: AMM.x, y: AMM.y},
+    {x: BULB.x + 40, y: AMM.y},
+    {x: BULB.x + 40, y: SW.y},
+    {x: SW.x + 12, y: SW.y},
+    ...(sim.switchClosed ? [{x: SW.x + 78, y: SW.y}] : [{x: SW.x + 78, y: SW.y - 28}]),
+    {x: 1295, y: SW.y},
+    {x: 1295, y: py},
+    {x: px, y: py}
   ];
-  if (sim.switchClosed) return [toSwitch.concat([{x: SW.x + 12, y: SW.y}]).concat(fromSwitch.slice(1))];
-  return [toSwitch, fromSwitch];
+}
+function wireRedOpenVisual() {
+  const px = BATT.x + 138, py = BATT.y;
+  return [
+    [
+      {x: px, y: py}, {x: 1295, y: py}, {x: 1295, y: SW.y}, {x: SW.x + 78, y: SW.y}
+    ],
+    [
+      {x: SW.x + 12, y: SW.y},
+      {x: BULB.x + 40, y: SW.y},
+      {x: BULB.x + 40, y: AMM.y},
+      {x: AMM.x, y: AMM.y},
+      {x: ANO.x, y: AMM.y},
+      {x: ANO.x, y: ANO.y1}
+    ]
+  ];
 }
 function wireSegments() {
-  return [wireBlue()].concat(wireRedParts());
+  return sim.switchClosed ? [wireBlue(), wireRed()] : [wireBlue()].concat(wireRedOpenVisual());
 }
 
 function pathLen(pts){ let L=0; for(let i=1;i<pts.length;i++) L+=Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y); return L||1; }
@@ -744,7 +758,20 @@ function setSubstance(id) {
   spawnParticles();
   updateObservation(); updateMeters();
 }
-function toggleCircuit(){ sim.switchClosed=!sim.switchClosed; document.getElementById('ui-switch').classList.toggle('on', sim.switchClosed); updateObservation(); updateMeters(); }
+function toggleCircuit(){
+  sim.switchClosed=!sim.switchClosed;
+  document.getElementById('ui-switch').classList.toggle('on', sim.switchClosed);
+  if(!sim.switchClosed){
+    if(sim.anodeMerge){
+      if(sim.anodeMerge.a) sim.anodeMerge.a.merging=false;
+      if(sim.anodeMerge.b) sim.anodeMerge.b.merging=false;
+      sim.anodeMerge=null;
+    }
+    sim.electrons.forEach(e=>{ if(e.side==='red') e.active=false; });
+    sim.anodeCool=0;
+  }
+  updateObservation(); updateMeters();
+}
 function togglePause(){
   sim.paused=!sim.paused;
   document.getElementById('pause-icon').className = sim.paused ? 'fa-solid fa-play' : 'fa-solid fa-pause';
@@ -838,16 +865,15 @@ function setupPointer(){
 function hitSwitch(x,y){ return x>SW.x-10 && x<SW.x+100 && y>SW.y-40 && y<SW.y+50; }
 
 function tryFollow(wpt){
-  let best=null, bd=28;
-  if(sim.showIons) sim.ions.forEach(p=>{
-    if(p.kind==='mol') return;
+  let best=null, bd=40;
+  sim.ions.forEach(p=>{
     const d=Math.hypot(p.x-wpt.x,p.y-wpt.y);
     if(d<bd){ bd=d; best=p; }
   });
-  if(sim.showE && currentAmps()>0.05){
-    const segs=wireSegments();
+  if(currentAmps()>0.05){
     sim.electrons.forEach(el=>{
-      const pts=segs[el.seg]||segs[0];
+      if(el.side==='red' && !el.active) return;
+      const pts = el.side==='blue' ? wireBlue() : wireRed();
       const p=pointOnPath(pts, el.s);
       const d=Math.hypot(p.x-wpt.x,p.y-wpt.y);
       if(d<bd){ bd=d; best=el; }
@@ -858,89 +884,120 @@ function tryFollow(wpt){
 }
 
 function bounce(p){
-  if(p.x<LIQ.x+18){p.x=LIQ.x+18;p.vx=Math.abs(p.vx)*0.4;}
-  if(p.x>LIQ.x+LIQ.w-18){p.x=LIQ.x+LIQ.w-18;p.vx=-Math.abs(p.vx)*0.4;}
-  if(p.y<LIQ.y+18){p.y=LIQ.y+18;p.vy=Math.abs(p.vy)*0.4;}
-  if(p.y>LIQ.y+LIQ.h-18){p.y=LIQ.y+LIQ.h-18;p.vy=-Math.abs(p.vy)*0.4;}
+  const margin = 34;
+  if(p.x<LIQ.x+margin){p.x=LIQ.x+margin;p.vx=Math.abs(p.vx)+0.25;}
+  if(p.x>LIQ.x+LIQ.w-margin){p.x=LIQ.x+LIQ.w-margin;p.vx=-Math.abs(p.vx)-0.25;}
+  if(p.y<LIQ.y+margin){p.y=LIQ.y+margin;p.vy=Math.abs(p.vy)+0.25;}
+  if(p.y>LIQ.y+LIQ.h-margin){p.y=LIQ.y+LIQ.h-margin;p.vy=-Math.abs(p.vy)-0.25;}
+  [CAT, ANO].forEach(el=>{
+    const dx = p.x - el.x;
+    if (Math.abs(dx) < 30 && p.y > el.y0 + 40 && p.y < el.y1 - 20) {
+      p.x = el.x + (dx >= 0 ? 36 : -30);
+      p.vx = dx >= 0 ? Math.abs(p.vx)+0.4 : -Math.abs(p.vx)-0.4;
+    }
+  });
 }
 
 function stepParticles(){
   if(sim.paused) return;
   sim.tick++;
-  if(sim.anodeCool>0) sim.anodeCool--;
+  if(sim.anodeCool>0 && sim.anodeCool < 900) sim.anodeCool--;
   if(sim.cathodeCool>0) sim.cathodeCool--;
   const I=currentAmps();
-  const field = I>0.05 ? 0.09 : 0;
+  const field = I>0.05 ? 0.12 : 0;
+
+  if(sim.anodeMerge){
+    const m = sim.anodeMerge;
+    m.t++;
+    const a=m.a, b=m.b;
+    if(a){ a.x += (m.mx - a.x)*0.2; a.y += (m.my-14 - a.y)*0.2; }
+    if(b){ b.x += (m.mx - b.x)*0.2; b.y += (m.my+14 - b.y)*0.2; }
+    if(m.t > 26){
+      sim.flashA=30;
+      sim.ions = sim.ions.filter(p=>p!==a && p!==b);
+      if(sim.follow===a || sim.follow===b) sim.follow=null;
+      sim.bubbles.push({kind:'Cl2', x:m.mx-10, y:m.my, vy:-3.4, r:24, ph:Math.random()*6});
+      releaseAnodeElectrons(2);
+      sim.sparks.push({x:ANO.x+10, y:m.my-8, vy:-2.8, life:45});
+      sim.sparks.push({x:ANO.x+12, y:m.my+10, vy:-3.0, life:45});
+      if(sim.ions.filter(p=>p.kind==='Cl-').length<4){
+        sim.ions.push({ id:'clA'+sim.tick, kind:'Cl-', q:-1, x:LIQ.x+55, y:rndY(), vx:0.55, vy:rndV(), locked:false });
+        sim.ions.push({ id:'clB'+sim.tick, kind:'Cl-', q:-1, x:LIQ.x+75, y:rndY(), vx:0.45, vy:rndV(), locked:false });
+      }
+      sim.anodeMerge=null;
+      sim.anodeCool=50;
+    }
+  }
 
   sim.ions.forEach(p=>{
-    if(p.merging){
-      p.x += (p.tx - p.x)*0.12;
-      p.y += (p.ty - p.y)*0.12;
-      return;
-    }
-    p.vx += (Math.random()-0.5)*0.035;
-    p.vy += (Math.random()-0.5)*0.035;
+    if(p.merging) return;
+    p.vx += (Math.random()-0.5)*0.055;
+    p.vy += (Math.random()-0.5)*0.055;
     if(field && p.q) p.vx += (p.q>0?-1:1)*field;
-    p.vx*=0.94; p.vy*=0.94;
+    p.vx*=0.93; p.vy*=0.93;
+    if(Math.abs(p.vy)<0.1) p.vy += (Math.random()-0.5)*0.25;
     p.x+=p.vx; p.y+=p.vy;
     bounce(p);
   });
   sim.waters.forEach(w=>{
-    w.vx+=(Math.random()-0.5)*0.04; w.vy+=(Math.random()-0.5)*0.04;
-    w.vx*=0.97; w.vy*=0.97; w.x+=w.vx; w.y+=w.vy; bounce(w);
+    w.vx+=(Math.random()-0.5)*0.05; w.vy+=(Math.random()-0.5)*0.05;
+    w.vx*=0.96; w.vy*=0.96; w.x+=w.vx; w.y+=w.vy; bounce(w);
   });
 
   if(I>0.08 && sim.substance==='nacl_molten'){
     if(sim.cathodeCool===0) cathodeReaction();
-    if(sim.anodeCool===0) anodeReaction();
+    if((sim.anodeCool===0 || sim.anodeCool===undefined) && !sim.anodeMerge) anodeReaction();
   }
 
-  sim.bubbles.forEach(b=>{ b.y+=b.vy; b.x+=Math.sin(sim.tick/8+b.ph)*0.55; b.r=Math.min(16, b.r+0.06); });
-  sim.bubbles = sim.bubbles.filter(b=> b.y>70);
-  sim.sparks.forEach(s=>{ s.y+=s.vy; s.life--; });
+  sim.bubbles.forEach(b=>{ b.y+=b.vy; b.x+=Math.sin(sim.tick/8+b.ph)*0.8; b.r=Math.min(30, b.r+0.14); });
+  sim.bubbles = sim.bubbles.filter(b=> b.y>35);
+  sim.sparks.forEach(s=>{ s.y+=s.vy; s.x+=0.9; s.life--; });
   sim.sparks = sim.sparks.filter(s=>s.life>0);
-  if(sim.deposits.length>18) sim.deposits.shift();
+  if(sim.deposits.length>8) sim.deposits.shift();
 
-  const segs=wireSegments();
-  const speed = I>0.05 ? 2.6 : 0;
-  sim.electrons.forEach(e=>{ e.s+=speed; if(e.seg>=segs.length) e.seg=0; });
+  const blue=wireBlue(), red=wireRed();
+  const speed = I>0.05 ? 3.1 : 0;
+  sim.electrons.forEach(e=>{
+    if(e.side==='blue'){
+      if(speed) e.s += speed;
+    } else if(e.active && sim.switchClosed){
+      e.s += speed;
+      if(e.s > pathLen(red)) { e.active=false; e.s=0; }
+    }
+  });
   if(sim.flashC>0) sim.flashC--;
   if(sim.flashA>0) sim.flashA--;
 }
 
+function releaseAnodeElectrons(n){
+  let left=n;
+  sim.electrons.forEach(e=>{
+    if(left<=0) return;
+    if(e.side==='red' && !e.active){
+      e.active=true; e.s = Math.random()*10; left--;
+    }
+  });
+}
+
 function cathodeReaction(){
-  const na = sim.ions.find(p=>p.kind==='Na+' && !p.merging && Math.abs(p.x-CAT.x)<42 && p.y>320 && p.y<530);
+  const na = sim.ions.find(p=>p.kind==='Na+' && !p.merging && Math.abs(p.x-CAT.x)<58 && p.y>300 && p.y<520);
   if(!na) return;
-  sim.flashC=22;
-  sim.cathodeCool=70;
-  sim.deposits.push({x:CAT.x + (Math.random()*10-18), y: na.y});
+  sim.flashC=28;
+  sim.cathodeCool=55;
+  sim.deposits.push({x:CAT.x - 24 - Math.random()*10, y: na.y + (Math.random()*20-10)});
   if(sim.follow===na) sim.follow=null;
   sim.ions = sim.ions.filter(p=>p!==na);
   if(sim.ions.filter(p=>p.kind==='Na+').length<4){
-    sim.ions.push({ id:'na'+sim.tick, kind:'Na+', q:1, x:LIQ.x+LIQ.w-40, y:rndY(), vx:-0.4, vy:rndV(), locked:false });
+    sim.ions.push({ id:'na'+sim.tick, kind:'Na+', q:1, x:LIQ.x+LIQ.w-55, y:rndY(), vx:-0.65, vy:rndV(), locked:false });
   }
 }
 function anodeReaction(){
-  const cl = sim.ions.filter(p=>p.kind==='Cl-' && !p.merging && Math.abs(p.x-ANO.x)<48 && p.y>320 && p.y<530);
+  const cl = sim.ions.filter(p=>p.kind==='Cl-' && !p.merging && Math.abs(p.x-ANO.x)<60 && p.y>300 && p.y<520);
   if(cl.length<2) return;
   const a=cl[0], b=cl[1];
   a.merging=true; b.merging=true;
-  a.tx=ANO.x-16; a.ty=410;
-  b.tx=ANO.x-16; b.ty=430;
-  sim.anodeCool=85;
-  setTimeout(()=>{
-    if(!sim.ions.includes(a) && !sim.ions.includes(b)) return;
-    sim.flashA=22;
-    sim.ions = sim.ions.filter(p=>p!==a && p!==b);
-    if(sim.follow===a || sim.follow===b) sim.follow=null;
-    sim.bubbles.push({kind:'Cl2', x:ANO.x-20, y:400, vy:-2.4, r:9, ph:Math.random()*6});
-    sim.sparks.push({x:ANO.x, y:390, vy:-3.2, life:48});
-    sim.sparks.push({x:ANO.x+5, y:400, vy:-3.4, life:48});
-    if(sim.ions.filter(p=>p.kind==='Cl-').length<4){
-      sim.ions.push({ id:'clA'+sim.tick, kind:'Cl-', q:-1, x:LIQ.x+36, y:rndY(), vx:0.4, vy:rndV(), locked:false });
-      sim.ions.push({ id:'clB'+sim.tick, kind:'Cl-', q:-1, x:LIQ.x+50, y:rndY(), vx:0.35, vy:rndV(), locked:false });
-    }
-  }, 420);
+  sim.anodeMerge = { a, b, mx: ANO.x - 40, my: (a.y+b.y)/2, t:0 };
+  sim.anodeCool=999;
 }
 
 function roundRect(ctx,x,y,w,h,r){
@@ -969,8 +1026,8 @@ function drawLab(ctx){
 
 function urFont(){ return currentLang==='ur' ? 'Noto Nastaliq Urdu' : 'Manrope'; }
 function drawCaption(ctx){
-  ctx.fillStyle='#67e8f9'; ctx.font='700 18px '+urFont(); ctx.textAlign='left';
-  ctx.fillText(currentLang==='ur' ? 'الیکٹرولیسس: تار میں الیکٹران، محلول میں آئن' : 'Electrolysis: electrons in the wire, ions in the solution', 36, 40);
+  ctx.fillStyle='#67e8f9'; ctx.font='800 26px '+urFont(); ctx.textAlign='left';
+  ctx.fillText(currentLang==='ur' ? 'الیکٹرولیسس: تار میں الیکٹران، محلول میں آئن' : 'Electrolysis: electrons in the wire, ions in the solution', 36, 42);
 }
 
 function strokePath(ctx,pts){ if(!pts.length) return; ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y); ctx.stroke(); }
@@ -979,28 +1036,32 @@ function drawWires(ctx){
   function paint(pts, edge, fill) {
     if (!pts || !pts.length) return;
     ctx.lineJoin='round'; ctx.lineCap='round';
-    ctx.strokeStyle=edge; ctx.lineWidth=14; strokePath(ctx,pts);
-    ctx.strokeStyle=fill; ctx.lineWidth=8; strokePath(ctx,pts);
+    ctx.strokeStyle=edge; ctx.lineWidth=16; strokePath(ctx,pts);
+    ctx.strokeStyle=fill; ctx.lineWidth=9; strokePath(ctx,pts);
   }
   paint(wireBlue(), '#0e7490', COL_NEG);
-  wireRedParts().forEach(pts => paint(pts, '#9f1239', COL_POS));
+  if(sim.switchClosed) paint(wireRed(), '#9f1239', COL_POS);
+  else wireRedOpenVisual().forEach(pts => paint(pts, '#9f1239', COL_POS));
 
-  ctx.font='700 13px '+urFont(); ctx.textAlign='left';
+  ctx.font='800 20px '+urFont(); ctx.textAlign='left';
   ctx.fillStyle=COL_NEG;
-  ctx.fillText(currentLang==='ur' ? 'نیلی تار  −  کیتھوڈ' : 'Blue wire  −  cathode', 48, 72);
+  ctx.fillText(currentLang==='ur' ? 'نیلی تار − کیتھوڈ' : 'Blue wire − cathode', 48, 74);
   ctx.fillStyle=COL_POS;
   ctx.textAlign='right';
-  ctx.fillText(currentLang==='ur' ? 'لال تار  +  اینوڈ' : 'Red wire  +  anode', 1320, 72);
+  ctx.fillText(currentLang==='ur' ? 'لال تار + اینوڈ' : 'Red wire + anode', 1320, 74);
 
   if(currentAmps()>0.05){
-    const segs=wireSegments();
+    const blue=wireBlue(), red=wireRed();
     sim.electrons.forEach(e=>{
-      const pts=segs[e.seg]||segs[0];
+      if(e.side==='red' && !e.active) return;
+      const pts = e.side==='blue' ? blue : red;
       const p=pointOnPath(pts,e.s);
       const followed = sim.follow && sim.follow.id===e.id;
-      ctx.beginPath(); ctx.fillStyle='#fef08a'; ctx.shadowColor='#fde047'; ctx.shadowBlur=followed?18:10;
-      ctx.arc(p.x,p.y, followed?6:3.6, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-      if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
+      ctx.beginPath(); ctx.fillStyle='#fef08a'; ctx.shadowColor='#fde047'; ctx.shadowBlur=followed?20:12;
+      ctx.arc(p.x,p.y, followed?8:5.5, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      ctx.fillStyle='#0f172a'; ctx.font='800 10px Oxanium'; ctx.textAlign='center';
+      ctx.fillText('e−', p.x, p.y+3);
+      if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(p.x,p.y,9,0,Math.PI*2); ctx.stroke(); }
     });
     drawFlowArrows(ctx);
   }
@@ -1008,14 +1069,16 @@ function drawWires(ctx){
 
 function drawFlowArrows(ctx){
   const I=currentAmps(); if(I<0.05) return;
-  ctx.font='700 12px Oxanium'; ctx.textAlign='center';
+  ctx.font='800 18px Oxanium'; ctx.textAlign='center';
   ctx.fillStyle=COL_NEG;
-  ctx.fillText(currentLang==='ur' ? 'e− → کیتھوڈ' : 'e− → cathode', 90, 430);
+  ctx.fillText(currentLang==='ur' ? 'e− بیٹری − سے کیتھوڈ' : 'e− from battery − → cathode', 95, 430);
   ctx.fillStyle=COL_POS;
-  ctx.fillText(currentLang==='ur' ? 'e− → بیٹری +' : 'e− → battery +', 1180, 250);
-  if(sim.showIons && sim.substance==='nacl_molten'){
-    ctx.fillStyle='#fb923c'; ctx.fillText('Na+ →', 230, 268);
-    ctx.fillStyle='#34d399'; ctx.fillText('← Cl−', 340, 268);
+  ctx.fillText(currentLang==='ur' ? '2e− اینوڈ سے بیٹری +' : '2e− from anode → battery +', 1180, 250);
+  if(sim.substance==='nacl_molten'){
+    ctx.fillStyle='#fb923c'; ctx.font='800 22px Oxanium';
+    ctx.fillText('Na+ →', 245, 275);
+    ctx.fillStyle='#34d399';
+    ctx.fillText('← Cl−', 345, 275);
   }
 }
 
@@ -1089,36 +1152,40 @@ function drawBeaker(ctx){
 
   if(sim.substance==='water'){
     sim.waters.forEach(w=>{
-      ctx.beginPath(); ctx.fillStyle='rgba(125,211,252,0.55)'; ctx.arc(w.x,w.y,11,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#0f172a'; ctx.font='700 8px Oxanium'; ctx.textAlign='center'; ctx.fillText('H2O', w.x, w.y+3);
+      ctx.beginPath(); ctx.fillStyle='rgba(125,211,252,0.6)'; ctx.arc(w.x,w.y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0f172a'; ctx.font='800 12px Oxanium'; ctx.textAlign='center'; ctx.fillText('H2O', w.x, w.y+4);
     });
   }
   sim.ions.forEach(p=>drawParticle(ctx,p));
   sim.sparks.forEach(s=>{
-    ctx.beginPath(); ctx.fillStyle='#22d3ee'; ctx.shadowColor='#22d3ee'; ctx.shadowBlur=14;
-    ctx.arc(s.x,s.y,4.5,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-    ctx.fillStyle='#ecfeff'; ctx.font='800 9px Oxanium'; ctx.textAlign='center';
-    ctx.fillText('e−', s.x+14, s.y+3);
+    ctx.beginPath(); ctx.fillStyle='#fef08a'; ctx.shadowColor='#fde047'; ctx.shadowBlur=16;
+    ctx.arc(s.x,s.y,7,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle='#0f172a'; ctx.font='800 14px Oxanium'; ctx.textAlign='center';
+    ctx.fillText('e−', s.x+20, s.y+5);
   });
   sim.bubbles.forEach(b=>{
     ctx.beginPath();
-    ctx.fillStyle = b.kind==='H2' ? 'rgba(226,232,240,0.55)' : 'rgba(163,230,53,0.45)';
-    ctx.strokeStyle = b.kind==='H2' ? '#e2e8f0' : '#a3e635';
-    ctx.lineWidth=1.5; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle='#0f172a'; ctx.font='700 8px Oxanium'; ctx.textAlign='center';
-    ctx.fillText(b.kind, b.x, b.y+4);
+    ctx.fillStyle = 'rgba(163,230,53,0.55)';
+    ctx.strokeStyle = '#a3e635';
+    ctx.lineWidth=3; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    // twin Cl atoms inside Cl2 bubble
+    ctx.beginPath(); ctx.fillStyle='#34d399'; ctx.arc(b.x-10,b.y,10,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.x+10,b.y,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0f172a'; ctx.font='800 16px Oxanium'; ctx.textAlign='center';
+    ctx.fillText('Cl2 gas', b.x, b.y-b.r-8);
   });
   sim.deposits.forEach(d=>{
-    ctx.beginPath(); ctx.fillStyle='#e2e8f0'; ctx.shadowColor='#94a3b8'; ctx.shadowBlur=8;
-    ctx.arc(d.x,d.y,10,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-    ctx.fillStyle='#0f172a'; ctx.font='800 9px Oxanium'; ctx.textAlign='center'; ctx.fillText('Na', d.x, d.y+3);
+    ctx.beginPath(); ctx.fillStyle='#f8fafc'; ctx.shadowColor='#e2e8f0'; ctx.shadowBlur=10;
+    ctx.arc(d.x,d.y,16,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+    ctx.strokeStyle='#94a3b8'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#0f172a'; ctx.font='800 14px Oxanium'; ctx.textAlign='center'; ctx.fillText('Na', d.x, d.y+5);
   });
 
   if(!sim.switchClosed){
-    ctx.fillStyle='rgba(148,163,184,0.9)'; ctx.font='700 13px '+urFont(); ctx.textAlign='center';
-    ctx.fillText(t('no_net'), x+w/2, y+h-24);
+    ctx.fillStyle='rgba(148,163,184,0.95)'; ctx.font='800 18px '+urFont(); ctx.textAlign='center';
+    ctx.fillText(t('no_net'), x+w/2, y+h-28);
   }
-  ctx.fillStyle='#e2e8f0'; ctx.font='600 13px '+urFont(); ctx.textAlign='center';
+  ctx.fillStyle='#e2e8f0'; ctx.font='700 18px '+urFont(); ctx.textAlign='center';
   const sol= sim.substance==='water' ? (currentLang==='ur'?'مقطر پانی':'Distilled water') : (currentLang==='ur'?'پگھلا ہوا NaCl محلول':'Molten NaCl solution');
   ctx.fillText(sol, x+w/2, y+h+26);
   ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont();
@@ -1127,36 +1194,36 @@ function drawBeaker(ctx){
 
 function drawElectrode(ctx,x,y,label,flash,color){
   ctx.fillStyle = flash? '#fef08a' : color;
-  roundRect(ctx,x-9,y,18,340,5); ctx.fill();
-  ctx.fillStyle='#0f172a'; roundRect(ctx,x-4,y+8,8,320,3); ctx.fill();
-  ctx.fillStyle=color; ctx.font='700 13px '+urFont(); ctx.textAlign='center';
-  ctx.fillText(label, x, y-8);
+  roundRect(ctx,x-11,y,22,340,6); ctx.fill();
+  ctx.fillStyle='#0f172a'; roundRect(ctx,x-5,y+8,10,320,3); ctx.fill();
+  ctx.fillStyle=color; ctx.font='800 18px '+urFont(); ctx.textAlign='center';
+  ctx.fillText(label, x, y-10);
 }
 
 function drawParticle(ctx,p){
   const followed = sim.follow && sim.follow.id===p.id;
-  const r = followed? 18 : (p.tiny?8:15);
+  const r = followed? 30 : 26;
   let col='#fbbf24';
-  if(p.kind==='Na+'||p.kind==='H+') col='#fb923c';
+  if(p.kind==='Na+') col='#fb923c';
   else if(p.kind==='Cl-') col='#34d399';
-  else if(p.kind==='OH-') col='#a78bfa';
-  ctx.beginPath(); ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=followed?16:8;
+  ctx.beginPath(); ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=followed?22:12;
   ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-  if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
-  ctx.fillStyle='#0f172a'; ctx.font='800 11px Oxanium'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(p.kind, p.x, p.y+0.5);
+  ctx.strokeStyle='#0f172a'; ctx.lineWidth=2; ctx.stroke();
+  if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(p.x,p.y,r+3,0,Math.PI*2); ctx.stroke(); }
+  ctx.fillStyle='#0f172a'; ctx.font='800 20px Oxanium'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(p.kind, p.x, p.y+1);
   ctx.textBaseline='alphabetic';
 }
 
 function drawSummary(ctx){
-  const y=WORLD.h-78;
-  ctx.fillStyle='rgba(15,23,42,0.9)'; roundRect(ctx,36,y,WORLD.w-72,62,14); ctx.fill();
-  ctx.strokeStyle='rgba(0,243,255,0.25)'; ctx.stroke();
-  ctx.fillStyle='#e2e8f0'; ctx.font='600 13px '+urFont(); ctx.textAlign='left';
+  const y=WORLD.h-90;
+  ctx.fillStyle='rgba(15,23,42,0.92)'; roundRect(ctx,28,y,WORLD.w-56,78,14); ctx.fill();
+  ctx.strokeStyle='rgba(0,243,255,0.3)'; ctx.stroke();
+  ctx.fillStyle='#e2e8f0'; ctx.font='700 16px '+urFont(); ctx.textAlign='left';
   const bits=[t('sum_wire'), t('sum_sol'), t('sum_cat'), t('sum_an')];
-  ctx.fillText(bits.join('   ·   '), 52, y+24);
-  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont();
-  ctx.fillText(t('banner'), 52, y+48);
+  ctx.fillText(bits.join('   ·   '), 48, y+28);
+  ctx.fillStyle='#67e8f9'; ctx.font='700 15px '+urFont();
+  ctx.fillText(t('banner'), 48, y+56);
 }
 
 let quizIndex=0, quizScore=0, quizLocked=false, quizChosen=-1;
