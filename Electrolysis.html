@@ -237,7 +237,7 @@
     box-shadow: 0 0 22px rgba(34,197,94,.45), inset 0 0 12px rgba(34,197,94,.2);
   }
 
-  #sim-viewport { cursor: grab; }
+  #sim-viewport { cursor: grab; background: #f4f7fb; }
   #sim-viewport.panning { cursor: grabbing; }
 
   .gas-bar {
@@ -269,10 +269,10 @@
     </div>
 
     <nav class="flex items-center gap-2 glass-card rounded-2xl p-1.5 shrink-0">
-      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-3 md:px-6 py-2.5 font-extrabold text-base md:text-lg text-slate-200 flex items-center gap-2">
         <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
       </button>
-      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-bold text-sm md:text-base text-slate-300 flex items-center gap-2">
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-3 md:px-6 py-2.5 font-extrabold text-base md:text-lg text-slate-200 flex items-center gap-2">
         <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
       </button>
     </nav>
@@ -309,10 +309,10 @@
     </div>
   </header>
 
-  <main id="view-sim" class="view flex-1 flex flex-col lg:flex-row gap-4 p-3 md:p-4 min-h-0 overflow-hidden">
+  <main id="view-sim" class="view flex-1 flex flex-col gap-3 p-3 md:p-4 min-h-0 overflow-hidden">
 
     <section class="flex-1 flex flex-col min-h-0 min-w-0">
-      <div id="sim-viewport" class="glass-card rounded-2xl relative flex-1 min-h-[340px] overflow-hidden">
+      <div id="sim-viewport" class="rounded-2xl relative flex-1 min-h-[360px] overflow-hidden border border-slate-600">
         <canvas id="simCanvas" class="absolute inset-0 w-full h-full"></canvas>
         <canvas id="fabricLayer"></canvas>
 
@@ -338,57 +338,33 @@
       </div>
     </section>
 
-    <aside class="w-full lg:w-[380px] xl:w-[420px] flex flex-col gap-3 min-h-0 overflow-y-auto shrink-0 board-ui">
-      <div class="glass-card rounded-2xl p-4">
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <div class="text-base uppercase tracking-widest text-slate-300 font-extrabold" data-i18n="circuit"></div>
-            <div id="power-label" class="font-extrabold text-white"></div>
-          </div>
-          <button id="power-btn" onclick="togglePower()" class="power-knob flex items-center justify-center text-slate-400" title="Power">
-            <i class="fa-solid fa-power-off text-2xl"></i>
-          </button>
-        </div>
+    <aside class="glass-card rounded-2xl px-4 py-3 flex flex-wrap items-center gap-4 shrink-0 board-ui">
+      <button id="power-btn" onclick="togglePower()" class="power-knob flex items-center justify-center text-slate-400 shrink-0" title="Power">
+        <i class="fa-solid fa-power-off text-2xl"></i>
+      </button>
+      <div class="min-w-[140px]">
+        <div class="text-sm uppercase tracking-widest text-slate-300 font-extrabold" data-i18n="circuit"></div>
+        <div id="power-label" class="font-extrabold text-white"></div>
       </div>
-
-      <div class="glass-card rounded-2xl p-4 space-y-3">
+      <div class="flex-1 min-w-[220px] max-w-md">
         <div class="flex items-center justify-between">
           <span class="font-extrabold text-white" data-i18n="voltage"></span>
           <span class="stat-val num" id="volt-val">9.0 V</span>
         </div>
         <input id="volt-slider" type="range" min="0" max="12" step="0.1" value="9" oninput="setVoltage(this.value)">
-        <div class="flex justify-between text-base text-slate-300 font-bold"><span class="num">0 V</span><span class="num">9–12 V</span></div>
       </div>
-
-      <div class="glass-card rounded-2xl p-4 space-y-3">
-        <div class="font-extrabold text-white" data-i18n="collected"></div>
-        <div>
-          <div class="flex justify-between mb-1"><span id="h2-name" class="text-sky-300 font-extrabold"></span><span class="stat-val num" id="h2-ml">0.0 mL</span></div>
-          <div class="gas-bar"><span id="h2-bar" style="width:0%;background:#38bdf8"></span></div>
-        </div>
-        <div>
-          <div class="flex justify-between mb-1"><span id="ox-name" class="text-red-400 font-extrabold"></span><span class="stat-val num" id="ox-ml">0.0 mL</span></div>
-          <div class="gas-bar"><span id="ox-bar" style="width:0%;background:#f87171"></span></div>
-        </div>
-        <div class="flex justify-between pt-1">
-          <span class="text-slate-200 font-bold" data-i18n="ratio"></span>
-          <span class="stat-val num" id="ratio-val">—</span>
-        </div>
+      <div class="min-w-[180px]">
+        <div class="flex justify-between"><span id="h2-name" class="text-sky-300 font-extrabold"></span><span class="stat-val num" id="h2-ml">0.0 mL</span></div>
+        <div class="gas-bar mt-1"><span id="h2-bar" style="width:0%;background:#0077b6"></span></div>
+        <div class="flex justify-between mt-2"><span id="ox-name" class="text-red-400 font-extrabold"></span><span class="stat-val num" id="ox-ml">0.0 mL</span></div>
+        <div class="gas-bar mt-1"><span id="ox-bar" style="width:0%;background:#d90429"></span></div>
       </div>
-
-      <div class="glass-card rounded-2xl p-4 space-y-2">
-        <div class="font-extrabold text-white flex items-center gap-2"><i class="fa-solid fa-eye text-cyan-400"></i><span data-i18n="observe"></span></div>
-        <p id="observe-text" class="text-slate-100"></p>
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="runPopTest()" class="rounded-xl px-3 py-4 bg-slate-800 hover:bg-slate-700 border border-sky-400 font-extrabold text-sky-300"><i class="fa-solid fa-burst ml-1"></i> <span data-i18n="pop_test"></span></button>
-          <button onclick="runSplintTest()" class="rounded-xl px-3 py-4 bg-slate-800 hover:bg-slate-700 border border-red-400 font-extrabold text-red-300"><i class="fa-solid fa-fire ml-1"></i> <span data-i18n="splint_test"></span></button>
-        </div>
-        <p id="test-feedback" class="min-h-[1.6em] text-cyan-200 font-bold"></p>
-      </div>
-
-      <button onclick="resetExperiment()" class="rounded-2xl px-4 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-500 font-extrabold text-white flex items-center justify-center gap-2">
-        <i class="fa-solid fa-rotate-right text-cyan-400"></i><span data-i18n="reset"></span>
-      </button>
+      <div class="font-extrabold text-white"><span data-i18n="ratio"></span> <span class="stat-val num" id="ratio-val">—</span></div>
+      <p id="observe-text" class="flex-1 min-w-[200px] text-slate-100"></p>
+      <button onclick="runPopTest()" class="rounded-xl px-4 py-3 bg-slate-800 border border-sky-400 font-extrabold text-sky-300"><span data-i18n="pop_test"></span></button>
+      <button onclick="runSplintTest()" class="rounded-xl px-4 py-3 bg-slate-800 border border-red-400 font-extrabold text-red-300"><span data-i18n="splint_test"></span></button>
+      <p id="test-feedback" class="min-w-[160px] text-cyan-200 font-bold"></p>
+      <button onclick="resetExperiment()" class="rounded-xl px-4 py-3 bg-slate-800 border border-slate-500 font-extrabold text-white"><i class="fa-solid fa-rotate-right text-cyan-400"></i> <span data-i18n="reset"></span></button>
     </aside>
   </main>
 
@@ -423,7 +399,8 @@ const LANG = {
     platinum: "Platinum electrodes",
     o2_bubbles: "Oxygen bubbles",
     h2_bubbles: "Hydrogen bubbles",
-    power_supply: "Power supply 9 to 12 V",
+    power_supply: "Power supply 9 to 12 volt",
+    caption: "Electrolysis of water",
     anode: "Anode",
     cathode: "Cathode",
     anode_ox: "Anode (oxidation)",
@@ -509,7 +486,8 @@ const LANG = {
     platinum: "پلاٹینم الیکٹروڈز",
     o2_bubbles: "آکسیجن کے بلبلے",
     h2_bubbles: "ہائیڈروجن کے بلبلے",
-    power_supply: "بجلی کی فراہمی 9 تا 12 V",
+    power_supply: "بجلی کی فراہمی 9 تا 12 وولٹ",
+    caption: "پانی کی برق پاشیدگی",
     anode: "اینوڈ",
     cathode: "کیتھوڈ",
     anode_ox: "اینوڈ (تکسید)",
@@ -582,11 +560,14 @@ const LANG = {
 let cur = localStorage.getItem('iqra-lang') || 'en';
 const T = () => LANG[cur];
 
-const WORLD_W = 1700;
-const WORLD_H = 1000;
-const ANODE = { x: 625, y: 175, w: 140, h: 400 }; // left tube O2
-const CATHODE = { x: 935, y: 175, w: 140, h: 400 }; // right tube H2
-const SWITCH_BOX = { x: 1088, y: 812, w: 130, h: 70 };
+const WORLD_W = 1920;
+const WORLD_H = 1080;
+const ANODE = { x: 700, y: 118, w: 168, h: 470 };
+const CATHODE = { x: 1052, y: 118, w: 168, h: 470 };
+const SWITCH_BOX = { x: 1008, y: 770, w: 140, h: 76 };
+const RED = '#c1121f';
+const BLUE = '#023e8a';
+const INK = '#111827';
 
 const state = {
   power: false,
@@ -937,36 +918,51 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-function boardText(ctx, text, x, y, opt) {
+function ink(ctx, text, x, y, opt) {
   opt = opt || {};
   const ur = cur === 'ur' && !opt.chem;
-  const size = opt.size || (ur ? 36 : 32);
+  const size = opt.size || (ur ? 34 : 30);
   ctx.save();
   ctx.font = opt.chem
-    ? `800 ${size}px Oxanium, Manrope, sans-serif`
-    : (ur ? `700 ${size}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif` : `800 ${size}px Manrope, sans-serif`);
+    ? `800 ${size}px Manrope, Arial, sans-serif`
+    : (ur ? `700 ${size}px 'Jameel Noori Nastaliq','Noto Nastaliq Urdu',serif` : `800 ${size}px Manrope, Arial, sans-serif`);
   ctx.textAlign = opt.align || 'center';
   ctx.textBaseline = 'middle';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = opt.stroke || Math.max(5, size / 6);
-  ctx.strokeStyle = '#020617';
-  ctx.strokeText(text, x, y);
-  ctx.fillStyle = opt.color || '#f8fafc';
+  ctx.fillStyle = opt.color || INK;
   ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function arrow(ctx, x1, y1, x2, y2, color) {
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 14 * Math.cos(a - 0.45), y2 - 14 * Math.sin(a - 0.45));
+  ctx.lineTo(x2 - 14 * Math.cos(a + 0.45), y2 - 14 * Math.sin(a + 0.45));
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
 
 function spawnBubbles(dt) {
   if (!producing()) return;
-  const rate = (0.6 + state.voltage * 0.28);
-  const n = Math.min(5, rate * dt * 12);
+  const rate = 0.7 + state.voltage * 0.22;
+  const n = Math.min(6, rate * dt * 11);
   const ax = ANODE.x + ANODE.w / 2;
   const cx = CATHODE.x + CATHODE.w / 2;
-  const ey = 555;
+  const ey = 560;
   for (let i = 0; i < n; i++) {
-    bubbles.push({ side: 'H', x: cx + (Math.random() - 0.5) * 36, y: ey, r: 3.2 + Math.random() * 3.2, v: 36 + Math.random() * 48 });
-    if (Math.random() < 0.52) {
-      bubbles.push({ side: 'O', x: ax + (Math.random() - 0.5) * 36, y: ey, r: 3 + Math.random() * 3, v: 30 + Math.random() * 40 });
+    bubbles.push({ side: 'H', x: cx + (Math.random() - 0.5) * 46, y: ey, r: 4 + Math.random() * 4.5, v: 34 + Math.random() * 42 });
+    if (Math.random() < 0.5) {
+      bubbles.push({ side: 'O', x: ax + (Math.random() - 0.5) * 46, y: ey, r: 4 + Math.random() * 4, v: 30 + Math.random() * 38 });
     }
   }
 }
@@ -974,8 +970,8 @@ function spawnBubbles(dt) {
 function step(dt) {
   spawnBubbles(dt);
   if (producing()) {
-    const k = 0.5 * (state.voltage - 1.2);
-    const dh = k * dt * 3.1;
+    const k = 0.48 * Math.max(0, state.voltage - 1.23);
+    const dh = k * dt * 3.0;
     state.h2 = Math.min(state.maxH2, state.h2 + dh);
     state.ox = Math.min(state.maxOx, state.ox + dh / 2);
   }
@@ -984,262 +980,235 @@ function step(dt) {
     b.y -= b.v * dt;
     const tube = b.side === 'H' ? CATHODE : ANODE;
     const fill = b.side === 'H' ? state.h2 / state.maxH2 : state.ox / state.maxOx;
-    const top = tube.y + 16 + (1 - fill) * (tube.h - 40);
-    if (b.y < top + 18) bubbles.splice(i, 1);
+    const top = tube.y + 18 + (1 - fill) * (tube.h * 0.62);
+    if (b.y < top + 16) bubbles.splice(i, 1);
   }
-  state.dash += dt * (state.power ? 48 : 0);
+  state.dash += dt * (state.power ? 50 : 0);
   if (state.flash > 0) state.flash = Math.max(0, state.flash - dt * 2.2);
   if (state.splint > 0) state.splint = Math.max(0, state.splint - dt * 1.4);
 }
 
 function drawApparatus(ctx) {
   const L = T();
-  const RED = '#ff6b6b';
-  const BLUE = '#5ec8ff';
-  const WHITE = '#f8fafc';
+  ctx.fillStyle = '#f7f9fc';
+  ctx.fillRect(0, 0, WORLD_W, WORLD_H);
 
-  ctx.fillStyle = '#07101c';
-  roundRect(ctx, 20, 20, WORLD_W - 40, WORLD_H - 40, 28);
-  ctx.fill();
+  ink(ctx, L.anode_ox, 250, 90, { color: RED, size: 40 });
+  ink(ctx, '2H₂O(l)  →  O₂(g)', 250, 160, { color: RED, size: 32, chem: true });
+  ink(ctx, '+  4H⁺(aq)  +  4e⁻', 250, 210, { color: RED, size: 32, chem: true });
+  ink(ctx, 'E°  =  +1.23 V', 250, 280, { color: RED, size: 36, chem: true });
 
-  drawHalfPanel(ctx, 36, 70, 400, 620, RED, L.anode_ox, L.eq_anode, L.e_anode);
-  drawHalfPanel(ctx, 1264, 70, 400, 620, BLUE, L.cathode_red, L.eq_cathode, L.e_cathode);
+  ink(ctx, L.cathode_red, 1670, 90, { color: BLUE, size: 40 });
+  ink(ctx, '2H⁺(aq)  +  2e⁻', 1670, 160, { color: BLUE, size: 32, chem: true });
+  ink(ctx, '→  H₂(g)', 1670, 210, { color: BLUE, size: 32, chem: true });
+  ink(ctx, 'E°  =  0.00 V', 1670, 280, { color: BLUE, size: 36, chem: true });
 
-  const bx = 470, by = 110, bw = 760, bh = 620;
-  ctx.strokeStyle = '#e2e8f0';
-  ctx.lineWidth = 8;
-  ctx.beginPath();
-  ctx.moveTo(bx, by + 50);
-  ctx.lineTo(bx, by + bh - 40);
-  ctx.quadraticCurveTo(bx, by + bh, bx + 40, by + bh);
-  ctx.lineTo(bx + bw - 40, by + bh);
-  ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw, by + bh - 40);
-  ctx.lineTo(bx + bw, by + 50);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.lineWidth = 10;
-  ctx.moveTo(bx - 12, by + 48);
-  ctx.lineTo(bx + bw + 12, by + 48);
-  ctx.stroke();
+  const bx = 620, by = 80, bw = 680, bh = 600, br = 36;
+  const waterTop = 210;
 
   ctx.save();
   ctx.beginPath();
-  ctx.moveTo(bx + 10, by + 90);
-  ctx.lineTo(bx + 10, by + bh - 44);
-  ctx.quadraticCurveTo(bx + 10, by + bh - 14, bx + 40, by + bh - 14);
-  ctx.lineTo(bx + bw - 40, by + bh - 14);
-  ctx.quadraticCurveTo(bx + bw - 10, by + bh - 14, bx + bw - 10, by + bh - 44);
-  ctx.lineTo(bx + bw - 10, by + 90);
-  ctx.closePath();
-  ctx.clip();
-  const wg = ctx.createLinearGradient(0, by + 90, 0, by + bh);
-  wg.addColorStop(0, 'rgba(56, 189, 248, 0.38)');
-  wg.addColorStop(1, 'rgba(12, 74, 110, 0.72)');
-  ctx.fillStyle = wg;
-  ctx.fillRect(bx, by + 88, bw, bh);
+  ctx.moveTo(bx, by + 40);
+  ctx.lineTo(bx, by + bh - br);
+  ctx.quadraticCurveTo(bx, by + bh, bx + br, by + bh);
+  ctx.lineTo(bx + bw - br, by + bh);
+  ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw, by + bh - br);
+  ctx.lineTo(bx + bw, by + 40);
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 7;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.lineWidth = 8;
+  ctx.moveTo(bx - 16, by + 38);
+  ctx.lineTo(bx + bw + 16, by + 38);
+  ctx.stroke();
   ctx.restore();
-  ctx.fillStyle = 'rgba(186,230,253,0.28)';
-  ctx.fillRect(bx + 10, by + 86, bw - 20, 14);
 
-  drawTube(ctx, ANODE.x, ANODE.y, ANODE.w, ANODE.h, state.ox / state.maxOx, 'rgba(255,255,255,0.55)');
-  drawTube(ctx, CATHODE.x, CATHODE.y, CATHODE.w, CATHODE.h, state.h2 / state.maxH2, 'rgba(125,211,252,0.55)');
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(bx + 8, waterTop);
+  ctx.lineTo(bx + 8, by + bh - br);
+  ctx.quadraticCurveTo(bx + 8, by + bh - 10, bx + br, by + bh - 10);
+  ctx.lineTo(bx + bw - br, by + bh - 10);
+  ctx.quadraticCurveTo(bx + bw - 8, by + bh - 10, bx + bw - 8, by + bh - br);
+  ctx.lineTo(bx + bw - 8, waterTop);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(125, 211, 252, 0.55)';
+  ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = 'rgba(14, 116, 144, 0.18)';
+  ctx.fillRect(bx + 8, waterTop, bw - 16, 10);
 
-  drawPlatinum(ctx, ANODE.x + ANODE.w / 2, 530);
-  drawPlatinum(ctx, CATHODE.x + CATHODE.w / 2, 530);
+  drawCollectingTube(ctx, ANODE, state.ox / state.maxOx, 0.38);
+  drawCollectingTube(ctx, CATHODE, state.h2 / state.maxH2, 0.76);
+
+  drawPlatinumBlock(ctx, ANODE.x + ANODE.w / 2, 548);
+  drawPlatinumBlock(ctx, CATHODE.x + CATHODE.w / 2, 548);
 
   bubbles.forEach(b => {
     ctx.beginPath();
     ctx.fillStyle = '#ffffff';
-    ctx.strokeStyle = b.side === 'O' ? RED : BLUE;
+    ctx.strokeStyle = INK;
     ctx.lineWidth = 2;
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   });
 
-  boardText(ctx, 'O₂', ANODE.x + ANODE.w / 2, ANODE.y - 38, { color: WHITE, size: 48, chem: true });
-  boardText(ctx, 'H₂', CATHODE.x + CATHODE.w / 2, CATHODE.y - 38, { color: WHITE, size: 48, chem: true });
-  boardText(ctx, L.o2_bubbles, ANODE.x + ANODE.w / 2, 430, { color: RED, size: 28 });
-  boardText(ctx, L.h2_bubbles, CATHODE.x + CATHODE.w / 2, 430, { color: BLUE, size: 28 });
-  boardText(ctx, L.anode + '  (+)', ANODE.x + ANODE.w / 2, 640, { color: RED, size: 34 });
-  boardText(ctx, L.cathode + '  (−)', CATHODE.x + CATHODE.w / 2, 640, { color: BLUE, size: 34 });
-  boardText(ctx, L.platinum, 850, 690, { color: WHITE, size: 30 });
-  boardText(ctx, L.water, 850, 748, { color: WHITE, size: 34 });
+  ink(ctx, 'O₂', ANODE.x + ANODE.w / 2, ANODE.y - 28, { color: RED, size: 48, chem: true });
+  ink(ctx, 'H₂', CATHODE.x + CATHODE.w / 2, CATHODE.y - 28, { color: BLUE, size: 48, chem: true });
 
-  ctx.strokeStyle = WHITE;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(ANODE.x + ANODE.w / 2 + 40, 615);
-  ctx.lineTo(820, 690);
-  ctx.lineTo(CATHODE.x + 20, 615);
-  ctx.stroke();
+  ink(ctx, L.o2_bubbles, 430, 430, { color: RED, size: 28, align: 'right' });
+  arrow(ctx, 445, 430, ANODE.x - 8, 470, RED);
+  ink(ctx, L.h2_bubbles, 1490, 430, { color: BLUE, size: 28, align: 'left' });
+  arrow(ctx, 1475, 430, CATHODE.x + CATHODE.w + 8, 470, BLUE);
 
-  drawCircuit(ctx, L);
+  ink(ctx, L.anode, ANODE.x + ANODE.w / 2, 640, { color: RED, size: 36 });
+  ink(ctx, L.cathode, CATHODE.x + CATHODE.w / 2, 640, { color: BLUE, size: 36 });
+
+  ink(ctx, L.platinum, 960, 500, { color: INK, size: 28 });
+  arrow(ctx, 900, 500, ANODE.x + ANODE.w + 8, 548, INK);
+  arrow(ctx, 1020, 500, CATHODE.x - 8, 548, INK);
+
+  ink(ctx, L.water, 960, 705, { color: INK, size: 34 });
+
+  drawBottomCircuit(ctx, L);
+
+  ink(ctx, L.caption, 960, 1048, { color: INK, size: 36 });
 
   if (state.flash > 0) {
-    ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.45})`;
+    ctx.fillStyle = `rgba(2, 62, 138, ${state.flash * 0.35})`;
     ctx.beginPath();
-    ctx.arc(CATHODE.x + CATHODE.w / 2, 280, 80 * state.flash, 0, Math.PI * 2);
+    ctx.arc(CATHODE.x + CATHODE.w / 2, 240, 70 * state.flash, 0, Math.PI * 2);
     ctx.fill();
   }
   if (state.splint > 0) {
-    ctx.strokeStyle = `rgba(248,113,113,${state.splint})`;
+    ctx.strokeStyle = `rgba(193, 18, 31, ${state.splint})`;
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(ANODE.x + ANODE.w / 2, 200);
-    ctx.lineTo(ANODE.x + ANODE.w / 2 + 70, 120);
+    ctx.lineTo(ANODE.x + ANODE.w / 2 + 80, 110);
     ctx.stroke();
-    ctx.fillStyle = `rgba(248,113,113,${state.splint})`;
+    ctx.fillStyle = `rgba(193, 18, 31, ${state.splint})`;
     ctx.beginPath();
-    ctx.arc(ANODE.x + ANODE.w / 2 + 70, 120, 14, 0, Math.PI * 2);
+    ctx.arc(ANODE.x + ANODE.w / 2 + 80, 110, 12, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-function drawHalfPanel(ctx, x, y, w, h, color, title, eq, e) {
-  ctx.save();
-  ctx.fillStyle = 'rgba(15,23,42,0.72)';
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 4;
-  roundRect(ctx, x, y, w, h, 22);
-  ctx.fill();
-  ctx.stroke();
-  boardText(ctx, title, x + w / 2, y + 70, { color, size: 36 });
-  wrapChem(ctx, eq, x + 22, y + 200, w - 44, color);
-  boardText(ctx, e, x + w / 2, y + 470, { color, size: 40, chem: true });
-  ctx.restore();
-}
-
-function wrapChem(ctx, text, x, y, maxW, color) {
-  const size = 30;
-  ctx.save();
-  ctx.font = `800 ${size}px Oxanium, Manrope, sans-serif`;
-  const words = text.split(' ');
-  let line = '', ly = y;
-  const lines = [];
-  words.forEach(word => {
-    const test = line ? line + ' ' + word : word;
-    if (ctx.measureText(test).width > maxW && line) {
-      lines.push(line);
-      line = word;
-    } else line = test;
-  });
-  if (line) lines.push(line);
-  ctx.restore();
-  lines.forEach((ln, i) => boardText(ctx, ln, x + maxW / 2, ly + i * 46, { color, size, chem: true }));
-}
-
-function drawTube(ctx, x, y, w, h, fillFrac, gas) {
+function drawCollectingTube(ctx, tube, fill, maxFrac) {
+  const x = tube.x, y = tube.y, w = tube.w, h = tube.h;
   ctx.save();
   ctx.beginPath();
   ctx.moveTo(x, y + h);
-  ctx.lineTo(x, y + 40);
-  ctx.quadraticCurveTo(x, y, x + w / 2, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + 40);
+  ctx.lineTo(x, y + 48);
+  ctx.bezierCurveTo(x, y, x + w, y, x + w, y + 48);
   ctx.lineTo(x + w, y + h);
-  ctx.strokeStyle = '#f1f5f9';
+  ctx.strokeStyle = INK;
   ctx.lineWidth = 6;
   ctx.stroke();
+
   ctx.save();
   ctx.beginPath();
-  ctx.moveTo(x + 4, y + h);
-  ctx.lineTo(x + 4, y + 40);
-  ctx.quadraticCurveTo(x + 4, y + 4, x + w / 2, y + 4);
-  ctx.quadraticCurveTo(x + w - 4, y + 4, x + w - 4, y + 40);
-  ctx.lineTo(x + w - 4, y + h);
+  ctx.moveTo(x + 6, y + h);
+  ctx.lineTo(x + 6, y + 48);
+  ctx.bezierCurveTo(x + 6, y + 6, x + w - 6, y + 6, x + w - 6, y + 48);
+  ctx.lineTo(x + w - 6, y + h);
   ctx.clip();
-  const gasH = Math.max(0, fillFrac) * (h - 28);
-  ctx.fillStyle = gas;
+  const gasH = Math.max(0, fill) * h * maxFrac;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
   ctx.fillRect(x, y, w, gasH);
+  ctx.fillStyle = 'rgba(125, 211, 252, 0.42)';
+  ctx.fillRect(x, y + gasH, w, h);
   ctx.restore();
   ctx.restore();
 }
 
-function drawPlatinum(ctx, cx, cy) {
-  const g = ctx.createLinearGradient(cx - 28, cy, cx + 28, cy);
-  g.addColorStop(0, '#64748b');
-  g.addColorStop(0.45, '#e2e8f0');
-  g.addColorStop(1, '#475569');
+function drawPlatinumBlock(ctx, cx, cy) {
+  const g = ctx.createLinearGradient(cx - 36, cy, cx + 36, cy);
+  g.addColorStop(0, '#6b7280');
+  g.addColorStop(0.45, '#d1d5db');
+  g.addColorStop(1, '#4b5563');
   ctx.fillStyle = g;
-  ctx.strokeStyle = '#0f172a';
+  ctx.strokeStyle = INK;
   ctx.lineWidth = 3;
-  roundRect(ctx, cx - 28, cy - 55, 56, 110, 6);
+  const x = cx - 36, y = cy - 28, w = 72, h = 56;
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
   ctx.fill();
   ctx.stroke();
 }
 
-function drawCircuit(ctx, L) {
+function drawBottomCircuit(ctx, L) {
   const ax = ANODE.x + ANODE.w / 2;
   const cx = CATHODE.x + CATHODE.w / 2;
-  const ey = 585;
-  const wy = 850;
+  const ey = 576;
+  const wy = 808;
   ctx.save();
   ctx.lineCap = 'round';
-  ctx.lineWidth = 6;
-  ctx.setLineDash([14, 10]);
+  ctx.lineWidth = 5;
+  ctx.setLineDash(state.power ? [12, 8] : []);
   ctx.lineDashOffset = -state.dash;
-
-  ctx.strokeStyle = state.power ? '#ff6b6b' : '#94a3b8';
+  ctx.strokeStyle = INK;
   ctx.beginPath();
   ctx.moveTo(ax, ey);
   ctx.lineTo(ax, wy);
-  ctx.lineTo(720, wy);
+  ctx.lineTo(860, wy);
   ctx.stroke();
-
-  ctx.strokeStyle = state.power ? '#5ec8ff' : '#94a3b8';
   ctx.beginPath();
   ctx.moveTo(cx, ey);
   ctx.lineTo(cx, wy);
   ctx.lineTo(SWITCH_BOX.x + SWITCH_BOX.w, wy);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(970, wy);
-  ctx.lineTo(SWITCH_BOX.x, wy);
+  ctx.moveTo(SWITCH_BOX.x, wy);
+  ctx.lineTo(960, wy);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  ctx.fillStyle = '#0f172a';
-  ctx.strokeStyle = '#f8fafc';
-  ctx.lineWidth = 4;
-  roundRect(ctx, 730, 800, 240, 100, 14);
-  ctx.fill();
-  ctx.stroke();
-  ctx.strokeStyle = '#f8fafc';
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(770, 850); ctx.lineTo(790, 850);
-  ctx.moveTo(800, 830); ctx.lineTo(800, 870);
-  ctx.moveTo(812, 822); ctx.lineTo(812, 878);
-  ctx.moveTo(824, 830); ctx.lineTo(824, 870);
-  ctx.moveTo(848, 850); ctx.lineTo(868, 850);
-  ctx.stroke();
-  ctx.fillStyle = '#ff6b6b';
-  ctx.font = '800 28px Oxanium';
-  ctx.textAlign = 'left';
-  ctx.fillText('+', 748, 858);
-  ctx.fillStyle = '#5ec8ff';
-  ctx.fillText('−', 880, 858);
-  boardText(ctx, L.power_supply, 850, 930, { color: '#f8fafc', size: 28 });
-
-  const sx = SWITCH_BOX.x, sy = SWITCH_BOX.y, sw = SWITCH_BOX.w, sh = SWITCH_BOX.h;
-  roundRect(ctx, sx, sy, sw, sh, 12);
-  ctx.fillStyle = state.power ? 'rgba(34,197,94,0.25)' : 'rgba(15,23,42,0.9)';
-  ctx.fill();
-  ctx.strokeStyle = state.power ? '#4ade80' : '#f8fafc';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-  ctx.fillStyle = '#f8fafc';
-  ctx.beginPath(); ctx.arc(sx + 28, sy + sh / 2, 8, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(sx + sw - 28, sy + sh / 2, 8, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#f8fafc';
+  ctx.strokeStyle = INK;
   ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.moveTo(sx + 28, sy + sh / 2);
-  if (state.power) ctx.lineTo(sx + sw - 28, sy + sh / 2);
-  else ctx.lineTo(sx + sw - 34, sy + 16);
+  ctx.moveTo(872, 778);
+  ctx.lineTo(872, 838);
+  ctx.stroke();
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(900, 758);
+  ctx.lineTo(900, 858);
+  ctx.stroke();
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(928, 778);
+  ctx.lineTo(928, 838);
+  ctx.moveTo(944, 778);
+  ctx.lineTo(944, 838);
+  ctx.stroke();
+
+  ink(ctx, '+', 848, 808, { color: RED, size: 40, chem: true });
+  ink(ctx, '−', 972, 808, { color: BLUE, size: 40, chem: true });
+  ink(ctx, L.power_supply, 910, 900, { color: INK, size: 30 });
+
+  const sx = SWITCH_BOX.x, sy = SWITCH_BOX.y, sw = SWITCH_BOX.w, sh = SWITCH_BOX.h;
+  ctx.fillStyle = state.power ? '#dcfce7' : '#ffffff';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 4;
+  roundRect(ctx, sx, sy, sw, sh, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = INK;
+  ctx.beginPath(); ctx.arc(sx + 30, wy, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(sx + sw - 30, wy, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(sx + 30, wy);
+  if (state.power) ctx.lineTo(sx + sw - 30, wy);
+  else ctx.lineTo(sx + sw - 36, sy + 16);
   ctx.stroke();
   ctx.restore();
 }
+
 
 function loop(ts) {
   if (!lastTs) lastTs = ts;
