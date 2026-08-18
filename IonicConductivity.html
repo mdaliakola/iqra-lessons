@@ -633,9 +633,15 @@ function changeAnnoColor(color) { if(fCanvas) fCanvas.freeDrawingBrush.color = c
 function clearAnnotations() { if(fCanvas) fCanvas.clear(); }
 
 const WORLD = { w: 1360, h: 760 };
-const CAT = { x: 168, y0: 228, y1: 560 };
-const ANO = { x: 392, y0: 228, y1: 560 };
+const CAT = { x: 168, y0: 228, y1: 555 };
+const ANO = { x: 400, y0: 228, y1: 555 };
 const LIQ = { x: 92, y: 278, w: 376, h: 300 };
+const BATT = { x: 980, y: 455, w: 170, h: 96 };
+const SW = { x: 1148, y: 132 };
+const BULB = { x: 820, y: 78 };
+const AMM = { x: 620, y: 95 };
+const COL_NEG = '#38bdf8';
+const COL_POS = '#f87171';
 
 let view = { scale: 1, panX: 0, panY: 0, minScale: 0.4 };
 let sim = {
@@ -684,20 +690,38 @@ function spawnElectrons() {
   for (let i=0;i<32;i++) sim.electrons.push({ id:'e'+i, kind:'e', s:i*22, seg: i<16?0:1 });
 }
 
+function wireBlue() {
+  const mx = BATT.x + 32, my = BATT.y;
+  return [
+    {x: mx, y: my},
+    {x: mx, y: 648},
+    {x: 34, y: 648},
+    {x: 34, y: 88},
+    {x: CAT.x, y: 88},
+    {x: CAT.x, y: CAT.y1}
+  ];
+}
+function wireRedParts() {
+  const px = BATT.x + 138, py = BATT.y;
+  const toSwitch = [
+    {x: px, y: py},
+    {x: 1295, y: py},
+    {x: 1295, y: SW.y},
+    {x: SW.x + 78, y: SW.y}
+  ];
+  const fromSwitch = [
+    {x: SW.x + 12, y: SW.y},
+    {x: BULB.x + 40, y: SW.y},
+    {x: BULB.x + 40, y: AMM.y},
+    {x: AMM.x, y: AMM.y},
+    {x: ANO.x, y: AMM.y},
+    {x: ANO.x, y: ANO.y1}
+  ];
+  if (sim.switchClosed) return [toSwitch.concat([{x: SW.x + 12, y: SW.y}]).concat(fromSwitch.slice(1))];
+  return [toSwitch, fromSwitch];
+}
 function wireSegments() {
-  const minus = { x: 1095, y: 500 };
-  const plus = { x: 1218, y: 500 };
-  const left = [
-    {x:minus.x,y:minus.y},{x:minus.x,y:108},{x:CAT.x,y:108},{x:CAT.x,y:560}
-  ];
-  const mid = [
-    {x:ANO.x,y:560},{x:ANO.x,y:108},{x:640,y:108},{x:820,y:108},{x:820,y:148},{x:1008,y:148}
-  ];
-  const right = [
-    {x:1095,y:148},{x:plus.x,y:108},{x:plus.x,y:plus.y}
-  ];
-  if (sim.switchClosed) return [left, mid.concat(right)];
-  return [left, mid, right];
+  return [wireBlue()].concat(wireRedParts());
 }
 
 function pathLen(pts){ let L=0; for(let i=1;i<pts.length;i++) L+=Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y); return L||1; }
@@ -811,7 +835,7 @@ function setupPointer(){
   c.addEventListener('pointercancel', up);
   c.addEventListener('wheel', e=>{ e.preventDefault(); zoomBy(e.deltaY<0?1.08:1/1.08); }, {passive:false});
 }
-function hitSwitch(x,y){ return x>990 && x<1140 && y>90 && y<200; }
+function hitSwitch(x,y){ return x>SW.x-10 && x<SW.x+100 && y>SW.y-40 && y<SW.y+50; }
 
 function tryFollow(wpt){
   let best=null, bd=28;
@@ -952,22 +976,29 @@ function drawCaption(ctx){
 function strokePath(ctx,pts){ if(!pts.length) return; ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y); ctx.stroke(); }
 
 function drawWires(ctx){
-  const segs=wireSegments();
-  segs.forEach(pts=>{
-    ctx.strokeStyle='#78350f'; ctx.lineWidth=14; ctx.lineJoin='round'; ctx.lineCap='round'; strokePath(ctx,pts);
-    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=8; strokePath(ctx,pts);
-  });
-  ctx.fillStyle='#fbbf24'; ctx.font='700 12px '+urFont(); ctx.textAlign='center';
-  ctx.fillText(currentLang==='ur'?'جوڑنے والی تار':'Connecting wires', 280, 88);
+  function paint(pts, edge, fill) {
+    if (!pts || !pts.length) return;
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.strokeStyle=edge; ctx.lineWidth=14; strokePath(ctx,pts);
+    ctx.strokeStyle=fill; ctx.lineWidth=8; strokePath(ctx,pts);
+  }
+  paint(wireBlue(), '#0e7490', COL_NEG);
+  wireRedParts().forEach(pts => paint(pts, '#9f1239', COL_POS));
+
+  ctx.font='700 13px '+urFont(); ctx.textAlign='left';
+  ctx.fillStyle=COL_NEG;
+  ctx.fillText(currentLang==='ur' ? 'نیلی تار  −  کیتھوڈ' : 'Blue wire  −  cathode', 48, 72);
+  ctx.fillStyle=COL_POS;
+  ctx.textAlign='right';
+  ctx.fillText(currentLang==='ur' ? 'لال تار  +  اینوڈ' : 'Red wire  +  anode', 1320, 72);
+
   if(currentAmps()>0.05){
-    ctx.save(); ctx.setLineDash([10,8]); ctx.strokeStyle='rgba(34,211,238,0.55)'; ctx.lineWidth=2.5;
-    segs.forEach(pts=>strokePath(ctx,pts));
-    ctx.restore();
+    const segs=wireSegments();
     sim.electrons.forEach(e=>{
       const pts=segs[e.seg]||segs[0];
       const p=pointOnPath(pts,e.s);
       const followed = sim.follow && sim.follow.id===e.id;
-      ctx.beginPath(); ctx.fillStyle='#22d3ee'; ctx.shadowColor='#22d3ee'; ctx.shadowBlur=followed?18:10;
+      ctx.beginPath(); ctx.fillStyle='#fef08a'; ctx.shadowColor='#fde047'; ctx.shadowBlur=followed?18:10;
       ctx.arc(p.x,p.y, followed?6:3.6, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
       if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
     });
@@ -977,8 +1008,11 @@ function drawWires(ctx){
 
 function drawFlowArrows(ctx){
   const I=currentAmps(); if(I<0.05) return;
-  ctx.fillStyle='#22d3ee'; ctx.font='700 11px Oxanium'; ctx.textAlign='center';
-  ctx.fillText(currentLang==='ur' ? 'e− → کیتھوڈ' : 'e− toward cathode', 430, 102);
+  ctx.font='700 12px Oxanium'; ctx.textAlign='center';
+  ctx.fillStyle=COL_NEG;
+  ctx.fillText(currentLang==='ur' ? 'e− → کیتھوڈ' : 'e− → cathode', 90, 430);
+  ctx.fillStyle=COL_POS;
+  ctx.fillText(currentLang==='ur' ? 'e− → بیٹری +' : 'e− → battery +', 1180, 250);
   if(sim.showIons && sim.substance==='nacl_molten'){
     ctx.fillStyle='#fb923c'; ctx.fillText('Na+ →', 230, 268);
     ctx.fillStyle='#34d399'; ctx.fillText('← Cl−', 340, 268);
@@ -986,29 +1020,29 @@ function drawFlowArrows(ctx){
 }
 
 function drawAmmeter(ctx){
-  const x=620,y=78;
-  ctx.fillStyle='#1e293b'; ctx.beginPath(); ctx.arc(x,y,28,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='#00f3ff'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#67e8f9'; ctx.font='800 11px Oxanium'; ctx.textAlign='center';
+  const x=AMM.x, y=AMM.y;
+  ctx.fillStyle='#1e293b'; ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle=COL_POS; ctx.lineWidth=3; ctx.stroke();
+  ctx.fillStyle='#fda4af'; ctx.font='800 11px Oxanium'; ctx.textAlign='center';
   ctx.fillText('A', x, y+4);
   ctx.font='600 11px '+urFont();
-  ctx.fillText(currentAmps().toFixed(2)+' A', x, y+46);
+  ctx.fillText(currentAmps().toFixed(2)+' A', x, y+48);
 }
 
 function drawSwitch(ctx){
-  const x=1010, y=148;
-  ctx.fillStyle='#1e293b'; roundRect(ctx,x,y-22,92,48,8); ctx.fill();
-  ctx.strokeStyle='#00f3ff'; ctx.lineWidth=1.4; ctx.stroke();
-  ctx.fillStyle='#94a3b8'; ctx.beginPath(); ctx.arc(x+14,y+2,5,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x+74,y+2,5,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x+14,y+2);
-  if(sim.switchClosed) ctx.lineTo(x+74,y+2); else ctx.lineTo(x+66,y-24); ctx.stroke();
-  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
+  const x=SW.x, y=SW.y;
+  ctx.fillStyle='#1e293b'; roundRect(ctx,x,y-24,92,48,8); ctx.fill();
+  ctx.strokeStyle=COL_POS; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.fillStyle='#fda4af'; ctx.beginPath(); ctx.arc(x+14,y,5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x+74,y,5,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x+14,y);
+  if(sim.switchClosed) ctx.lineTo(x+74,y); else ctx.lineTo(x+66,y-26); ctx.stroke();
+  ctx.fillStyle=COL_POS; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
   ctx.fillText(t('key_switch'), x+46, y+40);
 }
 
 function drawBulb(ctx){
-  const x=780,y=70, I=currentAmps(), on=I>0.08;
+  const x=BULB.x, y=BULB.y, I=currentAmps(), on=I>0.08;
   if(on){
     const g=ctx.createRadialGradient(x+40,y+28,4,x+40,y+28,68);
     g.addColorStop(0,'rgba(253,224,71,0.9)'); g.addColorStop(1,'rgba(251,191,36,0)');
@@ -1018,24 +1052,22 @@ function drawBulb(ctx){
   ctx.strokeStyle='#94a3b8'; ctx.lineWidth=3;
   ctx.arc(x+40,y+22,26,Math.PI,0); ctx.lineTo(x+56,y+48); ctx.lineTo(x+24,y+48); ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.fillStyle='#475569'; roundRect(ctx,x+28,y+48,24,16,3); ctx.fill();
-  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
+  ctx.fillStyle='#fda4af'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
   ctx.fillText(currentLang==='ur'?'بلب':'Bulb', x+40, y-8);
 }
 
 function drawBattery(ctx){
-  const x=1070,y=500,w=170,h=96;
+  const x=BATT.x, y=BATT.y, w=BATT.w, h=BATT.h;
   ctx.fillStyle='#1e293b'; roundRect(ctx,x,y,w,h,12); ctx.fill();
   ctx.strokeStyle='#64748b'; ctx.stroke();
-  if(sim.switchClosed){
-    ctx.fillStyle='rgba(56,189,248,0.18)'; roundRect(ctx,x+8,y+8,70,80,8); ctx.fill();
-    ctx.fillStyle='rgba(239,68,68,0.18)'; roundRect(ctx,x+92,y+8,70,80,8); ctx.fill();
-  }
+  ctx.fillStyle='rgba(56,189,248,0.22)'; roundRect(ctx,x+8,y+8,70,80,8); ctx.fill();
+  ctx.fillStyle='rgba(239,68,68,0.22)'; roundRect(ctx,x+92,y+8,70,80,8); ctx.fill();
   ctx.fillStyle='#0f172a'; ctx.fillRect(x+22,y-10,28,12);
   ctx.fillStyle='#ef4444'; ctx.fillRect(x+120,y-10,28,12);
   ctx.fillStyle='#e2e8f0'; ctx.font='800 22px Oxanium'; ctx.textAlign='center';
   ctx.fillText('6 V', x+w/2, y+40);
-  ctx.font='800 18px Oxanium'; ctx.fillStyle='#7dd3fc'; ctx.fillText('−', x+40, y+70);
-  ctx.fillStyle='#fca5a5'; ctx.fillText('+', x+132, y+70);
+  ctx.font='800 18px Oxanium'; ctx.fillStyle=COL_NEG; ctx.fillText('−', x+40, y+70);
+  ctx.fillStyle=COL_POS; ctx.fillText('+', x+132, y+70);
   ctx.fillStyle='#67e8f9'; ctx.font='600 13px '+urFont();
   ctx.fillText(currentLang==='ur'?'بیٹری':'Battery', x+w/2, y+h+20);
 }
@@ -1052,8 +1084,8 @@ function drawBeaker(ctx){
   ctx.lineTo(x+w-30,y+h); ctx.quadraticCurveTo(x+w,y+h,x+w,y+h-30); ctx.lineTo(x+w,y); ctx.stroke();
 
   ctx.fillStyle='#92400e'; roundRect(ctx,x+24,y+10,w-48,20,4); ctx.fill();
-  drawElectrode(ctx, CAT.x, y+18, currentLang==='ur'?'کیتھوڈ −':'Cathode −', sim.flashC);
-  drawElectrode(ctx, ANO.x, y+18, currentLang==='ur'?'اینوڈ +':'Anode +', sim.flashA);
+  drawElectrode(ctx, CAT.x, y+18, currentLang==='ur'?'کیتھوڈ −':'Cathode −', sim.flashC, COL_NEG);
+  drawElectrode(ctx, ANO.x, y+18, currentLang==='ur'?'اینوڈ +':'Anode +', sim.flashA, COL_POS);
 
   if(sim.substance==='water'){
     sim.waters.forEach(w=>{
@@ -1093,11 +1125,11 @@ function drawBeaker(ctx){
   ctx.fillText(currentLang==='ur'?'بیکر':'Beaker', x+w/2, y-8);
 }
 
-function drawElectrode(ctx,x,y,label,flash){
-  ctx.fillStyle = flash? '#67e8f9' : '#f59e0b';
+function drawElectrode(ctx,x,y,label,flash,color){
+  ctx.fillStyle = flash? '#fef08a' : color;
   roundRect(ctx,x-9,y,18,340,5); ctx.fill();
-  ctx.fillStyle='#78350f'; roundRect(ctx,x-5,y+8,10,320,3); ctx.fill();
-  ctx.fillStyle='#67e8f9'; ctx.font='700 13px '+urFont(); ctx.textAlign='center';
+  ctx.fillStyle='#0f172a'; roundRect(ctx,x-4,y+8,8,320,3); ctx.fill();
+  ctx.fillStyle=color; ctx.font='700 13px '+urFont(); ctx.textAlign='center';
   ctx.fillText(label, x, y-8);
 }
 
