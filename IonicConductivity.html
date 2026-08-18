@@ -14,8 +14,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Oxanium:wght@500;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Oxanium:wght@500;700;800&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 <style>
@@ -23,7 +22,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
   font-family: 'Jameel Noori Nastaliq';
   font-style: normal;
   font-weight: 400;
-  src: url('https://fonts.cdnfonts.com/s/14825/Jameel Noori Nastaleeq.woff') format('woff');
+  src: local('Noto Nastaliq Urdu'), local('Jameel Noori Nastaleeq');
   font-display: swap;
 }
 
@@ -36,7 +35,7 @@ document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margi
 /* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
 [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
 [dir="rtl"] {
-  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaliq', serif !important;
   line-height: 2.3 !important;
 }
 
@@ -81,6 +80,7 @@ input[type=range]::-webkit-slider-thumb {
   transition: transform 0.1s ease;
 }
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=checkbox] { accent-color: #00f3ff; width: 18px; height: 18px; cursor: pointer; }
 
 body {
   font-family: 'Manrope', sans-serif;
@@ -90,7 +90,7 @@ body {
   margin: 0;
 }
 .font-display { font-family: 'Oxanium', 'Manrope', sans-serif; }
-[dir="rtl"] .font-display { font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif; }
+[dir="rtl"] .font-display { font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaliq', serif; }
 [dir="rtl"] body, [dir="rtl"] { font-size: 1.08em; }
 
 .bg-grid {
@@ -222,6 +222,7 @@ body {
 [dir="rtl"] .switch-track.on .switch-knob { transform: translateX(-36px); }
 
 .obs-live { animation: viewIn .4s ease both; }
+.toggle-row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; font-size:13px; }
 </style>
 </head>
 <body class="bg-grid">
@@ -255,7 +256,6 @@ body {
     </nav>
 
     <div class="flex items-center gap-3">
-      <!-- Annotation Toolbar (Hidden by default) -->
       <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
         <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
         <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
@@ -263,12 +263,10 @@ body {
         <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
       </div>
 
-      <!-- Annotation Toggle Button -->
       <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
         <i class="fa-solid fa-pen-nib"></i>
       </button>
 
-      <!-- Language Selector -->
       <div class="relative">
         <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
           <option value="en">🌐 English</option>
@@ -279,7 +277,6 @@ body {
         </select>
       </div>
 
-      <!-- Fullscreen Button -->
       <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
         <i class="fa-solid fa-expand" id="fs-icon"></i>
       </button>
@@ -307,86 +304,91 @@ body {
           </div>
         </div>
 
-        <div class="absolute bottom-3 glass-panel rounded-xl px-3 py-2 text-xs text-cyan-200 z-10 pointer-events-none" style="inset-inline-start:12px">
+        <div class="absolute bottom-3 glass-panel rounded-xl px-3 py-2 text-xs text-cyan-200 z-10 pointer-events-none max-w-[70%]" style="inset-inline-start:12px">
           <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="canvas_hint"></span>
         </div>
       </div>
     </section>
 
-    <aside class="w-full lg:w-[340px] shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0">
+    <aside class="w-full lg:w-[360px] shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0">
       <div class="glass-card rounded-2xl p-4">
         <div class="text-xs uppercase tracking-widest text-slate-400 mb-3 font-bold" data-i18n="sample"></div>
         <div class="grid grid-cols-1 gap-2">
-          <button id="sub-nacl_aq" onclick="setSubstance('nacl_aq')" class="mode-btn active px-3 py-3 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
+          <button id="sub-nacl_aq" onclick="setSubstance('nacl_aq')" class="mode-btn active px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
             <i class="fa-solid fa-droplet text-sky-400"></i><span data-i18n="sub_nacl_aq"></span>
           </button>
-          <button id="sub-nacl_solid" onclick="setSubstance('nacl_solid')" class="mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
-            <i class="fa-solid fa-gem text-violet-300"></i><span data-i18n="sub_nacl_solid"></span>
-          </button>
-          <button id="sub-nacl_molten" onclick="setSubstance('nacl_molten')" class="mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
+          <button id="sub-nacl_molten" onclick="setSubstance('nacl_molten')" class="mode-btn px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
             <i class="fa-solid fa-fire text-orange-400"></i><span data-i18n="sub_nacl_molten"></span>
           </button>
-          <button id="sub-sugar" onclick="setSubstance('sugar')" class="mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
+          <button id="sub-nacl_solid" onclick="setSubstance('nacl_solid')" class="mode-btn px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
+            <i class="fa-solid fa-gem text-violet-300"></i><span data-i18n="sub_nacl_solid"></span>
+          </button>
+          <button id="sub-sugar" onclick="setSubstance('sugar')" class="mode-btn px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
             <i class="fa-solid fa-cubes-stacked text-amber-300"></i><span data-i18n="sub_sugar"></span>
           </button>
-          <button id="sub-water" onclick="setSubstance('water')" class="mode-btn px-3 py-3 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
+          <button id="sub-water" onclick="setSubstance('water')" class="mode-btn px-3 py-2.5 rounded-xl font-bold text-sm text-slate-300 text-start flex items-center gap-2">
             <i class="fa-solid fa-glass-water text-blue-300"></i><span data-i18n="sub_water"></span>
           </button>
         </div>
       </div>
 
-      <div class="glass-card rounded-2xl p-4 space-y-4">
+      <div class="glass-card rounded-2xl p-4 space-y-3">
         <div class="flex items-center justify-between gap-3">
           <span class="font-bold" data-i18n="key_switch"></span>
           <div id="ui-switch" class="switch-track" onclick="toggleCircuit()">
             <div class="switch-knob"></div>
           </div>
         </div>
-        <div>
-          <div class="flex justify-between text-sm mb-2">
-            <span data-i18n="concentration"></span>
-            <span class="stat-val num" id="conc-val">0.50 M</span>
-          </div>
-          <input type="range" id="conc-slider" min="0.05" max="1.2" step="0.05" value="0.50" oninput="setConcentration(this.value)">
+        <div class="flex gap-2">
+          <button onclick="togglePause()" class="flex-1 py-2.5 rounded-xl font-bold bg-slate-800 border border-slate-600 text-cyan-300">
+            <i id="pause-icon" class="fa-solid fa-pause"></i> <span id="pause-lbl" data-i18n="pause"></span>
+          </button>
+          <button onclick="resetExperiment()" class="flex-1 py-2.5 rounded-xl font-bold bg-slate-800 border border-slate-600 text-cyan-300">
+            <i class="fa-solid fa-rotate-left"></i> <span data-i18n="reset_exp"></span>
+          </button>
         </div>
         <div>
-          <div class="flex justify-between text-sm mb-2">
-            <span data-i18n="voltage"></span>
-            <span class="stat-val num" id="volt-val">6.0 V</span>
-          </div>
+          <div class="flex justify-between text-sm mb-1"><span data-i18n="concentration"></span><span class="stat-val num" id="conc-val">1.00 M</span></div>
+          <input type="range" id="conc-slider" min="0.1" max="2" step="0.1" value="1" oninput="setConcentration(this.value)">
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span data-i18n="voltage"></span><span class="stat-val num" id="volt-val">6.0 V</span></div>
           <input type="range" id="volt-slider" min="1" max="12" step="0.5" value="6" oninput="setVoltage(this.value)">
         </div>
-        <button onclick="resetExperiment()" class="w-full py-3 rounded-xl font-bold bg-slate-800 border border-slate-600 hover:border-cyan-400 text-cyan-300">
-          <i class="fa-solid fa-rotate-left"></i> <span data-i18n="reset_exp"></span>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span data-i18n="e_speed"></span><span class="stat-val num" id="espeed-val">1.0×</span></div>
+          <input type="range" id="espeed-slider" min="0.3" max="2.5" step="0.1" value="1" oninput="sim.eSpeed=parseFloat(this.value);document.getElementById('espeed-val').textContent=parseFloat(this.value).toFixed(1)+'×'">
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span data-i18n="ion_speed"></span><span class="stat-val num" id="ispeed-val">1.0×</span></div>
+          <input type="range" id="ispeed-slider" min="0.3" max="2.5" step="0.1" value="1" oninput="sim.ionSpeed=parseFloat(this.value);document.getElementById('ispeed-val').textContent=parseFloat(this.value).toFixed(1)+'×'">
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span data-i18n="pcount"></span><span class="stat-val num" id="pcount-val">40</span></div>
+          <input type="range" id="pcount-slider" min="12" max="80" step="2" value="40" oninput="setParticleCount(this.value)">
+        </div>
+        <label class="toggle-row"><span data-i18n="show_e"></span><input type="checkbox" id="chk-e" checked onchange="sim.showE=this.checked"></label>
+        <label class="toggle-row"><span data-i18n="show_ions"></span><input type="checkbox" id="chk-ions" checked onchange="sim.showIons=this.checked"></label>
+        <label class="toggle-row"><span data-i18n="show_rxn"></span><input type="checkbox" id="chk-rxn" checked onchange="sim.showRxn=this.checked"></label>
+        <button onclick="clearFollow()" class="w-full py-2 rounded-xl font-bold bg-slate-900 border border-slate-600 text-sm text-slate-200">
+          <i class="fa-solid fa-crosshairs"></i> <span data-i18n="clear_follow"></span>
         </button>
       </div>
 
       <div class="glass-card rounded-2xl p-4">
         <div class="text-xs uppercase tracking-widest text-slate-400 mb-3 font-bold" data-i18n="live_meters"></div>
-        <div class="grid grid-cols-2 gap-2 text-sm">
-          <div class="bg-slate-900/70 rounded-xl p-3">
-            <div class="text-slate-400" data-i18n="current"></div>
-            <div class="stat-val text-lg num" id="meter-i">0.00 A</div>
-          </div>
-          <div class="bg-slate-900/70 rounded-xl p-3">
-            <div class="text-slate-400" data-i18n="bulb_state"></div>
-            <div class="stat-val text-lg" id="meter-bulb"></div>
-          </div>
-          <div class="bg-slate-900/70 rounded-xl p-3 col-span-2">
-            <div class="text-slate-400" data-i18n="carriers"></div>
-            <div class="stat-val text-base" id="meter-carriers"></div>
-          </div>
+        <div class="grid grid-cols-1 gap-2 text-sm">
+          <div class="bg-slate-900/70 rounded-xl p-3 flex justify-between"><span data-i18n="i_wire"></span><span class="stat-val num" id="meter-wire">0.00 A</span></div>
+          <div class="bg-slate-900/70 rounded-xl p-3 flex justify-between"><span data-i18n="i_ion"></span><span class="stat-val num" id="meter-ion">0.00 A</span></div>
+          <div class="bg-slate-900/70 rounded-xl p-3 flex justify-between"><span data-i18n="circuit"></span><span class="stat-val" id="meter-circuit"></span></div>
+          <div class="bg-slate-900/70 rounded-xl p-3 flex justify-between"><span data-i18n="bulb_state"></span><span class="stat-val" id="meter-bulb"></span></div>
         </div>
       </div>
 
-      <div class="glass-card rounded-2xl p-4 flex-1">
+      <div class="glass-card rounded-2xl p-4">
         <div class="text-xs uppercase tracking-widest text-slate-400 mb-2 font-bold" data-i18n="observe"></div>
-        <p id="observe-text" class="obs-live text-sm text-slate-200 leading-relaxed"></p>
-        <div class="mt-3 flex flex-wrap gap-2 text-xs">
-          <span class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-400/30">Na<sup>+</sup></span>
-          <span class="px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">Cl<sup>−</sup></span>
-          <span class="px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/30" data-i18n="legend_e"></span>
-        </div>
+        <p id="observe-text" class="obs-live text-sm text-slate-200"></p>
+        <p id="follow-text" class="mt-2 text-xs text-cyan-300 hidden"></p>
       </div>
     </aside>
   </main>
@@ -425,144 +427,190 @@ const LANG = {
     intro_topic: "Electrical Conductivity in Ionic Compounds",
     tab_sim: "Simulation",
     tab_quiz: "Quiz",
-    sample: "Test sample",
-    sub_nacl_aq: "NaCl solution (aqueous)",
+    sample: "Medium (What if?)",
+    sub_nacl_aq: "Aqueous NaCl (brine)",
     sub_nacl_solid: "Solid NaCl crystal",
-    sub_nacl_molten: "Molten NaCl",
-    sub_sugar: "Sugar solution (molecular)",
+    sub_nacl_molten: "Molten NaCl — Na metal",
+    sub_sugar: "Sugar solution",
     sub_water: "Distilled water",
-    key_switch: "Circuit key",
-    concentration: "Concentration",
+    key_switch: "Battery / key",
+    concentration: "NaCl concentration",
     voltage: "Battery voltage",
-    reset_exp: "Reset experiment",
-    live_meters: "Live meters",
-    current: "Current",
+    e_speed: "Electron speed",
+    ion_speed: "Ion speed",
+    pcount: "Particle count",
+    show_e: "Show electron movement",
+    show_ions: "Show ion movement",
+    show_rxn: "Show chemical reactions",
+    pause: "Pause",
+    play: "Play",
+    reset_exp: "Reset",
+    clear_follow: "Stop following",
+    live_meters: "Ammeter",
+    i_wire: "Electron current (wire)",
+    i_ion: "Ionic current (solution)",
+    circuit: "Total circuit",
+    closed: "CLOSED",
+    open: "OPEN",
     bulb_state: "Bulb",
-    carriers: "Charge carriers in sample",
-    observe: "What to notice",
-    legend_e: "e− in metal wires",
+    observe: "Microscopic story",
     view_tools: "View",
-    canvas_hint: "Tap the key • Drag to pan when zoomed • Wheel / pinch to zoom",
+    canvas_hint: "Tap the key • Click an ion or electron to follow • Drag to pan • Wheel / pinch zoom",
     bulb_on: "Glowing",
     bulb_off: "Dark",
-    carriers_ions: "Free Na+ and Cl− ions",
-    carriers_lattice: "Ions locked in crystal lattice",
-    carriers_molten: "Free Na+ and Cl− (melted lattice)",
-    carriers_sugar: "Neutral sugar molecules only",
-    carriers_water: "Almost no free ions",
-    obs_open: "The key is open. No closed path, so electrons in the wires stay still and the bulb stays dark. Ions in the beaker drift randomly.",
-    obs_nacl_aq: "NaCl has broken into Na+ and Cl−. Closed circuit: Na+ swims to the cathode (−), Cl− swims to the anode (+). Electrons race through the metal wires. The bulb glows because ions complete the circuit under water.",
-    obs_solid: "The crystal is ionic, but ions cannot leave their lattice seats. The underwater view shows vibration, not travel. No charge crosses the gap — the bulb stays dark.",
-    obs_molten: "Heat has melted the lattice. Ions are free to drift. With the key closed they march to opposite electrodes and the bulb lights — same ions, now mobile.",
-    obs_sugar: "Sugar dissolves as whole molecules, not ions. No charged particles move between the electrodes. Electrons in the wires have nowhere to go. The bulb stays dark.",
-    obs_water: "Pure water has almost no ions. A few H+ / OH− are too rare to carry useful current. Add salt and watch the underwater storm of ions begin.",
+    no_net: "No net ionic current",
+    obs_open: "Battery disconnected. Na+ and Cl− still wander at random. Random motion is not current. Net ionic current = 0. Electrons in the wires are still.",
+    obs_nacl_aq: "ONE circuit, TWO carriers. Wires: electrons leave the − terminal toward the cathode. Solution: Na+ drifts to the cathode, Cl− to the anode. At the cathode water is reduced to H2 (not sodium metal). At the anode Cl− is oxidized to Cl2. Charge never jumps through water as free electrons.",
+    obs_solid: "Ions exist, but they are locked in the lattice. No drift, no electrode reaction, no closed circuit.",
+    obs_molten: "Same NaCl, different medium. No water, so Na+ can be reduced: Na+ + e− → Na (metal deposits). Cl− still forms Cl2. Medium changes the cathode reaction.",
+    obs_sugar: "Neutral molecules cannot carry charge. The wire electrons have nowhere to go.",
+    obs_water: "Almost no ions, so almost no ionic current. Add NaCl to complete the circuit through the electrolyte.",
+    follow_na_aq: "Follow Na+: it migrates to the cathode as a spectator. Water, not Na+, accepts the electron. 2H2O + 2e− → H2 + 2OH−",
+    follow_na_molten: "Follow Na+: Na+ + e− → Na. Metal deposits only because the melt has no water.",
+    follow_cl: "Follow Cl−: Cl− → anode → loses electron → Cl2 gas. 2Cl− → Cl2 + 2e− (oxidation).",
+    follow_e: "Follow electron: Battery − → metal wire → cathode. It never swims through the solution.",
+    follow_oh: "Follow OH−: formed at the cathode when water is reduced, then disperses in the brine.",
+    sum_wire: "IN WIRE: electrons move",
+    sum_sol: "IN SOLUTION: Na+ and Cl− move",
+    sum_cat: "CATHODE: reduction",
+    sum_an: "ANODE: oxidation",
+    sum_all: "OVERALL: electrical energy → chemical change",
+    banner: "Current does not simply travel through the water as electrons; charge is transported through the electrolyte by moving ions.",
+    rxn_h2: "2H2O + 2e− → H2 + 2OH−",
+    rxn_na: "Na+ + e− → Na",
+    rxn_cl: "2Cl− → Cl2 + 2e−",
+    red: "Reduction",
+    ox: "Oxidation",
     quiz_title: "Concept check",
     next_q: "Next question",
     final_score: "Final score",
     percentage: "Percentage",
     restart_quiz: "Restart quiz",
-    q1: "Solid sodium chloride contains ions. Why does the bulb stay dark when electrodes touch solid NaCl?",
-    q1a: "Solid NaCl has no charged particles at all",
-    q1b: "Ions are trapped in a rigid lattice and cannot move",
-    q1c: "The battery polarity is reversed",
-    q1d: "Metal wires cannot carry electrons",
-    q1e: "Ions are locked in place. Conduction needs mobile charged particles. Melting or dissolving frees those ions.",
-    q2: "In the closed circuit, which way do Na+ ions move in the solution?",
-    q2a: "Toward the anode (+ electrode)",
-    q2b: "Toward the cathode (− electrode)",
-    q2c: "Along the metal wires with the electrons",
-    q2d: "They do not move; only electrons move in water",
-    q2e: "Cations are positive, so they are attracted to the negative electrode (cathode).",
-    q3: "A sugar solution looks like salt water, but the bulb stays dark. Why?",
-    q3a: "Sugar molecules are too large to fit between electrodes",
-    q3b: "Sugar is an ionic compound that never dissolves",
-    q3c: "Sugar dissolves as neutral molecules, so no free ions carry charge",
-    q3d: "Sugar destroys the battery voltage",
-    q3e: "Only free ions (or free electrons in metals) can carry current. Molecular solutes stay uncharged.",
-    q4: "What is the underwater role of ions when the bulb lights?",
-    q4a: "They jump out of the beaker into the wires",
-    q4b: "They complete the circuit by drifting to opposite electrodes",
-    q4c: "They turn into electrons inside the solution",
-    q4d: "They heat the water until it becomes a metal",
-    q4e: "Charge is carried by ion flow in the electrolyte and by electron flow in the metal wires — two different carriers, one circuit.",
-    q5: "Raising NaCl concentration (with the key closed) typically makes the bulb brighter because",
-    q5a: "More free ions can carry a larger current",
-    q5b: "The battery voltage automatically doubles",
-    q5c: "Water molecules start conducting like copper",
-    q5d: "The switch resistance falls to zero",
-    q5e: "Current in an electrolyte grows with the number of mobile ions (until other limits appear)."
+    q1: "Why is random motion of Na+ and Cl− in the beaker not the same as current?",
+    q1a: "Ions do not have charge until the switch closes",
+    q1b: "Current needs a net drift of charge in one direction, not random wandering",
+    q1c: "Only electrons can ever be called current",
+    q1d: "The beaker is not part of any circuit",
+    q1e: "With the battery off, + and − motions cancel. A field makes a net ionic current that matches the electron current in the wires.",
+    q2: "In concentrated aqueous NaCl, what is produced at the cathode?",
+    q2a: "Solid sodium metal, because Na+ arrives there",
+    q2b: "H2 gas, because water is easier to reduce than Na+",
+    q2c: "Cl2 gas",
+    q2d: "Electrons swimming out into the water",
+    q2e: "Na+ is a spectator at the aqueous cathode. Water accepts electrons: 2H2O + 2e− → H2 + 2OH−. Sodium metal needs molten NaCl.",
+    q3: "What happens at the anode in brine?",
+    q3a: "Na+ deposits as metal",
+    q3b: "Water is reduced to H2",
+    q3c: "Cl− ions are oxidized: 2Cl− → Cl2 + 2e−, and those electrons enter the wire",
+    q3d: "Electrons leave the solution as bubbles",
+    q3e: "Oxidation at the anode releases electrons into the metal, completing the loop back to the battery + terminal.",
+    q4: "How is the circuit completed through the solution?",
+    q4a: "Free electrons jump from cathode to anode through the water",
+    q4b: "Moving ions carry charge: Na+ one way, Cl− the other",
+    q4c: "The bulb sends light through the liquid",
+    q4d: "H2 bubbles act as wires",
+    q4e: "Wire = electron current. Solution = ionic current. Together they are one closed circuit.",
+    q5: "Why can molten NaCl deposit sodium metal while aqueous NaCl does not?",
+    q5a: "Molten NaCl has stronger batteries",
+    q5b: "The medium changes the cathode reaction: with no water, Na+ + e− → Na is possible",
+    q5c: "Aqueous NaCl has no Na+ ions",
+    q5d: "Chlorine cannot form in a melt",
+    q5e: "Same compound, different electrode chemistry. Always check what else is present (water) before predicting the product."
   },
   ur: {
     topic: "آئینی مرکبات میں برقی موصلیت",
     intro_topic: "آئینی مرکبات میں برقی موصلیت",
     tab_sim: "تخروپن",
     tab_quiz: "آزمائش",
-    sample: "نمونہ",
-    sub_nacl_aq: "سوڈیم کلورائڈ کا محلول",
-    sub_nacl_solid: "ٹھوس سوڈیم کلورائڈ",
-    sub_nacl_molten: "پگھلا ہوا سوڈیم کلورائڈ",
-    sub_sugar: "چینی کا محلول (سالماتی)",
+    sample: "وسط (اگر ایسا ہو؟)",
+    sub_nacl_aq: "آبی NaCl (نمکین محلول)",
+    sub_nacl_solid: "ٹھوس NaCl",
+    sub_nacl_molten: "پگھلا NaCl — سوڈیم دھات",
+    sub_sugar: "چینی کا محلول",
     sub_water: "مقطر پانی",
-    key_switch: "کنجی",
-    concentration: "ارتکاز",
+    key_switch: "بیٹری / کنجی",
+    concentration: "NaCl کا ارتکاز",
     voltage: "بیٹری وولٹیج",
-    reset_exp: "تجربہ ازسرنو",
-    live_meters: "زنده پیمائش",
-    current: "برقی رو",
+    e_speed: "الیکٹران کی رفتار",
+    ion_speed: "آئن کی رفتار",
+    pcount: "ذرات کی تعداد",
+    show_e: "الیکٹران کی حرکت دکھائیں",
+    show_ions: "آئن کی حرکت دکھائیں",
+    show_rxn: "کیمیائی تعامل دکھائیں",
+    pause: "توقف",
+    play: "چلائیں",
+    reset_exp: "ازسرنو",
+    clear_follow: "پیروی بند کریں",
+    live_meters: "امیٹر",
+    i_wire: "تار میں الیکٹرونی رو",
+    i_ion: "محلول میں آئینی رو",
+    circuit: "مکمل سرکٹ",
+    closed: "بند",
+    open: "کھلا",
     bulb_state: "بلب",
-    carriers: "نمونے میں چارج لے جانے والے",
-    observe: "غور کیجیے",
-    legend_e: "دھاتی تاروں میں e−",
+    observe: "خردبینی کہانی",
     view_tools: "منظر",
-    canvas_hint: "کنجی دبائیں • زوم کے بعد کھینچ کر پین • پہیہ / پنچ سے زوم",
+    canvas_hint: "کنجی دبائیں • آئن یا الیکٹران پر کلک کر کے پیروی کریں • پین / زوم",
     bulb_on: "روشن",
     bulb_off: "بند",
-    carriers_ions: "آزاد Na+ اور Cl− آئنز",
-    carriers_lattice: "جالی میں قید آئنز",
-    carriers_molten: "آزاد Na+ اور Cl− (پگھلی جالی)",
-    carriers_sugar: "صرف غیر جانبدار سالمے",
-    carriers_water: "تقریباً کوئی آزاد آئن نہیں",
-    obs_open: "کنجی کھلی ہے۔ سرکٹ بند نہیں، اس لیے تاروں میں الیکٹران ساکت ہیں اور بلب اندھیرا ہے۔ بیکر میں آئنز بے ترتیب بہہ رہے ہیں۔",
-    obs_nacl_aq: "سوڈیم کلورائڈ Na+ اور Cl− میں ٹوٹ چکا ہے۔ بند سرکٹ: Na+ کیتھوڈ (−) کی طرف اور Cl− اینوڈ (+) کی طرف تیرتے ہیں۔ الیکٹران دھاتی تاروں میں دوڑتے ہیں۔ بلب اس لیے جلتا ہے کہ پانی کے اندر آئنز سرکٹ مکمل کرتے ہیں۔",
-    obs_solid: "کرسٹل آئینی ہے مگر آئن اپنی جالی کی نشستوں سے نہیں نکل سکتے۔ زیرِ آب منظر میں کمپنی ہے، سفر نہیں۔ خلا کے پار چارج نہیں جاتا — بلب بند رہتا ہے۔",
-    obs_molten: "حرارت نے جالی پگھلا دی۔ آئن اب آزاد ہیں۔ کنجی بند ہو تو وہ مخالف الیکٹروڈز کی طرف چلتے ہیں اور بلب جلتا ہے — وہی آئن، اب متحرک۔",
-    obs_sugar: "چینی مکمل سالموں کی صورت میں گھلتی ہے، آئن نہیں بنتے۔ الیکٹروڈز کے درمیان کوئی چارج شدہ ذرہ نہیں چلتا۔ تاروں کے الیکٹران کے پاس راستہ نہیں۔ بلب بند رہتا ہے۔",
-    obs_water: "خالص پانی میں تقریباً آئن نہیں ہوتے۔ چند H+ / OH− اتنے کم ہیں کہ مفید رو نہیں لے سکتے۔ نمک ڈالیں اور آئنوں کا زیرِ آب ہجوم دیکھیں۔",
+    no_net: "خالص آئینی رو صفر",
+    obs_open: "بیٹری منقطع ہے۔ Na+ اور Cl− اب بھی بے ترتیب گھوم رہے ہیں۔ بے ترتیب حرکت رو نہیں۔ خالص آئینی رو = 0۔ تاروں میں الیکٹران ساکت ہیں۔",
+    obs_nacl_aq: "ایک سرکٹ، دو حامل۔ تار: الیکٹران − قطب سے کیتھوڈ کی طرف۔ محلول: Na+ کیتھوڈ، Cl− اینوڈ۔ کیتھوڈ پر پانی کم ہو کر H2 بناتا ہے (سوڈیم دھات نہیں)۔ اینوڈ پر Cl− سے Cl2۔ پانی میں آزاد الیکٹران نہیں تیرتے۔",
+    obs_solid: "آئن موجود ہیں مگر جالی میں قید ہیں۔ نہ بہاؤ، نہ الیکٹروڈ تعامل، نہ بند سرکٹ۔",
+    obs_molten: "وہی NaCl، دوسرا وسط۔ پانی نہیں، اس لیے Na+ + e− → Na (دھات جمے)۔ Cl− سے پھر Cl2۔ وسط کیتھوڈ کا تعامل بدل دیتا ہے۔",
+    obs_sugar: "غیر جانبدار سالمے چارج نہیں لے سکتے۔ تار کے الیکٹران کے پاس راستہ نہیں۔",
+    obs_water: "تقریباً آئن نہیں، اس لیے آئینی رو نہیں۔ NaCl ڈال کر الیکٹرولائٹ سے سرکٹ مکمل کریں۔",
+    follow_na_aq: "Na+ کی پیروی: یہ کیتھوڈ کی طرف تماشائی کی طرح آتا ہے۔ الیکٹران Na+ نہیں، پانی لیتا ہے: 2H2O + 2e− → H2 + 2OH−",
+    follow_na_molten: "Na+ کی پیروی: Na+ + e− → Na۔ دھات صرف پگھلے نمک میں جمے گی کیونکہ پانی نہیں۔",
+    follow_cl: "Cl− کی پیروی: Cl− → اینوڈ → الیکٹران کھوئے → Cl2 گیس۔ 2Cl− → Cl2 + 2e− (آکسیکرن)۔",
+    follow_e: "الیکٹران کی پیروی: بیٹری − → دھاتی تار → کیتھوڈ۔ یہ محلول میں نہیں تیرتا۔",
+    follow_oh: "OH− کی پیروی: کیتھوڈ پر پانی کی تخفیف سے بنتا ہے، پھر محلول میں پھیل جاتا ہے۔",
+    sum_wire: "تار میں: الیکٹران چلتے ہیں",
+    sum_sol: "محلول میں: Na+ اور Cl− چلتے ہیں",
+    sum_cat: "کیتھوڈ: تخفیف",
+    sum_an: "اینوڈ: آکسیکرن",
+    sum_all: "مجموعی: برقی توانائی → کیمیائی تبدیلی",
+    banner: "رو پانی میں الیکٹران بن کر نہیں گزرتی؛ الیکٹرولائٹ میں چارج متحرک آئنوں سے منتقل ہوتا ہے۔",
+    rxn_h2: "2H2O + 2e− → H2 + 2OH−",
+    rxn_na: "Na+ + e− → Na",
+    rxn_cl: "2Cl− → Cl2 + 2e−",
+    red: "تخفیف",
+    ox: "آکسیکرن",
     quiz_title: "تصوراتی جانچ",
     next_q: "اگلا سوال",
     final_score: "حتمی اسکور",
     percentage: "فیصد",
     restart_quiz: "آزمائش دوبارہ",
-    q1: "ٹھوس سوڈیم کلورائڈ میں آئن موجود ہیں۔ الیکٹروڈز ٹھوس نمک کو چھوئیں تو بلب کیوں نہیں جلتا؟",
-    q1a: "ٹھوس نمک میں کوئی چارج شدہ ذرہ ہی نہیں",
-    q1b: "آئن سخت کرسٹلی جالی میں قید ہیں اور حرکت نہیں کر سکتے",
-    q1c: "بیٹری کی قطبیت الٹی ہے",
-    q1d: "دھاتی تاریں الیکٹران نہیں لے جا سکتیں",
-    q1e: "آئن اپنی جگہ بند ہیں۔ موصلیت کے لیے متحرک چارج شدہ ذرات درکار ہیں۔ پگھلانا یا گھولنا ان آئنوں کو آزاد کرتا ہے۔",
-    q2: "بند سرکٹ میں محلول کے اندر Na+ آئن کس طرف حرکت کرتے ہیں؟",
-    q2a: "اینوڈ (+ الیکٹروڈ) کی طرف",
-    q2b: "کیتھوڈ (− الیکٹروڈ) کی طرف",
-    q2c: "الیکٹرانوں کے ساتھ دھاتی تاروں میں",
-    q2d: "وہ حرکت نہیں کرتے؛ پانی میں صرف الیکٹران چلتے ہیں",
-    q2e: "کیٹائن مثبت ہوتے ہیں اس لیے منفی الیکٹروڈ (کیتھوڈ) کی طرف کھنچتے ہیں۔",
-    q3: "چینی کا محلول نمکین پانی جیسا دکھائی دیتا ہے مگر بلب بند رہتا ہے۔ کیوں؟",
-    q3a: "چینی کے سالمے الیکٹروڈز کے درمیان فٹ نہیں آتے",
-    q3b: "چینی ایک آئینی مرکب ہے جو کبھی نہیں گھلتا",
-    q3c: "چینی غیر جانبدار سالموں کی صورت میں گھلتی ہے، آزاد آئن چارج نہیں لے جاتے",
-    q3d: "چینی بیٹری وولٹیج ختم کر دیتی ہے",
-    q3e: "صرف آزاد آئن (یا دھات میں آزاد الیکٹران) رو لے جا سکتے ہیں۔ سالماتی محلول غیر چارج شدہ رہتے ہیں۔",
-    q4: "بلب جلنے پر پانی کے اندر آئنوں کا کیا کردار ہے؟",
-    q4a: "وہ بیکر سے نکل کر تاروں میں گھس جاتے ہیں",
-    q4b: "وہ مخالف الیکٹروڈز کی طرف بہہ کر سرکٹ مکمل کرتے ہیں",
-    q4c: "وہ محلول کے اندر الیکٹران بن جاتے ہیں",
-    q4d: "وہ پانی کو دھات بنا دیتے ہیں",
-    q4e: "الیکٹرولائٹ میں چارج آئنوں کے بہاؤ سے اور دھاتی تاروں میں الیکٹرانوں کے بہاؤ سے چلتا ہے — دو حامل، ایک سرکٹ۔",
-    q5: "کنجی بند ہو کر NaCl کا ارتکاز بڑھانے سے بلب عام طور پر زیادہ روشن کیوں ہوتا ہے؟",
-    q5a: "زیادہ آزاد آئن زیادہ برقی رو لے جا سکتے ہیں",
-    q5b: "بیٹری وولٹیج خود دوگنی ہو جاتی ہے",
-    q5c: "پانی کے سالمے تانبے کی طرح موصل ہو جاتے ہیں",
-    q5d: "کنجی کی مزاحمت صفر ہو جاتی ہے",
-    q5e: "الیکٹرولائٹ میں رو متحرک آئنوں کی تعداد کے ساتھ بڑھتی ہے (جب تک دیگر حدیں نہ آ جائیں)۔"
+    q1: "بیکر میں Na+ اور Cl− کی بے ترتیب حرکت برقی رو کیوں نہیں کہلاتی؟",
+    q1a: "کنجی کھلی ہو تو آئنوں پر چارج نہیں ہوتا",
+    q1b: "رو کے لیے چارج کا ایک سمت میں خالص بہاؤ چاہیے، بے ترتیب گھومنا نہیں",
+    q1c: "رو صرف الیکٹران کو کہتے ہیں",
+    q1d: "بیکر سرکٹ کا حصہ ہی نہیں",
+    q1e: "بیٹری بند ہو تو + اور − حرکات کٹ جاتی ہیں۔ میدان خالص آئینی رو بناتا ہے جو تار کی الیکٹرونی رو سے میل کھاتی ہے۔",
+    q2: "مرتکز آبی NaCl میں کیتھوڈ پر کیا بنتا ہے؟",
+    q2a: "ٹھوس سوڈیم دھات، کیونکہ Na+ وہاں پہنچتا ہے",
+    q2b: "H2 گیس، کیونکہ پانی کو Na+ سے آسان تخفیف ہوتی ہے",
+    q2c: "Cl2 گیس",
+    q2d: "الیکٹران پانی میں تیر کر نکلتے ہیں",
+    q2e: "آبی کیتھوڈ پر Na+ تماشائی ہے۔ پانی الیکٹران لیتا ہے: 2H2O + 2e− → H2 + 2OH−۔ سوڈیم دھات پگھلے NaCl میں بنتی ہے۔",
+    q3: "نمکین محلول کے اینوڈ پر کیا ہوتا ہے؟",
+    q3a: "Na+ دھات بن کر جم جاتا ہے",
+    q3b: "پانی کم ہو کر H2 بناتا ہے",
+    q3c: "Cl− آکسیڈائز ہوتے ہیں: 2Cl− → Cl2 + 2e−، اور الیکٹران تار میں داخل ہوتے ہیں",
+    q3d: "الیکٹران محلول سے بلبلے بن کر نکلتے ہیں",
+    q3e: "اینوڈ پر آکسیکرن الیکٹران دھات میں چھوڑتا ہے جو بیٹری کے + قطب تک لوپ مکمل کرتے ہیں۔",
+    q4: "محلول کے اندر سرکٹ کیسے مکمل ہوتا ہے؟",
+    q4a: "آزاد الیکٹران کیتھوڈ سے اینوڈ تک پانی میں چھلاتے ہیں",
+    q4b: "متحرک آئن چارج لے جاتے ہیں: Na+ ایک سمت، Cl− دوسری",
+    q4c: "بلب روشنی مائع میں بھیجتا ہے",
+    q4d: "H2 کے بلبلے تار کا کام کرتے ہیں",
+    q4e: "تار = الیکٹرونی رو۔ محلول = آئینی رو۔ دونوں مل کر ایک بند سرکٹ ہیں۔",
+    q5: "پگھلا NaCl سوڈیم دھات کیوں جما سکتا ہے جبکہ آبی NaCl نہیں؟",
+    q5a: "پگھلے نمک کی بیٹری زیادہ طاقتور ہے",
+    q5b: "وسط کیتھوڈ کا تعامل بدل دیتا ہے: پانی نہ ہو تو Na+ + e− → Na ممکن ہے",
+    q5c: "آبی NaCl میں Na+ ہوتا ہی نہیں",
+    q5d: "پگھل میں کلورین نہیں بنتی",
+    q5e: "وہی مرکب، مختلف الیکٹروڈ کیمیا۔ مصنوعہ بتانے سے پہلے دیکھیں اور کیا موجود ہے (پانی)۔"
   }
 };
 
@@ -571,27 +619,23 @@ const QUIZ = [
   { q:'q2', opts:['q2a','q2b','q2c','q2d'], ans:1, exp:'q2e' },
   { q:'q3', opts:['q3a','q3b','q3c','q3d'], ans:2, exp:'q3e' },
   { q:'q4', opts:['q4a','q4b','q4c','q4d'], ans:1, exp:'q4e' },
-  { q:'q5', opts:['q5a','q5b','q5c','q5d'], ans:0, exp:'q5e' }
+  { q:'q5', opts:['q5a','q5b','q5c','q5d'], ans:1, exp:'q5e' }
 ];
 
 let currentLang = localStorage.getItem('iqra-lang') || 'en';
 if (currentLang !== 'en' && currentLang !== 'ur') currentLang = 'en';
-
-function t(key) {
-  return (LANG[currentLang] && LANG[currentLang][key]) || LANG.en[key] || key;
-}
+function t(key) { return (LANG[currentLang] && LANG[currentLang][key]) || LANG.en[key] || key; }
 
 function applyI18n() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.getAttribute('data-i18n'));
-  });
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
   const intro = document.getElementById('intro-topic');
   if (intro) intro.textContent = t('intro_topic');
+  const pl = document.getElementById('pause-lbl');
+  if (pl) pl.textContent = sim.paused ? t('play') : t('pause');
   updateMeters();
   updateObservation();
   if (!document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
 }
-
 function changeLanguage(lang) {
   if (lang !== 'en' && lang !== 'ur') return;
   currentLang = lang;
@@ -602,7 +646,6 @@ function changeLanguage(lang) {
   if (sel) sel.value = lang;
   applyI18n();
 }
-
 function switchTab(name) {
   document.getElementById('view-sim').classList.toggle('hidden', name !== 'sim');
   document.getElementById('view-quiz').classList.toggle('hidden', name !== 'quiz');
@@ -611,46 +654,30 @@ function switchTab(name) {
   if (name === 'sim') requestAnimationFrame(resizeAll);
   if (name === 'quiz') renderQuiz();
 }
-
 function toggleFullScreen() {
   const root = document.documentElement;
-  if (!document.fullscreenElement) {
-    (root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen).call(root);
-  } else {
-    (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
-  }
+  if (!document.fullscreenElement) (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+  else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
 }
 document.addEventListener('fullscreenchange', () => {
   const ic = document.getElementById('fs-icon');
   if (ic) ic.className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
 });
 
-let fCanvas;
-let isAnnoActive = false;
-
+let fCanvas, isAnnoActive = false;
 function initAnnotationCanvas(w, h) {
-    fCanvas = new fabric.Canvas('fabricLayer', {
-        isDrawingMode: false,
-        width: w,
-        height: h
-    });
+    fCanvas = new fabric.Canvas('fabricLayer', { isDrawingMode: false, width: w, height: h });
     fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
     fCanvas.freeDrawingBrush.width = 4;
-
     fCanvas.on('mouse:down', function(options) {
-        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
-            fCanvas.remove(options.target);
-        }
+        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) fCanvas.remove(options.target);
     });
 }
-
 function toggleAnnotationMode() {
     isAnnoActive = !isAnnoActive;
     const btn = document.getElementById('btn-anno-toggle');
     const toolbar = document.getElementById('anno-toolbar');
-
     const fabricContainer = document.querySelector('.canvas-container');
-
     if (isAnnoActive) {
         btn.classList.replace('text-slate-400', 'text-cyan-400');
         toolbar.classList.remove('max-w-0', 'opacity-0');
@@ -665,11 +692,9 @@ function toggleAnnotationMode() {
         if (fCanvas) fCanvas.isDrawingMode = false;
     }
 }
-
 function setAnnoMode(mode) {
     document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
     document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
-
     if (mode === 'pen') {
         document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
         if(fCanvas) fCanvas.isDrawingMode = true;
@@ -678,27 +703,21 @@ function setAnnoMode(mode) {
         if(fCanvas) fCanvas.isDrawingMode = false;
     }
 }
+function changeAnnoColor(color) { if(fCanvas) fCanvas.freeDrawingBrush.color = color; setAnnoMode('pen'); }
+function clearAnnotations() { if(fCanvas) fCanvas.clear(); }
 
-function changeAnnoColor(color) {
-    if(fCanvas) fCanvas.freeDrawingBrush.color = color;
-    setAnnoMode('pen');
-}
+const WORLD = { w: 1360, h: 760 };
+const CAT = { x: 168, y0: 228, y1: 560 };
+const ANO = { x: 392, y0: 228, y1: 560 };
+const LIQ = { x: 92, y: 278, w: 376, h: 300 };
 
-function clearAnnotations() {
-    if(fCanvas) fCanvas.clear();
-}
-
-const WORLD = { w: 1280, h: 720 };
 let view = { scale: 1, panX: 0, panY: 0, minScale: 0.4 };
 let sim = {
-  substance: 'nacl_aq',
-  switchClosed: false,
-  concentration: 0.5,
-  voltage: 6,
-  ions: [],
-  molecules: [],
-  electrons: [],
-  spark: 0
+  substance: 'nacl_aq', switchClosed: false, paused: false,
+  concentration: 1, voltage: 6, eSpeed: 1, ionSpeed: 1, pCount: 40,
+  showE: true, showIons: true, showRxn: true,
+  ions: [], waters: [], electrons: [], bubbles: [], deposits: [],
+  follow: null, tick: 0, flashC: 0, flashA: 0
 };
 
 const canvas = () => document.getElementById('simCanvas');
@@ -706,808 +725,590 @@ const ctx2d = () => canvas().getContext('2d');
 
 function conducts() {
   if (!sim.switchClosed) return 0;
-  if (sim.substance === 'nacl_aq') return 0.35 + sim.concentration * 0.9;
-  if (sim.substance === 'nacl_molten') return 0.85;
-  if (sim.substance === 'water') return 0.02;
+  if (sim.substance === 'nacl_aq') return 0.45 + sim.concentration * 0.55;
+  if (sim.substance === 'nacl_molten') return 0.95;
+  if (sim.substance === 'water') return 0.015;
   return 0;
 }
-
 function currentAmps() {
   const c = conducts();
   if (!c) return 0;
-  return +(c * (sim.voltage / 6) * (sim.substance === 'nacl_aq' ? (0.4 + sim.concentration) : 1) * 0.45).toFixed(2);
+  return +(c * (sim.voltage / 6) * 0.55).toFixed(2);
 }
 
 function spawnParticles() {
-  sim.ions = [];
-  sim.molecules = [];
-  const bx = 90, by = 250, bw = 360, bh = 330;
-  const n = sim.substance === 'nacl_aq' ? Math.round(18 + sim.concentration * 55)
-    : sim.substance === 'nacl_molten' ? 48
-    : sim.substance === 'nacl_solid' ? 36
-    : sim.substance === 'sugar' ? 22
-    : 6;
-
+  sim.ions = []; sim.waters = []; sim.bubbles = []; sim.deposits = []; sim.follow = null;
+  const n = sim.pCount;
   if (sim.substance === 'nacl_solid') {
-    const cols = 6, rows = 6;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        sim.ions.push({
-          x: bx + 70 + c * 42, y: by + 80 + r * 38,
-          vx: 0, vy: 0,
-          q: (r + c) % 2 === 0 ? 1 : -1,
-          locked: true, phase: Math.random() * 6
-        });
-      }
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 6; c++) {
+      sim.ions.push({ id:'i'+r+c, kind:(r+c)%2? 'Cl-':'Na+', q:(r+c)%2?-1:1, x: LIQ.x+50+c*48, y: LIQ.y+40+r*40, vx:0, vy:0, locked:true, phase:Math.random()*6 });
     }
     return;
   }
-
   if (sim.substance === 'sugar') {
-    for (let i = 0; i < n; i++) {
-      sim.molecules.push({
-        x: bx + 40 + Math.random() * (bw - 80),
-        y: by + 50 + Math.random() * (bh - 90),
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4
-      });
-    }
+    for (let i=0;i<n;i++) sim.ions.push({ id:'s'+i, kind:'mol', q:0, x:rndX(), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
     return;
   }
-
   if (sim.substance === 'water') {
-    for (let i = 0; i < 4; i++) {
-      sim.ions.push({
-        x: bx + 50 + Math.random() * (bw - 100),
-        y: by + 60 + Math.random() * (bh - 110),
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        q: i % 2 ? 1 : -1,
-        locked: false, phase: 0, tiny: true
-      });
-    }
+    for (let i=0;i<6;i++) sim.ions.push({ id:'w'+i, kind:i%2?'H+':'OH-', q:i%2?1:-1, x:rndX(), y:rndY(), vx:rndV(), vy:rndV(), locked:false, tiny:true });
+    spawnWaters(18);
     return;
   }
-
-  for (let i = 0; i < n; i++) {
-    sim.ions.push({
-      x: bx + 40 + Math.random() * (bw - 80),
-      y: by + 50 + Math.random() * (bh - 90),
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6,
-      q: i % 2 === 0 ? 1 : -1,
-      locked: false, phase: Math.random() * 6
-    });
+  for (let i=0;i<n;i++) {
+    const pos = i%2===0;
+    sim.ions.push({ id:'p'+i, kind: pos?'Na+':'Cl-', q: pos?1:-1, x:rndX(), y:rndY(), vx:rndV(), vy:rndV(), locked:false });
   }
+  if (sim.substance === 'nacl_aq') spawnWaters(16);
 }
+function spawnWaters(n) {
+  sim.waters = [];
+  for (let i=0;i<n;i++) sim.waters.push({ x:rndX(), y:rndY(), vx:rndV()*0.4, vy:rndV()*0.4 });
+}
+function rndX(){ return LIQ.x+24+Math.random()*(LIQ.w-48); }
+function rndY(){ return LIQ.y+24+Math.random()*(LIQ.h-48); }
+function rndV(){ return (Math.random()-0.5)*0.7; }
 
 function spawnElectrons() {
   sim.electrons = [];
-  const n = 28;
-  for (let i = 0; i < n; i++) sim.electrons.push({ s: i * 18 });
+  for (let i=0;i<32;i++) sim.electrons.push({ id:'e'+i, kind:'e', s:i*22, seg: i<16?0:1 });
 }
 
 function wireSegments() {
-  const plus = { x: 1098, y: 430 };
-  const minus = { x: 1012, y: 430 };
+  const minus = { x: 1095, y: 500 };
+  const plus = { x: 1218, y: 500 };
   const left = [
-    { x: minus.x, y: minus.y },
-    { x: minus.x, y: 168 },
-    { x: 180, y: 168 },
-    { x: 180, y: 210 }
+    {x:minus.x,y:minus.y},{x:minus.x,y:118},{x:CAT.x,y:118},{x:CAT.x,y:CAT.y0}
   ];
   const mid = [
-    { x: 360, y: 210 },
-    { x: 360, y: 168 },
-    { x: 800, y: 168 },
-    { x: 800, y: 188 },
-    { x: 1032, y: 188 }
+    {x:ANO.x,y:ANO.y0},{x:ANO.x,y:118},{x:640,y:118},{x:820,y:118},{x:820,y:148},{x:1008,y:148}
   ];
   const right = [
-    { x: 1100, y: 188 },
-    { x: plus.x, y: 168 },
-    { x: plus.x, y: plus.y }
+    {x:1095,y:148},{x:plus.x,y:118},{x:plus.x,y:plus.y}
   ];
   if (sim.switchClosed) return [left, mid.concat(right)];
   return [left, mid, right];
 }
-function wirePathLeft() { return wireSegments()[0]; }
-function wirePathRight() { return wireSegments()[1]; }
 
-function pathLen(pts) {
-  let L = 0;
-  for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
-  return L;
-}
-function pointOnPath(pts, s) {
-  let rem = ((s % pathLen(pts)) + pathLen(pts)) % pathLen(pts);
-  for (let i = 1; i < pts.length; i++) {
-    const d = Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
-    if (rem <= d) {
-      const k = d ? rem / d : 0;
-      return { x: pts[i-1].x + (pts[i].x - pts[i-1].x) * k, y: pts[i-1].y + (pts[i].y - pts[i-1].y) * k };
-    }
-    rem -= d;
+function pathLen(pts){ let L=0; for(let i=1;i<pts.length;i++) L+=Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y); return L||1; }
+function pointOnPath(pts,s){
+  let rem=((s%pathLen(pts))+pathLen(pts))%pathLen(pts);
+  for(let i=1;i<pts.length;i++){
+    const d=Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y);
+    if(rem<=d){ const k=d?rem/d:0; return {x:pts[i-1].x+(pts[i].x-pts[i-1].x)*k, y:pts[i-1].y+(pts[i].y-pts[i-1].y)*k}; }
+    rem-=d;
   }
-  return pts[pts.length - 1];
+  return pts[pts.length-1];
 }
 
 function setSubstance(id) {
   sim.substance = id;
   ['nacl_aq','nacl_solid','nacl_molten','sugar','water'].forEach(s => {
-    document.getElementById('sub-' + s).classList.toggle('active', s === id);
+    const el = document.getElementById('sub-'+s);
+    if (el) el.classList.toggle('active', s===id);
   });
-  const conc = document.getElementById('conc-slider');
-  conc.disabled = id !== 'nacl_aq';
+  document.getElementById('conc-slider').disabled = id !== 'nacl_aq';
   spawnParticles();
-  updateObservation();
-  updateMeters();
+  updateObservation(); updateMeters();
 }
-
-function setConcentration(v) {
-  sim.concentration = parseFloat(v);
-  document.getElementById('conc-val').textContent = sim.concentration.toFixed(2) + ' M';
-  if (sim.substance === 'nacl_aq') spawnParticles();
-  updateMeters();
+function setConcentration(v){ sim.concentration=parseFloat(v); document.getElementById('conc-val').textContent=sim.concentration.toFixed(2)+' M'; if(sim.substance==='nacl_aq') spawnParticles(); updateMeters(); }
+function setVoltage(v){ sim.voltage=parseFloat(v); document.getElementById('volt-val').textContent=sim.voltage.toFixed(1)+' V'; updateMeters(); }
+function setParticleCount(v){ sim.pCount=parseInt(v,10); document.getElementById('pcount-val').textContent=sim.pCount; spawnParticles(); }
+function toggleCircuit(){ sim.switchClosed=!sim.switchClosed; document.getElementById('ui-switch').classList.toggle('on', sim.switchClosed); updateObservation(); updateMeters(); }
+function togglePause(){
+  sim.paused=!sim.paused;
+  document.getElementById('pause-icon').className = sim.paused ? 'fa-solid fa-play' : 'fa-solid fa-pause';
+  document.getElementById('pause-lbl').textContent = sim.paused ? t('play') : t('pause');
 }
-
-function setVoltage(v) {
-  sim.voltage = parseFloat(v);
-  document.getElementById('volt-val').textContent = sim.voltage.toFixed(1) + ' V';
-  updateMeters();
-}
-
-function toggleCircuit() {
-  sim.switchClosed = !sim.switchClosed;
-  document.getElementById('ui-switch').classList.toggle('on', sim.switchClosed);
-  updateObservation();
-  updateMeters();
-}
-
-function resetExperiment() {
-  sim.switchClosed = false;
-  sim.voltage = 6;
-  sim.concentration = 0.5;
-  document.getElementById('volt-slider').value = 6;
-  document.getElementById('conc-slider').value = 0.5;
+function resetExperiment(){
+  sim.switchClosed=false; sim.paused=false; sim.voltage=6; sim.concentration=1; sim.eSpeed=1; sim.ionSpeed=1; sim.pCount=40; sim.follow=null;
   document.getElementById('ui-switch').classList.remove('on');
-  setVoltage(6);
-  setConcentration(0.5);
-  setSubstance('nacl_aq');
-  resetView();
+  document.getElementById('volt-slider').value=6; document.getElementById('conc-slider').value=1;
+  document.getElementById('espeed-slider').value=1; document.getElementById('ispeed-slider').value=1; document.getElementById('pcount-slider').value=40;
+  document.getElementById('espeed-val').textContent='1.0×'; document.getElementById('ispeed-val').textContent='1.0×';
+  document.getElementById('pause-icon').className='fa-solid fa-pause';
+  setVoltage(6); setConcentration(1); setParticleCount(40); setSubstance('nacl_aq'); resetView();
+}
+function clearFollow(){ sim.follow=null; updateObservation(); }
+
+function updateMeters(){
+  const I=currentAmps();
+  document.getElementById('meter-wire').textContent=I.toFixed(2)+' A';
+  document.getElementById('meter-ion').textContent=I.toFixed(2)+' A';
+  document.getElementById('meter-circuit').textContent = (I>0.05)? t('closed') : t('open');
+  document.getElementById('meter-bulb').textContent = (I>0.08)? t('bulb_on') : t('bulb_off');
+}
+function updateObservation(){
+  const el=document.getElementById('observe-text');
+  if(!el) return;
+  if(!sim.switchClosed) el.textContent=t('obs_open');
+  else el.textContent=t({nacl_aq:'obs_nacl_aq', nacl_solid:'obs_solid', nacl_molten:'obs_molten', sugar:'obs_sugar', water:'obs_water'}[sim.substance]);
+  const ft=document.getElementById('follow-text');
+  if(sim.follow){
+    ft.classList.remove('hidden');
+    const k=sim.follow.kind;
+    ft.textContent = k==='e' ? t('follow_e') : k==='Cl-' ? t('follow_cl') : k==='OH-' ? t('follow_oh') : (sim.substance==='nacl_molten'? t('follow_na_molten'): t('follow_na_aq'));
+  } else ft.classList.add('hidden');
 }
 
-function updateMeters() {
-  const I = currentAmps();
-  const on = I > 0.08;
-  document.getElementById('meter-i').textContent = I.toFixed(2) + ' A';
-  document.getElementById('meter-bulb').textContent = on ? t('bulb_on') : t('bulb_off');
-  const map = {
-    nacl_aq: 'carriers_ions',
-    nacl_solid: 'carriers_lattice',
-    nacl_molten: 'carriers_molten',
-    sugar: 'carriers_sugar',
-    water: 'carriers_water'
-  };
-  document.getElementById('meter-carriers').textContent = t(map[sim.substance]);
-}
-
-function updateObservation() {
-  const el = document.getElementById('observe-text');
-  if (!el) return;
-  if (!sim.switchClosed) { el.textContent = t('obs_open'); return; }
-  const key = {
-    nacl_aq: 'obs_nacl_aq',
-    nacl_solid: 'obs_solid',
-    nacl_molten: 'obs_molten',
-    sugar: 'obs_sugar',
-    water: 'obs_water'
-  }[sim.substance];
-  el.textContent = t(key);
-}
-
-function toggleFloatTools() {
-  const box = document.getElementById('float-tools');
-  const ic = document.getElementById('float-min-icon');
+function toggleFloatTools(){
+  const box=document.getElementById('float-tools');
+  const ic=document.getElementById('float-min-icon');
   box.classList.toggle('collapsed');
   ic.className = box.classList.contains('collapsed') ? 'fa-solid fa-up-right-and-down-left-from-center' : 'fa-solid fa-minus';
 }
-
-function fitView() {
-  const c = canvas();
-  const sx = c.width / (window.devicePixelRatio || 1) / WORLD.w;
-  const sy = c.height / (window.devicePixelRatio || 1) / WORLD.h;
-  view.minScale = Math.min(sx, sy) * 0.92;
-  view.scale = view.minScale;
-  view.panX = (c.width / (window.devicePixelRatio || 1) - WORLD.w * view.scale) / 2;
-  view.panY = (c.height / (window.devicePixelRatio || 1) - WORLD.h * view.scale) / 2;
+function fitView(){
+  const c=canvas();
+  const sx=c.width/(window.devicePixelRatio||1)/WORLD.w;
+  const sy=c.height/(window.devicePixelRatio||1)/WORLD.h;
+  view.minScale=Math.min(sx,sy)*0.94;
+  view.scale=view.minScale;
+  view.panX=(c.width/(window.devicePixelRatio||1)-WORLD.w*view.scale)/2;
+  view.panY=(c.height/(window.devicePixelRatio||1)-WORLD.h*view.scale)/2;
 }
-function zoomBy(f) {
-  const c = canvas();
-  const w = c.width / (window.devicePixelRatio || 1);
-  const h = c.height / (window.devicePixelRatio || 1);
-  const cx = w / 2, cy = h / 2;
-  const ns = Math.max(view.minScale * 0.8, Math.min(3.2, view.scale * f));
-  const k = ns / view.scale;
-  view.panX = cx - (cx - view.panX) * k;
-  view.panY = cy - (cy - view.panY) * k;
-  view.scale = ns;
+function zoomBy(f){
+  const c=canvas(); const w=c.width/(window.devicePixelRatio||1), h=c.height/(window.devicePixelRatio||1);
+  const ns=Math.max(view.minScale*0.8, Math.min(3.2, view.scale*f));
+  const k=ns/view.scale; view.panX=w/2-(w/2-view.panX)*k; view.panY=h/2-(h/2-view.panY)*k; view.scale=ns;
 }
-function resetView() { fitView(); }
+function resetView(){ fitView(); }
+function screenToWorld(x,y){ return {x:(x-view.panX)/view.scale, y:(y-view.panY)/view.scale}; }
 
-let dragging = false, lastX = 0, lastY = 0, pointers = new Map();
-
-function screenToWorld(x, y) {
-  return { x: (x - view.panX) / view.scale, y: (y - view.panY) / view.scale };
-}
-
-function setupPointer() {
-  const c = canvas();
-  c.addEventListener('pointerdown', e => {
-    if (isAnnoActive) return;
+let dragging=false, lastX=0, lastY=0, pointers=new Map(), downPt=null;
+function setupPointer(){
+  const c=canvas();
+  c.addEventListener('pointerdown', e=>{
+    if(isAnnoActive) return;
     c.setPointerCapture(e.pointerId);
-    pointers.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
-    const wpt = screenToWorld(e.offsetX, e.offsetY);
-    if (hitSwitch(wpt.x, wpt.y)) { toggleCircuit(); return; }
-    dragging = true;
-    lastX = e.offsetX; lastY = e.offsetY;
-    c.style.cursor = 'grabbing';
+    pointers.set(e.pointerId,{x:e.offsetX,y:e.offsetY});
+    downPt={x:e.offsetX,y:e.offsetY, t:Date.now()};
+    const wpt=screenToWorld(e.offsetX,e.offsetY);
+    if(hitSwitch(wpt.x,wpt.y)){ toggleCircuit(); downPt=null; return; }
+    dragging=true; lastX=e.offsetX; lastY=e.offsetY; c.style.cursor='grabbing';
   });
-  c.addEventListener('pointermove', e => {
-    if (isAnnoActive) return;
-    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
-    if (pointers.size === 2) {
-      const pts = [...pointers.values()];
-      const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      if (c._pinch) zoomBy(d / c._pinch);
-      c._pinch = d;
-      return;
+  c.addEventListener('pointermove', e=>{
+    if(isAnnoActive) return;
+    if(pointers.has(e.pointerId)) pointers.set(e.pointerId,{x:e.offsetX,y:e.offsetY});
+    if(pointers.size===2){
+      const pts=[...pointers.values()]; const d=Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      if(c._pinch) zoomBy(d/c._pinch); c._pinch=d; return;
     }
-    if (!dragging) return;
-    view.panX += e.offsetX - lastX;
-    view.panY += e.offsetY - lastY;
-    lastX = e.offsetX; lastY = e.offsetY;
+    if(!dragging) return;
+    view.panX+=e.offsetX-lastX; view.panY+=e.offsetY-lastY; lastX=e.offsetX; lastY=e.offsetY;
   });
-  const up = e => {
-    pointers.delete(e.pointerId);
-    c._pinch = null;
-    dragging = false;
-    c.style.cursor = 'grab';
+  const up=e=>{
+    pointers.delete(e.pointerId); c._pinch=null; dragging=false; c.style.cursor='grab';
+    if(downPt && Math.hypot(e.offsetX-downPt.x,e.offsetY-downPt.y)<8){
+      tryFollow(screenToWorld(e.offsetX,e.offsetY));
+    }
+    downPt=null;
   };
   c.addEventListener('pointerup', up);
   c.addEventListener('pointercancel', up);
-  c.addEventListener('wheel', e => {
-    e.preventDefault();
-    zoomBy(e.deltaY < 0 ? 1.08 : 1/1.08);
-  }, { passive: false });
+  c.addEventListener('wheel', e=>{ e.preventDefault(); zoomBy(e.deltaY<0?1.08:1/1.08); }, {passive:false});
+}
+function hitSwitch(x,y){ return x>990 && x<1140 && y>90 && y<200; }
+
+function tryFollow(wpt){
+  let best=null, bd=28;
+  if(sim.showIons) sim.ions.forEach(p=>{
+    if(p.kind==='mol') return;
+    const d=Math.hypot(p.x-wpt.x,p.y-wpt.y);
+    if(d<bd){ bd=d; best=p; }
+  });
+  if(sim.showE && currentAmps()>0.05){
+    const segs=wireSegments();
+    sim.electrons.forEach(el=>{
+      const pts=segs[el.seg]||segs[0];
+      const p=pointOnPath(pts, el.s);
+      const d=Math.hypot(p.x-wpt.x,p.y-wpt.y);
+      if(d<bd){ bd=d; best=el; }
+    });
+  }
+  sim.follow=best;
+  updateObservation();
 }
 
-function hitSwitch(x, y) {
-  return x > 1000 && x < 1120 && y > 95 && y < 210;
+function bounce(p){
+  if(p.x<LIQ.x+16){p.x=LIQ.x+16;p.vx=Math.abs(p.vx);}
+  if(p.x>LIQ.x+LIQ.w-16){p.x=LIQ.x+LIQ.w-16;p.vx=-Math.abs(p.vx);}
+  if(p.y<LIQ.y+16){p.y=LIQ.y+16;p.vy=Math.abs(p.vy);}
+  if(p.y>LIQ.y+LIQ.h-16){p.y=LIQ.y+LIQ.h-16;p.vy=-Math.abs(p.vy);}
+  [CAT,ANO].forEach(el=>{
+    if(Math.abs(p.x-el.x)<16 && p.y>el.y0+20 && p.y<el.y1){
+      p.x += p.x<el.x ? -4 : 4; p.vx *= -0.5;
+    }
+  });
 }
 
-function stepParticles() {
-  const I = currentAmps();
-  const field = sim.switchClosed && I > 0.05 ? (sim.voltage / 6) * 0.085 * (I > 0.1 ? 1 : 0.2) : 0;
-  const bx = 110, by = 280, bw = 320, bh = 280;
-  const cathodeX = 180, anodeX = 360;
+function stepParticles(){
+  if(sim.paused) return;
+  sim.tick++;
+  const I=currentAmps();
+  const field = I>0.05 ? (sim.voltage/6)*0.07*sim.ionSpeed : 0;
+  const sp=sim.ionSpeed;
 
-  sim.ions.forEach(p => {
-    if (p.locked) {
-      p.x += Math.sin(performance.now() / 180 + p.phase) * 0.15;
-      p.y += Math.cos(performance.now() / 200 + p.phase) * 0.15;
+  sim.ions.forEach(p=>{
+    if(p.locked){
+      p.x += Math.sin(sim.tick/18 + p.phase)*0.12;
+      p.y += Math.cos(sim.tick/20 + p.phase)*0.12;
       return;
     }
-    p.vx += (Math.random() - 0.5) * 0.04;
-    p.vy += (Math.random() - 0.5) * 0.04;
-    if (field) {
-      p.vx += (p.q > 0 ? -1 : 1) * field;
-    }
-    p.vx *= 0.96; p.vy *= 0.96;
-    p.x += p.vx; p.y += p.vy;
-    if (p.x < bx) { p.x = bx; p.vx *= -0.4; }
-    if (p.x > bx + bw) { p.x = bx + bw; p.vx *= -0.4; }
-    if (p.y < by) { p.y = by; p.vy *= -0.4; }
-    if (p.y > by + bh) { p.y = by + bh; p.vy *= -0.4; }
-    if (field && p.q > 0 && Math.abs(p.x - cathodeX) < 18) p.vx *= 0.3;
-    if (field && p.q < 0 && Math.abs(p.x - anodeX) < 18) p.vx *= 0.3;
+    p.vx += (Math.random()-0.5)*0.05*sp;
+    p.vy += (Math.random()-0.5)*0.05*sp;
+    if(field && p.q) p.vx += (p.q>0?-1:1)*field;
+    p.vx*=0.96; p.vy*=0.96;
+    p.x+=p.vx; p.y+=p.vy;
+    bounce(p);
+  });
+  sim.waters.forEach(w=>{
+    w.vx+=(Math.random()-0.5)*0.03; w.vy+=(Math.random()-0.5)*0.03;
+    if(field){ /* water stays, some drift toward cathode for highlight */ w.vx += -field*0.15; }
+    w.vx*=0.97; w.vy*=0.97; w.x+=w.vx; w.y+=w.vy; bounce(w);
   });
 
-  sim.molecules.forEach(m => {
-    m.vx += (Math.random() - 0.5) * 0.03;
-    m.vy += (Math.random() - 0.5) * 0.03;
-    m.vx *= 0.98; m.vy *= 0.98;
-    m.x += m.vx; m.y += m.vy;
-    if (m.x < bx) { m.x = bx; m.vx *= -1; }
-    if (m.x > bx + bw) { m.x = bx + bw; m.vx *= -1; }
-    if (m.y < by) { m.y = by; m.vy *= -1; }
-    if (m.y > by + bh) { m.y = by + bh; m.vy *= -1; }
-  });
+  if(sim.showRxn && I>0.08 && (sim.substance==='nacl_aq' || sim.substance==='nacl_molten')){
+    if(sim.tick%28===0) cathodeReaction();
+    if(sim.tick%32===0) anodeReaction();
+  }
 
-  const speed = I > 0.08 ? 2.2 * (sim.voltage / 6) : 0;
-  sim.electrons.forEach(e => { e.s += speed; });
+  sim.bubbles.forEach(b=>{ b.y+=b.vy; b.x+=Math.sin(sim.tick/10+b.ph)*0.4; b.r+=0.02; });
+  sim.bubbles = sim.bubbles.filter(b=> b.y>90);
+  if(sim.deposits.length>40) sim.deposits.shift();
+
+  const segs=wireSegments();
+  const speed = I>0.05 ? 2.4*sim.eSpeed*(sim.voltage/6) : 0;
+  sim.electrons.forEach(e=>{ e.s+=speed; if(e.seg>=segs.length) e.seg=0; });
+  if(sim.flashC>0) sim.flashC--;
+  if(sim.flashA>0) sim.flashA--;
 }
 
-function drawLab(ctx) {
-  ctx.clearRect(0, 0, canvas().width, canvas().height);
+function cathodeReaction(){
+  if(sim.substance==='nacl_aq'){
+    sim.flashC=18;
+    sim.bubbles.push({kind:'H2', x:CAT.x+18, y:420, vy:-1.4, r:5, ph:Math.random()*6});
+    sim.ions.push({id:'oh'+sim.tick, kind:'OH-', q:-1, x:CAT.x+28, y:430, vx:0.8, vy:(Math.random()-0.5), locked:false});
+    if (sim.ions.length > sim.pCount + 24) {
+      const i = sim.ions.findIndex(p => p.kind === 'OH-' && sim.follow !== p);
+      if (i >= 0) sim.ions.splice(i, 1);
+    }
+  } else if(sim.substance==='nacl_molten'){
+    const na = sim.ions.find(p=>p.kind==='Na+' && Math.abs(p.x-CAT.x)<50);
+    if(na){
+      sim.flashC=18;
+      sim.deposits.push({x:CAT.x-10+(Math.random()*8-4), y:380+Math.random()*80});
+      na.x=rndX(); na.y=rndY();
+    }
+  }
+}
+function anodeReaction(){
+  const cl = sim.ions.filter(p=>p.kind==='Cl-' && Math.abs(p.x-ANO.x)<55);
+  if(cl.length>=1){
+    sim.flashA=18;
+    const victim=cl[0];
+    victim.x=rndX(); victim.y=rndY();
+    sim.bubbles.push({kind:'Cl2', x:ANO.x-18, y:410, vy:-1.15, r:6, ph:Math.random()*6});
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+function drawLab(ctx){
+  const dpr=window.devicePixelRatio||1;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,canvas().width,canvas().height);
   ctx.save();
-  const dpr = window.devicePixelRatio || 1;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.translate(view.panX, view.panY);
   ctx.scale(view.scale, view.scale);
-
-  ctx.fillStyle = '#0b1220';
-  roundRect(ctx, 0, 0, WORLD.w, WORLD.h, 24);
-  ctx.fill();
-
-  drawTitle(ctx);
+  ctx.fillStyle='#0b1220'; roundRect(ctx,0,0,WORLD.w,WORLD.h,24); ctx.fill();
+  drawCaption(ctx);
   drawWires(ctx);
+  drawAmmeter(ctx);
   drawSwitch(ctx);
   drawBulb(ctx);
   drawBattery(ctx);
   drawBeaker(ctx);
-  drawMicroCallout(ctx);
-  drawLegend(ctx);
-
+  drawReactions(ctx);
+  drawSummary(ctx);
   ctx.restore();
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+function urFont(){ return currentLang==='ur' ? 'Noto Nastaliq Urdu' : 'Manrope'; }
+function drawCaption(ctx){
+  ctx.fillStyle='#67e8f9'; ctx.font='700 18px '+urFont(); ctx.textAlign='left';
+  ctx.fillText(currentLang==='ur' ? 'الیکٹرولیسس: تار میں الیکٹران، محلول میں آئن' : 'Electrolysis: electrons in the wire, ions in the solution', 36, 40);
 }
 
-function drawTitle(ctx) {
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '700 22px Manrope, sans-serif';
-  ctx.textAlign = 'left';
-  const caption = currentLang === 'ur' ? '5.8 محلول کی برقی ایصالیت کی جانچ' : '5.8 Testing the electrical conductivity of a solution';
-  ctx.fillText(caption, 40, 48);
-}
+function strokePath(ctx,pts){ if(!pts.length) return; ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y); ctx.stroke(); }
 
-function strokePath(ctx, pts) {
-  if (!pts.length) return;
-  ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-  ctx.stroke();
-}
-function drawWires(ctx) {
-  const paths = wireSegments();
-  paths.forEach(pts => {
-    ctx.strokeStyle = '#111827';
-    ctx.lineWidth = 7;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    strokePath(ctx, pts);
-    ctx.strokeStyle = '#64748b';
-    ctx.lineWidth = 4;
-    strokePath(ctx, pts);
+function drawWires(ctx){
+  const segs=wireSegments();
+  segs.forEach(pts=>{
+    ctx.strokeStyle='#0f172a'; ctx.lineWidth=8; ctx.lineJoin='round'; ctx.lineCap='round'; strokePath(ctx,pts);
+    ctx.strokeStyle='#64748b'; ctx.lineWidth=4; strokePath(ctx,pts);
   });
+  if(currentAmps()>0.05){
+    ctx.save(); ctx.setLineDash([10,8]); ctx.strokeStyle='rgba(251,191,36,0.55)'; ctx.lineWidth=2;
+    segs.forEach(pts=>strokePath(ctx,pts));
+    ctx.restore();
+    if(sim.showE){
+      sim.electrons.forEach(e=>{
+        const pts=segs[e.seg]||segs[0];
+        const p=pointOnPath(pts,e.s);
+        const followed = sim.follow && sim.follow.id===e.id;
+        ctx.beginPath(); ctx.fillStyle='#22d3ee'; ctx.shadowColor='#22d3ee'; ctx.shadowBlur=followed?18:10;
+        ctx.arc(p.x,p.y, followed?6:3.3, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+        if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
+      });
+    }
+    drawFlowArrows(ctx);
+  }
+}
 
-  if (currentAmps() > 0.08) {
-    const left = wirePathLeft();
-    const right = wirePathRight();
-    sim.electrons.forEach((e, i) => {
-      const pts = i % 2 === 0 ? left : right;
-      const p = pointOnPath(pts, e.s);
-      ctx.beginPath();
-      ctx.fillStyle = '#22d3ee';
-      ctx.shadowColor = '#22d3ee';
-      ctx.shadowBlur = 12;
-      ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
+function drawFlowArrows(ctx){
+  const I=currentAmps(); if(I<0.05) return;
+  ctx.fillStyle='#22d3ee'; ctx.font='700 11px Oxanium'; ctx.textAlign='center';
+  ctx.fillText(currentLang==='ur' ? 'e− → کیتھوڈ' : 'e− toward cathode', 430, 102);
+  if(sim.showIons && (sim.substance==='nacl_aq'||sim.substance==='nacl_molten')){
+    ctx.fillStyle='#fb923c'; ctx.fillText('Na+ →', 230, 268);
+    ctx.fillStyle='#34d399'; ctx.fillText('← Cl−', 340, 268);
+  }
+}
+
+function drawAmmeter(ctx){
+  const x=620,y=78;
+  ctx.fillStyle='#1e293b'; ctx.beginPath(); ctx.arc(x,y,28,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#00f3ff'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#67e8f9'; ctx.font='800 11px Oxanium'; ctx.textAlign='center';
+  ctx.fillText('A', x, y+4);
+  ctx.font='600 11px '+urFont();
+  ctx.fillText(currentAmps().toFixed(2)+' A', x, y+46);
+}
+
+function drawSwitch(ctx){
+  const x=1010, y=148;
+  ctx.fillStyle='#1e293b'; roundRect(ctx,x,y-22,92,48,8); ctx.fill();
+  ctx.strokeStyle='#00f3ff'; ctx.lineWidth=1.4; ctx.stroke();
+  ctx.fillStyle='#94a3b8'; ctx.beginPath(); ctx.arc(x+14,y+2,5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x+74,y+2,5,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x+14,y+2);
+  if(sim.switchClosed) ctx.lineTo(x+74,y+2); else ctx.lineTo(x+66,y-24); ctx.stroke();
+  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
+  ctx.fillText(t('key_switch'), x+46, y+40);
+}
+
+function drawBulb(ctx){
+  const x=780,y=70, I=currentAmps(), on=I>0.08;
+  if(on){
+    const g=ctx.createRadialGradient(x+40,y+28,4,x+40,y+28,68);
+    g.addColorStop(0,'rgba(253,224,71,0.9)'); g.addColorStop(1,'rgba(251,191,36,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x+40,y+28,68,0,Math.PI*2); ctx.fill();
+  }
+  ctx.beginPath(); ctx.fillStyle=on?'rgba(254,240,138,0.9)':'rgba(148,163,184,0.22)';
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=3;
+  ctx.arc(x+40,y+22,26,Math.PI,0); ctx.lineTo(x+56,y+48); ctx.lineTo(x+24,y+48); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#475569'; roundRect(ctx,x+28,y+48,24,16,3); ctx.fill();
+  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
+  ctx.fillText(currentLang==='ur'?'بلب':'Bulb', x+40, y-8);
+}
+
+function drawBattery(ctx){
+  const x=1070,y=500,w=170,h=96;
+  ctx.fillStyle='#1e293b'; roundRect(ctx,x,y,w,h,12); ctx.fill();
+  ctx.strokeStyle='#64748b'; ctx.stroke();
+  if(sim.switchClosed){
+    ctx.fillStyle='rgba(56,189,248,0.18)'; roundRect(ctx,x+8,y+8,70,80,8); ctx.fill();
+    ctx.fillStyle='rgba(239,68,68,0.18)'; roundRect(ctx,x+92,y+8,70,80,8); ctx.fill();
+  }
+  ctx.fillStyle='#0f172a'; ctx.fillRect(x+22,y-10,28,12);
+  ctx.fillStyle='#ef4444'; ctx.fillRect(x+120,y-10,28,12);
+  ctx.fillStyle='#e2e8f0'; ctx.font='800 22px Oxanium'; ctx.textAlign='center';
+  ctx.fillText(sim.voltage.toFixed(0)+' V', x+w/2, y+40);
+  ctx.font='800 18px Oxanium'; ctx.fillStyle='#7dd3fc'; ctx.fillText('−', x+40, y+70);
+  ctx.fillStyle='#fca5a5'; ctx.fillText('+', x+132, y+70);
+  ctx.fillStyle='#67e8f9'; ctx.font='600 13px '+urFont();
+  ctx.fillText(currentLang==='ur'?'بیٹری':'Battery', x+w/2, y+h+20);
+}
+
+function drawBeaker(ctx){
+  const x=70,y=210,w=420,h=420;
+  const liquid = sim.substance==='nacl_solid'?'rgba(148,163,184,0.12)': sim.substance==='nacl_molten'?'rgba(249,115,22,0.30)':'rgba(56,189,248,0.26)';
+  ctx.fillStyle=liquid;
+  ctx.beginPath(); ctx.moveTo(x+10,y+68); ctx.lineTo(x+10,y+h-34); ctx.quadraticCurveTo(x+10,y+h-8,x+36,y+h-8);
+  ctx.lineTo(x+w-36,y+h-8); ctx.quadraticCurveTo(x+w-10,y+h-8,x+w-10,y+h-34); ctx.lineTo(x+w-10,y+68); ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='rgba(226,232,240,0.5)'; ctx.lineWidth=6;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y+h-30); ctx.quadraticCurveTo(x,y+h,x+30,y+h);
+  ctx.lineTo(x+w-30,y+h); ctx.quadraticCurveTo(x+w,y+h,x+w,y+h-30); ctx.lineTo(x+w,y); ctx.stroke();
+
+  ctx.fillStyle='#92400e'; roundRect(ctx,x+24,y+10,w-48,20,4); ctx.fill();
+  drawElectrode(ctx, CAT.x, y+18, currentLang==='ur'?'کیتھوڈ −':'Cathode −', sim.flashC);
+  drawElectrode(ctx, ANO.x, y+18, currentLang==='ur'?'اینوڈ +':'Anode +', sim.flashA);
+
+  if(sim.showRxn && sim.substance==='nacl_aq'){
+    sim.waters.forEach(w=>{
+      ctx.beginPath(); ctx.fillStyle='rgba(125,211,252,0.35)'; ctx.arc(w.x,w.y,7,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#e0f2fe'; ctx.font='700 8px Oxanium'; ctx.textAlign='center'; ctx.fillText('H2O', w.x, w.y+3);
     });
   }
-}
-
-function drawSwitch(ctx) {
-  const x = 1020, y = 168;
-  ctx.fillStyle = '#1e293b';
-  roundRect(ctx, x, y - 18, 90, 44, 8);
-  ctx.fill();
-  ctx.strokeStyle = '#00f3ff';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.fillStyle = '#94a3b8';
-  ctx.beginPath(); ctx.arc(x + 12, y + 4, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x + 72, y + 4, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#e2e8f0';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(x + 12, y + 4);
-  if (sim.switchClosed) ctx.lineTo(x + 72, y + 4);
-  else ctx.lineTo(x + 62, y - 22);
-  ctx.stroke();
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '600 13px Manrope, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(t('key_switch'), x + 45, y + 40);
-}
-
-function drawBulb(ctx) {
-  const x = 760, y = 118;
-  const I = currentAmps();
-  const on = I > 0.08;
-  if (on) {
-    const g = ctx.createRadialGradient(x + 40, y + 28, 4, x + 40, y + 28, 70);
-    g.addColorStop(0, 'rgba(253, 224, 71, 0.9)');
-    g.addColorStop(0.4, 'rgba(251, 191, 36, 0.35)');
-    g.addColorStop(1, 'rgba(251, 191, 36, 0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(x + 40, y + 28, 70, 0, Math.PI * 2); ctx.fill();
+  if(sim.showIons){
+    sim.ions.forEach(p=>drawParticle(ctx,p));
   }
-  ctx.beginPath();
-  ctx.fillStyle = on ? 'rgba(254, 240, 138, 0.85)' : 'rgba(148, 163, 184, 0.25)';
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 3;
-  ctx.arc(x + 40, y + 22, 28, Math.PI, 0);
-  ctx.lineTo(x + 58, y + 48);
-  ctx.lineTo(x + 22, y + 48);
-  ctx.closePath();
-  ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#475569';
-  roundRect(ctx, x + 26, y + 48, 28, 18, 3);
-  ctx.fill();
-  if (on) {
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 2;
+  sim.bubbles.forEach(b=>{
     ctx.beginPath();
-    ctx.moveTo(x + 30, y + 30); ctx.quadraticCurveTo(x + 40, y + 8, x + 50, y + 30);
-    ctx.stroke();
-  }
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '600 13px Manrope, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(currentLang === 'ur' ? 'بلب' : 'Bulb', x + 40, y - 18);
-}
-
-function drawBattery(ctx) {
-  const x = 980, y = 430, w = 150, h = 90;
-  ctx.fillStyle = '#334155';
-  roundRect(ctx, x, y, w, h, 12);
-  ctx.fill();
-  ctx.strokeStyle = '#64748b';
-  ctx.stroke();
-  ctx.fillStyle = '#0f172a';
-  ctx.fillRect(x + 18, y - 10, 28, 12);
-  ctx.fillStyle = '#ef4444';
-  ctx.fillRect(x + 104, y - 10, 28, 12);
-  ctx.fillStyle = '#e2e8f0';
-  ctx.font = '800 22px Oxanium, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('6V', x + w/2, y + 42);
-  ctx.font = '700 16px Oxanium, sans-serif';
-  ctx.fillStyle = '#fca5a5'; ctx.fillText('+', x + 118, y + 70);
-  ctx.fillStyle = '#7dd3fc'; ctx.fillText('−', x + 32, y + 70);
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '600 13px Manrope, sans-serif';
-  ctx.fillText(currentLang === 'ur' ? 'بیٹری' : 'Battery', x + w/2, y + h + 22);
-}
-
-function drawBeaker(ctx) {
-  const x = 80, y = 220, w = 400, h = 400;
-  ctx.strokeStyle = 'rgba(226,232,240,0.45)';
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x, y + h - 30);
-  ctx.quadraticCurveTo(x, y + h, x + 30, y + h);
-  ctx.lineTo(x + w - 30, y + h);
-  ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - 30);
-  ctx.lineTo(x + w, y);
-  ctx.stroke();
-
-  const liquid = sim.substance === 'nacl_solid' ? 'rgba(148,163,184,0.12)'
-    : sim.substance === 'nacl_molten' ? 'rgba(249,115,22,0.28)'
-    : 'rgba(56,189,248,0.28)';
-  ctx.fillStyle = liquid;
-  ctx.beginPath();
-  ctx.moveTo(x + 8, y + 70);
-  ctx.lineTo(x + 8, y + h - 34);
-  ctx.quadraticCurveTo(x + 8, y + h - 8, x + 34, y + h - 8);
-  ctx.lineTo(x + w - 34, y + h - 8);
-  ctx.quadraticCurveTo(x + w - 8, y + h - 8, x + w - 8, y + h - 34);
-  ctx.lineTo(x + w - 8, y + 70);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = '#92400e';
-  roundRect(ctx, x + 20, y + 8, w - 40, 22, 4);
-  ctx.fill();
-  ctx.fillStyle = '#fbbf24';
-  ctx.font = '600 12px Manrope, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(currentLang === 'ur' ? 'سہارا' : 'Support', x + w/2, y + 24);
-
-  drawElectrode(ctx, 180, y + 18, currentLang === 'ur' ? 'کیتھوڈ −' : 'Cathode −');
-  drawElectrode(ctx, 360, y + 18, currentLang === 'ur' ? 'اینوڈ +' : 'Anode +');
-
-  sim.ions.forEach(p => drawIon(ctx, p));
-  sim.molecules.forEach(m => drawMolecule(ctx, m));
-
-  ctx.fillStyle = '#e2e8f0';
-  ctx.font = '600 14px Manrope, sans-serif';
-  ctx.textAlign = 'center';
-  const sol = {
-    nacl_aq: currentLang === 'ur' ? 'سوڈیم کلورائڈ کا محلول' : 'Solution of sodium chloride',
-    nacl_solid: currentLang === 'ur' ? 'ٹھوس NaCl' : 'Solid NaCl',
-    nacl_molten: currentLang === 'ur' ? 'پگھلا NaCl' : 'Molten NaCl',
-    sugar: currentLang === 'ur' ? 'چینی کا محلول' : 'Sugar solution',
-    water: currentLang === 'ur' ? 'مقطر پانی' : 'Distilled water'
-  }[sim.substance];
-  ctx.fillText(sol, x + w/2, y + h + 28);
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '600 13px Manrope, sans-serif';
-  ctx.fillText(currentLang === 'ur' ? 'بیکر' : 'Beaker', x + w/2, y - 12);
-}
-
-function drawElectrode(ctx, x, y, label) {
-  ctx.fillStyle = '#94a3b8';
-  roundRect(ctx, x - 6, y, 12, 310, 3);
-  ctx.fill();
-  ctx.fillStyle = '#cbd5e1';
-  ctx.fillRect(x - 6, y + 200, 12, 110);
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '600 12px Manrope, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(label, x, y - 6);
-}
-
-function drawIon(ctx, p) {
-  const r = p.tiny ? 7 : 12;
-  ctx.beginPath();
-  ctx.fillStyle = p.q > 0 ? '#fb923c' : '#34d399';
-  ctx.shadowColor = ctx.fillStyle;
-  ctx.shadowBlur = 10;
-  ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#0f172a';
-  ctx.font = '800 10px Oxanium, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(p.tiny ? (p.q > 0 ? 'H+' : 'OH−') : (p.q > 0 ? 'Na+' : 'Cl−'), p.x, p.y + 0.5);
-  ctx.textBaseline = 'alphabetic';
-}
-
-function drawMolecule(ctx, m) {
-  ctx.beginPath();
-  ctx.fillStyle = 'rgba(251,191,36,0.85)';
-  ctx.arc(m.x, m.y, 11, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#0f172a';
-  ctx.font = '700 8px Oxanium, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('C₁₂H₂₂O₁₁', m.x, m.y);
-  ctx.textBaseline = 'alphabetic';
-}
-
-function drawMicroCallout(ctx) {
-  const x = 530, y = 250, w = 400, h = 430;
-  ctx.fillStyle = 'rgba(15,23,42,0.72)';
-  roundRect(ctx, x, y, w, h, 18);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(0,243,255,0.35)';
-  ctx.stroke();
-  ctx.fillStyle = '#67e8f9';
-  ctx.font = '700 16px Manrope, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText(currentLang === 'ur' ? 'زیرِ آب منظر' : 'Underwater close-up', x + 20, y + 32);
-
-  ctx.font = '500 13px Manrope, sans-serif';
-  ctx.fillStyle = '#cbd5e1';
-  const lines = underwaterText();
-  lines.forEach((ln, i) => ctx.fillText(ln, x + 20, y + 64 + i * (currentLang === 'ur' ? 34 : 22)));
-
-  drawBreakdown(ctx, x + 40, y + 230);
-}
-
-function underwaterText() {
-  if (currentLang === 'ur') {
-    if (sim.substance === 'nacl_aq') return ['NaCl(s) → Na+(aq) + Cl−(aq)', 'مثبت آئن کیتھوڈ، منفی اینوڈ'];
-    if (sim.substance === 'nacl_solid') return ['NaCl(s) جالی میں بند', 'کوئی آزاد بہاؤ نہیں'];
-    if (sim.substance === 'nacl_molten') return ['NaCl(l) → Na+ + Cl−', 'پگھلنے سے آئن آزاد'];
-    if (sim.substance === 'sugar') return ['C₁₂H₂₂O₁₁ سالمے غیر چارج شدہ', 'رو کا راستہ نہیں'];
-    return ['H₂O میں بہت کم آئن', 'موصلیت نہ ہونے کے برابر'];
-  }
-  if (sim.substance === 'nacl_aq') return ['NaCl dissociates: NaCl → Na+ + Cl−', 'Na+ → cathode (−)   Cl− → anode (+)'];
-  if (sim.substance === 'nacl_solid') return ['Ionic lattice: ions vibrate, cannot travel', 'No mobile charge between electrodes'];
-  if (sim.substance === 'nacl_molten') return ['Heat melts the lattice: NaCl(l) → Na+ + Cl−', 'Same ions, now free to carry current'];
-  if (sim.substance === 'sugar') return ['Molecular solute stays C₁₂H₂₂O₁₁', 'Neutral particles cannot complete a circuit'];
-  return ['Distilled water: almost no ions', 'Need an electrolyte to light the bulb'];
-}
-
-function drawBreakdown(ctx, x, y) {
-  ctx.font = '800 14px Oxanium, sans-serif';
-  ctx.textAlign = 'center';
-  if (sim.substance === 'nacl_solid') {
-    drawMiniIon(ctx, x + 70, y + 40, 1);
-    drawMiniIon(ctx, x + 110, y + 40, -1);
-    drawMiniIon(ctx, x + 70, y + 80, -1);
-    drawMiniIon(ctx, x + 110, y + 80, 1);
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillText(currentLang === 'ur' ? 'جالی' : 'LATTICE', x + 90, y + 130);
-  } else if (sim.substance === 'sugar') {
-    ctx.fillStyle = '#fbbf24';
-    ctx.beginPath(); ctx.arc(x + 90, y + 60, 22, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#0f172a';
-    ctx.fillText('molecule', x + 90, y + 64);
-  } else if (sim.substance === 'water') {
-    ctx.fillStyle = '#38bdf8';
-    ctx.font = '700 18px Oxanium, sans-serif';
-    ctx.fillText('H₂O', x + 90, y + 70);
-  } else {
-    drawMiniIon(ctx, x + 40, y + 50, 0);
-    ctx.fillStyle = '#e2e8f0';
-    ctx.fillText('NaCl', x + 40, y + 88);
-    ctx.strokeStyle = '#22d3ee';
-    ctx.beginPath(); ctx.moveTo(x + 80, y + 50); ctx.lineTo(x + 130, y + 50); ctx.stroke();
-    ctx.fillText('→', x + 105, y + 55);
-    drawMiniIon(ctx, x + 170, y + 30, 1);
-    drawMiniIon(ctx, x + 230, y + 70, -1);
-    if (sim.switchClosed && conducts() > 0.1) {
-      ctx.fillStyle = '#fb923c';
-      ctx.fillText('→ −', x + 170, y + 8);
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('+ ←', x + 230, y + 108);
-    }
-  }
-}
-
-function drawMiniIon(ctx, x, y, q) {
-  ctx.beginPath();
-  ctx.fillStyle = q === 0 ? '#a78bfa' : (q > 0 ? '#fb923c' : '#34d399');
-  ctx.arc(x, y, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#0f172a';
-  ctx.font = '800 11px Oxanium, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(q === 0 ? 'NaCl' : (q > 0 ? 'Na+' : 'Cl−'), x, y + 4);
-}
-
-function drawLegend(ctx) {
-  ctx.fillStyle = 'rgba(15,23,42,0.8)';
-  roundRect(ctx, 40, 70, 520, 46, 12);
-  ctx.fill();
-  const items = [
-    ['#fb923c', 'Na+'],
-    ['#34d399', 'Cl−'],
-    ['#22d3ee', 'e−'],
-    ['#fbbf24', currentLang === 'ur' ? 'سالمہ' : 'molecule']
-  ];
-  items.forEach((it, i) => {
-    ctx.beginPath();
-    ctx.fillStyle = it[0];
-    ctx.arc(70 + i * 125, 93, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#e2e8f0';
-    ctx.font = '600 13px Manrope, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(it[1], 84 + i * 125, 98);
+    ctx.fillStyle = b.kind==='H2' ? 'rgba(226,232,240,0.55)' : 'rgba(163,230,53,0.45)';
+    ctx.strokeStyle = b.kind==='H2' ? '#e2e8f0' : '#a3e635';
+    ctx.lineWidth=1.5; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#0f172a'; ctx.font='700 8px Oxanium'; ctx.textAlign='center';
+    ctx.fillText(b.kind, b.x, b.y+3);
   });
+  sim.deposits.forEach(d=>{
+    ctx.beginPath(); ctx.fillStyle='#cbd5e1'; ctx.arc(d.x,d.y,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0f172a'; ctx.font='700 8px Oxanium'; ctx.textAlign='center'; ctx.fillText('Na', d.x, d.y+3);
+  });
+
+  if(!sim.switchClosed){
+    ctx.fillStyle='rgba(148,163,184,0.9)'; ctx.font='700 13px '+urFont(); ctx.textAlign='center';
+    ctx.fillText(t('no_net'), x+w/2, y+h-24);
+  }
+  ctx.fillStyle='#e2e8f0'; ctx.font='600 13px '+urFont(); ctx.textAlign='center';
+  const sol={nacl_aq: currentLang==='ur'?'سوڈیم کلورائڈ کا محلول':'Concentrated NaCl(aq)', nacl_solid: currentLang==='ur'?'ٹھوس NaCl':'Solid NaCl', nacl_molten: currentLang==='ur'?'پگھلا NaCl':'Molten NaCl', sugar: currentLang==='ur'?'چینی کا محلول':'Sugar solution', water: currentLang==='ur'?'مقطر پانی':'Distilled water'}[sim.substance];
+  ctx.fillText(sol, x+w/2, y+h+26);
+  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont();
+  ctx.fillText(currentLang==='ur'?'بیکر':'Beaker', x+w/2, y-8);
 }
 
-let quizIndex = 0, quizScore = 0, quizLocked = false, quizChosen = -1;
+function drawElectrode(ctx,x,y,label,flash){
+  ctx.fillStyle = flash? '#67e8f9' : '#94a3b8';
+  roundRect(ctx,x-7,y,14,330,3); ctx.fill();
+  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont(); ctx.textAlign='center';
+  ctx.fillText(label, x, y-6);
+}
 
-function renderQuiz() {
-  const res = document.getElementById('quiz-result');
-  const play = document.getElementById('quiz-play');
-  if (quizIndex >= QUIZ.length) {
-    play.classList.add('hidden');
-    res.classList.remove('hidden');
-    document.getElementById('score-num').textContent = quizScore + ' / 5';
-    document.getElementById('score-pct').textContent = Math.round((quizScore / 5) * 100) + ' %';
+function drawParticle(ctx,p){
+  const followed = sim.follow && sim.follow.id===p.id;
+  const r = followed? 15 : (p.tiny?7:11);
+  let col='#fbbf24';
+  if(p.kind==='Na+'||p.kind==='H+') col='#fb923c';
+  else if(p.kind==='Cl-') col='#34d399';
+  else if(p.kind==='OH-') col='#a78bfa';
+  ctx.beginPath(); ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=followed?16:8;
+  ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+  if(followed){ ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
+  ctx.fillStyle='#0f172a'; ctx.font='800 9px Oxanium'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(p.kind==='mol'?'C₁₂H₂₂O₁₁':p.kind, p.x, p.y+0.5);
+  ctx.textBaseline='alphabetic';
+}
+
+function drawReactions(ctx){
+  if(!sim.showRxn) return;
+  const x=540, y=210, w=500, h=250;
+  ctx.fillStyle='rgba(15,23,42,0.82)'; roundRect(ctx,x,y,w,h,16); ctx.fill();
+  ctx.strokeStyle='rgba(0,243,255,0.3)'; ctx.stroke();
+  ctx.fillStyle='#67e8f9'; ctx.font='700 15px '+urFont(); ctx.textAlign='left';
+  ctx.fillText(currentLang==='ur'?'الیکٹروڈ تعاملات':'Electrode reactions', x+18, y+28);
+  ctx.font='600 13px '+urFont(); ctx.fillStyle='#e2e8f0';
+  if(sim.substance==='nacl_aq'){
+    ctx.fillStyle='#7dd3fc'; ctx.fillText(t('red')+'  |  '+t('rxn_h2'), x+18, y+64);
+    ctx.fillStyle='#86efac'; ctx.fillText(t('ox')+'  |  '+t('rxn_cl'), x+18, y+98);
+    wrapText(ctx, currentLang==='ur' ? 'Na+ کیتھوڈ پر جم نہیں سکتا — پانی الیکٹران لے لیتا ہے، H2 کے بلبلے اٹھتے ہیں، OH− پھیل جاتی ہے۔' : 'Na+ does not become metal here. Water takes the electron, H2 bubbles rise, OH− spreads.', x+18, y+132, w-36, currentLang==='ur'?32:20);
+  } else if(sim.substance==='nacl_molten'){
+    ctx.fillStyle='#7dd3fc'; ctx.fillText(t('red')+'  |  '+t('rxn_na'), x+18, y+64);
+    ctx.fillStyle='#86efac'; ctx.fillText(t('ox')+'  |  '+t('rxn_cl'), x+18, y+98);
+    wrapText(ctx, currentLang==='ur' ? 'پانی نہیں، اس لیے سوڈیم دھات کیتھوڈ پر جمے گی۔ یہ “اگر ایسا ہو؟” موڈ ہے۔' : 'No water, so sodium metal can deposit. This is the What-if? melt mode.', x+18, y+132, w-36, currentLang==='ur'?32:20);
+  } else {
+    wrapText(ctx, t({nacl_solid:'obs_solid', sugar:'obs_sugar', water:'obs_water'}[sim.substance]), x+18, y+70, w-36, currentLang==='ur'?32:20);
+  }
+  ctx.fillStyle='#fbbf24'; ctx.font='600 12px '+urFont();
+  ctx.fillText(currentLang==='ur'?'تار = الیکٹران    محلول = آئن':'WIRE = electrons     SOLUTION = ions', x+18, y+228);
+}
+
+function wrapText(ctx, text, x, y, maxW, lh){
+  const words=text.split(' '); let line='', yy=y;
+  words.forEach(w=>{
+    const test=line+w+' ';
+    if(ctx.measureText(test).width>maxW){ ctx.fillStyle='#cbd5e1'; ctx.fillText(line,x,yy); line=w+' '; yy+=lh; }
+    else line=test;
+  });
+  ctx.fillStyle='#cbd5e1'; ctx.fillText(line,x,yy);
+}
+
+function drawSummary(ctx){
+  const y=WORLD.h-78;
+  ctx.fillStyle='rgba(15,23,42,0.9)'; roundRect(ctx,36,y,WORLD.w-72,62,14); ctx.fill();
+  ctx.strokeStyle='rgba(0,243,255,0.25)'; ctx.stroke();
+  ctx.fillStyle='#e2e8f0'; ctx.font='600 13px '+urFont(); ctx.textAlign='left';
+  const bits=[t('sum_wire'), t('sum_sol'), t('sum_cat'), t('sum_an')];
+  ctx.fillText(bits.join('   ·   '), 52, y+24);
+  ctx.fillStyle='#67e8f9'; ctx.font='600 12px '+urFont();
+  ctx.fillText(t('banner'), 52, y+48);
+}
+
+let quizIndex=0, quizScore=0, quizLocked=false, quizChosen=-1;
+function renderQuiz(){
+  const res=document.getElementById('quiz-result'), play=document.getElementById('quiz-play');
+  if(quizIndex>=QUIZ.length){
+    play.classList.add('hidden'); res.classList.remove('hidden');
+    document.getElementById('score-num').textContent=quizScore+' / 5';
+    document.getElementById('score-pct').textContent=Math.round((quizScore/5)*100)+' %';
     return;
   }
-  play.classList.remove('hidden');
-  res.classList.add('hidden');
-  const item = QUIZ[quizIndex];
-  document.getElementById('quiz-progress').textContent = (quizIndex + 1) + ' / 5';
-  document.getElementById('quiz-q').textContent = t(item.q);
-  const box = document.getElementById('quiz-opts');
-  box.innerHTML = '';
-  item.opts.forEach((k, i) => {
-    const b = document.createElement('button');
-    b.className = 'opt-btn w-full text-start px-4 py-3 rounded-xl font-semibold';
-    b.textContent = t(k);
-    if (quizLocked) {
-      b.classList.add('locked');
-      if (i === item.ans) b.classList.add('correct');
-      else if (i === quizChosen) b.classList.add('wrong');
-    } else {
-      b.onclick = () => pickAnswer(i);
-    }
+  play.classList.remove('hidden'); res.classList.add('hidden');
+  const item=QUIZ[quizIndex];
+  document.getElementById('quiz-progress').textContent=(quizIndex+1)+' / 5';
+  document.getElementById('quiz-q').textContent=t(item.q);
+  const box=document.getElementById('quiz-opts'); box.innerHTML='';
+  item.opts.forEach((k,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn w-full text-start px-4 py-3 rounded-xl font-semibold';
+    b.textContent=t(k);
+    if(quizLocked){ b.classList.add('locked'); if(i===item.ans) b.classList.add('correct'); else if(i===quizChosen) b.classList.add('wrong'); }
+    else b.onclick=()=>pickAnswer(i);
     box.appendChild(b);
   });
-  const ex = document.getElementById('quiz-explain');
-  const next = document.getElementById('quiz-next');
-  if (quizLocked) {
-    ex.textContent = t(item.exp);
-    ex.classList.remove('hidden');
-    next.classList.remove('hidden');
-  } else {
-    ex.classList.add('hidden');
-    next.classList.add('hidden');
-  }
+  const ex=document.getElementById('quiz-explain'), next=document.getElementById('quiz-next');
+  if(quizLocked){ ex.textContent=t(item.exp); ex.classList.remove('hidden'); next.classList.remove('hidden'); }
+  else { ex.classList.add('hidden'); next.classList.add('hidden'); }
 }
+function pickAnswer(i){ if(quizLocked) return; quizLocked=true; quizChosen=i; if(i===QUIZ[quizIndex].ans) quizScore++; renderQuiz(); }
+function nextQuestion(){ quizIndex++; quizLocked=false; quizChosen=-1; renderQuiz(); }
+function restartQuiz(){ quizIndex=0; quizScore=0; quizLocked=false; quizChosen=-1; renderQuiz(); }
 
-function pickAnswer(i) {
-  if (quizLocked) return;
-  quizLocked = true;
-  quizChosen = i;
-  if (i === QUIZ[quizIndex].ans) quizScore++;
-  renderQuiz();
+let viewFitted=false;
+function resizeAll(){
+  const wrap=document.getElementById('sim-viewport'); if(!wrap) return;
+  const w=wrap.clientWidth, h=wrap.clientHeight, dpr=window.devicePixelRatio||1;
+  const c=canvas();
+  c.width=Math.max(1,w*dpr); c.height=Math.max(1,h*dpr); c.style.width=w+'px'; c.style.height=h+'px';
+  if(!fCanvas){
+    initAnnotationCanvas(w,h);
+    const fabricContainer=document.querySelector('.canvas-container');
+    if(fabricContainer) fabricContainer.style.pointerEvents='none';
+  } else { fCanvas.setWidth(w); fCanvas.setHeight(h); fCanvas.calcOffset(); }
+  if(!viewFitted){ fitView(); viewFitted=true; }
 }
-function nextQuestion() {
-  quizIndex++;
-  quizLocked = false;
-  quizChosen = -1;
-  renderQuiz();
-}
-function restartQuiz() {
-  quizIndex = 0; quizScore = 0; quizLocked = false; quizChosen = -1;
-  renderQuiz();
-}
-
-let viewFitted = false;
-function resizeAll() {
-  const wrap = document.getElementById('sim-viewport');
-  if (!wrap) return;
-  const w = wrap.clientWidth;
-  const h = wrap.clientHeight;
-  const dpr = window.devicePixelRatio || 1;
-  const c = canvas();
-  c.width = Math.max(1, w * dpr);
-  c.height = Math.max(1, h * dpr);
-  c.style.width = w + 'px';
-  c.style.height = h + 'px';
-  if (!fCanvas) {
-    initAnnotationCanvas(w, h);
-    const fabricContainer = document.querySelector('.canvas-container');
-    if (fabricContainer) {
-      fabricContainer.style.pointerEvents = 'none';
-    }
-  } else {
-    fCanvas.setWidth(w);
-    fCanvas.setHeight(h);
-    fCanvas.calcOffset();
-  }
-  if (!viewFitted) {
-    fitView();
-    viewFitted = true;
-  }
-}
-
-function loop() {
+function loop(){
   stepParticles();
-  const ctx = ctx2d();
-  if (ctx && !document.getElementById('view-sim').classList.contains('hidden')) drawLab(ctx);
+  const ctx=ctx2d();
+  if(ctx && !document.getElementById('view-sim').classList.contains('hidden')) drawLab(ctx);
   requestAnimationFrame(loop);
 }
-
-function boot() {
+function boot(){
   changeLanguage(currentLang);
   setSubstance('nacl_aq');
   spawnElectrons();
   setupPointer();
   window.addEventListener('resize', resizeAll);
-  setTimeout(() => {
-    const intro = document.getElementById('intro');
-    intro.style.opacity = '0';
+  setTimeout(()=>{
+    const intro=document.getElementById('intro');
+    intro.style.opacity='0';
     document.getElementById('app').classList.remove('opacity-0');
-    setTimeout(() => { intro.style.display = 'none'; resizeAll(); }, 700);
+    setTimeout(()=>{ intro.style.display='none'; resizeAll(); }, 700);
   }, 5000);
   requestAnimationFrame(loop);
 }
-
 boot();
 </script>
 </body>
