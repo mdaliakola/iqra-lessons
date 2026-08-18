@@ -274,6 +274,14 @@ input[type=range]::-webkit-slider-thumb:hover {
           </div>
           <input type="range" id="speed-slider" min="0.4" max="2.4" step="0.1" value="1" oninput="onSpeed(this.value)" class="w-full">
         </div>
+        <button id="btn-core" onclick="toggleCoreElectrons()" class="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold transition flex items-center justify-center gap-2">
+          <i id="core-icon" class="fa-solid fa-eye-slash text-cyan-400"></i>
+          <span id="core-label">Hide other electrons</span>
+        </button>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 px-1">
+          <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></span><span data-i18n="legendRed">Moving e⁻</span></span>
+          <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300/40 border border-slate-400/50"></span><span data-i18n="legendCore">Other e⁻ (light)</span></span>
+        </div>
       </div>
 
       <div class="glass-panel rounded-2xl p-3 flex-1 min-h-[140px]">
@@ -367,6 +375,13 @@ const LANG = {
     btnStep: "Step",
     btnReset: "Reset atoms",
     speed: "Electron speed",
+    showCore: "Show other electrons",
+    hideCore: "Hide other electrons",
+    legendRed: "Moving e⁻",
+    legendCore: "Other e⁻ (light)",
+    chargeRule: "Each electron that leaves the metal adds +1. Each electron the non-metal gains adds −1.",
+    obsChargeMetal: "Electrons that left the metal: {e}  →  charge +{n}",
+    obsChargeNon: "Electrons gained by the non-metal: {e}  →  charge −{n}",
     dragHint: "Drag the red electron from the metal to the non-metal",
     metalTitle: "Metal atom → cation",
     electronTitle: "Transferred electrons",
@@ -402,11 +417,13 @@ const LANG = {
     lif: "Lithium fluoride",
     mgo: "Magnesium oxide",
     cacl2: "Calcium chloride",
+    alcl3: "Aluminium chloride",
     sodium: "Sodium",
     potassium: "Potassium",
     lithium: "Lithium",
     magnesium: "Magnesium",
     calcium: "Calcium",
+    aluminium: "Aluminium",
     chlorine: "Chlorine",
     fluorine: "Fluorine",
     oxygen: "Oxygen",
@@ -454,6 +471,13 @@ const LANG = {
     btnStep: "ایک قدم",
     btnReset: "ایٹم دوبارہ",
     speed: "الیکٹرون کی رفتار",
+    showCore: "دیگر الیکٹرون دکھائیں",
+    hideCore: "دیگر الیکٹرون چھپائیں",
+    legendRed: "چلتا ہوا e⁻",
+    legendCore: "دیگر e⁻ (ہلکے)",
+    chargeRule: "دھات سے نکلنے والا ہر الیکٹرون +1 بار بڑھاتا ہے۔ غیردھات کو ملنے والا ہر الیکٹرون −1 بار بڑھاتا ہے۔",
+    obsChargeMetal: "دھات سے نکلے الیکٹرون: {e}  →  بار +{n}",
+    obsChargeNon: "غیردھات نے حاصل کیے: {e}  →  بار −{n}",
     dragHint: "سرخ الیکٹرون کو دھات سے غیردھات کی طرف گھسیٹیں",
     metalTitle: "دھاتی ایٹم ← مثبت آئن",
     electronTitle: "منتقل الیکٹرون",
@@ -489,11 +513,13 @@ const LANG = {
     lif: "لیتھیم فلورائیڈ",
     mgo: "میگنیشیم آکسائیڈ",
     cacl2: "کیلشیم کلورائیڈ",
+    alcl3: "ایلومینیم کلورائیڈ",
     sodium: "سوڈیم",
     potassium: "پوٹاشیم",
     lithium: "لیتھیم",
     magnesium: "میگنیشیم",
     calcium: "کیلشیم",
+    aluminium: "ایلومینیم",
     chlorine: "کلورین",
     fluorine: "فلورین",
     oxygen: "آکسیجن",
@@ -559,6 +585,15 @@ const COMPOUNDS = [
       { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" },
       { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#6ee7b7" }
     ]
+  },
+  {
+    id: "alcl3", formula: "AlCl₃", nameKey: "alcl3",
+    metal: { symbol: "Al", nameKey: "aluminium", shells: [2,8,3], color: "#f472b6" },
+    nonmetals: [
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" },
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#6ee7b7" },
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#a7f3d0" }
+    ]
   }
 ];
 
@@ -570,6 +605,7 @@ const QUIZ = [
   { q: "q5", opts: ["q5a","q5b","q5c","q5d"], ans: 2, exp: "q5e" }
 ];
 
+let showCoreElectrons = true;
 let currentLang = localStorage.getItem("iqra-lang") || "en";
 let fCanvas, isAnnoActive = false;
 let currentCompound = COMPOUNDS[0];
@@ -607,6 +643,7 @@ function applyLanguage() {
   });
   document.getElementById("intro-topic").textContent = t("subtitle");
   renderCompounds();
+  syncCoreBtn();
   updateHUD();
   renderQuiz(false);
 }
@@ -730,7 +767,7 @@ function buildElectrons(atom) {
 
 function layoutAtoms() {
   const nNon = currentCompound.nonmetals.length;
-  const metalX = nNon > 1 ? -210 : -170;
+  const metalX = nNon >= 3 ? -250 : (nNon > 1 ? -210 : -170);
   const metal = {
     role: "metal",
     symbol: currentCompound.metal.symbol,
@@ -744,7 +781,9 @@ function layoutAtoms() {
     shellScale: currentCompound.metal.shells.map(() => 1)
   };
   const non = currentCompound.nonmetals.map((nm, idx) => {
-    const y = nNon === 1 ? 0 : (idx === 0 ? -110 : 110);
+    let y = 0;
+    if (nNon === 2) y = idx === 0 ? -110 : 110;
+    if (nNon === 3) y = [-150, 0, 150][idx];
     return {
       role: "nonmetal",
       symbol: nm.symbol,
@@ -856,6 +895,19 @@ function updateCharges() {
   });
 }
 
+function toggleCoreElectrons() {
+  showCoreElectrons = !showCoreElectrons;
+  syncCoreBtn();
+}
+
+function syncCoreBtn() {
+  const icon = document.getElementById("core-icon");
+  const label = document.getElementById("core-label");
+  if (!icon || !label) return;
+  icon.className = showCoreElectrons ? "fa-solid fa-eye-slash text-cyan-400" : "fa-solid fa-eye text-cyan-400";
+  label.textContent = showCoreElectrons ? t("hideCore") : t("showCore");
+}
+
 function stepTransfer() {
   if (flyers.length || transferred >= totalNeed) return;
   const m = metalAtom();
@@ -899,11 +951,14 @@ function renderCompounds() {
 }
 
 function chargeStr(n) {
-  if (n === 0) return "";
-  if (n === 1) return "⁺";
-  if (n === -1) return "⁻";
-  if (n > 0) return "⁺" + n;
-  return "⁻" + Math.abs(n);
+  if (!n) return "";
+  const mag = Math.abs(n);
+  return (n > 0 ? "⁺" : "⁻") + mag;
+}
+
+function chargeBadgeText(n) {
+  if (!n) return "";
+  return (n > 0 ? "+" : "−") + Math.abs(n);
 }
 
 function updateHUD() {
@@ -927,10 +982,17 @@ function updateHUD() {
   else if (transferred === 0) hint = t("hintDrag");
   document.getElementById("hint-text").textContent = hint;
 
-  const items = [t("obsNeutral")];
+  const items = [t("obsNeutral"), t("chargeRule")];
   if (transferred > 0 || flyers.length) items.push(t("obsLeave"), t("obsGain"));
-  if (m.charge > 0) items.push(t("obsCation"));
-  if (nonmetals().some(n => n.charge < 0)) items.push(t("obsAnion"));
+  if (m.charge > 0) {
+    items.push(t("obsChargeMetal").replace("{e}", String(m.charge)).replace("{n}", String(m.charge)));
+    items.push(t("obsCation"));
+  }
+  const gained = nonmetals().reduce((s, n) => s + Math.abs(n.charge), 0);
+  if (gained > 0) {
+    items.push(t("obsChargeNon").replace("{e}", String(gained)).replace("{n}", String(gained)));
+    items.push(t("obsAnion"));
+  }
   if (m.charge > 0 && m.shells[m.shells.length - 1] <= 0) items.push(t("shellGone"));
   if (bonded) items.push(t("obsBond") + "  " + currentCompound.formula);
   document.getElementById("obs-list").innerHTML = items.map(s => `<li class="flex gap-2"><span class="text-cyan-400">▸</span><span>${s}</span></li>`).join("");
@@ -976,7 +1038,7 @@ function draw() {
     ctx.fillStyle = "#67e8f9";
     ctx.font = "700 16px Inter, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(currentCompound.formula + "  ·  " + t("ionicBond"), 0, 195);
+    ctx.fillText(currentCompound.formula + "  ·  " + t("ionicBond"), 0, currentCompound.nonmetals.length >= 3 ? 245 : 195);
   }
 
   atoms.forEach(drawAtom);
@@ -993,7 +1055,7 @@ function drawAtom(atom) {
     const r = shellR(atom, si);
     ctx.beginPath();
     ctx.arc(atom.x, atom.y, r, 0, Math.PI * 2);
-    ctx.strokeStyle = si === maxSi ? atom.color + "99" : "rgba(148,163,184,0.35)";
+    ctx.strokeStyle = si === maxSi ? atom.color + "99" : (showCoreElectrons ? "rgba(148,163,184,0.28)" : "rgba(148,163,184,0.12)");
     ctx.lineWidth = si === maxSi ? 2.2 : 1.2;
     ctx.stroke();
   }
@@ -1012,13 +1074,18 @@ function drawAtom(atom) {
   ctx.fillText(atom.symbol, atom.x, atom.y);
 
   if (atom.charge !== 0) {
+    const label = chargeBadgeText(atom.charge);
+    const r = label.length > 2 ? 14 : 13;
     ctx.beginPath();
-    ctx.arc(atom.x + 22, atom.y - 22, 11, 0, Math.PI * 2);
+    ctx.arc(atom.x + 24, atom.y - 24, r, 0, Math.PI * 2);
     ctx.fillStyle = atom.charge > 0 ? "#f43f5e" : "#22c55e";
     ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
     ctx.fillStyle = "#fff";
-    ctx.font = "800 12px Inter, sans-serif";
-    ctx.fillText(atom.charge > 0 ? "+" : "−", atom.x + 22, atom.y - 21);
+    ctx.font = "800 11px Inter, sans-serif";
+    ctx.fillText(label, atom.x + 24, atom.y - 23);
   }
 
   const live = atom.shells.map((n, i) => (atom.shellScale[i] > 0.2 ? n : null)).filter(n => n !== null);
@@ -1030,14 +1097,22 @@ function drawAtom(atom) {
   atom.electrons.forEach(e => {
     if (e.gone) return;
     if ((atom.shellScale[e.si] || 0) < 0.15) return;
+    const isActive = e.transferable || e.fromTransfer;
+    if (!isActive && !showCoreElectrons) return;
     const p = ePos(atom, e);
     ctx.beginPath();
-    ctx.arc(p.x, p.y, e.transferable ? 6.5 : 4.2, 0, Math.PI * 2);
-    ctx.fillStyle = e.fromTransfer || e.transferable ? "#f43f5e" : "#0f172a";
-    ctx.fill();
-    if (e.transferable) {
-      ctx.strokeStyle = "rgba(244,63,94,0.7)";
+    ctx.arc(p.x, p.y, isActive ? 6.5 : 4.4, 0, Math.PI * 2);
+    if (isActive) {
+      ctx.fillStyle = "#f43f5e";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(244,63,94,0.85)";
       ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+        ctx.fillStyle = "rgba(241, 245, 249, 0.38)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(241, 245, 249, 0.45)";
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
   });
@@ -1141,6 +1216,10 @@ function onDown(ev) {
     const m = metalAtom();
     const pos = ePos(m, e);
     e.gone = true;
+    m.shells[m.shells.length - 1] -= 1;
+    if (m.shells[m.shells.length - 1] <= 0) m.shellScale[m.shells.length - 1] = 0.01;
+    updateCharges();
+    updateHUD();
     dragging = { kind: "e", electron: e };
     playing = false;
     flyers.push({
@@ -1184,7 +1263,6 @@ function onUp(ev) {
     if (fl && tgt) {
       const d = Math.hypot(fl.x - tgt.x, fl.y - tgt.y);
       if (d < 90) {
-        m.shells[m.shells.length - 1] -= 1;
         fl.drag = false;
         fl.phase = "in";
         fl.t = 0;
@@ -1194,12 +1272,14 @@ function onUp(ev) {
         fl.tx = tgt.x + Math.cos(fl.vac) * fl.destR;
         fl.ty = tgt.y + Math.sin(fl.vac) * fl.destR;
         fl.target = tgt;
-        if (m.shells[m.shells.length - 1] <= 0) m.shellScale[m.shells.length - 1] = 0.01;
-        updateCharges();
         updateHUD();
       } else {
         dragging.electron.gone = false;
+        m.shells[m.shells.length - 1] += 1;
+        if (m.shells[m.shells.length - 1] > 0) m.shellScale[m.shells.length - 1] = 1;
         flyers = flyers.filter(f => !f.drag);
+        updateCharges();
+        updateHUD();
       }
     }
   }
@@ -1220,9 +1300,11 @@ function resetCanvasView() {
 }
 
 function autoFit() {
-  const need = 520;
-  const s = Math.min(W / need, H / 420);
-  cam.scale = Math.max(0.55, Math.min(1.15, s));
+  const nNon = (currentCompound && currentCompound.nonmetals) ? currentCompound.nonmetals.length : 1;
+  const needW = nNon >= 3 ? 660 : 520;
+  const needH = nNon >= 3 ? 540 : 420;
+  const s = Math.min(W / needW, H / needH);
+  cam.scale = Math.max(0.5, Math.min(1.15, s));
   cam.x = 0; cam.y = 0;
 }
 
