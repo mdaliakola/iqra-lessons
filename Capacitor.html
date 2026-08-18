@@ -223,6 +223,7 @@ body {
 .btn-hold { background: rgba(51, 65, 85, 0.7); color: #e2e8f0; }
 .btn-reset { background: rgba(239, 68, 68, 0.12); color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
 .btn-on { box-shadow: 0 0 16px rgba(0, 243, 255, 0.28); border-color: #00f3ff; color: #a5f3fc; background: rgba(0, 243, 255, 0.16); }
+.sys-btn.btn-on { border-color: #00f3ff; }
 
 #sim-viewport {
   position: relative;
@@ -377,11 +378,26 @@ body {
     <aside class="w-full xl:w-[300px] shrink-0 flex flex-col gap-3 overflow-y-auto xl:max-h-full">
       <section class="glass-card rounded-2xl p-4 space-y-4">
         <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm tracking-wide">
+          <i class="fa-solid fa-layer-group"></i><span data-i18n="systems"></span>
+        </h2>
+        <div class="grid grid-cols-1 gap-2">
+          <button class="btn-lab btn-hold sys-btn" id="sys-charge" onclick="setSystem('charge')"><i class="fa-solid fa-battery-full"></i><span data-i18n="sys_charge"></span></button>
+          <button class="btn-lab btn-hold sys-btn" id="sys-discharge" onclick="setSystem('discharge')"><i class="fa-solid fa-lightbulb"></i><span data-i18n="sys_discharge"></span></button>
+          <button class="btn-lab btn-hold sys-btn" id="sys-acdc" onclick="setSystem('acdc')"><i class="fa-solid fa-wave-square"></i><span data-i18n="sys_acdc"></span></button>
+        </div>
+      </section>
+
+      <section class="glass-card rounded-2xl p-4 space-y-4">
+        <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm tracking-wide">
           <i class="fa-solid fa-sliders"></i><span data-i18n="controls"></span>
         </h2>
+        <div id="acdc-toggle" class="hidden grid grid-cols-2 gap-2">
+          <button class="btn-lab btn-hold" id="btn-dc" onclick="setSource('dc')"><i class="fa-solid fa-equals"></i><span data-i18n="src_dc"></span></button>
+          <button class="btn-lab btn-hold" id="btn-ac" onclick="setSource('ac')"><i class="fa-solid fa-wave-square"></i><span data-i18n="src_ac"></span></button>
+        </div>
         <div>
           <div class="flex justify-between text-xs text-slate-400 mb-2">
-            <span data-i18n="vbat"></span>
+            <span id="lbl-vname" data-i18n="vbat"></span>
             <span class="num text-cyan-300" id="lbl-v">9.0 V</span>
           </div>
           <input type="range" id="rng-v" min="3" max="12" step="0.1" value="9" class="w-full" oninput="onParamChange()" />
@@ -400,19 +416,26 @@ body {
           </div>
           <input type="range" id="rng-c" min="200" max="2500" step="10" value="1000" class="w-full" oninput="onParamChange()" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button class="btn-lab btn-charge" id="btn-charge" onclick="setMode('charge')"><i class="fa-solid fa-plug-circle-bolt"></i><span data-i18n="btn_charge"></span></button>
-          <button class="btn-lab btn-discharge" id="btn-discharge" onclick="setMode('discharge')"><i class="fa-solid fa-bolt"></i><span data-i18n="btn_discharge"></span></button>
-          <button class="btn-lab btn-hold" id="btn-hold" onclick="setMode('hold')"><i class="fa-solid fa-pause"></i><span data-i18n="btn_hold"></span></button>
-          <button class="btn-lab btn-reset" onclick="resetSim()"><i class="fa-solid fa-rotate-left"></i><span data-i18n="btn_reset"></span></button>
+        <div id="freq-wrap" class="hidden">
+          <div class="flex justify-between text-xs text-slate-400 mb-2">
+            <span data-i18n="freq"></span>
+            <span class="num text-cyan-300" id="lbl-f">0.8 Hz</span>
+          </div>
+          <input type="range" id="rng-f" min="0.2" max="2.5" step="0.05" value="0.8" class="w-full" oninput="onParamChange()" />
+        </div>
+        <div id="run-btns" class="grid grid-cols-2 gap-2">
+          <button class="btn-lab btn-charge" id="btn-charge" onclick="setSwitch('closed')"><i class="fa-solid fa-toggle-on"></i><span data-i18n="btn_sw_on"></span></button>
+          <button class="btn-lab btn-hold" id="btn-hold" onclick="setSwitch('open')"><i class="fa-solid fa-toggle-off"></i><span data-i18n="btn_sw_off"></span></button>
+          <button class="btn-lab btn-reset col-span-2" onclick="resetSim()"><i class="fa-solid fa-rotate-left"></i><span data-i18n="btn_reset"></span></button>
         </div>
       </section>
 
       <section class="glass-card rounded-2xl p-4 space-y-3">
         <h2 class="text-cyan-400 font-bold flex items-center gap-2 text-sm">
-          <i class="fa-solid fa-eye"></i><span data-i18n="observe"></span>
+          <i class="fa-solid fa-book-open"></i><span id="story-title"></span>
         </h2>
-        <p id="obs-text" class="text-sm text-slate-300 leading-relaxed"></p>
+        <p id="story-text" class="text-sm text-slate-300 leading-relaxed"></p>
+        <p id="obs-text" class="text-sm text-cyan-200/90 leading-relaxed"></p>
         <div class="glass-panel rounded-xl p-3 text-xs space-y-1">
           <div class="flex justify-between"><span class="text-slate-400">τ = RC</span><span class="num text-cyan-300" id="lbl-tau">1.00 s</span></div>
           <div class="text-slate-500" data-i18n="tau_hint"></div>
@@ -501,15 +524,46 @@ const LANG = {
     tab_sim: "Simulation",
     tab_quiz: "Quiz",
     controls: "Experiment controls",
+    systems: "Choose a lab system",
+    sys_charge: "Charging system",
+    sys_discharge: "Discharging system",
+    sys_acdc: "AC vs DC",
+    src_dc: "DC source",
+    src_ac: "AC source",
     vbat: "Battery voltage",
+    vpeak: "Peak voltage",
     res: "Resistance",
     cap: "Capacitance",
-    btn_charge: "Charge",
-    btn_discharge: "Discharge",
-    btn_hold: "Open / Hold",
+    freq: "AC frequency",
+    btn_sw_on: "Switch ON",
+    btn_sw_off: "Switch OFF",
     btn_reset: "Reset",
-    observe: "What to notice",
-    tau_hint: "Larger τ means slower charging and discharging.",
+    tau_hint: "Larger τ = R C means slower filling or emptying.",
+    story_charge_t: "Practical: charging a camera flash",
+    story_charge: "A photographer connects the flash capacitor to a DC battery. The switch must sit on the BATTERY contact. Electrons pile onto one plate, the electric field grows, and voltage climbs toward the battery. After a few time-constants the flash is “ready”. Because this is DC, current then almost stops — a charged capacitor behaves like an open circuit.",
+    story_discharge_t: "Practical: firing the flash",
+    story_discharge: "This is a different circuit. The switch leaves the battery and locks onto the LAMP contact. The battery is out of the loop. The capacitor alone dumps its stored energy into the bulb — a bright burst, then darkness. A capacitor is not a torch battery; it only holds a short pulse.",
+    story_dc_t: "Practical: DC in the mains adaptor / battery pack",
+    story_dc: "Steady DC is a one-way push. The capacitor fills like a tank. When Vc equals the source, the voltage across the resistor is zero, so current is zero. That is why capacitors block DC — used so a wrong DC bias cannot wander into the next stage.",
+    story_ac_t: "Practical: AC coupling / the “passing” capacitor",
+    story_ac: "AC keeps reversing, like pushing water back and forth. The plates never stay full. Charge rushes in, then out, every half-cycle, so current keeps flowing. Capacitors pass AC. Radios and amplifiers use this to send the sound signal while blocking the DC bias.",
+    obs_idle: "Switch is OFF (open). No path — charge on the plates stays put.",
+    obs_charging: "Switch ON to the battery. Current is large at first; Vc is catching up.",
+    obs_full: "Flash ready: Vc ≈ battery, I ≈ 0. In DC the capacitor has blocked further current.",
+    obs_discharge: "Switch ON to the lamp. Battery isolated. The burst is brightest at the first instant.",
+    obs_empty: "Burst over. Field collapsed, lamp dark. Charge the charging system again to refill.",
+    obs_hold: "Switch open. Energy stays stored until a path exists.",
+    obs_ac: "Watch polarity flip: field arrows reverse and current never settles to zero.",
+    obs_dc_block: "DC path is complete, but after charging the current has died. DC is blocked.",
+    banner_charge: "CHARGING LAB  ·  switch on BATTERY contact",
+    banner_discharge: "DISCHARGING LAB  ·  switch on LAMP contact  ·  battery isolated",
+    banner_dc: "DC SOURCE  ·  fills, then blocks",
+    banner_ac: "AC SOURCE  ·  polarity flips  ·  current continues",
+    sw_bat: "to battery",
+    sw_lamp: "to lamp",
+    sw_open: "OPEN",
+    isolated: "isolated",
+    acsrc: "AC SOURCE",
     live: "Live meters",
     formulas: "Living formulae",
     formula_hint: "Raise V: energy grows with V². Raise C: more charge stored.",
@@ -519,12 +573,6 @@ const LANG = {
     score: "Final score",
     explain: "Why",
     next: "Next question",
-    obs_idle: "The plates start empty. Close the path with Charge and watch electrons separate.",
-    obs_charging: "Current is large at first. Electrons pile onto one plate, the field grows, and Vc rises toward the battery.",
-    obs_full: "Fully charged: Vc ≈ battery voltage and current is almost zero. In steady DC the capacitor blocks further flow.",
-    obs_discharge: "The battery is out. Stored charge returns through the resistor. The lamp is bright, then fades as energy leaves the field.",
-    obs_hold: "The path is open. Charge stays on the plates — energy is stored, not created like a battery.",
-    obs_empty: "Almost empty. The field has collapsed and the lamp is dark. A capacitor only stores energy for a while.",
     bat: "BATTERY",
     sw: "SWITCH",
     rlab: "RESISTOR",
@@ -567,10 +615,10 @@ const LANG = {
         e: "The time constant is τ = R C. Larger R means a larger τ, so Vc climbs more slowly. The final voltage is still the battery voltage."
       },
       {
-        q: "A capacitor stores electrical energy mainly by…",
-        a: ["Acting as a never-ending battery", "Separating charge on two plates and building an electric field", "Heating the resistor", "Turning mass into energy"],
+        q: "In a real circuit a capacitor typically…",
+        a: ["Blocks AC and passes DC", "Blocks DC and passes AC", "Blocks both AC and DC", "Passes both equally once charged"],
         c: 1,
-        e: "Charge separation creates an electric field between the plates. The energy lives in that field and can be given back when the capacitor discharges."
+        e: "In DC the capacitor fills and current falls to zero (open circuit). In AC the polarity keeps reversing so charge never settles and current continues — that is AC coupling."
       }
     ]
   },
@@ -580,15 +628,46 @@ const LANG = {
     tab_sim: "مشابہت",
     tab_quiz: "کوئز",
     controls: "تجرباتی کنٹرول",
+    systems: "لیب نظام چنیں",
+    sys_charge: "چارجنگ نظام",
+    sys_discharge: "ڈسچارج نظام",
+    sys_acdc: "AC بمقابلہ DC",
+    src_dc: "DC منبع",
+    src_ac: "AC منبع",
     vbat: "بیٹری وولٹیج",
+    vpeak: "چوٹی وولٹیج",
     res: "مزاحمت",
     cap: "گنجائش",
-    btn_charge: "چارج",
-    btn_discharge: "ڈسچارج",
-    btn_hold: "کھلا / روکیں",
+    freq: "AC تعدد",
+    btn_sw_on: "سوئچ آن",
+    btn_sw_off: "سوئچ آف",
     btn_reset: "ازسرنو",
-    observe: "کیا دیکھنا ہے",
-    tau_hint: "بڑا τ چارج اور ڈسچارج دونوں کو سست کر دیتا ہے۔",
+    tau_hint: "بڑا τ = R C بھرنے یا خالی ہونے کو سست کر دیتا ہے۔",
+    story_charge_t: "عملی مثال: کیمرہ فلیش چارج کرنا",
+    story_charge: "فوٹوگرافر فلیش کے برق گیر کو DC بیٹری سے جوڑتا ہے۔ سوئچ بیٹری کے کانٹیکٹ پر ہونا چاہیے۔ الیکٹران ایک پلیٹ پر جمع ہوتے ہیں، میدان بڑھتا ہے، وولٹیج بیٹری تک چڑھتی ہے۔ چند وقتی مستقل بعد فلیش تیار ہے۔ یہ DC ہے اس لیے رو تقریباً رک جاتی ہے — چارج شدہ برق گیر کھلے سرکٹ جیسا برتاؤ کرتا ہے۔",
+    story_discharge_t: "عملی مثال: فلیش چلانا",
+    story_discharge: "یہ الگ سرکٹ ہے۔ سوئچ بیٹری چھوڑ کر بلب کے کانٹیکٹ پر لگتا ہے۔ بیٹری لوپ سے باہر ہے۔ صرف برق گیر بلب میں توانائی ڈالتا ہے — تیز چمک، پھر اندھیرا۔ برق گیر ٹارچ کی بیٹری نہیں؛ صرف مختصر دھماکہ رکھتا ہے۔",
+    story_dc_t: "عملی مثال: DC بیٹری / اڈاپٹر",
+    story_dc: "مستقل DC ایک طرفہ دھکا ہے۔ برق گیر ٹینکی کی طرح بھرتا ہے۔ جب Vc منبع جتنی ہو، ریزسٹر پر وولٹیج صفر، رو صفر۔ اسی لیے برق گیر DC روکتا ہے تاکہ غلط DC بائیس اگلی سٹیج میں نہ جائے۔",
+    story_ac_t: "عملی مثال: AC کپلنگ",
+    story_ac: "AC پلٹتا رہتا ہے، جیسے پانی آگے پیچھے۔ پلیٹیں کبھی بھری نہیں رہتیں۔ ہر نصف چکر بار اندر باہر ہوتا ہے اس لیے رو جاری رہتی ہے۔ برق گیر AC گزارتا ہے۔ ریڈیو اور ایمپلیفائر آواز کی سگنل بھیجتے ہیں اور DC بائیس روکتے ہیں۔",
+    obs_idle: "سوئچ آف (کھلا) ہے۔ کوئی راستہ نہیں — پلیٹوں پر بار ٹھہرا رہتا ہے۔",
+    obs_charging: "سوئچ بیٹری پر آن ہے۔ شروع میں رو زیادہ؛ Vc بیٹری کا پیچھا کر رہی ہے۔",
+    obs_full: "فلیش تیار: Vc ≈ بیٹری، I ≈ 0۔ DC میں برق گیر نے مزید رو روک دی۔",
+    obs_discharge: "سوئچ بلب پر آن۔ بیٹری الگ۔ چمک پہلے لمحے سب سے تیز۔",
+    obs_empty: "دھماکہ ختم۔ میدان گرا، بلب بجھا۔ دوبارہ بھرنے کے لیے چارجنگ نظام کھولیں۔",
+    obs_hold: "سوئچ کھلا۔ توانائی تب تک ذخیرہ رہتی ہے جب تک راستہ نہ بنے۔",
+    obs_ac: "قطبیت پلٹتی ہے: میدان کے تیر الٹتے ہیں اور رو صفر پر نہیں ٹھہرتی۔",
+    obs_dc_block: "DC راستہ مکمل ہے، مگر چارج کے بعد رو مر چکی ہے۔ DC رک گئی۔",
+    banner_charge: "چارجنگ لیب  ·  سوئچ بیٹری کانٹیکٹ پر",
+    banner_discharge: "ڈسچارج لیب  ·  سوئچ بلب کانٹیکٹ پر  ·  بیٹری الگ",
+    banner_dc: "DC منبع  ·  بھرتا ہے، پھر روکتا ہے",
+    banner_ac: "AC منبع  ·  قطبیت پلٹتی ہے  ·  رو جاری رہتی ہے",
+    sw_bat: "بیٹری کی طرف",
+    sw_lamp: "بلب کی طرف",
+    sw_open: "کھلا",
+    isolated: "الگ",
+    acsrc: "AC منبع",
     live: "براہِ راست پیمائش",
     formulas: "زندہ کلیے",
     formula_hint: "وولٹیج بڑھائیں: توانائی V² سے بڑھتی ہے۔ گنجائش بڑھائیں: زیادہ بار ذخیرہ ہوتا ہے۔",
@@ -598,12 +677,6 @@ const LANG = {
     score: "حتمی اسکور",
     explain: "وجہ",
     next: "اگلا سوال",
-    obs_idle: "پلیٹیں خالی ہیں۔ چارج دبائیں اور الیکٹرانوں کی علیحدگی دیکھیں۔",
-    obs_charging: "شروع میں برقی رو زیادہ ہے۔ ایک پلیٹ پر الیکٹران جمع ہوتے ہیں، میدان بڑھتا ہے، اور Vc بیٹری کی طرف چڑھتی ہے۔",
-    obs_full: "مکمل چارج: Vc ≈ بیٹری وولٹیج اور رو تقریباً صفر۔ مستقل ڈی سی میں برق گیر مزید رو روک دیتا ہے۔",
-    obs_discharge: "بیٹری الگ ہے۔ ذخیرہ شدہ بار ریزسٹر سے واپس آتا ہے۔ بلب روشن ہوتا ہے، پھر میدان کی توانائی کم ہونے سے مدھم۔",
-    obs_hold: "راستہ کھلا ہے۔ بار پلیٹوں پر ٹھہرا رہتا ہے — توانائی ذخیرہ ہے، بیٹری کی طرح پیدا نہیں ہو رہی۔",
-    obs_empty: "تقریباً خالی۔ میدان ختم اور بلب بجھ۔ برق گیر توانائی صرف عارضی طور پر رکھتا ہے۔",
     bat: "بیٹری",
     sw: "سوئچ",
     rlab: "ریزسٹر",
@@ -646,10 +719,10 @@ const LANG = {
         e: "وقتی مستقل τ = R C ہے۔ بڑی R سے τ بڑا ہوتا ہے اس لیے Vc آہستہ چڑھتی ہے۔ حتمی وولٹیج پھر بھی بیٹری وولٹیج ہی رہتی ہے۔"
       },
       {
-        q: "برق گیر برقی توانائی بنیادی طور پر کیسے ذخیرہ کرتا ہے؟",
-        a: ["ہمیشہ چلنے والی بیٹری بن کر", "دو پلیٹوں پر بار الگ کر کے برقی میدان بنا کر", "ریزسٹر گرم کر کے", "کمیت کو توانائی میں بدل کر"],
+        q: "حقیقی سرکٹ میں برق گیر عموماً…",
+        a: ["AC روکتا ہے اور DC گزارتا ہے", "DC روکتا ہے اور AC گزارتا ہے", "AC اور DC دونوں روکتا ہے", "چارج کے بعد دونوں برابر گزارتا ہے"],
         c: 1,
-        e: "بار کی علیحدگی پلیٹوں کے درمیان برقی میدان پیدا کرتی ہے۔ توانائی اسی میدان میں ہوتی ہے اور ڈسچارج پر واپس دی جا سکتی ہے۔"
+        e: "DC میں برق گیر بھر جاتا ہے اور رو صفر ہو جاتی ہے (کھلا سرکٹ)۔ AC میں قطبیت پلٹتی رہتی ہے اس لیے بار ٹھہرتا نہیں اور رو جاری رہتی ہے — یہی AC کپلنگ ہے۔"
       }
     ]
   }
@@ -662,10 +735,14 @@ const sim = {
   Vbat: 9,
   R: 1000,
   C: 1000e-6,
+  f: 0.8,
   Q: 0,
   Vc: 0,
   I: 0,
-  mode: 'idle',
+  Vac: 0,
+  system: 'charge',
+  sw: 'closed',
+  source: 'dc',
   t: 0,
   hist: [],
   electrons: [],
@@ -675,12 +752,35 @@ const sim = {
 const view = { scale: 1, x: 0, y: 0, min: 0.45, max: 2.8, panning: false, px: 0, py: 0, vx: 0, vy: 0 };
 
 const WORLD_W = 1200, WORLD_H = 720;
-const PATH = [
-  { x: 118, y: 168 }, { x: 250, y: 168 }, { x: 330, y: 168 }, { x: 470, y: 168 },
-  { x: 580, y: 168 }, { x: 700, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 },
-  { x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 168 }
-];
+const CAP = { Lx: 702, Rx: 818, top: 198, bot: 402 };
 
+function metaFrom(pts) {
+  const segs = [];
+  let L = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const d = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    segs.push({ i, d, acc: L + d, a: pts[i - 1], b: pts[i] });
+    L += d;
+  }
+  return { pts, L, segs };
+}
+
+function activePath() {
+  if (sim.system === 'discharge') {
+    return metaFrom([
+      { x: 210, y: 168 }, { x: 330, y: 168 }, { x: 470, y: 168 }, { x: 620, y: 168 },
+      { x: 818, y: 168 }, { x: 818, y: 198 }, { x: 702, y: 402 }, { x: 702, y: 432 },
+      { x: 210, y: 432 }, { x: 210, y: 168 }
+    ]);
+  }
+  return metaFrom([
+    { x: 118, y: 168 }, { x: 260, y: 168 }, { x: 330, y: 168 }, { x: 470, y: 168 },
+    { x: 620, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }, { x: 702, y: 402 },
+    { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 168 }
+  ]);
+}
+
+let pathMeta = activePath();
 let canvas, ctx, dpr = 1;
 
 function applyLanguage() {
@@ -691,7 +791,8 @@ function applyLanguage() {
     const k = el.getAttribute('data-i18n');
     if (LANG[cur][k] != null) el.textContent = LANG[cur][k];
   });
-  document.getElementById('intro-topic').textContent = T('intro_topic');
+  const intro = document.getElementById('intro-topic');
+  if (intro) intro.textContent = T('intro_topic');
   const titles = {
     'btn-anno-toggle': T('anno'),
     'anno-pen': T('pen'),
@@ -700,10 +801,9 @@ function applyLanguage() {
   };
   Object.keys(titles).forEach(id => {
     const el = document.getElementById(id);
-    if (el && el.parentElement && el.tagName !== 'I') el.title = titles[id];
-    else if (el && el.closest('button')) el.closest('button').title = titles[id];
+    if (el && el.closest('button')) el.closest('button').title = titles[id];
   });
-  document.getElementById('obs-text').textContent = T(observationKey());
+  refreshStory();
   if (document.getElementById('view-quiz').classList.contains('hidden') === false) renderQuiz();
 }
 
@@ -715,17 +815,169 @@ function changeLanguage(l) {
   applyLanguage();
 }
 
+function refreshStory() {
+  let tk = 'story_charge_t', sk = 'story_charge';
+  if (sim.system === 'discharge') { tk = 'story_discharge_t'; sk = 'story_discharge'; }
+  if (sim.system === 'acdc') {
+    if (sim.source === 'ac') { tk = 'story_ac_t'; sk = 'story_ac'; }
+    else { tk = 'story_dc_t'; sk = 'story_dc'; }
+  }
+  document.getElementById('story-title').textContent = T(tk);
+  document.getElementById('story-text').textContent = T(sk);
+  document.getElementById('obs-text').textContent = T(observationKey());
+  const vname = document.getElementById('lbl-vname');
+  if (vname) vname.textContent = (sim.system === 'acdc' && sim.source === 'ac') ? T('vpeak') : T('vbat');
+}
+
 function observationKey() {
-  if (sim.mode === 'discharge') {
+  if (sim.sw !== 'closed') return Math.abs(sim.Q) > 2e-6 ? 'obs_hold' : 'obs_idle';
+  if (sim.system === 'discharge') {
     if (Math.abs(sim.I) < 0.0004 && Math.abs(sim.Vc) < 0.08) return 'obs_empty';
     return 'obs_discharge';
   }
-  if (sim.mode === 'charge') {
-    if (Math.abs(sim.I) < 0.0005 && Math.abs(sim.Vc - sim.Vbat) < 0.08) return 'obs_full';
-    return 'obs_charging';
+  if (sim.system === 'acdc' && sim.source === 'ac') return 'obs_ac';
+  if (Math.abs(sim.I) < 0.0005 && Math.abs(sim.Vc - sim.Vbat) < 0.08) return sim.system === 'acdc' ? 'obs_dc_block' : 'obs_full';
+  return 'obs_charging';
+}
+
+function syncSysButtons() {
+  ['charge', 'discharge', 'acdc'].forEach(s => {
+    document.getElementById('sys-' + s).classList.toggle('btn-on', sim.system === s);
+  });
+  document.getElementById('acdc-toggle').classList.toggle('hidden', sim.system !== 'acdc');
+  document.getElementById('freq-wrap').classList.toggle('hidden', !(sim.system === 'acdc' && sim.source === 'ac'));
+  document.getElementById('btn-dc')?.classList.toggle('btn-on', sim.source === 'dc');
+  document.getElementById('btn-ac')?.classList.toggle('btn-on', sim.source === 'ac');
+  document.getElementById('btn-charge').classList.toggle('btn-on', sim.sw === 'closed');
+  document.getElementById('btn-hold').classList.toggle('btn-on', sim.sw !== 'closed');
+}
+
+function setSystem(s) {
+  const prev = sim.system;
+  sim.system = s;
+  sim.sw = 'closed';
+  sim.hist = [];
+  if (s === 'discharge') {
+    if (Math.abs(sim.Q) < sim.C * sim.Vbat * 0.15) {
+      sim.Vc = sim.Vbat;
+      sim.Q = sim.C * sim.Vc;
+    }
+    sim.source = 'dc';
+  } else if (s === 'charge') {
+    sim.source = 'dc';
+    if (prev === 'discharge' && Math.abs(sim.Vc) < 0.2) {
+      sim.Q = 0; sim.Vc = 0;
+    }
+  } else {
+    if (sim.source !== 'ac') sim.source = 'dc';
+    if (sim.source === 'dc') { sim.Q = 0; sim.Vc = 0; }
   }
-  if (Math.abs(sim.Q) > 2e-6) return 'obs_hold';
-  return 'obs_idle';
+  pathMeta = activePath();
+  initElectrons();
+  syncSysButtons();
+  refreshStory();
+}
+
+function setSource(src) {
+  sim.source = src;
+  sim.sw = 'closed';
+  sim.hist = [];
+  if (src === 'dc') { sim.Q = 0; sim.Vc = 0; sim.I = 0; }
+  syncSysButtons();
+  refreshStory();
+  onParamChange();
+}
+
+function setSwitch(pos) {
+  sim.sw = pos;
+  syncSysButtons();
+  refreshStory();
+}
+
+function resetSim() {
+  sim.Q = 0;
+  sim.Vc = 0;
+  sim.I = 0;
+  sim.t = 0;
+  sim.hist = [];
+  if (sim.system === 'discharge') {
+    sim.Vc = sim.Vbat;
+    sim.Q = sim.C * sim.Vc;
+  }
+  sim.sw = sim.system === 'acdc' ? 'closed' : 'open';
+  if (sim.system === 'charge' || sim.system === 'discharge') sim.sw = 'open';
+  pathMeta = activePath();
+  initElectrons();
+  syncSysButtons();
+  refreshStory();
+}
+
+function onParamChange() {
+  const oldC = sim.C;
+  sim.Vbat = parseFloat(document.getElementById('rng-v').value);
+  sim.R = parseFloat(document.getElementById('rng-r').value);
+  const uF = parseFloat(document.getElementById('rng-c').value);
+  sim.C = uF * 1e-6;
+  sim.f = parseFloat(document.getElementById('rng-f').value);
+  if (oldC > 0 && sim.sw !== 'closed') sim.Vc = sim.Q / sim.C;
+  document.getElementById('lbl-v').textContent = sim.Vbat.toFixed(1) + ' V';
+  document.getElementById('lbl-r').textContent = Math.round(sim.R) + ' Ω';
+  document.getElementById('lbl-c').textContent = Math.round(uF) + ' µF';
+  document.getElementById('lbl-f').textContent = sim.f.toFixed(2) + ' Hz';
+  document.getElementById('lbl-tau').textContent = (sim.R * sim.C).toFixed(2) + ' s';
+  refreshStory();
+}
+
+function stepPhysics(dt) {
+  dt = Math.min(dt, 0.05);
+  const closed = sim.sw === 'closed';
+  if (sim.system === 'acdc' && sim.source === 'ac' && closed) {
+    sim.Vac = sim.Vbat * Math.sin(2 * Math.PI * sim.f * sim.t);
+    sim.I = (sim.Vac - sim.Vc) / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+  } else if (closed && sim.system === 'discharge') {
+    sim.Vac = 0;
+    sim.I = -sim.Vc / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+    if (Math.abs(sim.Q) < 1e-9) { sim.Q = 0; sim.Vc = 0; sim.I = 0; }
+  } else if (closed && (sim.system === 'charge' || (sim.system === 'acdc' && sim.source === 'dc'))) {
+    sim.Vac = sim.Vbat;
+    sim.I = (sim.Vbat - sim.Vc) / sim.R;
+    sim.Q += sim.I * dt;
+    sim.Vc = sim.Q / sim.C;
+  } else {
+    sim.I = 0;
+    if (!(sim.system === 'acdc' && sim.source === 'ac')) sim.Vac = 0;
+  }
+  sim.t += dt;
+  if (sim.hist.length === 0 || sim.t - sim.hist[sim.hist.length - 1].t > 0.016) {
+    sim.hist.push({ t: sim.t, v: sim.Vc, i: sim.I, vs: sim.Vac });
+    if (sim.hist.length > 520) sim.hist.shift();
+  }
+}
+
+function pointOnPath(s, meta) {
+  const M = meta || pathMeta;
+  if (!M.L) return { x: 0, y: 0 };
+  s = ((s % M.L) + M.L) % M.L;
+  let prev = 0;
+  for (const seg of M.segs) {
+    if (s <= seg.acc) {
+      const u = seg.d ? (s - prev) / seg.d : 0;
+      return { x: seg.a.x + (seg.b.x - seg.a.x) * u, y: seg.a.y + (seg.b.y - seg.a.y) * u };
+    }
+    prev = seg.acc;
+  }
+  return { ...M.pts[0] };
+}
+
+function initElectrons() {
+  pathMeta = activePath();
+  sim.electrons = [];
+  const n = 26;
+  for (let i = 0; i < n; i++) sim.electrons.push({ s: (i / n) * (pathMeta.L || 1) });
 }
 
 function switchTab(name) {
@@ -762,96 +1014,6 @@ document.addEventListener('fullscreenchange', () => {
   setTimeout(() => { fitView(); resizeAnno(); }, 80);
 });
 
-function setMode(m) {
-  sim.mode = m;
-  document.getElementById('btn-charge').classList.toggle('btn-on', m === 'charge');
-  document.getElementById('btn-discharge').classList.toggle('btn-on', m === 'discharge');
-  document.getElementById('btn-hold').classList.toggle('btn-on', m === 'hold' || m === 'idle');
-}
-
-function resetSim() {
-  sim.Q = 0;
-  sim.Vc = 0;
-  sim.I = 0;
-  sim.t = 0;
-  sim.hist = [];
-  sim.mode = 'idle';
-  setMode('idle');
-}
-
-function onParamChange() {
-  const oldC = sim.C;
-  sim.Vbat = parseFloat(document.getElementById('rng-v').value);
-  sim.R = parseFloat(document.getElementById('rng-r').value);
-  const uF = parseFloat(document.getElementById('rng-c').value);
-  sim.C = uF * 1e-6;
-  if (oldC > 0 && sim.mode !== 'charge') {
-    sim.Vc = sim.Q / sim.C;
-  }
-  document.getElementById('lbl-v').textContent = sim.Vbat.toFixed(1) + ' V';
-  document.getElementById('lbl-r').textContent = Math.round(sim.R) + ' Ω';
-  document.getElementById('lbl-c').textContent = Math.round(uF) + ' µF';
-  document.getElementById('lbl-tau').textContent = (sim.R * sim.C).toFixed(2) + ' s';
-}
-
-function stepPhysics(dt) {
-  dt = Math.min(dt, 0.05);
-  if (sim.mode === 'charge') {
-    sim.I = (sim.Vbat - sim.Vc) / sim.R;
-    sim.Q += sim.I * dt;
-    sim.Vc = sim.Q / sim.C;
-  } else if (sim.mode === 'discharge') {
-    sim.I = -sim.Vc / sim.R;
-    sim.Q += sim.I * dt;
-    sim.Vc = sim.Q / sim.C;
-    if (Math.abs(sim.Q) < 1e-9) { sim.Q = 0; sim.Vc = 0; sim.I = 0; }
-  } else {
-    sim.I = 0;
-  }
-  sim.t += dt;
-  if (sim.hist.length === 0 || sim.t - sim.hist[sim.hist.length - 1].t > 0.016) {
-    sim.hist.push({ t: sim.t, v: sim.Vc, i: sim.I });
-    if (sim.hist.length > 520) sim.hist.shift();
-  }
-}
-
-function pathLength() {
-  let L = 0;
-  for (let i = 1; i < PATH.length; i++) {
-    L += Math.hypot(PATH[i].x - PATH[i - 1].x, PATH[i].y - PATH[i - 1].y);
-  }
-  return L;
-}
-const PLEN = (function () {
-  const segs = [];
-  let L = 0;
-  for (let i = 1; i < PATH.length; i++) {
-    const d = Math.hypot(PATH[i].x - PATH[i - 1].x, PATH[i].y - PATH[i - 1].y);
-    segs.push({ i, d, acc: L + d });
-    L += d;
-  }
-  return { L, segs };
-})();
-
-function pointOnPath(s) {
-  s = ((s % PLEN.L) + PLEN.L) % PLEN.L;
-  let prev = 0;
-  for (const seg of PLEN.segs) {
-    if (s <= seg.acc) {
-      const a = PATH[seg.i - 1], b = PATH[seg.i];
-      const u = (s - prev) / seg.d;
-      return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
-    }
-    prev = seg.acc;
-  }
-  return { ...PATH[0] };
-}
-
-function initElectrons() {
-  sim.electrons = [];
-  for (let i = 0; i < 28; i++) sim.electrons.push({ s: (i / 28) * PLEN.L });
-}
-
 function updateMeters() {
   const Imax = sim.Vbat / sim.R;
   const Qmax = sim.C * 12;
@@ -883,13 +1045,14 @@ function roundRect(x, y, w, h, r) {
   ctx.closePath();
 }
 
-function strokeLive(points) {
+function strokePath(points, live) {
+  const on = live && Math.abs(sim.I) > 0.0002;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  ctx.strokeStyle = Math.abs(sim.I) > 0.0002 ? '#22d3ee' : '#475569';
+  ctx.strokeStyle = on ? '#22d3ee' : '#475569';
   ctx.lineWidth = 5;
-  ctx.shadowColor = Math.abs(sim.I) > 0.0002 ? 'rgba(0,243,255,0.45)' : 'transparent';
-  ctx.shadowBlur = Math.abs(sim.I) > 0.0002 ? 12 : 0;
+  ctx.shadowColor = on ? 'rgba(0,243,255,0.45)' : 'transparent';
+  ctx.shadowBlur = on ? 12 : 0;
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
@@ -897,25 +1060,14 @@ function strokeLive(points) {
   ctx.shadowBlur = 0;
 }
 
-function drawWire() {
-  strokeLive([
-    { x: 118, y: 300 }, { x: 118, y: 168 }, { x: 250, y: 168 }, { x: 330, y: 168 },
-    { x: 470, y: 168 }, { x: 580, y: 168 }, { x: 700, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }
-  ]);
-  strokeLive([
-    { x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 400 }
-  ]);
-}
-
-function drawBattery() {
-  const x = 88, y = 210;
+function drawBatteryAt(x, y, isolated) {
   roundRect(x, y, 60, 190, 10);
   ctx.fillStyle = 'rgba(15,23,42,0.9)';
   ctx.fill();
-  ctx.strokeStyle = '#f59e0b';
+  ctx.strokeStyle = isolated ? '#64748b' : '#f59e0b';
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.fillStyle = '#fbbf24';
+  ctx.fillStyle = isolated ? '#94a3b8' : '#fbbf24';
   ctx.font = '700 11px Outfit, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(T('bat'), x + 30, y + 22);
@@ -935,39 +1087,96 @@ function drawBattery() {
   ctx.fillText('+', x + 30, y + 36);
   ctx.fillStyle = '#fca5a5';
   ctx.fillText('−', x + 30, y + 178);
-  if (sim.mode !== 'charge') {
-    ctx.fillStyle = 'rgba(2,6,23,0.45)';
-    roundRect(x, y, 60, 190, 10);
-    ctx.fill();
+  if (isolated) {
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y + 28);
+    ctx.lineTo(x + 52, y + 172);
+    ctx.moveTo(x + 52, y + 28);
+    ctx.lineTo(x + 8, y + 172);
+    ctx.stroke();
+    ctx.fillStyle = '#fca5a5';
+    ctx.font = '700 11px Outfit, sans-serif';
+    ctx.fillText(T('isolated'), x + 30, y + 204);
   }
 }
 
-function drawSwitch() {
-  const x = 250, y = 168;
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 4;
+function drawACSource(x, y) {
   ctx.beginPath();
-  ctx.arc(x, y, 7, 0, Math.PI * 2);
+  ctx.arc(x + 30, y + 95, 42, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(15,23,42,0.92)';
+  ctx.fill();
+  ctx.strokeStyle = '#a855f7';
+  ctx.lineWidth = 3;
   ctx.stroke();
+  ctx.strokeStyle = '#e879f9';
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.arc(x + 80, y, 7, 0, Math.PI * 2);
+  ctx.moveTo(x + 8, y + 95);
+  for (let i = 0; i <= 40; i++) {
+    const px = x + 8 + i * 1.1;
+    const py = y + 95 - Math.sin(i / 40 * Math.PI * 2) * 14;
+    ctx.lineTo(px, py);
+  }
   ctx.stroke();
-  ctx.save();
-  ctx.translate(x, y);
-  let ang = -0.55;
-  if (sim.mode === 'charge') ang = 0;
-  if (sim.mode === 'discharge') ang = 0.7;
-  ctx.rotate(ang);
-  ctx.strokeStyle = sim.mode === 'hold' || sim.mode === 'idle' ? '#64748b' : '#22d3ee';
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(78, 0);
-  ctx.stroke();
-  ctx.restore();
+  ctx.fillStyle = '#e9d5ff';
+  ctx.font = '700 11px Outfit, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(T('acsrc'), x + 30, y + 22);
+  ctx.font = '700 14px JetBrains Mono, monospace';
+  ctx.fillStyle = '#f5d0fe';
+  ctx.fillText(sim.Vac.toFixed(1) + ' V', x + 30, y + 160);
+}
+
+function drawSPDT(kind) {
+  const pivot = { x: 250, y: 168 };
+  const batC = { x: 250, y: 118 };
+  const lampC = { x: 250, y: 218 };
+  const common = { x: 330, y: 168 };
   ctx.fillStyle = '#94a3b8';
   ctx.font = '700 11px Outfit, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(T('sw'), x + 40, y - 22);
+  ctx.fillText(T('sw'), pivot.x + 20, 86);
+
+  const contact = (p, label, active) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = active ? '#22d3ee' : '#1e293b';
+    ctx.fill();
+    ctx.strokeStyle = active ? '#67e8f9' : '#64748b';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = active ? '#a5f3fc' : '#64748b';
+    ctx.font = '600 10px Outfit, sans-serif';
+    ctx.fillText(label, p.x - 48, p.y + 4);
+  };
+
+  let target = null;
+  if (sim.sw === 'closed') {
+    if (kind === 'charge' || kind === 'dc' || kind === 'ac') target = batC;
+    if (kind === 'discharge') target = lampC;
+  }
+
+  contact(batC, kind === 'discharge' ? T('isolated') : T('sw_bat'), target === batC);
+  contact(lampC, kind === 'charge' || kind === 'dc' || kind === 'ac' ? T('sw_open') : T('sw_lamp'), target === lampC);
+  ctx.beginPath();
+  ctx.arc(pivot.x, pivot.y, 9, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.strokeStyle = target ? '#22d3ee' : '#64748b';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(pivot.x, pivot.y);
+  if (target) ctx.lineTo(target.x, target.y);
+  else ctx.lineTo(pivot.x + 36, pivot.y - 28);
+  ctx.stroke();
+
+  strokePath([{ x: pivot.x, y: pivot.y }, common], !!target);
 }
 
 function drawResistor() {
@@ -987,10 +1196,9 @@ function drawResistor() {
   ctx.fillText(T('rlab') + '  ' + Math.round(sim.R) + ' Ω', x + 50, y - 28);
 }
 
-function drawLamp() {
-  const x = 620, y = 168;
+function drawLampAt(x, y, lit) {
   const Imax = sim.Vbat / Math.max(sim.R, 1);
-  const b = Math.min(1, Math.abs(sim.I) / Math.max(Imax, 1e-9));
+  const b = lit ? Math.min(1, Math.abs(sim.I) / Math.max(Imax, 1e-9)) : 0;
   ctx.beginPath();
   ctx.arc(x, y, 18, 0, Math.PI * 2);
   ctx.fillStyle = `rgba(251, 191, 36, ${0.08 + b * 0.55})`;
@@ -998,7 +1206,7 @@ function drawLamp() {
   ctx.shadowBlur = 8 + b * 28;
   ctx.fill();
   ctx.shadowBlur = 0;
-  ctx.strokeStyle = '#fbbf24';
+  ctx.strokeStyle = lit ? '#fbbf24' : '#64748b';
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.beginPath();
@@ -1007,22 +1215,20 @@ function drawLamp() {
   ctx.moveTo(x + 8, y - 8);
   ctx.lineTo(x - 8, y + 8);
   ctx.stroke();
-  ctx.fillStyle = '#fde68a';
+  ctx.fillStyle = lit ? '#fde68a' : '#64748b';
   ctx.font = '700 11px Outfit, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(T('lamp'), x, y - 30);
 }
 
 function drawCapacitor() {
-  const Lx = 702, Rx = 818, top = 198, bot = 402;
-  const gap = Rx - Lx;
+  const { Lx, Rx, top, bot } = CAP;
   const field = Math.min(1, Math.abs(sim.Vc) / Math.max(sim.Vbat, 0.01));
   ctx.fillStyle = '#cbd5e1';
   roundRect(Lx - 10, top, 14, bot - top, 3);
   ctx.fill();
   roundRect(Rx - 4, top, 14, bot - top, 3);
   ctx.fill();
-
   const n = 7;
   for (let i = 0; i < n; i++) {
     const yy = top + 18 + i * ((bot - top - 36) / (n - 1));
@@ -1047,46 +1253,56 @@ function drawCapacitor() {
     }
     ctx.fill();
   }
-
   const dots = Math.round(4 + Math.min(22, Math.abs(sim.Q) / Math.max(sim.C * sim.Vbat, 1e-9) * 22));
   for (let i = 0; i < dots; i++) {
     const yy = top + 16 + (i % 12) * 15;
     const ox = Math.floor(i / 12) * 7;
-    ctx.fillStyle = '#22d3ee';
+    ctx.fillStyle = sim.Vc >= 0 ? '#22d3ee' : '#f87171';
     ctx.beginPath();
     ctx.arc(Lx - 22 - ox, yy, 3.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#f87171';
+    ctx.fillStyle = sim.Vc >= 0 ? '#f87171' : '#22d3ee';
     ctx.font = '700 14px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('+', Rx + 22 + ox, yy + 5);
+    ctx.fillText(sim.Vc >= 0 ? '+' : '−', Rx + 22 + ox, yy + 5);
   }
-
   ctx.fillStyle = '#94a3b8';
   ctx.font = '700 12px Outfit, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(T('clab'), (Lx + Rx) / 2, top - 18);
   ctx.fillStyle = '#7dd3fc';
   ctx.font = '600 11px Outfit, sans-serif';
-  ctx.fillText(T('neg'), Lx - 8, bot + 22);
+  ctx.fillText(sim.Vc >= 0 ? T('neg') : T('pos'), Lx - 8, bot + 22);
   ctx.fillStyle = '#fca5a5';
-  ctx.fillText(T('pos'), Rx + 8, bot + 22);
+  ctx.fillText(sim.Vc >= 0 ? T('pos') : T('neg'), Rx + 8, bot + 22);
   ctx.fillStyle = '#fde68a';
   ctx.fillText(T('efield'), (Lx + Rx) / 2, top + (bot - top) / 2 - 8);
 }
 
 function drawElectrons(dt) {
   const speed = sim.I * 180000;
-  const moving = sim.mode === 'charge' || sim.mode === 'discharge';
+  const moving = sim.sw === 'closed' && Math.abs(sim.I) > 0.00005;
   ctx.fillStyle = '#22d3ee';
   for (const e of sim.electrons) {
     if (moving) e.s += -speed * dt;
-    const p = pointOnPath(e.s);
+    const p = pointOnPath(e.s, pathMeta);
     if (p.x > 690 && p.x < 830 && p.y > 190 && p.y < 410) continue;
     ctx.beginPath();
     ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
     ctx.fill();
   }
+}
+
+function drawBanner(text) {
+  roundRect(40, 18, 1120, 36, 10);
+  ctx.fillStyle = 'rgba(15,23,42,0.82)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,243,255,0.25)';
+  ctx.stroke();
+  ctx.fillStyle = '#67e8f9';
+  ctx.font = '700 14px Outfit, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(text, 58, 42);
 }
 
 function drawGraph(x, y, w, h, key, color, label, ymin, ymax) {
@@ -1114,27 +1330,63 @@ function drawGraph(x, y, w, h, key, color, label, ymin, ymax) {
   ctx.stroke();
 }
 
+function drawChargeSystem() {
+  drawBanner(T('banner_charge'));
+  const live = sim.sw === 'closed';
+  strokePath([{ x: 118, y: 300 }, { x: 118, y: 168 }, { x: 250, y: 118 }], live);
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 400 }], live);
+  drawBatteryAt(88, 210, false);
+  drawSPDT('charge');
+  drawResistor();
+  drawCapacitor();
+}
+
+function drawDischargeSystem() {
+  drawBanner(T('banner_discharge'));
+  const live = sim.sw === 'closed';
+  drawBatteryAt(40, 210, true);
+  strokePath([{ x: 210, y: 218 }, { x: 210, y: 168 }, { x: 250, y: 218 }], live);
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 210, y: 432 }, { x: 210, y: 218 }], live);
+  drawSPDT('discharge');
+  drawLampAt(210, 168, live);
+  drawResistor();
+  drawCapacitor();
+}
+
+function drawACDCSystem() {
+  const ac = sim.source === 'ac';
+  drawBanner(ac ? T('banner_ac') : T('banner_dc'));
+  const live = sim.sw === 'closed';
+  if (ac) {
+    drawACSource(70, 200);
+    strokePath([{ x: 100, y: 253 }, { x: 100, y: 118 }, { x: 250, y: 118 }], live);
+    strokePath([{ x: 100, y: 337 }, { x: 100, y: 432 }, { x: 702, y: 432 }, { x: 702, y: 402 }], live);
+  } else {
+    drawBatteryAt(88, 210, false);
+    strokePath([{ x: 118, y: 300 }, { x: 118, y: 168 }, { x: 250, y: 118 }], live);
+    strokePath([{ x: 702, y: 402 }, { x: 702, y: 432 }, { x: 118, y: 432 }, { x: 118, y: 400 }], live);
+  }
+  strokePath([{ x: 330, y: 168 }, { x: 818, y: 168 }, { x: 818, y: 198 }], live);
+  drawSPDT(ac ? 'ac' : 'dc');
+  drawResistor();
+  drawCapacitor();
+}
+
 function drawScene(dt) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, WORLD_W, WORLD_H);
   ctx.fillStyle = '#07101f';
   ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-
-  ctx.fillStyle = '#64748b';
-  ctx.font = '600 13px Outfit, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText(T('electrons'), 40, 36);
-
-  drawWire();
-  drawBattery();
-  drawSwitch();
-  drawResistor();
-  drawLamp();
-  drawCapacitor();
+  if (sim.system === 'discharge') drawDischargeSystem();
+  else if (sim.system === 'acdc') drawACDCSystem();
+  else drawChargeSystem();
   drawElectrons(dt);
-
   const Imax = Math.max(sim.Vbat / sim.R, 0.002);
-  drawGraph(40, 500, 540, 190, 'v', '#22d3ee', T('graph_v') + '   Vc', -0.2, sim.Vbat + 0.5);
+  const vmax = sim.system === 'acdc' && sim.source === 'ac' ? sim.Vbat + 0.5 : sim.Vbat + 0.5;
+  const vmin = sim.system === 'acdc' && sim.source === 'ac' ? -sim.Vbat - 0.5 : -0.2;
+  drawGraph(40, 500, 540, 190, 'v', '#22d3ee', T('graph_v') + '   Vc', vmin, vmax);
   drawGraph(620, 500, 540, 190, 'i', '#f59e0b', T('graph_i') + '   I', -Imax * 1.05, Imax * 1.05);
 }
 
@@ -1191,6 +1443,13 @@ function setupPanZoom() {
   vp.addEventListener('pointerdown', (e) => {
     if (isAnnoActive) return;
     if (e.target.closest('#float-tools')) return;
+    const r = vp.getBoundingClientRect();
+    const wx = (e.clientX - r.left - view.x) / view.scale;
+    const wy = (e.clientY - r.top - view.y) / view.scale;
+    if (Math.hypot(wx - 250, wy - 168) < 55 || Math.hypot(wx - 250, wy - 118) < 22 || Math.hypot(wx - 250, wy - 218) < 22) {
+      setSwitch(sim.sw === 'closed' ? 'open' : 'closed');
+      return;
+    }
     view.panning = true;
     view.px = e.clientX; view.py = e.clientY;
     view.vx = view.x; view.vy = view.y;
@@ -1414,7 +1673,7 @@ function bootApp() {
   setupCanvas();
   initElectrons();
   onParamChange();
-  setMode('idle');
+  setSystem('charge');
   const vp = document.getElementById('sim-viewport');
   initAnnotationCanvas(vp.clientWidth || 800, vp.clientHeight || 500);
   resizeAnno();
