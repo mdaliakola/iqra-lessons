@@ -1285,8 +1285,8 @@ function boot(){
     const intro=document.getElementById('intro');
     intro.style.opacity='0';
     document.getElementById('app').classList.remove('opacity-0');
-    setTimeout(()=>{ intro.style.display='none'; resizeAll(); }, 700);
-  }, 5000);
+    setTimeout(()=>{ intro.style.display='none'; resizeAll(); }, 400);
+  }, 1200);
   requestAnimationFrame(loop);
 }
 boot();
