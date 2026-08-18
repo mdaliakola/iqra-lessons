@@ -1164,10 +1164,9 @@ function drawBattery(ctx, x, y) {
   ctx.fillStyle = '#5c3317';
   roundRect(ctx, x + 10, y + 10, 190, 70, 10);
   ctx.fill();
-  ctx.fillStyle = '#f8fafc';
-  ctx.font = "bold 22px Oxanium";
+  label(ctx, L.battery, x + 105, y + 48, { color: '#f8fafc' });
   ctx.textAlign = 'center';
-  ctx.fillText(L.battery, x + 105, y + 48);
+  ctx.textBaseline = 'middle';
   ctx.fillStyle = '#f87171';
   ctx.font = 'bold 28px Oxanium';
   ctx.fillText('+', x + 48, y + 108);
@@ -1305,7 +1304,9 @@ window.addEventListener('load', () => {
     intro.style.opacity = '0';
     setTimeout(() => {
       intro.style.display = 'none';
-      document.getElementById('app').classList.add('opacity-100');
+      const app = document.getElementById('app');
+      app.classList.remove('opacity-0');
+      app.classList.add('opacity-100');
       boot();
     }, 700);
   }, 5000);
