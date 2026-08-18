@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IQRA VIRTUAL LAB — Ionic Compound Formation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoNastaliqUrdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #020617;
+  color: #f8fafc;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] select,
+[dir="rtl"] .glass-panel,
+[dir="rtl"] .glass-card {
+  font-size: 1.05em;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+  touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.formula-font { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+#sim-viewport .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 25;
+}
+#sim-viewport .canvas-container .upper-canvas,
+#sim-viewport .canvas-container .lower-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#anno-toolbar.max-w-0 { padding-left: 0; padding-right: 0; border-width: 0; }
+
+@keyframes introZoom {
+  0% { transform: scale(0.78); opacity: 0; }
+  45% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes introGlow {
+  0%, 100% { text-shadow: 0 0 18px rgba(0,243,255,0.25); }
+  50% { text-shadow: 0 0 42px rgba(0,243,255,0.85), 0 0 80px rgba(34,211,238,0.4); }
+}
+@keyframes ringPulse {
+  0% { transform: scale(0.7); opacity: 0.55; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.animate-intro { animation: introZoom 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.intro-glow { animation: introGlow 2s ease-in-out infinite; }
+.intro-ring { animation: ringPulse 2.2s ease-out infinite; }
+
+.compound-btn.active {
+  background: rgba(0, 243, 255, 0.16);
+  border-color: rgba(0, 243, 255, 0.55);
+  color: #67e8f9;
+  box-shadow: 0 0 18px rgba(0, 243, 255, 0.22);
+}
+.tab-on {
+  background: #06b6d4;
+  color: #020617;
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.28);
+}
+.quiz-opt { transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+.quiz-opt:hover:not(.locked) { transform: translateY(-1px); border-color: rgba(0,243,255,0.4); }
+.quiz-opt.correct { background: rgba(34,197,94,0.18); border-color: #22c55e; color: #86efac; }
+.quiz-opt.wrong { background: rgba(239,68,68,0.18); border-color: #ef4444; color: #fca5a5; }
+
+#view-tools.collapsed #view-tools-body { display: none; }
+</style>
+</head>
+<body class="h-screen w-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+<!-- OPENING INTRO -->
+<div id="intro-screen" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
+  <div class="absolute w-72 h-72 rounded-full border border-cyan-400/30 intro-ring"></div>
+  <div class="absolute w-96 h-96 rounded-full border border-cyan-500/10 intro-ring" style="animation-delay:0.7s"></div>
+  <div class="text-center animate-intro space-y-5 px-6">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-400/40 text-cyan-400 glow-cyan">
+      <i class="fa-solid fa-atom text-4xl" style="animation: spin 7s linear infinite;"></i>
+    </div>
+    <h1 class="text-4xl md:text-6xl font-extrabold tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-teal-300 intro-glow">
+      IQRA VIRTUAL LAB
+    </h1>
+    <p id="intro-topic" class="text-lg md:text-2xl text-slate-300 font-semibold tracking-wide border-y border-slate-800 py-3">
+      Formation of Ionic Compounds
+    </p>
+    <div class="flex items-center justify-center gap-2 text-cyan-400 text-sm">
+      <i class="fa-solid fa-circle-notch animate-spin"></i>
+      <span id="intro-load" data-i18n="introLoad">Loading Interactive Engine…</span>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="glass-panel sticky top-0 z-40 px-3 md:px-5 py-2.5 border-b border-slate-800 shrink-0">
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 glow-cyan shrink-0">
+        <i class="fa-solid fa-flask-vial"></i>
+      </div>
+      <div class="min-w-0">
+        <h1 class="font-extrabold text-sm md:text-lg text-white leading-tight tracking-wide truncate">IQRA VIRTUAL LAB</h1>
+        <p id="hdr-subtitle" class="text-[11px] md:text-xs text-slate-400 truncate" data-i18n="subtitle">Formation of Ionic Compounds</p>
+      </div>
+    </div>
+
+    <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-sm">
+      <button onclick="switchTab('sim')" id="tab-btn-sim" class="tab-on px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2">
+        <i class="fa-solid fa-house"></i>
+        <span data-i18n="tabSim">Simulation</span>
+      </button>
+      <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span data-i18n="tabQuiz">Quiz</span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 min-h-0 relative">
+  <!-- SIMULATION TAB -->
+  <section id="view-sim" class="absolute inset-0 flex flex-col lg:flex-row gap-3 p-3">
+    <!-- LEFT CONTROLS -->
+    <aside class="lg:w-[300px] xl:w-[330px] shrink-0 flex flex-col gap-3 overflow-y-auto">
+      <div class="glass-panel rounded-2xl p-3">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2" data-i18n="chooseCompound">Choose a compound</p>
+        <div class="grid grid-cols-1 gap-2" id="compound-list"></div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-3 space-y-3">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold" data-i18n="experiment">Experiment</p>
+        <p class="text-sm text-slate-300 leading-relaxed" id="hint-text"></p>
+        <div class="flex gap-2">
+          <button onclick="playTransfer()" class="flex-1 h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold glow-cyan transition">
+            <i class="fa-solid fa-play mr-1"></i><span data-i18n="btnPlay">Play</span>
+          </button>
+          <button onclick="stepTransfer()" class="flex-1 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-cyan-300 font-bold transition">
+            <i class="fa-solid fa-forward-step mr-1"></i><span data-i18n="btnStep">Step</span>
+          </button>
+        </div>
+        <button onclick="resetExperiment()" class="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold transition">
+          <i class="fa-solid fa-rotate-left mr-1"></i><span data-i18n="btnReset">Reset atoms</span>
+        </button>
+        <div>
+          <div class="flex justify-between text-xs text-slate-400 mb-1">
+            <span data-i18n="speed">Electron speed</span>
+            <span id="speed-val" class="formula-font text-cyan-300">1.0×</span>
+          </div>
+          <input type="range" id="speed-slider" min="0.4" max="2.4" step="0.1" value="1" oninput="onSpeed(this.value)" class="w-full">
+        </div>
+        <button id="btn-core" onclick="toggleCoreElectrons()" class="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold transition flex items-center justify-center gap-2">
+          <i id="core-icon" class="fa-solid fa-eye-slash text-cyan-400"></i>
+          <span id="core-label">Hide other electrons</span>
+        </button>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 px-1">
+          <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></span><span data-i18n="legendRed">Moving e⁻</span></span>
+          <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300/40 border border-slate-400/50"></span><span data-i18n="legendCore">Other e⁻ (light)</span></span>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-3 flex-1 min-h-[140px]">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2" data-i18n="observe">Observe</p>
+        <ul id="obs-list" class="space-y-1.5 text-sm text-slate-200"></ul>
+      </div>
+    </aside>
+
+    <!-- VIEWPORT -->
+    <div class="flex-1 min-w-0 min-h-0 flex flex-col gap-3">
+      <div class="glass-panel rounded-2xl flex-1 min-h-0 relative overflow-hidden">
+        <div id="sim-viewport" class="absolute inset-0 bg-slate-950">
+          <canvas id="simCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+          <canvas id="fabricLayer"></canvas>
+        </div>
+
+        <!-- Floating zoom / pan tools (minimizable) -->
+        <div id="view-tools" class="absolute bottom-4 left-4 z-30 glass-panel rounded-2xl border border-slate-700 shadow-2xl select-none">
+          <div class="flex items-center justify-between px-3 py-2 border-b border-slate-800 cursor-move" id="view-tools-handle">
+            <span class="text-xs font-bold text-cyan-300" data-i18n="viewTools">View</span>
+            <button onclick="toggleViewTools()" class="w-8 h-8 rounded-lg hover:bg-slate-800 text-slate-300" data-i18n-title="minimize" title="Minimize">
+              <i class="fa-solid fa-minus" id="view-tools-icon"></i>
+            </button>
+          </div>
+          <div id="view-tools-body" class="flex items-center gap-1.5 p-2">
+            <button onclick="zoomCanvas(1.15)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700" data-i18n-title="zoomIn" title="+"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="zoomCanvas(0.87)" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700" data-i18n-title="zoomOut" title="−"><i class="fa-solid fa-minus"></i></button>
+            <button onclick="resetCanvasView()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700" data-i18n-title="resetView" title="Reset"><i class="fa-solid fa-expand"></i></button>
+          </div>
+        </div>
+
+        <div class="absolute top-3 left-3 right-3 z-20 pointer-events-none flex flex-wrap gap-2 justify-center">
+          <div class="pointer-events-auto glass-card rounded-full px-3 py-1 text-xs text-slate-300 border border-slate-700">
+            <i class="fa-solid fa-hand-pointer text-cyan-400 mr-1"></i>
+            <span data-i18n="dragHint">Drag the red electron from the metal to the non-metal</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 shrink-0">
+        <div class="glass-card rounded-2xl p-3 border-t-2 border-t-sky-400">
+          <p class="text-[11px] uppercase tracking-widest text-sky-300 font-bold" data-i18n="metalTitle">Metal atom → cation</p>
+          <p id="card-metal" class="mt-1 text-sm text-white formula-font"></p>
+          <p id="card-metal-note" class="text-xs text-slate-400 mt-1"></p>
+        </div>
+        <div class="glass-card rounded-2xl p-3 border-t-2 border-t-rose-400">
+          <p class="text-[11px] uppercase tracking-widest text-rose-300 font-bold" data-i18n="electronTitle">Transferred electrons</p>
+          <p id="card-e" class="mt-1 text-sm text-white formula-font"></p>
+          <p id="card-e-note" class="text-xs text-slate-400 mt-1"></p>
+        </div>
+        <div class="glass-card rounded-2xl p-3 border-t-2 border-t-emerald-400">
+          <p class="text-[11px] uppercase tracking-widest text-emerald-300 font-bold" data-i18n="nonmetalTitle">Non-metal → anion</p>
+          <p id="card-nonmetal" class="mt-1 text-sm text-white formula-font"></p>
+          <p id="card-nonmetal-note" class="text-xs text-slate-400 mt-1"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ TAB -->
+  <section id="view-quiz" class="absolute inset-0 hidden overflow-y-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto space-y-4">
+      <div class="glass-panel rounded-2xl p-5">
+        <h2 class="text-xl font-bold text-white" data-i18n="quizTitle">Concept Check — Ionic Bonding</h2>
+        <p class="text-slate-400 text-sm mt-1" data-i18n="quizIntro">Answer 5 questions. Watch the simulation first, then test what you discovered.</p>
+      </div>
+      <div id="quiz-box" class="space-y-4"></div>
+      <div id="quiz-result" class="hidden glass-panel rounded-2xl p-6 text-center space-y-3 glow-cyan">
+        <p class="text-slate-400 text-sm" data-i18n="finalScore">Final score</p>
+        <p id="score-line" class="text-4xl font-extrabold text-cyan-300"></p>
+        <p id="pct-line" class="text-lg text-white"></p>
+        <button onclick="restartQuiz()" class="h-12 px-8 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold">
+          <i class="fa-solid fa-rotate-right mr-2"></i><span data-i18n="restartQuiz">Restart Quiz</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const LANG = {
+  en: {
+    introLoad: "Loading Interactive Engine…",
+    subtitle: "Formation of Ionic Compounds",
+    tabSim: "Simulation",
+    tabQuiz: "Quiz",
+    chooseCompound: "Choose a compound",
+    experiment: "Experiment",
+    observe: "Observe",
+    btnPlay: "Play",
+    btnStep: "Step",
+    btnReset: "Reset atoms",
+    speed: "Electron speed",
+    showCore: "Show other electrons",
+    hideCore: "Hide other electrons",
+    legendRed: "Moving e⁻",
+    legendCore: "Other e⁻ (light)",
+    chargeRule: "Each electron that leaves the metal adds +1. Each electron the non-metal gains adds −1.",
+    obsChargeMetal: "Electrons that left the metal: {e}  →  charge +{n}",
+    obsChargeNon: "Electrons gained by the non-metal: {e}  →  charge −{n}",
+    dragHint: "Drag the red electron from the metal to the non-metal",
+    metalTitle: "Metal atom → cation",
+    electronTitle: "Transferred electrons",
+    nonmetalTitle: "Non-metal → anion",
+    viewTools: "View",
+    minimize: "Minimize",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    resetView: "Reset view",
+    quizTitle: "Concept Check — Ionic Bonding",
+    quizIntro: "Answer 5 questions. Watch the simulation first, then test what you discovered.",
+    finalScore: "Final score",
+    restartQuiz: "Restart Quiz",
+    qOf: "Question",
+    explanation: "Why",
+    outgoing: "1 electron leaving the metal",
+    incoming: "1 electron joining the non-metal",
+    ionicBond: "joined by an ionic bond",
+    hintStart: "The red dots are valence electrons. Transfer them to complete the non-metal octet.",
+    hintDrag: "Pull the red electron out of the metal. It should leave the side, then drop into the empty space on the non-metal.",
+    hintPlaying: "Watch: the metal loses electrons (becomes +) and the non-metal gains them (becomes −).",
+    hintDone: "Opposite charges attract. The ions stay together — that is an ionic bond.",
+    obsNeutral: "Both atoms start electrically neutral (protons = electrons).",
+    obsLeave: "Electron leaves the metal and appears beside it as −e⁻.",
+    obsGain: "The non-metal adds that electron into its outer shell.",
+    obsCation: "Metal now has fewer electrons than protons → positive ion.",
+    obsAnion: "Non-metal now has extra electrons → negative ion.",
+    obsBond: "Na⁺/metal cation and anion attract → ionic compound.",
+    eOutOf: "transferred",
+    shellGone: "Empty outer shell of the metal disappears.",
+    nacl: "Sodium chloride",
+    kcl: "Potassium chloride",
+    lif: "Lithium fluoride",
+    mgo: "Magnesium oxide",
+    cacl2: "Calcium chloride",
+    alcl3: "Aluminium chloride",
+    sodium: "Sodium",
+    potassium: "Potassium",
+    lithium: "Lithium",
+    magnesium: "Magnesium",
+    calcium: "Calcium",
+    aluminium: "Aluminium",
+    chlorine: "Chlorine",
+    fluorine: "Fluorine",
+    oxygen: "Oxygen",
+    q1: "When Na becomes Na⁺, what actually happens?",
+    q1a: "It gains a proton from chlorine",
+    q1b: "It loses one valence electron",
+    q1c: "It shares two electrons equally",
+    q1d: "It becomes a negative ion",
+    q1e: "Na has configuration (2,8,1). The single outer electron leaves. Protons stay 11, electrons become 10, so the particle is Na⁺ (2,8).",
+    q2: "Why does Cl become Cl⁻?",
+    q2a: "It loses seven electrons",
+    q2b: "It gains one electron to complete its octet (2,8,8)",
+    q2c: "The nucleus splits",
+    q2d: "It donates a proton",
+    q2e: "Cl is (2,8,7). One incoming electron fills the outer shell to 8. Extra electron means charge −1.",
+    q3: "What holds the ions of an ionic compound together?",
+    q3a: "Gravity between the nuclei",
+    q3b: "A shared pair of electrons (covalent bond)",
+    q3c: "Attraction between opposite charges (ionic bond)",
+    q3d: "The atoms melting together",
+    q3e: "After transfer, the metal is + and the non-metal is −. Opposite charges attract — that electrostatic force is the ionic bond.",
+    q4: "In MgO, how many electrons does magnesium lose?",
+    q4a: "1",
+    q4b: "2",
+    q4c: "8",
+    q4d: "0 — they are only shared",
+    q4e: "Mg is (2,8,2). Both valence electrons leave, giving Mg²⁺ (2,8). Oxygen needs two electrons to become O²⁻ (2,8).",
+    q5: "After electron transfer in NaCl, which statement is true?",
+    q5a: "Both atoms remain electrically neutral",
+    q5b: "Only chlorine has a full outer shell",
+    q5c: "Both ions have complete outer shells",
+    q5d: "Electrons keep bouncing back and forth equally",
+    q5e: "Na⁺ is (2,8) like neon. Cl⁻ is (2,8,8) like argon. Both have stable octets. The bond is attraction, not sharing.",
+    pctLabel: "Percentage"
+  },
+  ur: {
+    introLoad: "ورچوئل لیب تیار ہو رہی ہے…",
+    subtitle: "آئینی مرکبات کی تشکیل",
+    tabSim: "مشابہت",
+    tabQuiz: "سوالات",
+    chooseCompound: "مرکب منتخب کریں",
+    experiment: "تجربہ",
+    observe: "مشاہدہ",
+    btnPlay: "چلائیں",
+    btnStep: "ایک قدم",
+    btnReset: "ایٹم دوبارہ",
+    speed: "الیکٹرون کی رفتار",
+    showCore: "دیگر الیکٹرون دکھائیں",
+    hideCore: "دیگر الیکٹرون چھپائیں",
+    legendRed: "چلتا ہوا e⁻",
+    legendCore: "دیگر e⁻ (ہلکے)",
+    chargeRule: "دھات سے نکلنے والا ہر الیکٹرون +1 بار بڑھاتا ہے۔ غیردھات کو ملنے والا ہر الیکٹرون −1 بار بڑھاتا ہے۔",
+    obsChargeMetal: "دھات سے نکلے الیکٹرون: {e}  →  بار +{n}",
+    obsChargeNon: "غیردھات نے حاصل کیے: {e}  →  بار −{n}",
+    dragHint: "سرخ الیکٹرون کو دھات سے غیردھات کی طرف گھسیٹیں",
+    metalTitle: "دھاتی ایٹم ← مثبت آئن",
+    electronTitle: "منتقل الیکٹرون",
+    nonmetalTitle: "غیردھات ← منفی آئن",
+    viewTools: "منظر",
+    minimize: "چھوٹا کریں",
+    zoomIn: "بڑا کریں",
+    zoomOut: "چھوٹا کریں",
+    resetView: "منظر بحال",
+    quizTitle: "تصور کی جانچ — آئینی بندش",
+    quizIntro: "پانچ سوالات۔ پہلے مشابہت دیکھیں، پھر دریافت کردہ تصور آزمائیں۔",
+    finalScore: "حتمی نمبر",
+    restartQuiz: "سوالات دوبارہ",
+    qOf: "سوال",
+    explanation: "وجہ",
+    outgoing: "دھات سے نکلتا ہوا ۱ الیکٹرون",
+    incoming: "غیردھات میں داخل ہوتا ہوا ۱ الیکٹرون",
+    ionicBond: "آئینی بندش سے جڑا ہوا",
+    hintStart: "سرخ نقطے والینس الیکٹرون ہیں۔ انہیں منتقل کر کے غیردھات کا آکٹٹ مکمل کریں۔",
+    hintDrag: "سرخ الیکٹرون کو دھات سے باہر کھینچیں۔ وہ پہلو سے نکلے، پھر غیردھات کی خالی جگہ میں جا بیٹھے۔",
+    hintPlaying: "دیکھیں: دھات الیکٹرون کھو کر مثبت اور غیردھات حاصل کر کے منفی بنتی ہے۔",
+    hintDone: "مخالف بار کشش کرتے ہیں۔ آئن ساتھ رہتے ہیں — یہی آئینی بندش ہے۔",
+    obsNeutral: "شروع میں دونوں ایٹم برقی طور پر غیر جانبدار ہیں (پروٹون = الیکٹرون)۔",
+    obsLeave: "الیکٹرون دھات سے نکل کر پہلو میں −e⁻ کی صورت میں نظر آتا ہے۔",
+    obsGain: "غیردھات وہ الیکٹرون اپنی بیرونی شیل میں شامل کر لیتی ہے۔",
+    obsCation: "دھات میں الیکٹرون پروٹون سے کم ہو گئے ← مثبت آئن۔",
+    obsAnion: "غیردھات میں زائد الیکٹرون ← منفی آئن۔",
+    obsBond: "مثبت اور منفی آئن ایک دوسرے کو کھینچتے ہیں ← آئینی مرکب۔",
+    eOutOf: "منتقل",
+    shellGone: "دھات کی خالی بیرونی شیل غائب ہو جاتی ہے۔",
+    nacl: "سوڈیم کلورائیڈ",
+    kcl: "پوٹاشیم کلورائیڈ",
+    lif: "لیتھیم فلورائیڈ",
+    mgo: "میگنیشیم آکسائیڈ",
+    cacl2: "کیلشیم کلورائیڈ",
+    alcl3: "ایلومینیم کلورائیڈ",
+    sodium: "سوڈیم",
+    potassium: "پوٹاشیم",
+    lithium: "لیتھیم",
+    magnesium: "میگنیشیم",
+    calcium: "کیلشیم",
+    aluminium: "ایلومینیم",
+    chlorine: "کلورین",
+    fluorine: "فلورین",
+    oxygen: "آکسیجن",
+    q1: "جب Na سے Na⁺ بنتا ہے تو حقیقت میں کیا ہوتا ہے؟",
+    q1a: "کلورین سے پروٹون حاصل کرتا ہے",
+    q1b: "ایک والینس الیکٹرون کھو دیتا ہے",
+    q1c: "دو الیکٹرون برابر بانٹتا ہے",
+    q1d: "منفی آئن بن جاتا ہے",
+    q1e: "Na کی تشکیل (2,8,1) ہے۔ بیرونی اکیلا الیکٹرون نکل جاتا ہے۔ پروٹون 11 رہتے ہیں، الیکٹرون 10 ہو جاتے ہیں، لہٰذا Na⁺ (2,8)۔",
+    q2: "Cl سے Cl⁻ کیوں بنتا ہے؟",
+    q2a: "سات الیکٹرون کھو دیتا ہے",
+    q2b: "آکٹٹ مکمل کرنے کے لیے ایک الیکٹرون حاصل کرتا ہے (2,8,8)",
+    q2c: "نیوکلیئس ٹوٹ جاتا ہے",
+    q2d: "پروٹون دے دیتا ہے",
+    q2e: "Cl (2,8,7) ہے۔ ایک اندر آنے والا الیکٹرون بیرونی شیل کو 8 کر دیتا ہے۔ زائد الیکٹرون کا مطلب بار −1۔",
+    q3: "آئینی مرکب کے آئنوں کو کون سی قوت جوڑے رکھتی ہے؟",
+    q3a: "نیوکلیائی کششِ ثقل",
+    q3b: "الیکٹرون کا مشترکہ جوڑا (شرکتی بندش)",
+    q3c: "مخالف باروں کی کشش (آئینی بندش)",
+    q3d: "ایٹموں کا پگھل کر مل جانا",
+    q3e: "منتقلی کے بعد دھات مثبت اور غیردھات منفی ہوتی ہے۔ مخالف بار کھینچتے ہیں — یہی برقی سکونی قوت آئینی بندش ہے۔",
+    q4: "MgO میں میگنیشیم کتنے الیکٹرون کھوتا ہے؟",
+    q4a: "1",
+    q4b: "2",
+    q4c: "8",
+    q4d: "0 — صرف بانٹے جاتے ہیں",
+    q4e: "Mg (2,8,2) ہے۔ دونوں والینس الیکٹرون نکل کر Mg²⁺ (2,8) بناتے ہیں۔ آکسیجن کو O²⁻ (2,8) بننے کے لیے دو الیکٹرون درکار ہیں۔",
+    q5: "NaCl میں الیکٹرون کی منتقلی کے بعد کون سی بات درست ہے؟",
+    q5a: "دونوں ایٹم برقی طور پر غیر جانبدار رہتے ہیں",
+    q5b: "صرف کلورین کی بیرونی شیل بھری ہوتی ہے",
+    q5c: "دونوں آئنوں کی بیرونی شیل مکمل ہوتی ہے",
+    q5d: "الیکٹرون برابر آگے پیچھے دوڑتے رہتے ہیں",
+    q5e: "Na⁺ کی تشکیل (2,8) نیون جیسی ہے۔ Cl⁻ (2,8,8) آرگون جیسی ہے۔ دونوں کا آکٹٹ مستحکم ہے۔ بندش کشش ہے، بانٹنا نہیں۔",
+    pctLabel: "فی صد"
+  }
+};
+
+const COMPOUNDS = [
+  {
+    id: "nacl", formula: "NaCl", nameKey: "nacl",
+    metal: { symbol: "Na", nameKey: "sodium", shells: [2,8,1], color: "#38bdf8" },
+    nonmetals: [{ symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" }]
+  },
+  {
+    id: "kcl", formula: "KCl", nameKey: "kcl",
+    metal: { symbol: "K", nameKey: "potassium", shells: [2,8,8,1], color: "#818cf8" },
+    nonmetals: [{ symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" }]
+  },
+  {
+    id: "lif", formula: "LiF", nameKey: "lif",
+    metal: { symbol: "Li", nameKey: "lithium", shells: [2,1], color: "#fbbf24" },
+    nonmetals: [{ symbol: "F", nameKey: "fluorine", shells: [2,7], color: "#2dd4bf" }]
+  },
+  {
+    id: "mgo", formula: "MgO", nameKey: "mgo",
+    metal: { symbol: "Mg", nameKey: "magnesium", shells: [2,8,2], color: "#fb7185" },
+    nonmetals: [{ symbol: "O", nameKey: "oxygen", shells: [2,6], color: "#f87171" }]
+  },
+  {
+    id: "cacl2", formula: "CaCl₂", nameKey: "cacl2",
+    metal: { symbol: "Ca", nameKey: "calcium", shells: [2,8,8,2], color: "#a3e635" },
+    nonmetals: [
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" },
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#6ee7b7" }
+    ]
+  },
+  {
+    id: "alcl3", formula: "AlCl₃", nameKey: "alcl3",
+    metal: { symbol: "Al", nameKey: "aluminium", shells: [2,8,3], color: "#f472b6" },
+    nonmetals: [
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#34d399" },
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#6ee7b7" },
+      { symbol: "Cl", nameKey: "chlorine", shells: [2,8,7], color: "#a7f3d0" }
+    ]
+  }
+];
+
+const QUIZ = [
+  { q: "q1", opts: ["q1a","q1b","q1c","q1d"], ans: 1, exp: "q1e" },
+  { q: "q2", opts: ["q2a","q2b","q2c","q2d"], ans: 1, exp: "q2e" },
+  { q: "q3", opts: ["q3a","q3b","q3c","q3d"], ans: 2, exp: "q3e" },
+  { q: "q4", opts: ["q4a","q4b","q4c","q4d"], ans: 1, exp: "q4e" },
+  { q: "q5", opts: ["q5a","q5b","q5c","q5d"], ans: 2, exp: "q5e" }
+];
+
+let showCoreElectrons = true;
+let currentLang = localStorage.getItem("iqra-lang") || "en";
+let fCanvas, isAnnoActive = false;
+let currentCompound = COMPOUNDS[0];
+let atoms = [];
+let flyers = [];
+let cam = { scale: 1, x: 0, y: 0 };
+let dpr = 1, W = 800, H = 500;
+let dragging = null;
+let panning = false, panLast = null;
+let autoQueue = [];
+let playing = false;
+let speed = 1;
+let tSpin = 0;
+let lastTs = 0;
+let transferred = 0;
+let totalNeed = 1;
+let bonded = false;
+let pinchDist = 0;
+let quizState = { picked: [null,null,null,null,null], done: false };
+
+function t(key) {
+  return (LANG[currentLang] && LANG[currentLang][key]) || LANG.en[key] || key;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = currentLang === "ur" ? "ur" : "en";
+  document.documentElement.dir = currentLang === "ur" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.getAttribute("data-i18n");
+    if (LANG[currentLang] && LANG[currentLang][k]) el.textContent = LANG[currentLang][k];
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach(el => {
+    const k = el.getAttribute("data-i18n-title");
+    if (LANG[currentLang] && LANG[currentLang][k]) el.title = LANG[currentLang][k];
+  });
+  document.getElementById("intro-topic").textContent = t("subtitle");
+  renderCompounds();
+  syncCoreBtn();
+  updateHUD();
+  renderQuiz(false);
+}
+
+function changeLanguage(val) {
+  if (val !== "en" && val !== "ur") return;
+  currentLang = val;
+  localStorage.setItem("iqra-lang", val);
+  applyLanguage();
+}
+
+function switchTab(name) {
+  document.getElementById("view-sim").classList.toggle("hidden", name !== "sim");
+  document.getElementById("view-quiz").classList.toggle("hidden", name !== "quiz");
+  const simBtn = document.getElementById("tab-btn-sim");
+  const quizBtn = document.getElementById("tab-btn-quiz");
+  simBtn.className = (name === "sim" ? "tab-on " : "text-slate-300 hover:text-white hover:bg-slate-800/60 ") + "px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2";
+  quizBtn.className = (name === "quiz" ? "tab-on " : "text-slate-300 hover:text-white hover:bg-slate-800/60 ") + "px-3 md:px-4 py-1.5 rounded-lg transition flex items-center gap-2";
+  if (name === "sim") requestAnimationFrame(fitSim);
+}
+
+function toggleFullScreen() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+}
+document.addEventListener("fullscreenchange", () => {
+  const icon = document.getElementById("fs-icon");
+  icon.className = document.fullscreenElement ? "fa-solid fa-compress" : "fa-solid fa-expand";
+  fitSim();
+});
+
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas("fabricLayer", {
+    isDrawingMode: false,
+    width: w,
+    height: h
+  });
+  fCanvas.freeDrawingBrush.color = document.getElementById("anno-color").value;
+  fCanvas.freeDrawingBrush.width = 4;
+  fCanvas.on("mouse:down", function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+      fCanvas.remove(options.target);
+    }
+  });
+}
+
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById("btn-anno-toggle");
+  const toolbar = document.getElementById("anno-toolbar");
+  const fabricContainer = document.querySelector(".canvas-container");
+  if (isAnnoActive) {
+    btn.classList.replace("text-slate-400", "text-cyan-400");
+    toolbar.classList.remove("max-w-0", "opacity-0");
+    toolbar.classList.add("max-w-xs", "opacity-100");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "auto";
+    setAnnoMode("pen");
+  } else {
+    btn.classList.replace("text-cyan-400", "text-slate-400");
+    toolbar.classList.remove("max-w-xs", "opacity-100");
+    toolbar.classList.add("max-w-0", "opacity-0");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "none";
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function setAnnoMode(mode) {
+  document.getElementById("anno-pen").classList.replace("text-cyan-400", "text-slate-400");
+  document.getElementById("anno-eraser").classList.replace("text-cyan-400", "text-slate-400");
+  if (mode === "pen") {
+    document.getElementById("anno-pen").classList.replace("text-slate-400", "text-cyan-400");
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById("anno-eraser").classList.replace("text-slate-400", "text-cyan-400");
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode("pen");
+}
+
+function clearAnnotations() {
+  if (fCanvas) fCanvas.clear();
+}
+
+function toggleViewTools() {
+  const card = document.getElementById("view-tools");
+  card.classList.toggle("collapsed");
+  document.getElementById("view-tools-icon").className = card.classList.contains("collapsed") ? "fa-solid fa-up-right-and-down-left-from-center" : "fa-solid fa-minus";
+}
+
+function cfg(shells) {
+  return "(" + shells.join(", ") + ")";
+}
+
+function protonsOf(shells) {
+  return shells.reduce((a, b) => a + b, 0);
+}
+
+function buildElectrons(atom) {
+  atom.electrons = [];
+  atom.shells.forEach((count, si) => {
+    for (let i = 0; i < count; i++) {
+      const valence = si === atom.shells.length - 1;
+      atom.electrons.push({
+        si, i,
+        angle: (i / Math.max(count, 1)) * Math.PI * 2,
+        valence,
+        transferable: valence && atom.role === "metal",
+        gone: false
+      });
+    }
+  });
+}
+
+function layoutAtoms() {
+  const nNon = currentCompound.nonmetals.length;
+  const metalX = nNon >= 3 ? -250 : (nNon > 1 ? -210 : -170);
+  const metal = {
+    role: "metal",
+    symbol: currentCompound.metal.symbol,
+    nameKey: currentCompound.metal.nameKey,
+    color: currentCompound.metal.color,
+    orig: currentCompound.metal.shells.slice(),
+    shells: currentCompound.metal.shells.slice(),
+    charge: 0,
+    x: metalX,
+    y: 0,
+    shellScale: currentCompound.metal.shells.map(() => 1)
+  };
+  const non = currentCompound.nonmetals.map((nm, idx) => {
+    let y = 0;
+    if (nNon === 2) y = idx === 0 ? -110 : 110;
+    if (nNon === 3) y = [-150, 0, 150][idx];
+    return {
+      role: "nonmetal",
+      symbol: nm.symbol,
+      nameKey: nm.nameKey,
+      color: nm.color,
+      orig: nm.shells.slice(),
+      shells: nm.shells.slice(),
+      charge: 0,
+      x: 175,
+      y,
+      shellScale: nm.shells.map(() => 1)
+    };
+  });
+  atoms = [metal, ...non];
+  atoms.forEach(buildElectrons);
+  totalNeed = metal.orig[metal.orig.length - 1];
+  transferred = 0;
+  flyers = [];
+  autoQueue = [];
+  playing = false;
+  bonded = false;
+  dragging = null;
+}
+
+function metalAtom() { return atoms.find(a => a.role === "metal"); }
+function nonmetals() { return atoms.filter(a => a.role === "nonmetal"); }
+
+function nextTarget() {
+  return nonmetals().find(a => {
+    const outer = a.orig[a.orig.length - 1];
+    const now = a.shells[a.shells.length - 1];
+    return now < 8 && now < outer + (totalNeed / nonmetals().length + 0.01);
+  }) || nonmetals().find(a => a.shells[a.shells.length - 1] < 8);
+}
+
+function nextValenceElectron(atom) {
+  const last = atom.shells.length - 1;
+  return atom.electrons.find(e => e.si === last && e.transferable && !e.gone);
+}
+
+function ePos(atom, e) {
+  const r = shellR(atom, e.si);
+  const ang = e.angle + tSpin * (0.25 + e.si * 0.08);
+  return { x: atom.x + Math.cos(ang) * r, y: atom.y + Math.sin(ang) * r };
+}
+
+function shellR(atom, si) {
+  return (22 + (si + 1) * 20) * (atom.shellScale[si] ?? 1);
+}
+
+function toScreen(wx, wy) {
+  return { x: W / 2 + cam.x + wx * cam.scale, y: H / 2 + cam.y + wy * cam.scale };
+}
+function toWorld(sx, sy) {
+  return { x: (sx - W / 2 - cam.x) / cam.scale, y: (sy - H / 2 - cam.y) / cam.scale };
+}
+
+function startFlyer(fromAtom, electron, target, manual) {
+  if (!electron || !target) return false;
+  const p = ePos(fromAtom, electron);
+  electron.gone = true;
+  fromAtom.shells[fromAtom.shells.length - 1] -= 1;
+  const vac = vacancyAngle(target);
+  const destR = shellR(target, target.shells.length - 1);
+  flyers.push({
+    x: p.x, y: p.y,
+    sx: p.x, sy: p.y,
+    mx: (p.x + target.x) / 2,
+    my: fromAtom.y - 55,
+    tx: target.x + Math.cos(vac) * destR,
+    ty: target.y + Math.sin(vac) * destR,
+    target, vac, destR,
+    t: 0,
+    phase: "out",
+    label: "out"
+  });
+  if (fromAtom.shells[fromAtom.shells.length - 1] <= 0) {
+    fromAtom.shellScale[fromAtom.shells.length - 1] = 0.01;
+  }
+  updateCharges();
+  updateHUD();
+  return true;
+}
+
+function vacancyAngle(atom) {
+  const si = atom.shells.length - 1;
+  const n = atom.shells[si] + 1;
+  return ((n - 1) / Math.max(n, 1)) * Math.PI * 2 + 0.4;
+}
+
+function finishFlyer(fl) {
+  const a = fl.target;
+  a.shells[a.shells.length - 1] += 1;
+  buildElectrons(a);
+  const last = a.electrons[a.electrons.length - 1];
+  if (last) { last.transferable = false; last.valence = true; last.fromTransfer = true; }
+  transferred += 1;
+  if (transferred >= totalNeed) bonded = true;
+  updateCharges();
+  updateHUD();
+}
+
+function updateCharges() {
+  const m = metalAtom();
+  const lost = protonsOf(m.orig) - protonsOf(m.shells);
+  m.charge = lost;
+  nonmetals().forEach(n => {
+    n.charge = protonsOf(n.orig) - protonsOf(n.shells);
+  });
+}
+
+function toggleCoreElectrons() {
+  showCoreElectrons = !showCoreElectrons;
+  syncCoreBtn();
+}
+
+function syncCoreBtn() {
+  const icon = document.getElementById("core-icon");
+  const label = document.getElementById("core-label");
+  if (!icon || !label) return;
+  icon.className = showCoreElectrons ? "fa-solid fa-eye-slash text-cyan-400" : "fa-solid fa-eye text-cyan-400";
+  label.textContent = showCoreElectrons ? t("hideCore") : t("showCore");
+}
+
+function stepTransfer() {
+  if (flyers.length || transferred >= totalNeed) return;
+  const m = metalAtom();
+  const e = nextValenceElectron(m);
+  const tgt = nextTarget();
+  startFlyer(m, e, tgt, false);
+  playing = false;
+}
+
+function playTransfer() {
+  if (transferred >= totalNeed && !flyers.length) return;
+  playing = true;
+}
+
+function resetExperiment() {
+  layoutAtoms();
+  updateHUD();
+}
+
+function onSpeed(v) {
+  speed = Number(v);
+  document.getElementById("speed-val").textContent = speed.toFixed(1) + "×";
+}
+
+function selectCompound(id) {
+  currentCompound = COMPOUNDS.find(c => c.id === id) || COMPOUNDS[0];
+  layoutAtoms();
+  resetCanvasView();
+  renderCompounds();
+  updateHUD();
+}
+
+function renderCompounds() {
+  const box = document.getElementById("compound-list");
+  box.innerHTML = COMPOUNDS.map(c => `
+    <button onclick="selectCompound('${c.id}')" class="compound-btn text-left rounded-xl border border-slate-700 px-3 py-2.5 hover:bg-slate-800/80 transition ${c.id === currentCompound.id ? 'active' : ''}">
+      <span class="formula-font font-bold text-base">${c.formula}</span>
+      <span class="block text-xs text-slate-400">${t(c.nameKey)}</span>
+    </button>
+  `).join("");
+}
+
+function chargeStr(n) {
+  if (!n) return "";
+  const mag = Math.abs(n);
+  return (n > 0 ? "⁺" : "⁻") + mag;
+}
+
+function chargeBadgeText(n) {
+  if (!n) return "";
+  return (n > 0 ? "+" : "−") + Math.abs(n);
+}
+
+function updateHUD() {
+  const L = LANG[currentLang];
+  const m = metalAtom();
+  if (!m) return;
+  const mNow = m.shells.filter((n, i) => (m.shellScale[i] || 0) > 0.2);
+  document.getElementById("card-metal").textContent =
+    m.symbol + chargeStr(m.charge) + "  " + cfg(mNow.length ? mNow : m.shells.filter(Boolean));
+  document.getElementById("card-metal-note").textContent =
+    t(m.nameKey) + (m.charge > 0 ? "  →  " + m.symbol + chargeStr(m.charge) : "");
+  document.getElementById("card-e").textContent = transferred + " / " + totalNeed + "  e⁻  " + t("eOutOf");
+  document.getElementById("card-e-note").textContent = flyers.length ? t("outgoing") : (bonded ? t("ionicBond") + "  " + currentCompound.formula : t("hintDrag"));
+  const notes = nonmetals().map(n => n.symbol + chargeStr(n.charge) + " " + cfg(n.shells)).join("   ");
+  document.getElementById("card-nonmetal").textContent = notes;
+  document.getElementById("card-nonmetal-note").textContent = nonmetals().map(n => t(n.nameKey)).join(" · ");
+
+  let hint = t("hintStart");
+  if (flyers.length || playing) hint = t("hintPlaying");
+  else if (bonded) hint = t("hintDone");
+  else if (transferred === 0) hint = t("hintDrag");
+  document.getElementById("hint-text").textContent = hint;
+
+  const items = [t("obsNeutral"), t("chargeRule")];
+  if (transferred > 0 || flyers.length) items.push(t("obsLeave"), t("obsGain"));
+  if (m.charge > 0) {
+    items.push(t("obsChargeMetal").replace("{e}", String(m.charge)).replace("{n}", String(m.charge)));
+    items.push(t("obsCation"));
+  }
+  const gained = nonmetals().reduce((s, n) => s + Math.abs(n.charge), 0);
+  if (gained > 0) {
+    items.push(t("obsChargeNon").replace("{e}", String(gained)).replace("{n}", String(gained)));
+    items.push(t("obsAnion"));
+  }
+  if (m.charge > 0 && m.shells[m.shells.length - 1] <= 0) items.push(t("shellGone"));
+  if (bonded) items.push(t("obsBond") + "  " + currentCompound.formula);
+  document.getElementById("obs-list").innerHTML = items.map(s => `<li class="flex gap-2"><span class="text-cyan-400">▸</span><span>${s}</span></li>`).join("");
+}
+
+function draw() {
+  const canvas = document.getElementById("simCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, Math.max(W, H) * 0.7);
+  g.addColorStop(0, "#0b1224");
+  g.addColorStop(1, "#020617");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.save();
+  ctx.translate(W / 2 + cam.x, H / 2 + cam.y);
+  ctx.scale(cam.scale, cam.scale);
+
+  ctx.strokeStyle = "rgba(148,163,184,0.08)";
+  ctx.lineWidth = 1 / cam.scale;
+  for (let x = -600; x <= 600; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, -400); ctx.lineTo(x, 400); ctx.stroke();
+  }
+  for (let y = -400; y <= 400; y += 40) {
+    ctx.beginPath(); ctx.moveTo(-600, y); ctx.lineTo(600, y); ctx.stroke();
+  }
+
+  if (bonded && flyers.length === 0) {
+    const m = metalAtom();
+    nonmetals().forEach(n => {
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,243,255,0.35)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.moveTo(m.x + 36, m.y);
+      ctx.lineTo(n.x - 40, n.y);
+      ctx.stroke();
+      ctx.restore();
+    });
+    ctx.fillStyle = "#67e8f9";
+    ctx.font = "700 16px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(currentCompound.formula + "  ·  " + t("ionicBond"), 0, currentCompound.nonmetals.length >= 3 ? 245 : 195);
+  }
+
+  atoms.forEach(drawAtom);
+  flyers.forEach(drawFlyer);
+
+  ctx.restore();
+}
+
+function drawAtom(atom) {
+  const ctx = document.getElementById("simCanvas").getContext("2d");
+  const maxSi = atom.shells.length - 1;
+  for (let si = 0; si <= maxSi; si++) {
+    if ((atom.shellScale[si] || 0) < 0.08) continue;
+    const r = shellR(atom, si);
+    ctx.beginPath();
+    ctx.arc(atom.x, atom.y, r, 0, Math.PI * 2);
+    ctx.strokeStyle = si === maxSi ? atom.color + "99" : (showCoreElectrons ? "rgba(148,163,184,0.28)" : "rgba(148,163,184,0.12)");
+    ctx.lineWidth = si === maxSi ? 2.2 : 1.2;
+    ctx.stroke();
+  }
+
+  const ng = ctx.createRadialGradient(atom.x - 4, atom.y - 4, 2, atom.x, atom.y, 18);
+  ng.addColorStop(0, "#fff");
+  ng.addColorStop(1, atom.color);
+  ctx.beginPath();
+  ctx.arc(atom.x, atom.y, 18, 0, Math.PI * 2);
+  ctx.fillStyle = ng;
+  ctx.fill();
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "800 13px Inter, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(atom.symbol, atom.x, atom.y);
+
+  if (atom.charge !== 0) {
+    const label = chargeBadgeText(atom.charge);
+    const r = label.length > 2 ? 14 : 13;
+    ctx.beginPath();
+    ctx.arc(atom.x + 24, atom.y - 24, r, 0, Math.PI * 2);
+    ctx.fillStyle = atom.charge > 0 ? "#f43f5e" : "#22c55e";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 11px Inter, sans-serif";
+    ctx.fillText(label, atom.x + 24, atom.y - 23);
+  }
+
+  const live = atom.shells.map((n, i) => (atom.shellScale[i] > 0.2 ? n : null)).filter(n => n !== null);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "600 12px JetBrains Mono, monospace";
+  ctx.textBaseline = "top";
+  ctx.fillText(atom.symbol + chargeStr(atom.charge) + " " + cfg(live), atom.x, atom.y + shellR(atom, maxSi) + 10);
+
+  atom.electrons.forEach(e => {
+    if (e.gone) return;
+    if ((atom.shellScale[e.si] || 0) < 0.15) return;
+    const isActive = e.transferable || e.fromTransfer;
+    if (!isActive && !showCoreElectrons) return;
+    const p = ePos(atom, e);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, isActive ? 6.5 : 4.4, 0, Math.PI * 2);
+    if (isActive) {
+      ctx.fillStyle = "#f43f5e";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(244,63,94,0.85)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+        ctx.fillStyle = "rgba(241, 245, 249, 0.38)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(241, 245, 249, 0.45)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  });
+}
+
+function drawFlyer(fl) {
+  const ctx = document.getElementById("simCanvas").getContext("2d");
+  ctx.beginPath();
+  ctx.arc(fl.x, fl.y, 7, 0, Math.PI * 2);
+  ctx.fillStyle = "#f43f5e";
+  ctx.shadowColor = "#f43f5e";
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#fda4af";
+  ctx.font = "700 12px JetBrains Mono, monospace";
+  ctx.textAlign = "left";
+  ctx.fillText(fl.phase === "out" ? "−e⁻" : "+e⁻", fl.x + 10, fl.y - 10);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "600 11px Inter, sans-serif";
+  ctx.fillText(fl.phase === "out" ? t("outgoing") : t("incoming"), fl.x + 10, fl.y + 8);
+}
+
+function bezier(a, b, c, t) {
+  const u = 1 - t;
+  return u * u * a + 2 * u * t * b + t * t * c;
+}
+
+function tick(ts) {
+  const dt = Math.min(0.033, (ts - lastTs) / 1000 || 0.016);
+  lastTs = ts;
+  tSpin += dt;
+  atoms.forEach(a => {
+    a.shellScale = a.shellScale.map((s, i) => {
+      const want = a.shells[i] > 0 ? 1 : 0;
+      return s + (want - s) * Math.min(1, dt * 4);
+    });
+  });
+  if (playing && !flyers.length && transferred < totalNeed) {
+    const m = metalAtom();
+    startFlyer(m, nextValenceElectron(m), nextTarget(), false);
+  }
+  flyers.forEach(fl => {
+    if (fl.drag || fl.phase === "drag") return;
+    fl.t += dt * 0.85 * speed;
+    if (fl.phase === "out") {
+      const u = Math.min(1, fl.t / 0.45);
+      fl.x = fl.sx + (fl.mx - fl.sx) * u;
+      fl.y = fl.sy + (fl.my - fl.sy) * u;
+      if (u >= 1) { fl.phase = "in"; fl.t = 0; fl.label = "in"; }
+    } else if (fl.phase === "in") {
+      const u = Math.min(1, fl.t / 0.7);
+      fl.x = bezier(fl.mx, (fl.mx + fl.tx) / 2, fl.tx, u);
+      fl.y = bezier(fl.my, (fl.my + fl.ty) / 2 - 20, fl.ty, u);
+      if (u >= 1) fl.done = true;
+    }
+  });
+  const leftover = [];
+  flyers.forEach(fl => { if (fl.done) finishFlyer(fl); else leftover.push(fl); });
+  flyers = leftover;
+  if (dragging && dragging.kind === "e") {
+    const m = metalAtom();
+    const e = dragging.electron;
+    const p = ePos(m, e);
+  }
+  draw();
+  requestAnimationFrame(tick);
+}
+
+function canvasPoint(ev) {
+  const canvas = document.getElementById("simCanvas");
+  const r = canvas.getBoundingClientRect();
+  const x = (("touches" in ev ? ev.touches[0].clientX : ev.clientX) - r.left) * (canvas.clientWidth ? W / r.width : 1);
+  const y = (("touches" in ev ? ev.touches[0].clientY : ev.clientY) - r.top) * (canvas.clientHeight ? H / r.height : 1);
+  return { x, y };
+}
+
+function hitValence(sx, sy) {
+  const w = toWorld(sx, sy);
+  const m = metalAtom();
+  let best = null, bestD = 16 / cam.scale;
+  m.electrons.forEach(e => {
+    if (!e.transferable || e.gone) return;
+    const p = ePos(m, e);
+    const d = Math.hypot(p.x - w.x, p.y - w.y);
+    if (d < bestD) { bestD = d; best = e; }
+  });
+  return best;
+}
+
+function onDown(ev) {
+  if (isAnnoActive) return;
+  if (ev.target && ev.target.closest && ev.target.closest("#view-tools")) return;
+  if (ev.touches && ev.touches.length === 2) {
+    pinchDist = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY);
+    return;
+  }
+  const p = canvasPoint(ev);
+  const e = hitValence(p.x, p.y);
+  if (e && transferred < totalNeed && !flyers.length) {
+    const m = metalAtom();
+    const pos = ePos(m, e);
+    e.gone = true;
+    m.shells[m.shells.length - 1] -= 1;
+    if (m.shells[m.shells.length - 1] <= 0) m.shellScale[m.shells.length - 1] = 0.01;
+    updateCharges();
+    updateHUD();
+    dragging = { kind: "e", electron: e };
+    playing = false;
+    flyers.push({
+      x: pos.x, y: pos.y, sx: pos.x, sy: pos.y, mx: pos.x, my: pos.y, tx: pos.x, ty: pos.y,
+      target: nextTarget(), vac: 0, destR: 40, t: 0, phase: "drag", label: "out", drag: true
+    });
+  } else {
+    panning = true;
+    panLast = p;
+  }
+}
+
+function onMove(ev) {
+  if (isAnnoActive) return;
+  if (ev.touches && ev.touches.length === 2) {
+    const d = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY);
+    if (pinchDist) zoomCanvas(d / pinchDist);
+    pinchDist = d;
+    ev.preventDefault();
+    return;
+  }
+  const p = canvasPoint(ev);
+  if (dragging && dragging.kind === "e") {
+    const w = toWorld(p.x, p.y);
+    dragging.wx = w.x; dragging.wy = w.y;
+    const fl = flyers.find(f => f.drag);
+    if (fl) { fl.x = w.x; fl.y = w.y; }
+  } else if (panning && panLast) {
+    cam.x += p.x - panLast.x;
+    cam.y += p.y - panLast.y;
+    panLast = p;
+  }
+}
+
+function onUp(ev) {
+  pinchDist = 0;
+  if (dragging && dragging.kind === "e") {
+    const fl = flyers.find(f => f.drag);
+    const tgt = nextTarget();
+    const m = metalAtom();
+    if (fl && tgt) {
+      const d = Math.hypot(fl.x - tgt.x, fl.y - tgt.y);
+      if (d < 90) {
+        fl.drag = false;
+        fl.phase = "in";
+        fl.t = 0;
+        fl.mx = fl.x; fl.my = fl.y;
+        fl.vac = vacancyAngle(tgt);
+        fl.destR = shellR(tgt, tgt.shells.length - 1);
+        fl.tx = tgt.x + Math.cos(fl.vac) * fl.destR;
+        fl.ty = tgt.y + Math.sin(fl.vac) * fl.destR;
+        fl.target = tgt;
+        updateHUD();
+      } else {
+        dragging.electron.gone = false;
+        m.shells[m.shells.length - 1] += 1;
+        if (m.shells[m.shells.length - 1] > 0) m.shellScale[m.shells.length - 1] = 1;
+        flyers = flyers.filter(f => !f.drag);
+        updateCharges();
+        updateHUD();
+      }
+    }
+  }
+  dragging = null;
+  panning = false;
+  panLast = null;
+}
+
+function zoomCanvas(factor) {
+  cam.scale = Math.min(2.6, Math.max(0.45, cam.scale * factor));
+}
+
+function resetCanvasView() {
+  cam.scale = 1;
+  cam.x = 0;
+  cam.y = 0;
+  autoFit();
+}
+
+function autoFit() {
+  const nNon = (currentCompound && currentCompound.nonmetals) ? currentCompound.nonmetals.length : 1;
+  const needW = nNon >= 3 ? 660 : 520;
+  const needH = nNon >= 3 ? 540 : 420;
+  const s = Math.min(W / needW, H / needH);
+  cam.scale = Math.max(0.5, Math.min(1.15, s));
+  cam.x = 0; cam.y = 0;
+}
+
+function fitSim() {
+  const vp = document.getElementById("sim-viewport");
+  if (!vp) return;
+  W = Math.max(320, vp.clientWidth);
+  H = Math.max(240, vp.clientHeight);
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  const canvas = document.getElementById("simCanvas");
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  if (fCanvas) {
+    fCanvas.setWidth(W);
+    fCanvas.setHeight(H);
+    fCanvas.calcOffset();
+  } else if (W > 10) {
+    initAnnotationCanvas(W, H);
+    const fabricContainer = document.querySelector(".canvas-container");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "none";
+  }
+  autoFit();
+}
+
+function makeDraggable(el, handle) {
+  let ox = 0, oy = 0, draggingCard = false;
+  handle.addEventListener("pointerdown", e => {
+    draggingCard = true;
+    ox = e.clientX - el.offsetLeft;
+    oy = e.clientY - el.offsetTop;
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener("pointermove", e => {
+    if (!draggingCard) return;
+    el.style.left = (e.clientX - ox) + "px";
+    el.style.top = (e.clientY - oy) + "px";
+    el.style.bottom = "auto";
+  });
+  handle.addEventListener("pointerup", () => { draggingCard = false; });
+}
+
+function renderQuiz(reset) {
+  if (reset) quizState = { picked: [null,null,null,null,null], done: false };
+  const box = document.getElementById("quiz-box");
+  const L = LANG[currentLang];
+  box.innerHTML = QUIZ.map((item, qi) => {
+    const picked = quizState.picked[qi];
+    const locked = picked !== null;
+    const opts = item.opts.map((ok, oi) => {
+      let cls = "quiz-opt w-full text-left rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-3 text-slate-200 " + (locked ? "locked" : "");
+      if (picked !== null) {
+        if (oi === item.ans) cls += " correct";
+        else if (oi === picked) cls += " wrong";
+      }
+      return `<button class="${cls}" onclick="answerQ(${qi},${oi})">${String.fromCharCode(65 + oi)}. ${L[ok]}</button>`;
+    }).join("");
+    const exp = picked !== null ? `<div class="mt-3 text-sm text-slate-300 glass-card rounded-xl px-3 py-2"><span class="text-cyan-400 font-bold">${L.explanation}:</span> ${L[item.exp]}</div>` : "";
+    return `<div class="glass-panel rounded-2xl p-5 space-y-3">
+      <p class="text-xs text-slate-500 font-bold">${L.qOf} ${qi + 1} / 5</p>
+      <p class="text-lg font-semibold text-white">${L[item.q]}</p>
+      <div class="space-y-2">${opts}</div>${exp}
+    </div>`;
+  }).join("");
+  const all = quizState.picked.every(p => p !== null);
+  const res = document.getElementById("quiz-result");
+  if (all) {
+    const score = quizState.picked.filter((p, i) => p === QUIZ[i].ans).length;
+    const pct = Math.round(score / 5 * 100);
+    res.classList.remove("hidden");
+    document.getElementById("score-line").textContent = score + " / 5";
+    document.getElementById("pct-line").textContent = t("pctLabel") + "  " + pct + "%";
+  } else res.classList.add("hidden");
+}
+
+function answerQ(qi, oi) {
+  if (quizState.picked[qi] !== null) return;
+  quizState.picked[qi] = oi;
+  renderQuiz(false);
+}
+
+function restartQuiz() { renderQuiz(true); }
+
+function initApp() {
+  document.getElementById("lang-select").value = currentLang;
+  applyLanguage();
+  layoutAtoms();
+  renderQuiz(true);
+  fitSim();
+  const vp = document.getElementById("sim-viewport");
+  vp.addEventListener("pointerdown", onDown);
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
+  vp.addEventListener("wheel", e => {
+    e.preventDefault();
+    zoomCanvas(e.deltaY < 0 ? 1.08 : 0.92);
+  }, { passive: false });
+  vp.addEventListener("touchmove", e => { if (e.touches.length === 2) e.preventDefault(); }, { passive: false });
+  window.addEventListener("resize", fitSim);
+  makeDraggable(document.getElementById("view-tools"), document.getElementById("view-tools-handle"));
+  requestAnimationFrame(tick);
+}
+
+window.addEventListener("load", () => {
+  applyLanguage();
+  setTimeout(() => {
+    const intro = document.getElementById("intro-screen");
+    intro.style.transition = "opacity 0.7s ease";
+    intro.style.opacity = "0";
+    setTimeout(() => {
+      intro.style.display = "none";
+      initApp();
+    }, 720);
+  }, 5000);
+});
+</script>
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>
