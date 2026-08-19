@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IQRA VIRTUAL LAB — States of Matter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Jameel Noori Nastaliq';
+      src: url('https://cdn.jsdelivr.net/gh/khalidch90/urdu-fonts@master/Jameel%20Noori%20Nastaleeq.ttf') format('truetype'),
+           url('https://fonts.cdnfonts.com/s/15798/Jameel%20Noori%20Nastaleeq.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #020617;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+    [dir="rtl"] .rtl-flip {
+      transform: scaleX(-1);
+    }
+    [dir="rtl"] {
+      font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+      line-height: 2.3 !important;
+    }
+
+    body.urdu-mode {
+      font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+    }
+    body.urdu-mode [data-i18n],
+    body.urdu-mode [data-i18n-html],
+    body.urdu-mode .i18n-text {
+      font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+      line-height: 2.3 !important;
+      font-size: 1.08em;
+      direction: rtl;
+      unicode-bidi: isolate;
+    }
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Pulse Glow Effects */
+    .glow-cyan {
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+    }
+    .glow-red {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+    .glow-green {
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+    }
+
+    /* Canvas styling */
+    canvas {
+      touch-action: none;
+    }
+
+    /* Custom Slider Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #334155;
+      border-radius: 8px;
+      height: 8px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #00f3ff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00f3ff;
+      transition: transform 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .mono {
+      font-family: 'Share Tech Mono', ui-monospace, monospace;
+    }
+
+    #sim-viewport {
+      position: relative;
+      width: 100%;
+      height: min(68vh, 640px);
+      min-height: 420px;
+      overflow: hidden;
+      border-radius: 1rem;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(0, 243, 255, 0.08), transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(255, 87, 34, 0.08), transparent 45%),
+        #020617;
+    }
+
+    #sim-viewport .canvas-container {
+      position: absolute !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    #simCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    #simCanvas.panning {
+      cursor: grabbing;
+    }
+
+    @keyframes introGlow {
+      0% { opacity: 0; transform: scale(0.82); filter: blur(12px); }
+      35% { opacity: 1; transform: scale(1.06); filter: blur(0); }
+      70% { opacity: 1; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes introPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.25); }
+      50% { box-shadow: 0 0 48px rgba(0, 243, 255, 0.65); }
+    }
+    .intro-title {
+      animation: introGlow 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .intro-mark {
+      animation: introPulse 1.8s ease-in-out infinite;
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 243, 255, 0.12);
+      color: #22d3ee;
+      border-color: rgba(0, 243, 255, 0.45);
+    }
+
+    .state-btn.active-solid {
+      background: rgba(33, 150, 243, 0.25);
+      border-color: #60a5fa;
+      color: #93c5fd;
+    }
+    .state-btn.active-liquid {
+      background: rgba(0, 188, 212, 0.22);
+      border-color: #22d3ee;
+      color: #67e8f9;
+    }
+    .state-btn.active-gas {
+      background: rgba(255, 152, 0, 0.22);
+      border-color: #fb923c;
+      color: #fdba74;
+    }
+
+    .quiz-opt {
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    .quiz-opt:hover:not(.locked) {
+      transform: translateY(-1px);
+      border-color: rgba(0, 243, 255, 0.4);
+    }
+    .quiz-opt.correct {
+      background: rgba(34, 197, 94, 0.18);
+      border-color: #22c55e;
+      color: #86efac;
+    }
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .heat-track {
+      background: linear-gradient(90deg, #2196F3 0%, #00BCD4 42%, #FF9800 78%, #FF5722 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- OPENING INTRO -->
+  <div id="intro-screen" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute w-72 h-72 rounded-full bg-cyan-400/10 blur-3xl top-1/4 left-1/4"></div>
+      <div class="absolute w-80 h-80 rounded-full bg-orange-500/10 blur-3xl bottom-1/4 right-1/4"></div>
+    </div>
+    <div class="relative text-center px-6">
+      <div class="intro-mark mx-auto mb-6 w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-400/40 text-cyan-400 flex items-center justify-center glow-cyan">
+        <i class="fa-solid fa-snowflake text-3xl"></i>
+      </div>
+      <h1 class="intro-title text-4xl md:text-6xl font-black tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-orange-300">
+        IQRA VIRTUAL LAB
+      </h1>
+      <p id="intro-topic" class="intro-title mt-5 text-lg md:text-2xl text-slate-300 tracking-widest uppercase" style="animation-delay:0.35s">
+        States of Matter: Solid · Liquid · Gas
+      </p>
+      <div class="mt-8 h-1 w-48 mx-auto rounded-full overflow-hidden bg-slate-800">
+        <div id="intro-bar" class="h-full bg-cyan-400 glow-cyan" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="glass-panel sticky top-0 z-40 px-4 py-3 border-b border-slate-800">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-cyan-400 glow-cyan shrink-0">
+          <i class="fa-solid fa-flask-vial"></i>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-lg md:text-xl font-black tracking-tight text-white leading-none">IQRA VIRTUAL LAB</h1>
+          <p class="text-[11px] text-slate-400 uppercase tracking-[0.22em] mt-1 truncate" data-i18n="appSubtitle">States of Matter</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-2">
+        <button id="tab-btn-sim" onclick="switchTab('sim')" class="tab-btn active px-4 py-2 rounded-lg border border-slate-700 text-sm font-semibold text-slate-300 hover:bg-slate-800 transition">
+          <i class="fa-solid fa-house me-1"></i><span data-i18n="tabSim">Simulation</span>
+        </button>
+        <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 py-2 rounded-lg border border-slate-700 text-sm font-semibold text-slate-300 hover:bg-slate-800 transition">
+          <i class="fa-solid fa-clipboard-list me-1"></i><span data-i18n="tabQuiz">Quiz</span>
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <!-- Annotation Toolbar (Hidden by default) -->
+        <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+          <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+          <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+          <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+          <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+
+        <!-- Annotation Toggle Button -->
+        <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+          <i class="fa-solid fa-pen-nib"></i>
+        </button>
+
+        <!-- Language Selector -->
+        <div class="relative">
+          <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+            <option value="en">🌐 English</option>
+            <option value="ur">🌐 اردو</option>
+            <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+            <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+            <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+          </select>
+        </div>
+
+        <!-- Fullscreen Button -->
+        <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+          <i class="fa-solid fa-expand" id="fs-icon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-3 md:p-5">
+    <!-- SIMULATION TAB -->
+    <section id="view-sim" class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+      <div class="xl:col-span-8 space-y-3">
+        <div class="glass-card rounded-2xl p-3 md:p-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base md:text-lg font-bold text-white" data-i18n="simTitle">Particle Chamber</h2>
+              <p class="text-xs text-slate-400" data-i18n="simHint">Heat the beaker. Watch spacing and speed — particle size never changes.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="state-pill" class="px-3 py-1 rounded-full text-xs font-bold border border-cyan-500/40 bg-cyan-500/10 text-cyan-300">Solid</span>
+              <span id="temp-pill" class="mono px-3 py-1 rounded-full text-xs font-bold border border-slate-600 text-orange-300">−10 °C</span>
+            </div>
+          </div>
+
+          <div id="sim-viewport">
+            <canvas id="simCanvas"></canvas>
+            <canvas id="fabricLayer"></canvas>
+
+            <div class="absolute bottom-3 left-3 z-30 flex items-center gap-1.5">
+              <button onclick="zoomBy(1.15)" class="w-9 h-9 rounded-lg bg-slate-900/90 border border-slate-600 text-cyan-300 hover:bg-slate-800" title="+"><i class="fa-solid fa-plus"></i></button>
+              <button onclick="zoomBy(1/1.15)" class="w-9 h-9 rounded-lg bg-slate-900/90 border border-slate-600 text-cyan-300 hover:bg-slate-800" title="−"><i class="fa-solid fa-minus"></i></button>
+              <button onclick="resetView()" class="w-9 h-9 rounded-lg bg-slate-900/90 border border-slate-600 text-slate-200 hover:bg-slate-800" title="Reset"><i class="fa-solid fa-compress"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 space-y-4">
+          <div class="flex items-center justify-between gap-2">
+            <label class="text-sm font-semibold text-slate-200" data-i18n="tempLabel">Temperature</label>
+            <span id="temp-readout" class="mono text-cyan-300 text-sm">−10 °C</span>
+          </div>
+          <input id="temp-slider" type="range" min="-20" max="120" value="-10" step="1" class="w-full heat-track" oninput="setTemperature(+this.value)">
+          <div class="flex justify-between text-[10px] text-slate-500 mono">
+            <span>−20 °C</span><span>0 °C</span><span>100 °C</span><span>120 °C</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <button id="btn-solid" onclick="jumpState('solid')" class="state-btn active-solid py-3 rounded-xl border border-slate-600 bg-slate-900 font-semibold text-sm">
+              <i class="fa-solid fa-cubes me-1"></i><span data-i18n="solid">Solid</span>
+            </button>
+            <button id="btn-liquid" onclick="jumpState('liquid')" class="state-btn py-3 rounded-xl border border-slate-600 bg-slate-900 font-semibold text-sm text-slate-300">
+              <i class="fa-solid fa-droplet me-1"></i><span data-i18n="liquid">Liquid</span>
+            </button>
+            <button id="btn-gas" onclick="jumpState('gas')" class="state-btn py-3 rounded-xl border border-slate-600 bg-slate-900 font-semibold text-sm text-slate-300">
+              <i class="fa-solid fa-wind me-1"></i><span data-i18n="gas">Gas</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button id="btn-play" onclick="togglePlay()" class="flex-1 min-w-[140px] py-3 rounded-xl bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 font-bold hover:bg-cyan-500/25">
+              <i id="play-icon" class="fa-solid fa-pause me-1"></i><span id="play-label" data-i18n="pause">Pause</span>
+            </button>
+            <button onclick="toggleVectors()" class="flex-1 min-w-[140px] py-3 rounded-xl bg-slate-900 border border-slate-600 text-slate-200 font-semibold hover:bg-slate-800">
+              <i class="fa-solid fa-up-down-left-right me-1"></i><span data-i18n="vectors">Velocity arrows</span>
+            </button>
+            <button onclick="resetExperiment()" class="py-3 px-4 rounded-xl bg-slate-900 border border-slate-600 text-slate-200 font-semibold hover:bg-slate-800">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xl:col-span-4 space-y-3">
+        <div class="glass-card rounded-2xl p-4">
+          <h3 class="text-sm font-bold uppercase tracking-widest text-cyan-400 mb-3" data-i18n="liveTitle">Live observations</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-xl bg-slate-950/70 border border-slate-700 p-3">
+              <div class="text-[10px] text-slate-400 uppercase" data-i18n="keLabel">Kinetic energy</div>
+              <div id="obs-ke" class="mono text-lg text-orange-300 mt-1">Low</div>
+            </div>
+            <div class="rounded-xl bg-slate-950/70 border border-slate-700 p-3">
+              <div class="text-[10px] text-slate-400 uppercase" data-i18n="spaceLabel">Particle spacing</div>
+              <div id="obs-space" class="mono text-lg text-cyan-300 mt-1">Tight</div>
+            </div>
+            <div class="rounded-xl bg-slate-950/70 border border-slate-700 p-3">
+              <div class="text-[10px] text-slate-400 uppercase" data-i18n="motionLabel">Motion</div>
+              <div id="obs-motion" class="text-sm text-slate-100 mt-1">Vibration</div>
+            </div>
+            <div class="rounded-xl bg-slate-950/70 border border-slate-700 p-3">
+              <div class="text-[10px] text-slate-400 uppercase" data-i18n="sizeLabel">Particle size</div>
+              <div class="mono text-lg text-emerald-300 mt-1">const</div>
+            </div>
+          </div>
+          <p id="obs-note" class="mt-3 text-sm text-slate-300 leading-relaxed" data-i18n="obsSolid">Friends hold hands tightly and only wiggle in place.</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4">
+          <h3 class="text-sm font-bold uppercase tracking-widest text-amber-300 mb-2" data-i18n="predictTitle">Predict then test</h3>
+          <p class="text-sm text-slate-200 mb-3" data-i18n="predictQ">When water becomes steam, what happens to each particle?</p>
+          <div class="space-y-2">
+            <button onclick="answerPredict('a')" class="predict-btn w-full text-left px-3 py-2.5 rounded-xl border border-slate-600 bg-slate-900 text-sm hover:border-cyan-500/50" data-choice="a" data-i18n="predA">A) The particles themselves expand</button>
+            <button onclick="answerPredict('b')" class="predict-btn w-full text-left px-3 py-2.5 rounded-xl border border-slate-600 bg-slate-900 text-sm hover:border-cyan-500/50" data-choice="b" data-i18n="predB">B) They move faster and spread apart</button>
+            <button onclick="answerPredict('c')" class="predict-btn w-full text-left px-3 py-2.5 rounded-xl border border-slate-600 bg-slate-900 text-sm hover:border-cyan-500/50" data-choice="c" data-i18n="predC">C) New particles are created</button>
+          </div>
+          <div id="predict-fb" class="hidden mt-3 text-sm p-3 rounded-xl border"></div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4">
+          <h3 class="text-sm font-bold uppercase tracking-widest text-slate-300 mb-3" data-i18n="compareTitle">Three snapshots</h3>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="rounded-xl border border-blue-500/30 bg-blue-500/10 p-2">
+              <div class="text-blue-300 text-xs font-bold" data-i18n="solid">Solid</div>
+              <div class="text-[11px] text-slate-400 mt-1" data-i18n="cmpSolid">Packed lattice</div>
+            </div>
+            <div class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-2">
+              <div class="text-cyan-300 text-xs font-bold" data-i18n="liquid">Liquid</div>
+              <div class="text-[11px] text-slate-400 mt-1" data-i18n="cmpLiquid">Slide & stay close</div>
+            </div>
+            <div class="rounded-xl border border-orange-500/30 bg-orange-500/10 p-2">
+              <div class="text-orange-300 text-xs font-bold" data-i18n="gas">Gas</div>
+              <div class="text-[11px] text-slate-400 mt-1" data-i18n="cmpGas">Fill the volume</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- QUIZ TAB -->
+    <section id="view-quiz" class="hidden max-w-3xl mx-auto">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-black" data-i18n="quizTitle">Concept check</h2>
+          <span id="quiz-progress" class="text-sm text-cyan-300 mono">1 / 5</span>
+        </div>
+        <div id="quiz-card">
+          <p id="quiz-q" class="text-lg font-semibold text-white mb-4 leading-relaxed"></p>
+          <div id="quiz-opts" class="space-y-3"></div>
+          <div id="quiz-explain" class="hidden mt-4 p-4 rounded-xl border text-sm"></div>
+          <button id="quiz-next" onclick="nextQuestion()" class="hidden mt-5 w-full py-3 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 font-bold">
+            <span id="quiz-next-label" data-i18n="nextQ">Next question</span>
+          </button>
+        </div>
+        <div id="quiz-result" class="hidden text-center py-6">
+          <div class="text-5xl font-black text-cyan-300 mono" id="quiz-score">0/5</div>
+          <div class="text-2xl text-white mt-2 mono" id="quiz-pct">0%</div>
+          <p class="text-slate-300 mt-3" id="quiz-msg"></p>
+          <button onclick="restartQuiz()" class="mt-6 px-8 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 font-bold glow-cyan">
+            <i class="fa-solid fa-rotate-right me-2"></i><span data-i18n="restartQuiz">Restart Quiz</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+const LANG = {
+  en: {
+    appSubtitle: "States of Matter",
+    tabSim: "Simulation",
+    tabQuiz: "Quiz",
+    simTitle: "Particle Chamber",
+    simHint: "Heat the beaker. Watch spacing and speed — particle size never changes.",
+    tempLabel: "Temperature",
+    solid: "Solid",
+    liquid: "Liquid",
+    gas: "Gas",
+    pause: "Pause",
+    play: "Play",
+    vectors: "Velocity arrows",
+    liveTitle: "Live observations",
+    keLabel: "Kinetic energy",
+    spaceLabel: "Particle spacing",
+    motionLabel: "Motion",
+    sizeLabel: "Particle size",
+    keLow: "Low",
+    keMed: "Medium",
+    keHigh: "High",
+    spaceTight: "Tight",
+    spaceClose: "Close",
+    spaceWide: "Wide",
+    motionVib: "Vibration in place",
+    motionSlide: "Sliding past neighbours",
+    motionFly: "Free flight + wall hits",
+    obsSolid: "Dancing friends hold hands tightly and only wiggle in place.",
+    obsMelt: "Hand-holds loosen. The lattice is breaking — melting has begun.",
+    obsLiquid: "Friends link loosely and slide around, still staying near the bottom.",
+    obsBoil: "Some friends let go and sprint upward — boiling has begun.",
+    obsGas: "Everyone sprints freely, filling the beaker and bouncing off the walls (pressure).",
+    predictTitle: "Predict then test",
+    predictQ: "When water becomes steam, what happens to each particle?",
+    predA: "A) The particles themselves expand",
+    predB: "B) They move faster and spread apart",
+    predC: "C) New particles are created",
+    predGood: "Correct. Diameter stays constant. Heat raises kinetic energy, so particles move faster and occupy more space.",
+    predBadA: "Particles do not swell. Drag heat up and watch: every sphere keeps the same radius while gaps grow.",
+    predBadC: "The number of particles is fixed (30). Steam is the same particles, moving faster and farther apart.",
+    compareTitle: "Three snapshots",
+    cmpSolid: "Packed lattice",
+    cmpLiquid: "Slide & stay close",
+    cmpGas: "Fill the volume",
+    quizTitle: "Concept check",
+    nextQ: "Next question",
+    seeResults: "See results",
+    restartQuiz: "Restart Quiz",
+    quizDone: "You connected heat, motion and spacing like a scientist.",
+    quizRetry: "Heat the beaker again, then retry. Focus on size vs spacing.",
+    q1: "When ice melts into water, what really changes about the particles?",
+    q1a: "They stop moving completely",
+    q1b: "They shrink to a smaller size",
+    q1c: "They keep the same size but start sliding past one another",
+    q1d: "They vanish into empty space",
+    q1e: "In a solid they vibrate in a lattice. Melting frees them to slide while radius stays constant.",
+    q2: "If you heat water, the individual particles…",
+    q2a: "Grow larger like balloons",
+    q2b: "Stay the same size",
+    q2c: "Split into more particles",
+    q2d: "Lose all mass",
+    q2e: "Thermal energy changes speed and spacing, not particle diameter.",
+    q3: "How can a gas push on a container if it looks ‘empty’?",
+    q3a: "Gases contain no particles",
+    q3b: "Particles collide with the walls and exert pressure",
+    q3c: "Only the heater pushes the glass",
+    q3d: "Particles melt into the wall",
+    q3e: "Watch the gas state: every bounce on glass is a tiny force. Many bounces become pressure.",
+    q4: "In a solid, particles are best described as…",
+    q4a: "Completely motionless",
+    q4b: "Vibrating about fixed positions",
+    q4c: "Flying in straight lines",
+    q4d: "Having no kinetic energy",
+    q4e: "Even ice particles jiggle. Zero motion would mean absolute zero, not a classroom solid.",
+    q5: "Raising temperature of the sample mainly increases…",
+    q5a: "The number of particles",
+    q5b: "The size of each particle",
+    q5c: "The kinetic energy of the particles",
+    q5d: "The chemical formula of water",
+    q5e: "Temperature is a measure of average kinetic energy. H₂O stays H₂O."
+  },
+  ur: {
+    appSubtitle: "حالتِ مادہ",
+    tabSim: "تجربہ",
+    tabQuiz: "سوالات",
+    simTitle: "ذرّاتی خانہ",
+    simHint: "بیكر گرم کریں۔ فاصلہ اور رفتار دیکھیں — ذرّے کا سائز نہیں بدلتا۔",
+    tempLabel: "درجہ حرارت",
+    solid: "ٹھوس",
+    liquid: "مائع",
+    gas: "گیس",
+    pause: "روکیں",
+    play: "چلائیں",
+    vectors: "سمتِ رفتار",
+    liveTitle: "براہِ راست مشاہدہ",
+    keLabel: "حرکی توانائی",
+    spaceLabel: "باہمی فاصلہ",
+    motionLabel: "حرکت",
+    sizeLabel: "سائزِ ذرّہ",
+    keLow: "کم",
+    keMed: "درمیانہ",
+    keHigh: "زیادہ",
+    spaceTight: "انتہائی قریب",
+    spaceClose: "قریب",
+    spaceWide: "کشادہ",
+    motionVib: "جگہ پر ارتعاش",
+    motionSlide: "پڑوسیوں کے ساتھ پھسلنا",
+    motionFly: "آزاد پرواز اور دیوار سے ٹکراؤ",
+    obsSolid: "دوست ہاتھ مضبوطی سے پکڑے ہوئے ہیں اور صرف جگہ پر جھومتے ہیں۔",
+    obsMelt: "ہاتھ ڈھیلے ہو رہے ہیں — جالی ٹوٹ رہی ہے، پگھلاؤ شروع۔",
+    obsLiquid: "دوست ڈھیلے بندھے ہیں، نیچے رہتے ہوئے ایک دوسرے کے پاس سے پھسلتے ہیں۔",
+    obsBoil: "کچھ دوست چھوڑ کر اوپر دوڑتے ہیں — ابال شروع۔",
+    obsGas: "سب آزاد دوڑتے ہیں، پورا بیكر بھرتے ہیں اور دیواروں سے ٹکرا کر دباؤ بناتے ہیں۔",
+    predictTitle: "پہلے اندازہ، پھر جانچ",
+    predictQ: "جب پانی بھاپ بنے تو ہر ذرّے کے ساتھ کیا ہوتا ہے؟",
+    predA: "الف) خود ذرّے پھول کر بڑے ہو جاتے ہیں",
+    predB: "ب) وہ تیز حرکت کرتے ہیں اور دور پھیل جاتے ہیں",
+    predC: "ج) نئے ذرّے پیدا ہو جاتے ہیں",
+    predGood: "درست۔ قطر مستقل رہتا ہے۔ حرارت حرکی توانائی بڑھاتی ہے، اس لیے ذرّے تیز اور زیادہ فاصلے پر ہو جاتے ہیں۔",
+    predBadA: "ذرّے سوجتے نہیں۔ حرارت بڑھائیں: ہر کرہ کا رداس وہی رہتا ہے، صرف خلاء بڑھتی ہے۔",
+    predBadC: "ذرّوں کی تعداد مقرر ہے (30)۔ بھاپ وہی ذرّے ہیں، صرف تیز اور دور۔",
+    compareTitle: "تین جھلکیاں",
+    cmpSolid: "کثیف جالی",
+    cmpLiquid: "قریب رہ کر پھسلیں",
+    cmpGas: "پورا حجم بھریں",
+    quizTitle: "تصوراتی جانچ",
+    nextQ: "اگلا سوال",
+    seeResults: "نتائج دیکھیں",
+    restartQuiz: "سوالات دوبارہ",
+    quizDone: "آپ نے حرارت، حرکت اور فاصلے کو سائنسی انداز میں جوڑا۔",
+    quizRetry: "بیكر دوبارہ گرم کریں، پھر کوشش کریں۔ سائز اور فاصلے کا فرق دیکھیں۔",
+    q1: "برف پانی بنے تو ذرّوں میں اصل تبدیلی کیا ہے؟",
+    q1a: "وہ بالکل رک جاتے ہیں",
+    q1b: "ان کا سائز چھوٹا ہو جاتا ہے",
+    q1c: "سائز وہی رہتا ہے مگر وہ ایک دوسرے کے پاس سے پھسلنے لگتے ہیں",
+    q1d: "وہ خالی جگہ میں غائب ہو جاتے ہیں",
+    q1e: "ٹھوس میں وہ جالی میں کانپتے ہیں۔ پگھلاؤ انہیں پھسلنے دیتا ہے، رداس نہیں بدلتا۔",
+    q2: "پانی گرم کرنے سے انفرادی ذرّے…",
+    q2a: "غبارے کی طرح بڑے ہو جاتے ہیں",
+    q2b: "وہی سائز رکھتے ہیں",
+    q2c: "ٹوٹ کر زیادہ ذرّے بن جاتے ہیں",
+    q2d: "ساری کمیت کھو دیتے ہیں",
+    q2e: "حرارتی توانائی رفتار اور فاصلہ بدلتی ہے، قطر نہیں۔",
+    q3: "گیس برتن پر دباؤ کیسے ڈالتی ہے حالانکہ ‘خالی’ لگتی ہے؟",
+    q3a: "گیس میں ذرّے نہیں ہوتے",
+    q3b: "ذرّے دیواروں سے ٹکرا کر دباؤ پیدا کرتے ہیں",
+    q3c: "صرف ہیٹر شیشہ دھکیلتا ہے",
+    q3d: "ذرّے دیوار میں پگھل جاتے ہیں",
+    q3e: "گیس حالت دیکھیں: ہر ٹکراؤ ایک چھوٹی قوت ہے۔ بہت سے ٹکراؤ دباؤ بنتے ہیں۔",
+    q4: "ٹھوس میں ذرّوں کی بہترین تصویر کیا ہے؟",
+    q4a: "بالکل بے حرکت",
+    q4b: "مقررہ مقامات پر ارتعاش",
+    q4c: "سیدھی لکیروں میں پرواز",
+    q4d: "صفر حرکی توانائی",
+    q4e: "برف کے ذرّے بھی کانپتے ہیں۔ صفر حرکت مطلق صفر پر ہوتی ہے، عام ٹھوس پر نہیں۔",
+    q5: "نمونے کا درجہ حرارت بڑھانے سے بنیادی طور پر بڑھتی ہے…",
+    q5a: "ذرّوں کی تعداد",
+    q5b: "ہر ذرّے کا سائز",
+    q5c: "ذرّوں کی حرکی توانائی",
+    q5d: "پانی کا کیمیائی فارمولا",
+    q5e: "درجہ حرارت اوسط حرکی توانائی کی پیمائش ہے۔ H₂O وہی H₂O رہتا ہے۔"
+  }
+};
+
+const QUIZ = [
+  { q: "q1", opts: ["q1a","q1b","q1c","q1d"], ans: 2, exp: "q1e" },
+  { q: "q2", opts: ["q2a","q2b","q2c","q2d"], ans: 1, exp: "q2e" },
+  { q: "q3", opts: ["q3a","q3b","q3c","q3d"], ans: 1, exp: "q3e" },
+  { q: "q4", opts: ["q4a","q4b","q4c","q4d"], ans: 1, exp: "q4e" },
+  { q: "q5", opts: ["q5a","q5b","q5c","q5d"], ans: 2, exp: "q5e" }
+];
+
+let lang = localStorage.getItem("iqra-lang") || "en";
+let temperature = -10;
+let playing = true;
+let showVectors = false;
+let tTime = 0;
+let lastTs = 0;
+let quizIndex = 0;
+let quizScore = 0;
+let quizLocked = false;
+let predictDone = false;
+
+const COUNT = 30;
+const PR = 9;
+const WORLD = { w: 1000, h: 620 };
+const BEAKER = { x: 210, y: 90, w: 560, h: 430, wall: 10 };
+const particles = [];
+
+const view = { scale: 1, x: 0, y: 0, fit: 1 };
+let panning = false;
+let panLast = { x: 0, y: 0 };
+let pointers = new Map();
+let lastPinch = 0;
+
+function t(key) {
+  return (LANG[lang] && LANG[lang][key]) || LANG.en[key] || key;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = lang === "ur" ? "ur" : "en";
+  document.body.classList.toggle("urdu-mode", lang === "ur");
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => {
+    el.innerHTML = t(el.getAttribute("data-i18n-html"));
+  });
+  const playKey = playing ? "pause" : "play";
+  const playLabel = document.getElementById("play-label");
+  if (playLabel) playLabel.textContent = t(playKey);
+  updateObservationHUD();
+  if (document.getElementById("view-quiz") && !document.getElementById("view-quiz").classList.contains("hidden")) {
+    if (document.getElementById("quiz-result").classList.contains("hidden")) renderQuiz(false);
+    else showQuizResult();
+  }
+  if (predictDone) {
+    const fb = document.getElementById("predict-fb");
+    if (fb && fb.dataset.key) {
+      fb.textContent = t(fb.dataset.key);
+    }
+  }
+}
+
+function changeLanguage(value) {
+  if (value !== "en" && value !== "ur") return;
+  lang = value;
+  localStorage.setItem("iqra-lang", lang);
+  applyLanguage();
+}
+
+function switchTab(name) {
+  document.getElementById("view-sim").classList.toggle("hidden", name !== "sim");
+  document.getElementById("view-quiz").classList.toggle("hidden", name !== "quiz");
+  document.getElementById("tab-btn-sim").classList.toggle("active", name === "sim");
+  document.getElementById("tab-btn-quiz").classList.toggle("active", name === "quiz");
+  if (name === "sim") requestAnimationFrame(() => resizeSim());
+}
+
+function toggleFullScreen() {
+  const icon = document.getElementById("fs-icon");
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+    icon.classList.replace("fa-expand", "fa-compress");
+  } else {
+    document.exitFullscreen();
+    icon.classList.replace("fa-compress", "fa-expand");
+  }
+}
+document.addEventListener("fullscreenchange", () => {
+  const icon = document.getElementById("fs-icon");
+  if (!document.fullscreenElement) icon.classList.replace("fa-compress", "fa-expand");
+  else icon.classList.replace("fa-expand", "fa-compress");
+  resizeSim();
+});
+
+/* ===== Annotation (exact logic) ===== */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas("fabricLayer", {
+    isDrawingMode: false,
+    width: w,
+    height: h
+  });
+  fCanvas.freeDrawingBrush.color = document.getElementById("anno-color").value;
+  fCanvas.freeDrawingBrush.width = 4;
+  fCanvas.on("mouse:down", function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+      fCanvas.remove(options.target);
+    }
+  });
+}
+
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById("btn-anno-toggle");
+  const toolbar = document.getElementById("anno-toolbar");
+  const fabricContainer = document.querySelector(".canvas-container");
+
+  if (isAnnoActive) {
+    btn.classList.replace("text-slate-400", "text-cyan-400");
+    toolbar.classList.remove("max-w-0", "opacity-0");
+    toolbar.classList.add("max-w-xs", "opacity-100");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "auto";
+    setAnnoMode("pen");
+  } else {
+    btn.classList.replace("text-cyan-400", "text-slate-400");
+    toolbar.classList.remove("max-w-xs", "opacity-100");
+    toolbar.classList.add("max-w-0", "opacity-0");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "none";
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function setAnnoMode(mode) {
+  document.getElementById("anno-pen").classList.replace("text-cyan-400", "text-slate-400");
+  document.getElementById("anno-eraser").classList.replace("text-cyan-400", "text-slate-400");
+  if (mode === "pen") {
+    document.getElementById("anno-pen").classList.replace("text-slate-400", "text-cyan-400");
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById("anno-eraser").classList.replace("text-slate-400", "text-cyan-400");
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode("pen");
+}
+
+function clearAnnotations() {
+  if (fCanvas) fCanvas.clear();
+}
+
+/* ===== Particles ===== */
+function latticePos(i) {
+  const cols = 6;
+  const col = i % cols;
+  const row = Math.floor(i / cols);
+  const innerX = BEAKER.x + 70;
+  const innerY = BEAKER.y + BEAKER.h - 70 - 4 * 28;
+  return { x: innerX + col * 28 + (row % 2) * 6, y: innerY + row * 26 };
+}
+
+function initParticles() {
+  particles.length = 0;
+  for (let i = 0; i < COUNT; i++) {
+    const p = latticePos(i);
+    particles.push({
+      x: p.x, y: p.y, vx: 0, vy: 0,
+      phase: Math.random() * Math.PI * 2,
+      r: PR
+    });
+  }
+}
+
+function currentState() {
+  if (temperature < 0) return "solid";
+  if (temperature < 100) return "liquid";
+  return "gas";
+}
+
+function mixWeights() {
+  const T = temperature;
+  if (T <= -6) return { s: 1, l: 0, g: 0 };
+  if (T < 8) {
+    const u = (T + 6) / 14;
+    return { s: 1 - u, l: u, g: 0 };
+  }
+  if (T < 90) return { s: 0, l: 1, g: 0 };
+  if (T < 108) {
+    const u = (T - 90) / 18;
+    return { s: 0, l: 1 - u, g: u };
+  }
+  return { s: 0, l: 0, g: 1 };
+}
+
+function kelvin() {
+  return temperature + 273.15;
+}
+
+function targetSpeed() {
+  return 0.12 + Math.sqrt(Math.max(1, kelvin()) / 80);
+}
+
+function innerBounds() {
+  return {
+    l: BEAKER.x + BEAKER.wall + PR + 8,
+    r: BEAKER.x + BEAKER.w - BEAKER.wall - PR - 8,
+    t: BEAKER.y + BEAKER.wall + PR + 18,
+    b: BEAKER.y + BEAKER.h - BEAKER.wall - PR - 14
+  };
+}
+
+function updateParticles(dt) {
+  tTime += dt;
+  const w = mixWeights();
+  const b = innerBounds();
+  const amp = 1.2 + Math.max(0, temperature + 20) * 0.04;
+  const thermal = targetSpeed();
+
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    const lat = latticePos(i);
+
+    if (w.s > 0.05) {
+      const vibx = Math.sin(tTime * 8 + p.phase) * amp * w.s;
+      const viby = Math.cos(tTime * 7.2 + p.phase * 1.3) * amp * w.s;
+      p.x += (lat.x + vibx - p.x) * (0.18 * w.s);
+      p.y += (lat.y + viby - p.y) * (0.18 * w.s);
+      p.vx *= (1 - 0.2 * w.s);
+      p.vy *= (1 - 0.2 * w.s);
+    }
+
+    if (w.l > 0.02) {
+      p.vy += 420 * dt * w.l;
+      p.vx += (Math.sin(tTime * 3 + p.phase) * 40) * dt * w.l;
+      p.vx *= (1 - 1.8 * dt * w.l);
+      p.vy *= (1 - 0.4 * dt * w.l);
+    }
+
+    if (w.g > 0.02) {
+      const spd = Math.hypot(p.vx, p.vy) || 1;
+      const want = 90 * thermal * w.g + 30 * w.l;
+      p.vx += (p.vx / spd) * (want - spd) * dt * 2 * w.g;
+      p.vy += (p.vy / spd) * (want - spd) * dt * 2 * w.g;
+      if (Math.random() < 0.02 * w.g) {
+        p.vx += (Math.random() - 0.5) * 40;
+        p.vy += (Math.random() - 0.5) * 40;
+      }
+    }
+
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+
+    if (p.x < b.l) { p.x = b.l; p.vx = Math.abs(p.vx) * (0.55 + 0.4 * w.g); }
+    if (p.x > b.r) { p.x = b.r; p.vx = -Math.abs(p.vx) * (0.55 + 0.4 * w.g); }
+    if (p.y < b.t) { p.y = b.t; p.vy = Math.abs(p.vy) * (0.4 + 0.5 * w.g); }
+    if (p.y > b.b) { p.y = b.b; p.vy = -Math.abs(p.vy) * (0.18 + 0.72 * w.g); }
+  }
+
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i], c = particles[j];
+      let dx = c.x - a.x, dy = c.y - a.y;
+      let d = Math.hypot(dx, dy) || 0.0001;
+      const minD = PR * 2;
+      if (d < minD) {
+        const nx = dx / d, ny = dy / d;
+        const overlap = (minD - d) * 0.5;
+        a.x -= nx * overlap; a.y -= ny * overlap;
+        c.x += nx * overlap; c.y += ny * overlap;
+        if (w.g + w.l > 0.2) {
+          const dvx = a.vx - c.vx, dvy = a.vy - c.vy;
+          const rel = dvx * nx + dvy * ny;
+          if (rel > 0) {
+            a.vx -= rel * nx; a.vy -= rel * ny;
+            c.vx += rel * nx; c.vy += rel * ny;
+          }
+        }
+      }
+    }
+  }
+}
+
+function meanSpacing() {
+  let s = 0, n = 0;
+  for (let i = 0; i < particles.length; i++) {
+    let best = 1e9;
+    for (let j = 0; j < particles.length; j++) {
+      if (i === j) continue;
+      const d = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+      if (d < best) best = d;
+    }
+    s += best; n++;
+  }
+  return s / n;
+}
+
+function meanSpeed() {
+  let s = 0;
+  particles.forEach(p => s += Math.hypot(p.vx, p.vy));
+  return s / particles.length;
+}
+
+function setTemperature(v) {
+  temperature = v;
+  document.getElementById("temp-slider").value = v;
+  refreshPills();
+  updateObservationHUD();
+}
+
+function jumpState(kind) {
+  if (kind === "solid") {
+    setTemperature(-10);
+    initParticles();
+  }
+  if (kind === "liquid") {
+    setTemperature(42);
+    particles.forEach(p => {
+      p.vx = (Math.random() - 0.5) * 50;
+      p.vy = (Math.random() - 0.5) * 24;
+    });
+  }
+  if (kind === "gas") {
+    setTemperature(112);
+    particles.forEach(p => {
+      const a = Math.random() * Math.PI * 2;
+      const s = 90 + Math.random() * 70;
+      p.vx = Math.cos(a) * s;
+      p.vy = Math.sin(a) * s;
+    });
+  }
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById("play-icon").className = "fa-solid me-1 " + (playing ? "fa-pause" : "fa-play");
+  document.getElementById("play-label").textContent = t(playing ? "pause" : "play");
+}
+
+function toggleVectors() {
+  showVectors = !showVectors;
+}
+
+function resetExperiment() {
+  setTemperature(-10);
+  initParticles();
+  playing = true;
+  document.getElementById("play-icon").className = "fa-solid fa-pause me-1";
+  document.getElementById("play-label").textContent = t("pause");
+  resetView();
+}
+
+function refreshPills() {
+  const st = currentState();
+  const pill = document.getElementById("state-pill");
+  pill.textContent = t(st);
+  pill.className = "px-3 py-1 rounded-full text-xs font-bold border " + (
+    st === "solid" ? "border-blue-400/50 bg-blue-500/15 text-blue-200" :
+    st === "liquid" ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-200" :
+    "border-orange-400/50 bg-orange-500/15 text-orange-200"
+  );
+  document.getElementById("temp-pill").textContent = temperature + " °C";
+  document.getElementById("temp-readout").textContent = temperature + " °C";
+  ["solid","liquid","gas"].forEach(k => {
+    const btn = document.getElementById("btn-" + k);
+    btn.classList.remove("active-solid","active-liquid","active-gas");
+    if (k === st) btn.classList.add("active-" + k);
+  });
+}
+
+function updateObservationHUD() {
+  const st = currentState();
+  const T = temperature;
+  document.getElementById("obs-ke").textContent = T < 0 ? t("keLow") : T < 90 ? t("keMed") : t("keHigh");
+  document.getElementById("obs-space").textContent = T < 0 ? t("spaceTight") : T < 95 ? t("spaceClose") : t("spaceWide");
+  document.getElementById("obs-motion").textContent = st === "solid" ? t("motionVib") : st === "liquid" ? t("motionSlide") : t("motionFly");
+  let note = "obsSolid";
+  if (T > -4 && T < 8) note = "obsMelt";
+  else if (T >= 8 && T < 90) note = "obsLiquid";
+  else if (T >= 90 && T < 108) note = "obsBoil";
+  else if (T >= 108) note = "obsGas";
+  document.getElementById("obs-note").textContent = t(note);
+}
+
+function answerPredict(choice) {
+  const fb = document.getElementById("predict-fb");
+  fb.classList.remove("hidden");
+  document.querySelectorAll(".predict-btn").forEach(b => {
+    b.classList.remove("correct","wrong","glow-green","glow-red");
+    if (b.dataset.choice === "b") b.classList.add("correct","glow-green");
+    if (b.dataset.choice === choice && choice !== "b") b.classList.add("wrong","glow-red");
+  });
+  let key = "predGood";
+  if (choice === "a") key = "predBadA";
+  if (choice === "c") key = "predBadC";
+  fb.dataset.key = key;
+  fb.textContent = t(key);
+  fb.className = "mt-3 text-sm p-3 rounded-xl border " + (choice === "b"
+    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+    : "border-red-500/40 bg-red-500/10 text-red-200");
+  predictDone = true;
+  if (choice !== "b") jumpState("gas");
+}
+
+/* ===== View / zoom / pan ===== */
+function fitView() {
+  const canvas = document.getElementById("simCanvas");
+  const sx = canvas.width / WORLD.w;
+  const sy = canvas.height / WORLD.h;
+  view.fit = Math.min(sx, sy);
+  view.scale = view.fit;
+  view.x = (canvas.width - WORLD.w * view.scale) / 2;
+  view.y = (canvas.height - WORLD.h * view.scale) / 2;
+}
+
+function resetView() { fitView(); }
+
+function zoomBy(factor, cx, cy) {
+  const canvas = document.getElementById("simCanvas");
+  const px = cx ?? canvas.width / 2;
+  const py = cy ?? canvas.height / 2;
+  const wx = (px - view.x) / view.scale;
+  const wy = (py - view.y) / view.scale;
+  view.scale = Math.max(view.fit * 0.85, Math.min(view.fit * 4.5, view.scale * factor));
+  view.x = px - wx * view.scale;
+  view.y = py - wy * view.scale;
+}
+
+function screenToWorld(sx, sy) {
+  return { x: (sx - view.x) / view.scale, y: (sy - view.y) / view.scale };
+}
+
+/* ===== Draw ===== */
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function draw(ctx) {
+  const w = ctx.canvas.width, h = ctx.canvas.height;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = "#020617";
+  ctx.fillRect(0,0,w,h);
+  ctx.setTransform(view.scale, 0, 0, view.scale, view.x, view.y);
+
+  const bench = ctx.createLinearGradient(0, 540, 0, 620);
+  bench.addColorStop(0, "#1e293b");
+  bench.addColorStop(1, "#0f172a");
+  ctx.fillStyle = bench;
+  ctx.fillRect(0, 540, WORLD.w, 80);
+
+  drawHeater(ctx);
+  drawBeaker(ctx);
+  drawMacroCue(ctx);
+  drawParticles(ctx);
+  drawThermometer(ctx);
+  drawLabels(ctx);
+}
+
+function drawHeater(ctx) {
+  const hx = BEAKER.x + 80, hy = 528, hw = 400, hh = 28;
+  roundRect(ctx, hx, hy, hw, hh, 8);
+  ctx.fillStyle = "#334155";
+  ctx.fill();
+  const heat = Math.max(0, Math.min(1, (temperature + 20) / 140));
+  if (heat > 0.25) {
+    for (let i = 0; i < 9; i++) {
+      const fx = hx + 30 + i * 40;
+      const fh = 10 + heat * 18 + Math.sin(tTime * 10 + i) * 4;
+      ctx.beginPath();
+      ctx.moveTo(fx - 6, hy);
+      ctx.quadraticCurveTo(fx, hy - fh, fx + 6, hy);
+      ctx.fillStyle = i % 2 ? "#FF5722" : "#FF9800";
+      ctx.globalAlpha = 0.35 + heat * 0.5;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "11px Inter";
+  ctx.fillText("HOT PLATE", hx + 160, hy + 19);
+}
+
+function drawBeaker(ctx) {
+  const { x, y, w, h, wall } = BEAKER;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x + 18, y);
+  ctx.lineTo(x + w - 18, y);
+  ctx.lineTo(x + w - 4, y + h);
+  ctx.lineTo(x + 4, y + h);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(148,163,184,0.08)";
+  ctx.fill();
+  ctx.lineWidth = wall;
+  ctx.strokeStyle = "#64748b";
+  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.18)";
+  ctx.beginPath();
+  ctx.moveTo(x + 28, y + 20);
+  ctx.lineTo(x + 40, y + h - 20);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMacroCue(ctx) {
+  const { x, y, w, h } = BEAKER;
+  const st = currentState();
+  if (st === "liquid" || (temperature > -2 && temperature < 100)) {
+    const level = 0.42 + Math.min(0.08, Math.max(0, temperature) / 800);
+    ctx.fillStyle = "rgba(0,188,212,0.12)";
+    ctx.fillRect(x + 22, y + h * (1 - level), w - 44, h * level - 16);
+  }
+  if (st === "gas" || temperature > 92) {
+    ctx.save();
+    ctx.globalAlpha = 0.15 + 0.2 * mixWeights().g;
+    for (let i = 0; i < 12; i++) {
+      const sx = x + 40 + (i * 41 + tTime * 30) % (w - 80);
+      const sy = y + 30 + (Math.sin(tTime * 2 + i) * 18);
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, 10, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function drawParticles(ctx) {
+  const heat = Math.max(0, temperature) / 120;
+  particles.forEach(p => {
+    const spd = Math.hypot(p.vx, p.vy);
+    const glow = Math.min(1, spd / 180) * heat;
+    const g = ctx.createRadialGradient(p.x - 3, p.y - 3, 2, p.x, p.y, PR);
+    g.addColorStop(0, "#67e8f9");
+    g.addColorStop(0.55, "#00BCD4");
+    g.addColorStop(1, glow > 0.45 ? "#FF9800" : "#0891b2");
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, PR, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.stroke();
+    if (showVectors && spd > 8) {
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + p.vx * 0.12, p.y + p.vy * 0.12);
+      ctx.strokeStyle = "#FF5722";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+}
+
+function drawThermometer(ctx) {
+  const x = 78, y = 110, h = 360;
+  roundRect(ctx, x, y, 28, h, 14);
+  ctx.fillStyle = "#0f172a";
+  ctx.fill();
+  ctx.strokeStyle = "#64748b";
+  ctx.stroke();
+  const frac = (temperature + 20) / 140;
+  const fillH = 40 + frac * (h - 70);
+  ctx.fillStyle = temperature < 0 ? "#2196F3" : temperature < 100 ? "#00BCD4" : "#FF5722";
+  roundRect(ctx, x + 8, y + h - fillH - 12, 12, fillH, 6);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + 14, y + h - 8, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "11px Share Tech Mono";
+  ctx.fillText("−20", x - 36, y + h - 8);
+  ctx.fillText("0", x - 22, y + h * 0.62);
+  ctx.fillText("100", x - 36, y + 48);
+}
+
+function drawLabels(ctx) {
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "bold 16px Inter";
+  ctx.fillText("H₂O  ·  30 particles  ·  r = const", 210, 72);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "12px Inter";
+  ctx.fillText("macro beaker  +  micro spheres (fixed size)", 210, 52);
+}
+
+/* ===== Loop / resize / input ===== */
+function resizeSim() {
+  const wrap = document.getElementById("sim-viewport");
+  const canvas = document.getElementById("simCanvas");
+  const rect = wrap.getBoundingClientRect();
+  const w = Math.max(320, Math.floor(rect.width));
+  const h = Math.max(320, Math.floor(rect.height));
+  canvas.width = w;
+  canvas.height = h;
+  if (!fCanvas) {
+    initAnnotationCanvas(w, h);
+    const fc = document.querySelector(".canvas-container");
+    if (fc) {
+      fc.style.pointerEvents = "none";
+      fc.style.position = "absolute";
+      fc.style.inset = "0";
+    }
+  } else {
+    fCanvas.setWidth(w);
+    fCanvas.setHeight(h);
+  }
+  fitView();
+}
+
+function loop(ts) {
+  const dt = Math.min(0.033, ((ts - lastTs) / 1000) || 0.016);
+  lastTs = ts;
+  if (playing) updateParticles(dt);
+  const ctx = document.getElementById("simCanvas").getContext("2d");
+  draw(ctx);
+  requestAnimationFrame(loop);
+}
+
+function setupPointer() {
+  const canvas = document.getElementById("simCanvas");
+  const wrap = document.getElementById("sim-viewport");
+
+  wrap.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    zoomBy(factor, e.clientX - rect.left, e.clientY - rect.top);
+  }, { passive: false });
+
+  canvas.addEventListener("pointerdown", (e) => {
+    if (isAnnoActive) return;
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1 && view.scale > view.fit * 1.02) {
+      panning = true;
+      panLast = { x: e.clientX, y: e.clientY };
+      canvas.classList.add("panning");
+    }
+  });
+  canvas.addEventListener("pointermove", (e) => {
+    if (isAnnoActive) return;
+    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (lastPinch) zoomBy(d / lastPinch);
+      lastPinch = d;
+      panning = false;
+      return;
+    }
+    if (panning) {
+      view.x += e.clientX - panLast.x;
+      view.y += e.clientY - panLast.y;
+      panLast = { x: e.clientX, y: e.clientY };
+    }
+  });
+  const up = (e) => {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) lastPinch = 0;
+    if (pointers.size === 0) {
+      panning = false;
+      canvas.classList.remove("panning");
+    }
+  };
+  canvas.addEventListener("pointerup", up);
+  canvas.addEventListener("pointercancel", up);
+}
+
+/* ===== Quiz ===== */
+function renderQuiz(resetLock) {
+  if (resetLock !== false) quizLocked = false;
+  const item = QUIZ[quizIndex];
+  document.getElementById("quiz-card").classList.remove("hidden");
+  document.getElementById("quiz-result").classList.add("hidden");
+  document.getElementById("quiz-progress").textContent = (quizIndex + 1) + " / 5";
+  document.getElementById("quiz-q").textContent = t(item.q);
+  const box = document.getElementById("quiz-opts");
+  box.innerHTML = "";
+  item.opts.forEach((key, i) => {
+    const b = document.createElement("button");
+    b.className = "quiz-opt w-full text-start px-4 py-3 rounded-xl border border-slate-600 bg-slate-900 text-slate-100";
+    b.textContent = t(key);
+    b.onclick = () => selectQuiz(i);
+    box.appendChild(b);
+  });
+  document.getElementById("quiz-explain").classList.add("hidden");
+  document.getElementById("quiz-next").classList.add("hidden");
+}
+
+function selectQuiz(i) {
+  if (quizLocked) return;
+  quizLocked = true;
+  const item = QUIZ[quizIndex];
+  const buttons = [...document.getElementById("quiz-opts").children];
+  buttons.forEach((b, idx) => {
+    b.classList.add("locked");
+    if (idx === item.ans) b.classList.add("correct");
+    if (idx === i && i !== item.ans) b.classList.add("wrong");
+  });
+  if (i === item.ans) quizScore++;
+  const ex = document.getElementById("quiz-explain");
+  ex.classList.remove("hidden");
+  ex.textContent = t(item.exp);
+  ex.className = "mt-4 p-4 rounded-xl border text-sm " + (i === item.ans
+    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-100"
+    : "border-red-500/40 bg-red-500/10 text-red-100");
+  const next = document.getElementById("quiz-next");
+  next.classList.remove("hidden");
+  document.getElementById("quiz-next-label").textContent = quizIndex === 4 ? t("seeResults") : t("nextQ");
+}
+
+function nextQuestion() {
+  if (quizIndex >= 4) {
+    showQuizResult();
+    return;
+  }
+  quizIndex++;
+  renderQuiz();
+}
+
+function showQuizResult() {
+  document.getElementById("quiz-card").classList.add("hidden");
+  document.getElementById("quiz-result").classList.remove("hidden");
+  document.getElementById("quiz-score").textContent = quizScore + "/5";
+  const pct = Math.round((quizScore / 5) * 100);
+  document.getElementById("quiz-pct").textContent = pct + "%";
+  document.getElementById("quiz-msg").textContent = quizScore >= 4 ? t("quizDone") : t("quizRetry");
+}
+
+function restartQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizLocked = false;
+  renderQuiz();
+}
+
+/* ===== Boot ===== */
+function bootIntro() {
+  const bar = document.getElementById("intro-bar");
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / 5000);
+    bar.style.width = (p * 100) + "%";
+    if (p < 1) requestAnimationFrame(tick);
+    else {
+      const intro = document.getElementById("intro-screen");
+      intro.style.opacity = "0";
+      intro.style.transition = "opacity 0.7s ease";
+      setTimeout(() => intro.remove(), 750);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+window.addEventListener("load", () => {
+  document.getElementById("lang-select").value = (lang === "ur") ? "ur" : "en";
+  initParticles();
+  applyLanguage();
+  refreshPills();
+  resizeSim();
+  setupPointer();
+  renderQuiz();
+  requestAnimationFrame(loop);
+  bootIntro();
+});
+window.addEventListener("resize", resizeSim);
+</script>
+</body>
+</html>
