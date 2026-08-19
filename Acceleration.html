@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if(window.top===window.self){
+document.documentElement.innerHTML="<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IQRA VIRTUAL LAB — Speed Change Lab</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oxanium:wght@500;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://fonts.cdnfonts.com/s/14880/Jameel%20Noori%20Nastaleeq.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+  touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Extended IQRA design language */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #020617;
+  color: #e2e8f0;
+  overflow: hidden;
+}
+.font-display { font-family: 'Oxanium', 'Inter', sans-serif; }
+.num { font-family: 'Oxanium', ui-monospace, monospace; letter-spacing: 0.02em; }
+
+body.lang-ur,
+body.lang-ur .i18n,
+body.lang-ur [data-i18n],
+body.lang-ur [data-i18n-html] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3;
+}
+body.lang-ur { font-size: 1.06em; }
+body.lang-ur .num,
+body.lang-ur .font-display#brand-lock {
+  font-family: 'Oxanium', 'Inter', sans-serif !important;
+  line-height: 1.2;
+}
+
+.bg-app {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(0, 243, 255, 0.08), transparent 50%),
+    radial-gradient(900px 400px at 100% 0%, rgba(34, 197, 94, 0.06), transparent 45%),
+    #020617;
+}
+
+#intro-screen {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0, 243, 255, 0.18), transparent 42%),
+    #020617;
+}
+.intro-title {
+  animation: introZoom 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  text-shadow: 0 0 28px rgba(0, 243, 255, 0.55);
+}
+.intro-topic {
+  animation: introFade 1.8s 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes introZoom {
+  0% { transform: scale(0.72); opacity: 0; filter: blur(10px); }
+  55% { transform: scale(1.06); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes introFade {
+  0% { opacity: 0; transform: translateY(14px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.45); }
+  50% { box-shadow: 0 0 0 18px rgba(0, 243, 255, 0); }
+}
+
+.tab-btn { border-bottom: 2px solid transparent; transition: 0.2s ease; }
+.tab-btn.active { color: #00f3ff; border-bottom-color: #00f3ff; }
+.scenario-chip.active { border-color: #00f3ff; color: #00f3ff; background: rgba(0, 243, 255, 0.12); }
+.cruise-on { border-color: #4ade80 !important; color: #4ade80 !important; box-shadow: 0 0 16px rgba(34, 197, 94, 0.35); }
+
+#sim-viewport { position: relative; }
+#sim-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+#sim-viewport .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 25;
+}
+#fabricLayer, #sim-viewport .upper-canvas, #sim-viewport .lower-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.zoom-btn {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #00f3ff;
+  display: flex; align-items: center; justify-content: center;
+}
+.zoom-btn:hover { background: #1e293b; }
+
+input[type=range].gas::-webkit-slider-thumb { background: #4CAF50; box-shadow: 0 0 10px #4CAF50; }
+input[type=range].brake::-webkit-slider-thumb { background: #FF5722; box-shadow: 0 0 10px #FF5722; }
+
+.quiz-opt { transition: 0.15s ease; }
+.quiz-opt.correct { background: rgba(34, 197, 94, 0.18); border-color: #22c55e; color: #86efac; }
+.quiz-opt.wrong { background: rgba(239, 68, 68, 0.18); border-color: #ef4444; color: #fca5a5; }
+
+.anno-float {
+  position: absolute;
+  z-index: 30;
+  right: 12px;
+  top: 56px;
+  width: 220px;
+  transition: max-height 0.28s ease, opacity 0.2s ease, width 0.28s ease, padding 0.28s ease;
+  overflow: hidden;
+}
+.anno-float.collapsed {
+  width: 44px;
+  padding: 6px !important;
+}
+.anno-float.collapsed .anno-body { display: none; }
+</style>
+</head>
+<body class="bg-app h-full">
+
+<div id="intro-screen" class="fixed inset-0 z-[80] flex flex-col items-center justify-center">
+  <div class="w-24 h-24 rounded-3xl bg-cyan-500/10 border border-cyan-400/40 text-cyan-400 flex items-center justify-center mb-6 glow-cyan" style="animation: pulseRing 2s infinite;">
+    <i class="fa-solid fa-gauge-high text-4xl"></i>
+  </div>
+  <h1 class="intro-title font-display text-4xl md:text-6xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-cyan-400">IQRA VIRTUAL LAB</h1>
+  <p class="intro-topic mt-5 text-lg md:text-2xl text-slate-300 font-semibold tracking-wide">Speed Change Lab: Master Acceleration</p>
+  <div class="mt-8 h-1 w-48 rounded-full bg-slate-800 overflow-hidden">
+    <div id="intro-bar" class="h-full bg-cyan-400 glow-cyan" style="width:0%; transition: width 4.6s linear;"></div>
+  </div>
+</div>
+
+<div id="app" class="h-full flex flex-col min-h-0 hidden">
+  <header class="glass-panel z-40 px-3 md:px-5 py-2.5 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-cyan-400 glow-cyan shrink-0">
+        <i class="fa-solid fa-car-side"></i>
+      </div>
+      <div class="min-w-0">
+        <h1 id="brand-lock" class="font-display text-base md:text-lg font-extrabold tracking-wide text-white leading-tight">IQRA VIRTUAL LAB</h1>
+        <p class="text-[11px] md:text-xs text-slate-400 truncate" data-i18n="topic_sub"></p>
+      </div>
+    </div>
+
+    <nav class="hidden sm:flex items-center gap-1 mx-2">
+      <button id="tab-sim" onclick="switchTab('sim')" class="tab-btn active px-4 py-2 font-bold text-sm text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i><span data-i18n="tab_sim"></span>
+      </button>
+      <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 py-2 font-bold text-sm text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-clipboard-question"></i><span data-i18n="tab_quiz"></span>
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Annotation Toolbar (Hidden by default) -->
+      <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+        <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+        <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+        <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+
+      <!-- Annotation Toggle Button -->
+      <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+        <i class="fa-solid fa-pen-nib"></i>
+      </button>
+
+      <!-- Language Selector -->
+      <div class="relative">
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+          <option value="en">🌐 English</option>
+          <option value="ur">🌐 اردو</option>
+          <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+          <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+          <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+        <i class="fa-solid fa-expand" id="fs-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="sm:hidden px-3 pt-2 shrink-0 flex gap-2">
+    <button onclick="switchTab('sim')" class="flex-1 tab-btn active glass-card rounded-xl py-2 font-bold text-sm" id="tab-sim-m"><i class="fa-solid fa-house mr-1"></i><span data-i18n="tab_sim"></span></button>
+    <button onclick="switchTab('quiz')" class="flex-1 tab-btn glass-card rounded-xl py-2 font-bold text-sm" id="tab-quiz-m"><i class="fa-solid fa-clipboard-question mr-1"></i><span data-i18n="tab_quiz"></span></button>
+  </div>
+
+  <main id="view-sim" class="flex-1 min-h-0 flex flex-col xl:flex-row gap-3 p-3 overflow-hidden">
+    <section class="flex-1 min-w-0 min-h-0 flex flex-col gap-3">
+      <div class="glass-card rounded-2xl px-3 py-2 flex flex-wrap items-center gap-2 md:gap-4">
+        <div class="flex items-baseline gap-2">
+          <span class="text-[11px] uppercase tracking-wider text-slate-400" data-i18n="live_u"></span>
+          <span class="num text-cyan-300 font-bold" id="hud-u">20.0 m/s</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-[11px] uppercase tracking-wider text-slate-400" data-i18n="live_v"></span>
+          <span class="num text-green-400 font-bold" id="hud-v">20.0 m/s</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-[11px] uppercase tracking-wider text-slate-400" data-i18n="live_t"></span>
+          <span class="num text-amber-300 font-bold" id="hud-t">0.00 s</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-[11px] uppercase tracking-wider text-slate-400" data-i18n="live_a"></span>
+          <span class="num text-orange-400 font-bold" id="hud-a">0.00 m/s²</span>
+        </div>
+        <div class="ms-auto font-display text-xs md:text-sm text-slate-200 bg-slate-900/70 border border-slate-700 rounded-lg px-3 py-1">
+          a = (v − u) / t
+        </div>
+      </div>
+
+      <div id="sim-stage" class="relative flex-1 min-h-[280px] glass-card rounded-2xl overflow-hidden">
+        <div id="sim-viewport" class="absolute inset-0">
+          <canvas id="sim-canvas"></canvas>
+          <canvas id="fabricLayer"></canvas>
+        </div>
+
+        <div class="absolute left-3 top-3 z-20 pointer-events-none">
+          <div class="glass-panel rounded-xl px-3 py-2 text-xs text-cyan-200 max-w-[280px]" id="hint-chip">
+            <i class="fa-solid fa-hand-pointer me-1"></i><span data-i18n="hint_observe"></span>
+          </div>
+        </div>
+
+        <div class="absolute z-20 flex flex-col gap-2" style="inset-inline-end:12px; bottom:12px;">
+          <button class="zoom-btn" onclick="zoomBy(1.2)" title="+"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" onclick="zoomBy(1/1.2)" title="−"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" onclick="resetView()" title="Reset"><i class="fa-solid fa-crosshairs"></i></button>
+        </div>
+
+        <div id="anno-float" class="anno-float glass-panel rounded-2xl p-3 collapsed">
+          <div class="flex items-center justify-between">
+            <button onclick="toggleAnnoFloat()" class="w-8 h-8 rounded-lg bg-slate-800 text-cyan-400 flex items-center justify-center border border-slate-700" title="Annotation">
+              <i class="fa-solid fa-pen-nib"></i>
+            </button>
+            <button onclick="toggleAnnoFloat()" class="anno-body text-slate-400 hover:text-white px-2">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+          </div>
+          <div class="anno-body mt-3 space-y-2">
+            <p class="text-xs text-slate-400" data-i18n="anno_float_hint"></p>
+            <div class="flex items-center gap-2">
+              <button onclick="setAnnoMode('pen'); if(!isAnnoActive) toggleAnnotationMode();" class="flex-1 py-2 rounded-lg bg-slate-800 text-cyan-400 text-xs font-bold"><i class="fa-solid fa-pen me-1"></i><span data-i18n="anno_pen"></span></button>
+              <button onclick="setAnnoMode('eraser'); if(!isAnnoActive) toggleAnnotationMode();" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold"><i class="fa-solid fa-eraser me-1"></i><span data-i18n="anno_eraser"></span></button>
+            </div>
+            <input type="color" value="#00f3ff" onchange="changeAnnoColor(this.value); document.getElementById('anno-color').value=this.value;" class="w-full h-8 bg-transparent cursor-pointer">
+            <button onclick="clearAnnotations()" class="w-full py-2 rounded-lg bg-red-500/15 text-red-400 text-xs font-bold border border-red-500/30"><i class="fa-solid fa-trash-can me-1"></i><span data-i18n="anno_clear"></span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-3 md:p-4 shrink-0">
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button class="scenario-chip active px-3 py-2 rounded-xl border border-slate-600 text-xs md:text-sm font-bold" data-scene="cruise" onclick="applyScene('cruise')"><span data-i18n="sc_cruise"></span></button>
+          <button class="scenario-chip px-3 py-2 rounded-xl border border-slate-600 text-xs md:text-sm font-bold" data-scene="gas" onclick="applyScene('gas')"><span data-i18n="sc_gas"></span></button>
+          <button class="scenario-chip px-3 py-2 rounded-xl border border-slate-600 text-xs md:text-sm font-bold" data-scene="brake" onclick="applyScene('brake')"><span data-i18n="sc_brake"></span></button>
+          <button class="scenario-chip px-3 py-2 rounded-xl border border-slate-600 text-xs md:text-sm font-bold" data-scene="rest" onclick="applyScene('rest')"><span data-i18n="sc_rest"></span></button>
+          <button class="scenario-chip px-3 py-2 rounded-xl border border-slate-600 text-xs md:text-sm font-bold" data-scene="fast" onclick="applyScene('fast')"><span data-i18n="sc_fast"></span></button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+          <div class="md:col-span-3">
+            <div class="flex justify-between mb-1">
+              <label class="text-xs font-bold text-slate-300" data-i18n="ctrl_u"></label>
+              <span class="num text-cyan-300 text-sm" id="val-u">20 m/s</span>
+            </div>
+            <input type="range" id="sl-u" min="0" max="40" step="1" value="20" oninput="onUSlider()">
+          </div>
+          <div class="md:col-span-3">
+            <div class="flex justify-between mb-1">
+              <label class="text-xs font-bold text-green-400" data-i18n="ctrl_gas"></label>
+              <span class="num text-green-400 text-sm" id="val-gas">0 m/s²</span>
+            </div>
+            <input type="range" id="sl-gas" class="gas" min="0" max="5" step="0.1" value="0" oninput="onGas()">
+          </div>
+          <div class="md:col-span-3">
+            <div class="flex justify-between mb-1">
+              <label class="text-xs font-bold text-orange-400" data-i18n="ctrl_brake"></label>
+              <span class="num text-orange-400 text-sm" id="val-brake">0 m/s²</span>
+            </div>
+            <input type="range" id="sl-brake" class="brake" min="0" max="5" step="0.1" value="0" oninput="onBrake()">
+          </div>
+          <div class="md:col-span-3 flex flex-wrap gap-2">
+            <button id="btn-cruise" onclick="setCruise()" class="flex-1 min-w-[110px] py-2.5 rounded-xl bg-slate-800 border border-slate-600 text-sm font-bold">
+              <i class="fa-solid fa-gauge me-1"></i><span data-i18n="btn_cruise"></span>
+            </button>
+            <button id="btn-play" onclick="togglePlay()" class="flex-1 min-w-[90px] py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-sm font-bold glow-cyan">
+              <i class="fa-solid fa-play me-1" id="play-icon"></i><span id="play-label" data-i18n="btn_play"></span>
+            </button>
+            <button onclick="resetSim()" class="w-12 py-2.5 rounded-xl bg-slate-800 border border-slate-600 text-slate-200">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="w-full xl:w-[340px] shrink-0 flex flex-col gap-3 overflow-y-auto min-h-0">
+      <div class="glass-card rounded-2xl p-4">
+        <h2 class="font-display text-sm font-bold text-cyan-400 mb-3 flex items-center gap-2"><i class="fa-solid fa-layer-group"></i><span data-i18n="stack_title"></span></h2>
+        <p class="text-xs text-slate-400 mb-3" data-i18n="stack_help"></p>
+        <div id="velocity-stack" class="flex items-end gap-1 h-24 px-1"></div>
+        <div class="mt-2 flex justify-between text-[11px] text-slate-500">
+          <span data-i18n="stack_low"></span>
+          <span class="num" id="stack-v">v = 20 m/s</span>
+          <span data-i18n="stack_high"></span>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 space-y-2">
+        <h2 class="font-display text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-microscope"></i><span data-i18n="obs_title"></span></h2>
+        <div class="flex justify-between text-sm border-b border-slate-700/50 pb-2"><span class="text-slate-400" data-i18n="obs_pattern"></span><span id="obs-pattern" class="font-bold text-end"></span></div>
+        <div class="flex justify-between text-sm border-b border-slate-700/50 pb-2"><span class="text-slate-400" data-i18n="obs_dv"></span><span id="obs-dv" class="num text-amber-300">0.0 m/s</span></div>
+        <div class="flex justify-between text-sm border-b border-slate-700/50 pb-2"><span class="text-slate-400" data-i18n="obs_sign"></span><span id="obs-sign" class="font-bold text-end"></span></div>
+        <div class="glass-panel rounded-xl px-3 py-2 text-sm" id="obs-msg"></div>
+      </div>
+      <div class="glass-card rounded-2xl p-4">
+        <h2 class="font-display text-sm font-bold text-green-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i><span data-i18n="tip_title"></span></h2>
+        <p class="text-sm text-slate-300" id="tip-text"></p>
+      </div>
+      <div class="glass-card rounded-2xl p-4">
+        <h2 class="font-display text-sm font-bold text-slate-200 mb-3 flex items-center gap-2"><i class="fa-solid fa-grip-lines"></i><span data-i18n="compare_title"></span></h2>
+        <canvas id="compare-canvas" class="w-full rounded-xl bg-slate-950/70 border border-slate-800" height="150"></canvas>
+      </div>
+    </aside>
+  </main>
+
+  <main id="view-quiz" class="flex-1 min-h-0 overflow-y-auto p-4 hidden">
+    <div class="max-w-3xl mx-auto">
+      <div id="quiz-box" class="glass-card rounded-2xl p-6 md:p-8"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+if (window.top === window.self) {
+  window.__denied = true;
+  document.documentElement.innerHTML = "<h1 style='color:red;text-align:center;margin-top:50px;font-family:sans-serif;'>Access Denied! Please open this lesson through the Smart Panel App.</h1>";
+  throw new Error('Access denied: top-level load blocked');
+}
+
+const LANG = {
+  en: {
+    topic_sub: "Speed Change Lab · Master Acceleration",
+    tab_sim: "Simulation",
+    tab_quiz: "Quiz",
+    live_u: "u",
+    live_v: "v",
+    live_t: "t",
+    live_a: "a",
+    hint_observe: "Watch ticker dots every 1 s. Equal gaps mean zero acceleration.",
+    anno_float_hint: "Draw over the track. Collapse this card to free the view.",
+    anno_pen: "Pen",
+    anno_eraser: "Eraser",
+    anno_clear: "Clear all",
+    sc_cruise: "Constant v",
+    sc_gas: "Speed up",
+    sc_brake: "Slow down",
+    sc_rest: "Start from rest",
+    sc_fast: "Fast cruise",
+    ctrl_u: "Initial velocity u",
+    ctrl_gas: "Gas pedal  a > 0",
+    ctrl_brake: "Brake  a < 0",
+    btn_cruise: "Cruise a = 0",
+    btn_play: "Play",
+    btn_pause: "Pause",
+    stack_title: "Velocity stacker",
+    stack_help: "Each block is a slice of velocity. Acceleration is the machine adding or removing blocks every second.",
+    stack_low: "slow",
+    stack_high: "fast",
+    obs_title: "Live observation",
+    obs_pattern: "Ticker pattern",
+    obs_dv: "Δv each 1 s",
+    obs_sign: "Acceleration sign",
+    tip_title: "Discover",
+    compare_title: "Three tapes, one idea",
+    pattern_equal: "Equal gaps",
+    pattern_expand: "Gaps growing",
+    pattern_shrink: "Gaps shrinking",
+    pattern_none: "Waiting for dots…",
+    sign_zero: "Zero  (a = 0)",
+    sign_pos: "Positive  (speeding up)",
+    sign_neg: "Negative  (slowing down)",
+    obs_zero: "High speed is not acceleration. If v stays the same, a = 0 m/s².",
+    obs_pos: "Forward acceleration: velocity stack grows and orange arrow points with motion.",
+    obs_neg: "Negative acceleration (deceleration): red arrow points opposite to velocity.",
+    obs_rest: "v can be 0 m/s while a is not zero — the car is just starting to change velocity.",
+    tip_cruise: "Keep cruise on. The green velocity arrow stays the same length. The acceleration arrow vanishes.",
+    tip_gas: "Press gas. Watch consecutive oil-drop gaps expand. That expanding pattern is acceleration you can see.",
+    tip_brake: "Brake. Velocity shrinks and the acceleration arrow points backward. Deceleration is still acceleration.",
+    tip_rest: "Start at rest, then give a push. At t = 0, v = 0 but a > 0. Zero velocity is not zero acceleration.",
+    tip_fast: "A car at 100 m/s with cruise control still has a = 0. Fast is not the same as accelerating.",
+    cmp_zero: "a = 0",
+    cmp_pos: "a > 0",
+    cmp_neg: "a < 0",
+    quiz_title: "Concept check",
+    quiz_q: "Question",
+    quiz_next: "Next",
+    quiz_restart: "Restart quiz",
+    quiz_score: "Final score",
+    quiz_explain: "Why",
+    quiz: [
+      {
+        q: "A car moves at a steady 100 m/s on cruise control. What is its acceleration?",
+        opts: ["100 m/s²", "Very high, because the car is very fast", "0 m/s²", "10 m/s²"],
+        ans: 2,
+        why: "Acceleration is the rate of change of velocity. If velocity does not change, a = 0 m/s² — even at 100 m/s."
+      },
+      {
+        q: "A car is braking and slowing down. Which statement is scientifically correct?",
+        opts: ["There is no acceleration because it is not speeding up", "Acceleration is negative (opposite to the velocity vector)", "Velocity must already be zero", "Acceleration cannot have a direction"],
+        ans: 1,
+        why: "Slowing down is negative acceleration (deceleration): the acceleration vector points opposite to velocity."
+      },
+      {
+        q: "A car starts from rest (u = 0) and the engine produces forward acceleration. At that first instant:",
+        opts: ["Both v and a are zero", "v = 0 but a > 0", "v > 0 and a = 0", "a is undefined because v is zero"],
+        ans: 1,
+        why: "Velocity can be zero while acceleration is not. The car is at rest only for an instant; velocity is already changing."
+      },
+      {
+        q: "A bullet train travels at a steady 300 km/h for 10 minutes. What is its acceleration?",
+        opts: ["Very high", "Zero", "Negative", "300 m/s²"],
+        ans: 1,
+        why: "Steady speed means Δv = 0, so a = (v − u)/t = 0. Duration and size of speed do not create acceleration by themselves."
+      },
+      {
+        q: "On ticker tape, dots are equally spaced every 1 s. What does this pattern show?",
+        opts: ["Acceleration is increasing", "Velocity is zero", "Acceleration is zero (constant velocity)", "The car is braking"],
+        ans: 2,
+        why: "Equal gaps mean equal distances in equal times — constant velocity — so a = 0 m/s²."
+      }
+    ]
+  },
+  ur: {
+    topic_sub: "اسراع لیب · رفتار کی تبدیلی سمجھو",
+    tab_sim: "تجربہ گاہ",
+    tab_quiz: "سوالات",
+    live_u: "u",
+    live_v: "v",
+    live_t: "t",
+    live_a: "a",
+    hint_observe: "ہر 1 s پر نقطے دیکھو۔ برابر فاصلے یعنی صفر اسراع۔",
+    anno_float_hint: "پٹی پر نشان لگاؤ۔ منظر کھولنے کے لیے کارڈ سکیڑو۔",
+    anno_pen: "قلم",
+    anno_eraser: "مسّاح",
+    anno_clear: "سب مٹاؤ",
+    sc_cruise: "یکساں سمتار",
+    sc_gas: "تیز ہونا",
+    sc_brake: "آہستہ ہونا",
+    sc_rest: "سکون سے آغاز",
+    sc_fast: "تیز کروز",
+    ctrl_u: "ابتدائی سمتار u",
+    ctrl_gas: "ایکسلیریٹر  a > 0",
+    ctrl_brake: "بریک  a < 0",
+    btn_cruise: "کروز a = 0",
+    btn_play: "چلاؤ",
+    btn_pause: "روکو",
+    stack_title: "سمتار اسٹیکر",
+    stack_help: "ہر بلاک سمتار کا ٹکڑا ہے۔ اسراع وہ مشین ہے جو ہر سیکنڈ بلاک جوڑتی یا ہٹاتی ہے۔",
+    stack_low: "آہستہ",
+    stack_high: "تیز",
+    obs_title: "براہِ راست مشاہدہ",
+    obs_pattern: "ٹکر پیٹرن",
+    obs_dv: "ہر 1 s میں Δv",
+    obs_sign: "اسراع کی علامت",
+    tip_title: "دریافت",
+    compare_title: "تین ٹیپ، ایک تصور",
+    pattern_equal: "برابر وقفے",
+    pattern_expand: "وقفے بڑھ رہے",
+    pattern_shrink: "وقفے سکڑ رہے",
+    pattern_none: "نقطوں کا انتظار…",
+    sign_zero: "صفر  (a = 0)",
+    sign_pos: "ثبت  (تیز ہو رہا)",
+    sign_neg: "منفی  (آہستہ ہو رہا)",
+    obs_zero: "زیادہ رفتار اسراع نہیں۔ اگر v نہ بدلے تو a = 0 m/s²۔",
+    obs_pos: "آگے اسراع: سمتار کا ڈھیر بڑھتا ہے اور نارنجی تیر حرکت کی سمت میں ہے۔",
+    obs_neg: "منفی اسراع: سرخ تیر سمتار کے الٹ ہے۔ آہستہ ہونا بھی اسراع ہے۔",
+    obs_rest: "v = 0 m/s ہو سکتا ہے جبکہ a صفر نہ ہو — گاڑی ابھی سمتار بدلنا شروع کر رہی ہے۔",
+    tip_cruise: "کروز آن رکھو۔ سبز تیر کی لمبائی نہ بدلے گی۔ اسراع کا تیر غائب رہے گا۔",
+    tip_gas: "گیس دباؤ۔ تیل کے قطرے پھیلتے فاصلوں پر گریں گے۔ یہ پھیلاؤ نظر آنے والا اسراع ہے۔",
+    tip_brake: "بریک لگاؤ۔ سمتار گھٹے گا اور اسراع کا تیر پیچھے ہوگا۔",
+    tip_rest: "سکون سے شروع کرو، پھر دھکا دو۔ t = 0 پر v = 0 مگر a > 0۔",
+    tip_fast: "100 m/s پر کروز کے باوجود a = 0۔ تیز ہونا اسراع کے برابر نہیں۔",
+    cmp_zero: "a = 0",
+    cmp_pos: "a > 0",
+    cmp_neg: "a < 0",
+    quiz_title: "تصوری پرکھ",
+    quiz_q: "سوال",
+    quiz_next: "اگلا",
+    quiz_restart: "دوبارہ شروع",
+    quiz_score: "حتمی اسکور",
+    quiz_explain: "وجہ",
+    quiz: [
+      {
+        q: "ایک گاڑی کروز کنٹرول پر مستقل 100 m/s سے چل رہی ہے۔ اس کا اسراع کیا ہے؟",
+        opts: ["100 m/s²", "بہت زیادہ، کیونکہ گاڑی بہت تیز ہے", "0 m/s²", "10 m/s²"],
+        ans: 2,
+        why: "اسراع سمتار کی تبدیلی کی شرح ہے۔ اگر سمتار نہ بدلے تو a = 0 m/s² — چاہے رفتار 100 m/s ہو۔"
+      },
+      {
+        q: "گاڑی بریک لگا کر آہستہ ہو رہی ہے۔ سائنسی طور پر درست بیان کون سا ہے؟",
+        opts: ["اسراع نہیں کیونکہ تیز نہیں ہو رہی", "اسراع منفی ہے (سمتار کے سمتی تیر کے الٹ)", "سمتار پہلے ہی صفر ہے", "اسراع کی سمت نہیں ہو سکتی"],
+        ans: 1,
+        why: "آہستہ ہونا منفی اسراع ہے: اسراع کا تیر سمتار کے الٹ ہوتا ہے۔"
+      },
+      {
+        q: "گاڑی سکون سے شروع ہوتی ہے (u = 0) اور انجن آگے اسراع دیتا ہے۔ پہلے لمحے پر:",
+        opts: ["v اور a دونوں صفر ہیں", "v = 0 مگر a > 0", "v > 0 اور a = 0", "چونکہ v صفر ہے اس لیے a غیر معین ہے"],
+        ans: 1,
+        why: "سمتار صفر ہو سکتا ہے جبکہ اسراع صفر نہ ہو۔ گاڑی صرف ایک لمحے کے لیے ساکن ہے، سمتار پہلے سے بدل رہا ہے۔"
+      },
+      {
+        q: "ایک تیز ریل مستقل 300 km/h سے 10 منٹ چلتی ہے۔ اس کا اسراع کیا ہے؟",
+        opts: ["بہت زیادہ", "صفر", "منفی", "300 m/s²"],
+        ans: 1,
+        why: "یکساں رفتار یعنی Δv = 0، لہٰذا a = (v − u)/t = 0۔ لمبا وقت یا بڑی رفتار خود اسراع نہیں بناتے۔"
+      },
+      {
+        q: "ٹکر ٹیپ پر ہر 1 s کے نقطے برابر فاصلے پر ہیں۔ یہ پیٹرن کیا بتاتا ہے؟",
+        opts: ["اسراع بڑھ رہا ہے", "سمتار صفر ہے", "اسراع صفر ہے (یکساں سمتار)", "گاڑی بریک لگا رہی ہے"],
+        ans: 2,
+        why: "برابر وقفے یعنی برابر وقت میں برابر فاصلہ — یکساں سمتار — اس لیے a = 0 m/s²۔"
+      }
+    ]
+  }
+};
+
+let currentLang = localStorage.getItem('iqra-vl-lang') || 'en';
+const t = (k) => (LANG[currentLang] && LANG[currentLang][k] != null) ? LANG[currentLang][k] : (LANG.en[k] ?? k);
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+    el.setAttribute('dir', currentLang === 'ur' ? 'rtl' : 'ltr');
+  });
+  document.body.classList.toggle('lang-ur', currentLang === 'ur');
+  document.documentElement.lang = currentLang === 'ur' ? 'ur' : 'en';
+  const play = document.getElementById('play-label');
+  if (play) play.textContent = sim.running ? t('btn_pause') : t('btn_play');
+  updateObservations();
+  if (document.getElementById('view-quiz') && !document.getElementById('view-quiz').classList.contains('hidden')) renderQuiz();
+}
+
+function changeLanguage(lang) {
+  if (lang !== 'en' && lang !== 'ur') return;
+  currentLang = lang;
+  localStorage.setItem('iqra-vl-lang', lang);
+  applyI18n();
+}
+
+function switchTab(name) {
+  const simV = document.getElementById('view-sim');
+  const quizV = document.getElementById('view-quiz');
+  simV.classList.toggle('hidden', name !== 'sim');
+  quizV.classList.toggle('hidden', name !== 'quiz');
+  ['tab-sim','tab-quiz','tab-sim-m','tab-quiz-m'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const on = (name === 'sim' && id.includes('sim')) || (name === 'quiz' && id.includes('quiz'));
+    el.classList.toggle('active', on);
+  });
+  if (name === 'quiz') renderQuiz();
+  if (name === 'sim') requestAnimationFrame(resizeAll);
+}
+
+function toggleFullScreen() {
+  const icon = document.getElementById('fs-icon');
+  const root = document.documentElement;
+  if (!document.fullscreenElement) {
+    (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+    if (icon) icon.classList.replace('fa-expand', 'fa-compress');
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    if (icon) icon.classList.replace('fa-compress', 'fa-expand');
+  }
+}
+
+/* ===================== ANNOTATION (exact logic) ===================== */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+  fCanvas = new fabric.Canvas('fabricLayer', {
+    isDrawingMode: false,
+    width: w,
+    height: h
+  });
+  fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+  fCanvas.freeDrawingBrush.width = 4;
+  fCanvas.on('mouse:down', function(options) {
+    if (isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+      fCanvas.remove(options.target);
+    }
+  });
+}
+
+function toggleAnnotationMode() {
+  isAnnoActive = !isAnnoActive;
+  const btn = document.getElementById('btn-anno-toggle');
+  const toolbar = document.getElementById('anno-toolbar');
+  const fabricContainer = document.querySelector('.canvas-container');
+
+  if (isAnnoActive) {
+    btn.classList.replace('text-slate-400', 'text-cyan-400');
+    toolbar.classList.remove('max-w-0', 'opacity-0');
+    toolbar.classList.add('max-w-xs', 'opacity-100');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+    setAnnoMode('pen');
+  } else {
+    btn.classList.replace('text-cyan-400', 'text-slate-400');
+    toolbar.classList.remove('max-w-xs', 'opacity-100');
+    toolbar.classList.add('max-w-0', 'opacity-0');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function setAnnoMode(mode) {
+  document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+  document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+  if (mode === 'pen') {
+    document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = true;
+  } else {
+    document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+    if (fCanvas) fCanvas.isDrawingMode = false;
+  }
+}
+
+function changeAnnoColor(color) {
+  if (fCanvas) fCanvas.freeDrawingBrush.color = color;
+  setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+  if (fCanvas) fCanvas.clear();
+}
+
+function toggleAnnoFloat() {
+  document.getElementById('anno-float').classList.toggle('collapsed');
+}
+
+/* ===================== SIMULATION ===================== */
+const sim = {
+  u0: 20,
+  a: 0,
+  t: 0,
+  x: 0,
+  v: 20,
+  running: false,
+  lastTs: 0,
+  dots: [],
+  nextDotT: 0,
+  scene: 'cruise',
+  follow: true
+};
+
+const cam = { scale: 1, panX: 0, panY: 0, ppm: 8 };
+
+function currentA() {
+  const g = +document.getElementById('sl-gas').value;
+  const b = +document.getElementById('sl-brake').value;
+  return g > 0 ? g : (b > 0 ? -b : 0);
+}
+
+function syncAccelUI() {
+  const g = document.getElementById('sl-gas');
+  const b = document.getElementById('sl-brake');
+  document.getElementById('val-gas').textContent = (+g.value).toFixed(1) + ' m/s²';
+  document.getElementById('val-brake').textContent = (+b.value).toFixed(1) + ' m/s²';
+  document.getElementById('btn-cruise').classList.toggle('cruise-on', currentA() === 0);
+  sim.a = currentA();
+}
+
+function onGas() {
+  document.getElementById('sl-brake').value = 0;
+  syncAccelUI();
+  markSceneFromAccel();
+}
+function onBrake() {
+  document.getElementById('sl-gas').value = 0;
+  syncAccelUI();
+  markSceneFromAccel();
+}
+function setCruise() {
+  document.getElementById('sl-gas').value = 0;
+  document.getElementById('sl-brake').value = 0;
+  syncAccelUI();
+  setSceneChip('cruise');
+  document.getElementById('tip-text').textContent = t('tip_cruise');
+}
+function onUSlider() {
+  sim.u0 = +document.getElementById('sl-u').value;
+  document.getElementById('val-u').textContent = sim.u0 + ' m/s';
+  if (!sim.running && sim.t === 0) {
+    sim.v = sim.u0;
+    updateHUD();
+  }
+}
+
+function setSceneChip(name) {
+  sim.scene = name;
+  document.querySelectorAll('.scenario-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-scene') === name);
+  });
+}
+function markSceneFromAccel() {
+  const a = currentA();
+  if (a > 0.05) { setSceneChip('gas'); document.getElementById('tip-text').textContent = t('tip_gas'); }
+  else if (a < -0.05) { setSceneChip('brake'); document.getElementById('tip-text').textContent = t('tip_brake'); }
+  else { setSceneChip('cruise'); document.getElementById('tip-text').textContent = t('tip_cruise'); }
+}
+
+function applyScene(name) {
+  setSceneChip(name);
+  resetSim(false);
+  const u = document.getElementById('sl-u');
+  const g = document.getElementById('sl-gas');
+  const b = document.getElementById('sl-brake');
+  if (name === 'cruise') { u.value = 20; g.value = 0; b.value = 0; document.getElementById('tip-text').textContent = t('tip_cruise'); }
+  if (name === 'gas') { u.value = 8; g.value = 2.5; b.value = 0; document.getElementById('tip-text').textContent = t('tip_gas'); }
+  if (name === 'brake') { u.value = 28; g.value = 0; b.value = 3; document.getElementById('tip-text').textContent = t('tip_brake'); }
+  if (name === 'rest') { u.value = 0; g.value = 3; b.value = 0; document.getElementById('tip-text').textContent = t('tip_rest'); }
+  if (name === 'fast') { u.value = 40; g.value = 0; b.value = 0; document.getElementById('tip-text').textContent = t('tip_fast'); }
+  sim.u0 = +u.value;
+  document.getElementById('val-u').textContent = sim.u0 + ' m/s';
+  syncAccelUI();
+  sim.v = sim.u0;
+  sim.running = true;
+  setPlayLabel();
+}
+
+function setPlayLabel() {
+  const icon = document.getElementById('play-icon');
+  const lab = document.getElementById('play-label');
+  if (sim.running) {
+    icon.classList.replace('fa-play', 'fa-pause');
+    lab.textContent = t('btn_pause');
+  } else {
+    icon.classList.replace('fa-pause', 'fa-play');
+    lab.textContent = t('btn_play');
+  }
+}
+
+function togglePlay() {
+  sim.running = !sim.running;
+  sim.lastTs = 0;
+  setPlayLabel();
+}
+
+function resetSim(keepScene) {
+  sim.t = 0;
+  sim.x = 0;
+  sim.u0 = +document.getElementById('sl-u').value;
+  sim.a = currentA();
+  sim.v = sim.u0;
+  sim.dots = [{ t: 0, x: 0, v: sim.v }];
+  sim.nextDotT = 1;
+  sim.lastTs = 0;
+  sim.running = false;
+  cam.panX = 0;
+  setPlayLabel();
+  updateHUD();
+}
+
+function stepSim(dt) {
+  const a = currentA();
+  sim.a = a;
+  let v1 = sim.v + a * dt;
+  if (v1 < 0 && a < 0) {
+    const tStop = sim.v / Math.max(1e-6, -a);
+    if (dt > tStop) {
+      sim.x += sim.v * tStop + 0.5 * a * tStop * tStop;
+      sim.t += tStop;
+      sim.v = 0;
+      maybeDropDots();
+      return;
+    }
+  }
+  sim.x += sim.v * dt + 0.5 * a * dt * dt;
+  sim.v = v1;
+  sim.t += dt;
+  maybeDropDots();
+}
+
+function maybeDropDots() {
+  while (sim.t >= sim.nextDotT) {
+    const tDot = sim.nextDotT;
+    const dtb = sim.t - tDot;
+    const vThen = sim.v - sim.a * dtb;
+    const xThen = sim.x - vThen * dtb - 0.5 * sim.a * dtb * dtb;
+    sim.dots.push({ t: tDot, x: xThen, v: vThen });
+    if (sim.dots.length > 48) sim.dots.shift();
+    sim.nextDotT += 1;
+  }
+}
+
+function updateHUD() {
+  document.getElementById('hud-u').textContent = sim.u0.toFixed(1) + ' m/s';
+  document.getElementById('hud-v').textContent = sim.v.toFixed(1) + ' m/s';
+  document.getElementById('hud-t').textContent = sim.t.toFixed(2) + ' s';
+  document.getElementById('hud-a').textContent = sim.a.toFixed(2) + ' m/s²';
+  const hudA = document.getElementById('hud-a');
+  hudA.className = 'num font-bold ' + (sim.a > 0.05 ? 'text-orange-400' : sim.a < -0.05 ? 'text-red-400' : 'text-slate-300');
+  updateObservations();
+  drawStack();
+}
+
+function updateObservations() {
+  const gaps = [];
+  for (let i = 1; i < sim.dots.length; i++) gaps.push(sim.dots[i].x - sim.dots[i - 1].x);
+  let pattern = t('pattern_none');
+  if (gaps.length >= 2) {
+    const d0 = gaps[gaps.length - 2];
+    const d1 = gaps[gaps.length - 1];
+    if (Math.abs(d1 - d0) < 0.35) pattern = t('pattern_equal');
+    else if (d1 > d0) pattern = t('pattern_expand');
+    else pattern = t('pattern_shrink');
+  }
+  const elP = document.getElementById('obs-pattern');
+  if (!elP) return;
+  elP.textContent = pattern;
+  document.getElementById('obs-dv').textContent = (sim.a * 1).toFixed(1) + ' m/s';
+  const sign = sim.a > 0.05 ? t('sign_pos') : sim.a < -0.05 ? t('sign_neg') : t('sign_zero');
+  document.getElementById('obs-sign').textContent = sign;
+  let msg = t('obs_zero');
+  if (sim.a > 0.05 && sim.v < 0.2) msg = t('obs_rest');
+  else if (sim.a > 0.05) msg = t('obs_pos');
+  else if (sim.a < -0.05) msg = t('obs_neg');
+  document.getElementById('obs-msg').textContent = msg;
+  document.getElementById('obs-pattern').setAttribute('dir', currentLang === 'ur' ? 'rtl' : 'ltr');
+  document.getElementById('obs-sign').setAttribute('dir', currentLang === 'ur' ? 'rtl' : 'ltr');
+  document.getElementById('obs-msg').setAttribute('dir', currentLang === 'ur' ? 'rtl' : 'ltr');
+  const tip = document.getElementById('tip-text');
+  if (tip && !tip.textContent) tip.textContent = t('tip_cruise');
+  tip.setAttribute('dir', currentLang === 'ur' ? 'rtl' : 'ltr');
+}
+
+function drawStack() {
+  const wrap = document.getElementById('velocity-stack');
+  const n = Math.max(0, Math.min(20, Math.round(Math.abs(sim.v) / 2)));
+  wrap.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const b = document.createElement('div');
+    b.className = 'flex-1 rounded-t-md transition-all';
+    const on = i < n;
+    const h = 18 + i * 3;
+    b.style.height = on ? h + 'px' : '8px';
+    b.style.background = on ? (sim.a < -0.05 ? '#FF5722' : '#4CAF50') : '#1e293b';
+    wrap.appendChild(b);
+  }
+  document.getElementById('stack-v').textContent = 'v = ' + sim.v.toFixed(1) + ' m/s';
+}
+
+/* zoom / pan */
+function worldToScreen(x, y, canvas) {
+  const followX = sim.follow ? sim.x * cam.ppm * cam.scale - canvas.width * 0.28 : 0;
+  return {
+    x: x * cam.ppm * cam.scale - followX + cam.panX,
+    y: y
+  };
+}
+
+function zoomBy(f) {
+  cam.scale = Math.max(0.45, Math.min(2.8, cam.scale * f));
+}
+function resetView() {
+  cam.scale = fitScale();
+  cam.panX = 0;
+  cam.panY = 0;
+}
+function fitScale() {
+  const c = document.getElementById('sim-canvas');
+  if (!c.width) return 1;
+  return Math.max(0.55, Math.min(1.15, c.width / (90 * cam.ppm)));
+}
+
+let dragging = false, lastMX = 0, lastMY = 0, pointers = new Map(), pinchD = 0;
+
+function bindViewGestures() {
+  const canvas = document.getElementById('sim-canvas');
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12);
+  }, { passive: false });
+  canvas.addEventListener('pointerdown', (e) => {
+    if (isAnnoActive) return;
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1) { dragging = true; lastMX = e.clientX; lastMY = e.clientY; }
+    if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      pinchD = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    }
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (isAnnoActive) return;
+    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (pinchD > 0) zoomBy(d / pinchD);
+      pinchD = d;
+      return;
+    }
+    if (!dragging) return;
+    cam.panX += e.clientX - lastMX;
+    lastMX = e.clientX;
+    lastMY = e.clientY;
+  });
+  const up = (e) => { pointers.delete(e.pointerId); if (pointers.size < 1) dragging = false; };
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', up);
+}
+
+function drawCar(ctx, sx, sy, v, a) {
+  ctx.save();
+  ctx.translate(sx, sy);
+  if (v < -0.05) ctx.scale(-1, 1);
+  ctx.fillStyle = '#1565C0';
+  roundRect(ctx, -34, -22, 68, 22, 6);
+  ctx.fill();
+  ctx.fillStyle = '#2196F3';
+  roundRect(ctx, -18, -36, 36, 16, 6);
+  ctx.fill();
+  ctx.fillStyle = '#0ea5e9';
+  ctx.fillRect(-12, -32, 12, 8);
+  ctx.fillRect(2, -32, 12, 8);
+  ctx.fillStyle = '#111827';
+  ctx.beginPath(); ctx.arc(-20, 2, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(20, 2, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(-20, 2, 4, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(20, 2, 4, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+
+  const vLen = Math.max(16, Math.min(90, Math.abs(v) * 2.2));
+  if (Math.abs(v) > 0.15) {
+    drawArrow(ctx, sx, sy - 52, sx + Math.sign(v || 1) * vLen, sy - 52, '#4CAF50', 'v');
+  }
+  if (Math.abs(a) > 0.08) {
+    const col = a > 0 ? '#FF5722' : '#ef4444';
+    const dir = Math.sign(a);
+    drawArrow(ctx, sx, sy - 70, sx + dir * (28 + Math.abs(a) * 10), sy - 70, col, 'a');
+  }
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, label) {
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 10 * Math.cos(ang - 0.4), y2 - 10 * Math.sin(ang - 0.4));
+  ctx.lineTo(x2 - 10 * Math.cos(ang + 0.4), y2 - 10 * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+  ctx.font = '700 12px Oxanium, sans-serif';
+  ctx.fillText(label, (x1 + x2) / 2 - 4, y1 - 6);
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawSim(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, '#071427'); g.addColorStop(1, '#020617');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+
+  const groundY = h * 0.68;
+  const p = worldToScreen(0, groundY, canvas);
+  const ppm = cam.ppm * cam.scale;
+
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(0, groundY, w, h - groundY);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, groundY, w, 10);
+
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  const meter0 = Math.floor((-p.x) / ppm) - 2;
+  const meter1 = meter0 + Math.ceil(w / ppm) + 6;
+  for (let m = meter0; m <= meter1; m++) {
+    const x = p.x + m * ppm;
+    ctx.beginPath(); ctx.moveTo(x, groundY); ctx.lineTo(x, groundY + (m % 10 === 0 ? 16 : 8)); ctx.stroke();
+    if (m % 10 === 0) {
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px Oxanium, sans-serif';
+      ctx.fillText(m + ' m', x + 4, groundY + 28);
+    }
+    if (m % 5 === 0) {
+      ctx.strokeStyle = 'rgba(148,163,184,0.18)';
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, groundY); ctx.stroke();
+      ctx.strokeStyle = '#334155';
+    }
+  }
+
+  ctx.setLineDash([14, 16]);
+  ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, groundY + 38); ctx.lineTo(w, groundY + 38); ctx.stroke();
+  ctx.setLineDash([]);
+
+  sim.dots.forEach((d, i) => {
+    const sx = p.x + d.x * ppm;
+    ctx.fillStyle = '#9E9E9E';
+    ctx.beginPath(); ctx.arc(sx, groundY - 6, 5, 0, Math.PI * 2); ctx.fill();
+    if (i > 0) {
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px Oxanium, sans-serif';
+      ctx.fillText(d.t + ' s', sx - 8, groundY - 16);
+    }
+  });
+
+  const carS = worldToScreen(sim.x, groundY, canvas);
+  drawCar(ctx, carS.x, groundY - 8, sim.v, sim.a);
+
+  drawSpeedo(ctx, w - 96, 86, sim.v, sim.a);
+}
+
+function drawSpeedo(ctx, cx, cy, v, a) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(15,23,42,0.75)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, 52, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.arc(cx, cy, 38, Math.PI * 0.75, Math.PI * 2.25); ctx.stroke();
+  const tmax = 50;
+  const ang = Math.PI * 0.75 + Math.min(1, Math.abs(v) / tmax) * Math.PI * 1.5;
+  ctx.strokeStyle = '#4CAF50'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + Math.cos(ang) * 32, cy + Math.sin(ang) * 32); ctx.stroke();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '700 12px Oxanium, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(Math.abs(v).toFixed(1), cx, cy + 18);
+  ctx.fillStyle = '#94a3b8'; ctx.font = '9px Inter, sans-serif';
+  ctx.fillText('m/s', cx, cy + 30);
+  ctx.fillStyle = Math.abs(a) < 0.08 ? '#94a3b8' : (a > 0 ? '#FF5722' : '#ef4444');
+  ctx.font = '700 11px Oxanium, sans-serif';
+  ctx.fillText('a ' + a.toFixed(1), cx, cy - 8);
+  ctx.restore();
+}
+
+function drawCompare() {
+  const c = document.getElementById('compare-canvas');
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(200, r.width * (window.devicePixelRatio || 1));
+  c.height = 150 * (window.devicePixelRatio || 1);
+  const ctx = c.getContext('2d');
+  ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
+  const w = r.width, h = 150;
+  ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, w, h);
+  const rows = [
+    { label: t('cmp_zero'), gaps: [18, 18, 18, 18, 18], col: '#94a3b8' },
+    { label: t('cmp_pos'), gaps: [10, 16, 24, 34, 46], col: '#FF5722' },
+    { label: t('cmp_neg'), gaps: [46, 34, 24, 16, 10], col: '#ef4444' }
+  ];
+  rows.forEach((row, i) => {
+    const y = 28 + i * 42;
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = currentLang === 'ur' ? '12px Jameel Noori Nastaliq, serif' : '600 12px Inter, sans-serif';
+    ctx.textAlign = currentLang === 'ur' ? 'right' : 'left';
+    const lx = currentLang === 'ur' ? w - 8 : 8;
+    ctx.fillText(row.label, lx, y - 8);
+    let x = 8;
+    row.gaps.forEach((g, k) => {
+      ctx.fillStyle = '#9E9E9E';
+      ctx.beginPath(); ctx.arc(x, y + 8, 4, 0, Math.PI * 2); ctx.fill();
+      if (k < row.gaps.length - 1) {
+        ctx.strokeStyle = row.col; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x + 5, y + 8); ctx.lineTo(x + g - 5, y + 8); ctx.stroke();
+      }
+      x += g;
+    });
+  });
+}
+
+function resizeAll() {
+  const wrap = document.getElementById('sim-viewport');
+  if (!wrap) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  const dpr = window.devicePixelRatio || 1;
+  const canvas = document.getElementById('sim-canvas');
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  if (!fCanvas) {
+    initAnnotationCanvas(w, h);
+    const fabricContainer = document.querySelector('.canvas-container');
+    if (fabricContainer) fabricContainer.style.pointerEvents = 'none';
+  } else {
+    fCanvas.setWidth(w);
+    fCanvas.setHeight(h);
+    fCanvas.calcOffset();
+  }
+  if (Math.abs(cam.scale - 1) < 0.02) cam.scale = fitScale();
+  drawCompare();
+}
+
+function loop(ts) {
+  if (sim.running) {
+    if (!sim.lastTs) sim.lastTs = ts;
+    let dt = Math.min(0.05, (ts - sim.lastTs) / 1000);
+    sim.lastTs = ts;
+    dt *= 1.35;
+    stepSim(dt);
+  } else {
+    sim.lastTs = 0;
+  }
+  const canvas = document.getElementById('sim-canvas');
+  if (canvas && canvas.width) drawSim(canvas);
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+
+/* ===================== QUIZ ===================== */
+const quizState = { i: 0, picked: null, score: 0, done: false };
+
+function renderQuiz() {
+  const box = document.getElementById('quiz-box');
+  const Qs = LANG[currentLang].quiz;
+  if (quizState.done) {
+    const pct = Math.round((quizState.score / 5) * 100);
+    box.innerHTML = `
+      <h2 class="font-display text-2xl font-bold text-cyan-400 mb-2" dir="${currentLang==='ur'?'rtl':'ltr'}">${t('quiz_score')}</h2>
+      <p class="num text-5xl font-extrabold text-white mb-2">${quizState.score} / 5</p>
+      <p class="num text-xl text-cyan-300 mb-6">${pct}%</p>
+      <button onclick="quizState.i=0;quizState.picked=null;quizState.score=0;quizState.done=false;renderQuiz()" class="px-6 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold glow-cyan">${t('quiz_restart')}</button>
+    `;
+    return;
+  }
+  const Q = Qs[quizState.i];
+  const dir = currentLang === 'ur' ? 'rtl' : 'ltr';
+  let opts = Q.opts.map((o, idx) => {
+    let cls = 'quiz-opt glass-panel rounded-xl px-4 py-3 text-left w-full border border-slate-700 hover:border-cyan-500/50';
+    if (quizState.picked != null) {
+      if (idx === Q.ans) cls += ' correct';
+      else if (idx === quizState.picked) cls += ' wrong';
+    }
+    return `<button class="${cls}" style="text-align:${currentLang==='ur'?'right':'left'}" dir="${dir}" onclick="pickQuiz(${idx})">${o}</button>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="flex justify-between items-center mb-4" dir="${dir}">
+      <h2 class="font-display text-xl font-bold text-cyan-400">${t('quiz_title')}</h2>
+      <span class="text-slate-400 text-sm">${t('quiz_q')} ${quizState.i + 1} / 5</span>
+    </div>
+    <p class="text-lg font-semibold mb-5 leading-relaxed" dir="${dir}">${Q.q}</p>
+    <div class="space-y-3">${opts}</div>
+    ${quizState.picked != null ? `<div class="mt-4 glass-panel rounded-xl p-4 text-sm" dir="${dir}"><span class="text-cyan-400 font-bold">${t('quiz_explain')}: </span>${Q.why}</div>
+      <button onclick="nextQuiz()" class="mt-5 px-6 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold">${quizState.i === 4 ? t('quiz_score') : t('quiz_next')}</button>` : ''}
+  `;
+}
+function pickQuiz(idx) {
+  if (quizState.picked != null) return;
+  quizState.picked = idx;
+  if (idx === LANG[currentLang].quiz[quizState.i].ans) quizState.score++;
+  renderQuiz();
+}
+function nextQuiz() {
+  if (quizState.i >= 4) { quizState.done = true; renderQuiz(); return; }
+  quizState.i++;
+  quizState.picked = null;
+  renderQuiz();
+}
+
+/* ===================== BOOT ===================== */
+function boot() {
+  document.getElementById('intro-bar').style.width = '100%';
+  setTimeout(() => {
+    const intro = document.getElementById('intro-screen');
+    intro.style.opacity = '0';
+    intro.style.transition = 'opacity 0.6s ease';
+    setTimeout(() => {
+      intro.classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      const sel = document.getElementById('lang-select');
+      sel.value = currentLang;
+      applyI18n();
+      resetSim();
+      document.getElementById('tip-text').textContent = t('tip_cruise');
+      resizeAll();
+      bindViewGestures();
+      resetView();
+      requestAnimationFrame(loop);
+      window.addEventListener('resize', resizeAll);
+    }, 650);
+  }, 4300);
+}
+
+if (!window.__denied) {
+  requestAnimationFrame(() => boot());
+}
+</script>
+</body>
+</html>
