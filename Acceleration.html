@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IQRA VIRTUAL LAB — Speed Change Lab</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@500;600&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Jameel Noori Nastaliq';
+  src: url('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #020617;
+  color: #f8fafc;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* RTL Styling Adjustments for Urdu with Jameel Noori Nastaliq */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  line-height: 2.3 !important;
+}
+
+html.lang-ur body,
+html.lang-ur .i18n,
+html.lang-ur button,
+html.lang-ur select,
+html.lang-ur .ur-font {
+  font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', serif !important;
+  font-size: 1.05em;
+  line-height: 2.3;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pulse Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Canvas styling */
+canvas {
+  touch-action: none;
+}
+
+/* Custom Slider Styling */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #334155;
+  border-radius: 8px;
+  height: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #00f3ff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.formula-font { font-family: 'Fira Code', ui-monospace, monospace; }
+
+@keyframes introZoom {
+  0% { transform: scale(0.72); opacity: 0; filter: blur(12px); }
+  45% { transform: scale(1.06); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes introGlow {
+  0%, 100% { text-shadow: 0 0 12px rgba(0, 243, 255, 0.25); }
+  50% { text-shadow: 0 0 42px rgba(0, 243, 255, 0.85), 0 0 80px rgba(34, 211, 238, 0.4); }
+}
+@keyframes ringPulse {
+  0% { transform: scale(0.8); opacity: 0.55; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.animate-intro { animation: introZoom 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-glow { animation: introGlow 2.2s ease-in-out infinite; }
+
+#sim-viewport { position: relative; overflow: hidden; background: #020617; }
+#sim-viewport .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 20;
+}
+#fabricLayer { position: absolute; inset: 0; }
+
+.tab-btn.active {
+  background: rgba(0, 243, 255, 0.12);
+  color: #00f3ff;
+  border-color: rgba(0, 243, 255, 0.45);
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.2);
+}
+
+.quiz-opt.correct { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #86efac; }
+.quiz-opt.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
+
+#anno-float { transition: width 0.25s ease, height 0.25s ease, padding 0.25s ease, opacity 0.25s ease; }
+#anno-float.collapsed { width: 48px; height: 48px; overflow: hidden; padding: 0; }
+</style>
+</head>
+<body class="h-screen w-screen flex flex-col">
+
+<!-- OPENING ANIMATION -->
+<div id="intro-screen" class="fixed inset-0 z-[80] bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
+  <div class="absolute w-72 h-72 rounded-full border border-cyan-400/30" style="animation: ringPulse 2.4s ease-out infinite;"></div>
+  <div class="absolute w-72 h-72 rounded-full border border-cyan-300/20" style="animation: ringPulse 2.4s ease-out infinite 0.6s;"></div>
+  <div class="text-center animate-intro px-6">
+    <div class="mx-auto mb-6 w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-400/40 text-cyan-400 glow-cyan flex items-center justify-center">
+      <i class="fa-solid fa-gauge-high text-4xl"></i>
+    </div>
+    <h1 class="text-4xl md:text-6xl font-extrabold tracking-[0.18em] text-cyan-300 animate-glow">IQRA VIRTUAL LAB</h1>
+    <p class="mt-5 text-xl md:text-3xl font-semibold text-slate-200 tracking-wide" data-i18n="introTopic">Speed Change Lab: Master Acceleration</p>
+    <div class="mt-8 h-1 w-48 mx-auto rounded-full bg-slate-800 overflow-hidden">
+      <div id="intro-bar" class="h-full bg-cyan-400 glow-cyan" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="glass-panel z-40 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+  <div class="flex items-center gap-3 min-w-0">
+    <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-cyan-400 glow-cyan shrink-0">
+      <i class="fa-solid fa-flask-vial"></i>
+    </div>
+    <div class="min-w-0">
+      <div class="text-cyan-300 font-extrabold tracking-widest text-sm md:text-base leading-tight">IQRA VIRTUAL LAB</div>
+      <div class="text-slate-400 text-xs truncate" data-i18n="appSubtitle">Speed Change Lab · Class 9</div>
+    </div>
+  </div>
+
+  <div class="hidden md:flex items-center gap-2">
+    <button class="tab-btn active px-4 py-2 rounded-lg border border-slate-700 text-sm font-semibold" onclick="switchTab('sim')" id="tab-sim">
+      <i class="fa-solid fa-house me-1"></i><span data-i18n="tabSim">Simulation</span>
+    </button>
+    <button class="tab-btn px-4 py-2 rounded-lg border border-slate-700 text-sm font-semibold text-slate-300" onclick="switchTab('quiz')" id="tab-quiz">
+      <i class="fa-solid fa-clipboard-list me-1"></i><span data-i18n="tabQuiz">Quiz</span>
+    </button>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <!-- Annotation Toolbar (Hidden by default) -->
+    <div id="anno-toolbar" class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 transition-all duration-300 max-w-0 overflow-hidden opacity-0">
+      <input type="color" id="anno-color" value="#00f3ff" onchange="changeAnnoColor(this.value)" class="w-6 h-6 cursor-pointer bg-transparent border-0 p-0" title="Color">
+      <button id="anno-pen" onclick="setAnnoMode('pen')" class="text-cyan-400 p-1.5 rounded hover:bg-slate-700 transition" title="Pen"><i class="fa-solid fa-pen"></i></button>
+      <button id="anno-eraser" onclick="setAnnoMode('eraser')" class="text-slate-400 p-1.5 rounded hover:bg-slate-700 transition" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
+      <button onclick="clearAnnotations()" class="text-red-400 p-1.5 rounded hover:bg-slate-700 transition" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
+    </div>
+
+    <!-- Annotation Toggle Button -->
+    <button id="btn-anno-toggle" onclick="toggleAnnotationMode()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Annotation">
+      <i class="fa-solid fa-pen-nib"></i>
+    </button>
+
+    <!-- Language Selector -->
+    <div class="relative">
+      <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 px-3 py-2 cursor-pointer font-bold outline-none">
+        <option value="en">🌐 English</option>
+        <option value="ur">🌐 اردو</option>
+        <option value="hi" disabled>🌐 हिंदी (Soon)</option>
+        <option value="bn" disabled>🌐 বাংলা (Soon)</option>
+        <option value="ta" disabled>🌐 தமிழ் (Soon)</option>
+      </select>
+    </div>
+
+    <!-- Fullscreen Button -->
+    <button onclick="toggleFullScreen()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center border border-slate-700 transition" title="Toggle Fullscreen">
+      <i class="fa-solid fa-expand" id="fs-icon"></i>
+    </button>
+  </div>
+</header>
+
+<main class="flex-1 min-h-0 flex flex-col">
+  <!-- SIMULATION TAB -->
+  <section id="view-sim" class="flex-1 min-h-0 flex flex-col lg:flex-row">
+    <!-- Viewport -->
+    <div class="flex-1 min-h-0 flex flex-col">
+      <div id="sim-viewport" class="flex-1 min-h-0 relative">
+        <canvas id="simCanvas" class="absolute inset-0 w-full h-full z-10"></canvas>
+        <canvas id="fabricLayer"></canvas>
+
+        <!-- Live HUD -->
+        <div class="absolute top-3 left-3 right-3 z-30 pointer-events-none flex flex-wrap gap-2">
+          <div class="glass-card rounded-xl px-3 py-2 pointer-events-auto">
+            <div class="text-[10px] uppercase tracking-widest text-slate-400" data-i18n="formulaTitle">Live Formula</div>
+            <div class="formula-font text-cyan-300 text-sm md:text-base" id="live-formula">a = (v − u) / t</div>
+          </div>
+          <div class="glass-card rounded-xl px-3 py-2 formula-font text-xs md:text-sm grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1">
+            <div>u = <span id="hud-u" class="text-emerald-300">20.0</span> m/s</div>
+            <div>v = <span id="hud-v" class="text-emerald-300">20.0</span> m/s</div>
+            <div>t = <span id="hud-t" class="text-amber-300">0.0</span> s</div>
+            <div>a = <span id="hud-a" class="text-orange-400">0.00</span> m/s²</div>
+          </div>
+        </div>
+
+        <!-- Zoom controls -->
+        <div class="absolute bottom-3 left-3 z-30 flex flex-col gap-1">
+          <button onclick="zoomBy(1.15)" class="w-10 h-10 rounded-lg glass-card text-cyan-300 hover:bg-slate-700" title="+"><i class="fa-solid fa-plus"></i></button>
+          <button onclick="zoomBy(1/1.15)" class="w-10 h-10 rounded-lg glass-card text-cyan-300 hover:bg-slate-700" title="−"><i class="fa-solid fa-minus"></i></button>
+          <button onclick="resetView()" class="w-10 h-10 rounded-lg glass-card text-slate-200 hover:bg-slate-700" title="Reset"><i class="fa-solid fa-compress"></i></button>
+        </div>
+
+        <!-- Floating annotation card -->
+        <div id="anno-float" class="absolute top-16 right-3 z-30 glass-panel rounded-xl p-3 glow-cyan w-48 cursor-move">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-cyan-300" data-i18n="annoTitle">Annotate</span>
+            <button onclick="toggleAnnoFloat()" class="text-slate-400 hover:text-cyan-300 w-8 h-8"><i class="fa-solid fa-minus" id="anno-float-icon"></i></button>
+          </div>
+          <div id="anno-float-body" class="flex items-center gap-2">
+            <input type="color" value="#00f3ff" onchange="document.getElementById('anno-color').value=this.value;changeAnnoColor(this.value)" class="w-8 h-8 cursor-pointer bg-transparent border-0 p-0">
+            <button onclick="if(!isAnnoActive)toggleAnnotationMode();setAnnoMode('pen')" class="w-9 h-9 rounded-lg bg-slate-800 text-cyan-400"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="if(!isAnnoActive)toggleAnnotationMode();setAnnoMode('eraser')" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300"><i class="fa-solid fa-eraser"></i></button>
+            <button onclick="clearAnnotations()" class="w-9 h-9 rounded-lg bg-slate-800 text-red-400"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <aside class="w-full lg:w-[340px] shrink-0 glass-panel border-t lg:border-t-0 lg:border-l border-slate-800 overflow-y-auto p-4 space-y-4">
+      <div class="md:hidden flex gap-2">
+        <button class="tab-btn active flex-1 px-3 py-2 rounded-lg border border-slate-700 text-sm font-semibold" onclick="switchTab('sim')"><span data-i18n="tabSim">Simulation</span></button>
+        <button class="tab-btn flex-1 px-3 py-2 rounded-lg border border-slate-700 text-sm font-semibold" onclick="switchTab('quiz')"><span data-i18n="tabQuiz">Quiz</span></button>
+      </div>
+
+      <div>
+        <h2 class="text-cyan-300 font-bold text-lg" data-i18n="exploreTitle">Explore Acceleration</h2>
+        <p class="text-slate-400 text-sm mt-1" data-i18n="exploreHint">Change velocity over time. High speed with no change means a = 0.</p>
+      </div>
+
+      <div class="glass-card rounded-xl p-3 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-semibold" data-i18n="initSpeed">Starting speed u</span>
+          <span class="formula-font text-emerald-300 text-sm"><span id="u-label">20</span> m/s</span>
+        </div>
+        <input type="range" id="u-slider" min="0" max="40" step="1" value="20" oninput="setU(this.value)">
+      </div>
+
+      <div class="glass-card rounded-xl p-3 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-semibold" data-i18n="accelLabel">Acceleration a</span>
+          <span class="formula-font text-orange-300 text-sm"><span id="a-label">0.0</span> m/s²</span>
+        </div>
+        <input type="range" id="a-slider" min="-5" max="5" step="0.1" value="0" oninput="setA(this.value)">
+        <div class="flex justify-between text-[10px] text-slate-500">
+          <span data-i18n="brake">Brake (−)</span>
+          <span data-i18n="cruise">Cruise 0</span>
+          <span data-i18n="gas">Gas (+)</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="nudgeA(-1)" class="py-2 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-bold"><i class="fa-solid fa-caret-left"></i> <span data-i18n="brakeBtn">Brake</span></button>
+          <button onclick="setCruise()" class="py-2 rounded-lg bg-slate-700/60 border border-slate-500 text-slate-200 text-xs font-bold" data-i18n="cruiseBtn">Cruise</button>
+          <button onclick="nudgeA(1)" class="py-2 rounded-lg bg-orange-500/15 border border-orange-400/40 text-orange-300 text-xs font-bold"><span data-i18n="gasBtn">Gas</span> <i class="fa-solid fa-caret-right"></i></button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="togglePlay()" id="btn-play" class="py-3 rounded-xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-bold glow-cyan"><i class="fa-solid fa-play" id="play-icon"></i></button>
+        <button onclick="pauseSim()" class="py-3 rounded-xl glass-card text-slate-200 font-bold"><i class="fa-solid fa-pause"></i></button>
+        <button onclick="resetSim()" class="py-3 rounded-xl glass-card text-slate-200 font-bold"><i class="fa-solid fa-rotate-left"></i></button>
+      </div>
+
+      <div class="glass-card rounded-xl p-3">
+        <div class="text-xs uppercase tracking-widest text-slate-400 mb-2" data-i18n="stackTitle">Velocity Stacker</div>
+        <p class="text-xs text-slate-400 mb-2" data-i18n="stackHint">Each second, acceleration adds or removes motion blocks.</p>
+        <div id="stack" class="flex gap-1 h-10 items-end"></div>
+      </div>
+
+      <div class="glass-card rounded-xl p-3 space-y-2">
+        <div class="text-xs uppercase tracking-widest text-slate-400" data-i18n="challengeTitle">Try these</div>
+        <button onclick="runScene('const')" class="w-full text-left px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-sm" data-i18n="ch1">1. Constant 20 m/s — watch equal dots</button>
+        <button onclick="runScene('gas')" class="w-full text-left px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-sm" data-i18n="ch2">2. Press gas — gaps grow</button>
+        <button onclick="runScene('brake')" class="w-full text-left px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-sm" data-i18n="ch3">3. Brake — gaps shrink, a points back</button>
+        <button onclick="runScene('fast')" class="w-full text-left px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-sm" data-i18n="ch4">4. Fast cruise 40 m/s — is a high?</button>
+        <button onclick="runScene('start')" class="w-full text-left px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-sm" data-i18n="ch5">5. Start from rest with gas</button>
+      </div>
+
+      <div class="glass-card rounded-xl p-3 text-xs text-slate-400 space-y-1">
+        <div><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 me-1"></span><span data-i18n="legV">Green arrow = velocity v</span></div>
+        <div><span class="inline-block w-2 h-2 rounded-full bg-orange-500 me-1"></span><span data-i18n="legApos">Orange arrow = +a (speeding up)</span></div>
+        <div><span class="inline-block w-2 h-2 rounded-full bg-red-500 me-1"></span><span data-i18n="legAneg">Red arrow = −a (slowing down)</span></div>
+        <div><span class="inline-block w-2 h-2 rounded-full bg-slate-400 me-1"></span><span data-i18n="legDots">Grey dots = position every 1 s</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- QUIZ TAB -->
+  <section id="view-quiz" class="hidden flex-1 min-h-0 overflow-y-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-cyan-300 mb-1" data-i18n="quizTitle">Concept Check</h2>
+      <p class="text-slate-400 mb-6" data-i18n="quizSub">Five questions. Learn from the explanation after each choice.</p>
+      <div id="quiz-box" class="space-y-4"></div>
+      <div id="quiz-result" class="hidden mt-6 glass-panel rounded-2xl p-6 text-center"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const LANG = {
+  en: {
+    introTopic: "Speed Change Lab: Master Acceleration",
+    appSubtitle: "Speed Change Lab · Class 9",
+    tabSim: "Simulation",
+    tabQuiz: "Quiz",
+    formulaTitle: "Live Formula",
+    annoTitle: "Annotate",
+    exploreTitle: "Explore Acceleration",
+    exploreHint: "Change velocity over time. High speed with no change means a = 0.",
+    initSpeed: "Starting speed u",
+    accelLabel: "Acceleration a",
+    brake: "Brake (−)",
+    cruise: "Cruise 0",
+    gas: "Gas (+)",
+    brakeBtn: "Brake",
+    cruiseBtn: "Cruise",
+    gasBtn: "Gas",
+    stackTitle: "Velocity Stacker",
+    stackHint: "Each second, acceleration adds or removes motion blocks.",
+    challengeTitle: "Try these",
+    ch1: "1. Constant 20 m/s — watch equal dots",
+    ch2: "2. Press gas — gaps grow",
+    ch3: "3. Brake — gaps shrink, a points back",
+    ch4: "4. Fast cruise 40 m/s — is a high?",
+    ch5: "5. Start from rest with gas",
+    legV: "Green arrow = velocity v",
+    legApos: "Orange arrow = +a (speeding up)",
+    legAneg: "Red arrow = −a (slowing down)",
+    legDots: "Grey dots = position every 1 s",
+    quizTitle: "Concept Check",
+    quizSub: "Five questions. Learn from the explanation after each choice.",
+    qNext: "Next",
+    qRestart: "Restart Quiz",
+    score: "Final Score",
+    correct: "Correct",
+    wrong: "Not quite",
+    q1: "A car travels at a steady 100 m/s. What is its acceleration?",
+    q1a: "Very high, because the speed is high",
+    q1b: "0 m/s², because velocity is not changing",
+    q1c: "100 m/s²",
+    q1d: "Cannot tell without mass",
+    q1e: "Acceleration is the rate of change of velocity. Constant velocity means a = 0, even if the car is very fast.",
+    q2: "When a car brakes, the acceleration arrow points opposite to velocity. What does this mean?",
+    q2a: "Braking is not acceleration",
+    q2b: "Negative acceleration (deceleration) — speed is decreasing",
+    q2c: "The car is reversing immediately",
+    q2d: "Velocity became zero instantly",
+    q2e: "Acceleration is a vector. If a points opposite to v, speed decreases. Deceleration is still acceleration with a negative sign.",
+    q3: "A bullet train moves at a steady 300 km/h for 10 minutes. Its acceleration is:",
+    q3a: "Very high",
+    q3b: "Zero",
+    q3c: "Negative",
+    q3d: "300 m/s²",
+    q3e: "Steady speed means Δv = 0, so a = Δv/t = 0. High speed is not high acceleration.",
+    q4: "Ticker-tape dots get farther apart each second. The car is:",
+    q4a: "Moving at constant speed",
+    q4b: "Speeding up (positive acceleration)",
+    q4c: "Slowing down",
+    q4d: "At rest",
+    q4e: "Equal time intervals with growing gaps mean larger distance per second — speed is increasing.",
+    q5: "At the instant a car starts from rest (u = 0) with the gas pedal down, which is true?",
+    q5a: "v = 0 and a = 0",
+    q5b: "v = 0 but a > 0",
+    q5c: "v is already large",
+    q5d: "Acceleration cannot exist if velocity is zero",
+    q5e: "Velocity can be zero while acceleration is not. The engine is already changing velocity: v = u + at will grow from 0."
+  },
+  ur: {
+    introTopic: "رفتار تبدیلی لیب: اسراع کو سمجھیں",
+    appSubtitle: "رفتار تبدیلی لیب · جماعت ۹",
+    tabSim: "تجربہ گاہ",
+    tabQuiz: "سوالات",
+    formulaTitle: "زنده صیغہ",
+    annoTitle: "نشان زنی",
+    exploreTitle: "اسراع دریافت کریں",
+    exploreHint: "سمتی رفتار وقت کے ساتھ بدلیں۔ زیادہ رفتار مگر بغیر تبدیلی کا مطلب a = 0 ہے۔",
+    initSpeed: "ابتدائی سمتی رفتار u",
+    accelLabel: "اسراع a",
+    brake: "بریک (−)",
+    cruise: "کروز ۰",
+    gas: "گیس (+)",
+    brakeBtn: "بریک",
+    cruiseBtn: "کروز",
+    gasBtn: "گیس",
+    stackTitle: "سمتی رفتار کے خانے",
+    stackHint: "ہر سیکنڈ اسراع حرکت کے خانے جوڑتی یا ہٹاتی ہے۔",
+    challengeTitle: "یہ آزمائیں",
+    ch1: "۱. مستقل ۲۰ m/s — برابر نقطے دیکھیں",
+    ch2: "۲. گیس دبائیں — فاصلے بڑھیں",
+    ch3: "۳. بریک — فاصلے سکڑیں، a پیچھے",
+    ch4: "۴. تیز کروز ۴۰ m/s — کیا a بڑی ہے؟",
+    ch5: "۵. سکون سے گیس کے ساتھ شروع",
+    legV: "سبز تیر = سمتی رفتار v",
+    legApos: "نارنجی تیر = +a (رفتار بڑھنا)",
+    legAneg: "سرخ تیر = −a (رفتار کم ہونا)",
+    legDots: "سرمئی نقطے = ہر ۱ s پر مقام",
+    quizTitle: "تصوراتی جانچ",
+    quizSub: "پانچ سوالات۔ ہر جواب کے بعد وضاحت پڑھیں۔",
+    qNext: "اگلا",
+    qRestart: "دوبارہ شروع",
+    score: "حتمی نمبر",
+    correct: "درست",
+    wrong: "غلط",
+    q1: "ایک گاڑی مستقل ۱۰۰ m/s سے چل رہی ہے۔ اس کا اسراع کیا ہے؟",
+    q1a: "بہت زیادہ، کیونکہ رفتار زیادہ ہے",
+    q1b: "0 m/s²، کیونکہ سمتی رفتار نہیں بدل رہی",
+    q1c: "100 m/s²",
+    q1d: "کمیت کے بغیر نہیں بتایا جا سکتا",
+    q1e: "اسراع سمتی رفتار کی تبدیلی کی شرح ہے۔ مستقل سمتی رفتار کا مطلب a = 0 ہے، چاہے گاڑی کتنی ہی تیز ہو۔",
+    q2: "بریک لگنے پر اسراع کا تیر سمتی رفتار کے مخالف ہوتا ہے۔ اس کا مطلب؟",
+    q2a: "بریک اسراع نہیں ہے",
+    q2b: "منفی اسراع — رفتار کم ہو رہی ہے",
+    q2c: "گاڑی فوراً الٹی چل پڑی",
+    q2d: "سمتی رفتار فوراً صفر ہو گئی",
+    q2e: "اسراع سمتی مقدار ہے۔ اگر a، v کے مخالف ہو تو رفتار کم ہوتی ہے۔ کمیِ رفتار بھی اسراع ہے، صرف علامت منفی ہے۔",
+    q3: "ایک تیز ریل مستقل ۳۰۰ km/h سے ۱۰ منٹ چلتی ہے۔ اسراع ہے:",
+    q3a: "بہت زیادہ",
+    q3b: "صفر",
+    q3c: "منفی",
+    q3d: "300 m/s²",
+    q3e: "مستقل رفتار یعنی Δv = 0، لہٰذا a = Δv/t = 0۔ زیادہ رفتار زیادہ اسراع نہیں۔",
+    q4: "ٹکر ٹیپ کے نقطے ہر سیکنڈ زیادہ دور ہو رہے ہیں۔ گاڑی:",
+    q4a: "مستقل رفتار سے چل رہی ہے",
+    q4b: "رفتار بڑھا رہی ہے (مثبت اسراع)",
+    q4c: "رفتار کم کر رہی ہے",
+    q4d: "ساکن ہے",
+    q4e: "برابر وقت میں بڑھتے فاصلے کا مطلب ہے ہر سیکنڈ زیادہ فاصلہ — رفتار بڑھ رہی ہے۔",
+    q5: "جس لمحے گاڑی سکون سے گیس دبا کر چلتی ہے (u = 0)، درست بات کون سی ہے؟",
+    q5a: "v = 0 اور a = 0",
+    q5b: "v = 0 مگر a > 0",
+    q5c: "v پہلے سے بڑی ہے",
+    q5d: "صفر سمتی رفتار پر اسراع ممکن نہیں",
+    q5e: "سمتی رفتار صفر ہو سکتی ہے جبکہ اسراع صفر نہ ہو۔ انجن پہلے سے سمتی رفتار بدل رہا ہے: v = u + at صفر سے بڑھے گی。"
+  }
+};
+
+const QUIZ = [
+  { q: "q1", opts: ["q1a","q1b","q1c","q1d"], ans: 1, exp: "q1e" },
+  { q: "q2", opts: ["q2a","q2b","q2c","q2d"], ans: 1, exp: "q2e" },
+  { q: "q3", opts: ["q3a","q3b","q3c","q3d"], ans: 1, exp: "q3e" },
+  { q: "q4", opts: ["q4a","q4b","q4c","q4d"], ans: 1, exp: "q4e" },
+  { q: "q5", opts: ["q5a","q5b","q5c","q5d"], ans: 1, exp: "q5e" }
+];
+
+let currentLang = localStorage.getItem("iqra-lang") || "en";
+let quizIndex = 0, quizScore = 0, quizLocked = false, quizDone = [];
+
+function t(key) { return (LANG[currentLang] && LANG[currentLang][key]) || LANG.en[key] || key; }
+
+function applyLanguage() {
+  document.documentElement.lang = currentLang === "ur" ? "ur" : "en";
+  document.documentElement.classList.toggle("lang-ur", currentLang === "ur");
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.getAttribute("data-i18n");
+    if (LANG[currentLang] && LANG[currentLang][k] != null) el.textContent = LANG[currentLang][k];
+  });
+  const sel = document.getElementById("lang-select");
+  if (sel) sel.value = currentLang;
+  renderQuiz();
+}
+
+function changeLanguage(code) {
+  if (code !== "en" && code !== "ur") return;
+  currentLang = code;
+  localStorage.setItem("iqra-lang", code);
+  applyLanguage();
+}
+
+/* ===== Physics ===== */
+const PX_PER_M = 8;
+let u0 = 20, a = 0, v = 20, s = 8, time = 0;
+let running = false, lastTs = 0;
+let dots = [];
+let nextDotT = 0;
+let view = { scale: 1, x: 0, y: 0 };
+let panning = false, panStart = { x: 0, y: 0, vx: 0, vy: 0 };
+
+function setU(val) {
+  u0 = Number(val);
+  document.getElementById("u-label").textContent = u0;
+  if (!running && time === 0) { v = u0; }
+  updateHUD();
+}
+
+function setA(val) {
+  a = Number(val);
+  document.getElementById("a-slider").value = a;
+  document.getElementById("a-label").textContent = a.toFixed(1);
+  updateHUD();
+}
+
+function nudgeA(d) {
+  setA(Math.max(-5, Math.min(5, Math.round((a + d) * 10) / 10)));
+}
+
+function setCruise() { setA(0); }
+
+function togglePlay() {
+  running = !running;
+  lastTs = 0;
+  document.getElementById("play-icon").className = running ? "fa-solid fa-pause" : "fa-solid fa-play";
+}
+
+function pauseSim() {
+  running = false;
+  document.getElementById("play-icon").className = "fa-solid fa-play";
+}
+
+function resetSim() {
+  running = false;
+  time = 0; s = 8; v = u0; dots = []; nextDotT = 0;
+  document.getElementById("play-icon").className = "fa-solid fa-play";
+  lastTs = 0;
+  updateHUD();
+  drawStack();
+}
+
+function runScene(id) {
+  resetSim();
+  if (id === "const") { setU(20); setA(0); document.getElementById("u-slider").value = 20; }
+  if (id === "gas") { setU(10); setA(2); document.getElementById("u-slider").value = 10; }
+  if (id === "brake") { setU(28); setA(-2.5); document.getElementById("u-slider").value = 28; }
+  if (id === "fast") { setU(40); setA(0); document.getElementById("u-slider").value = 40; }
+  if (id === "start") { setU(0); setA(3); document.getElementById("u-slider").value = 0; }
+  running = true;
+  document.getElementById("play-icon").className = "fa-solid fa-pause";
+}
+
+function updateHUD() {
+  const avgA = time > 0.05 ? (v - u0) / time : a;
+  document.getElementById("hud-u").textContent = u0.toFixed(1);
+  document.getElementById("hud-v").textContent = v.toFixed(1);
+  document.getElementById("hud-t").textContent = time.toFixed(1);
+  document.getElementById("hud-a").textContent = a.toFixed(2);
+  const sign = (v - u0) >= 0 ? "−" : "+";
+  document.getElementById("live-formula").textContent =
+    `a = (${v.toFixed(1)} − ${u0.toFixed(1)}) / ${Math.max(time, 0).toFixed(1)} = ${avgA.toFixed(2)} m/s²`;
+}
+
+function drawStack() {
+  const el = document.getElementById("stack");
+  const n = Math.max(0, Math.min(24, Math.round(Math.abs(v) / 2)));
+  let html = "";
+  for (let i = 0; i < n; i++) {
+    const c = a > 0.05 ? "bg-orange-400" : a < -0.05 ? "bg-red-400" : "bg-emerald-400";
+    html += `<div class="flex-1 max-w-[10px] rounded-sm ${c}" style="height:${10 + (i % 5) * 4}px"></div>`;
+  }
+  if (!n) html = `<span class="text-slate-500 text-xs">v = 0</span>`;
+  el.innerHTML = html;
+}
+
+/* ===== Canvas sim ===== */
+const canvas = document.getElementById("simCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeSim() {
+  const vp = document.getElementById("sim-viewport");
+  const r = vp.getBoundingClientRect();
+  canvas.width = r.width * devicePixelRatio;
+  canvas.height = r.height * devicePixelRatio;
+  canvas.style.width = r.width + "px";
+  canvas.style.height = r.height + "px";
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  if (fCanvas) {
+    fCanvas.setWidth(r.width);
+    fCanvas.setHeight(r.height);
+    fCanvas.calcOffset();
+  } else {
+    initAnnotationCanvas(r.width, r.height);
+    const fabricContainer = document.querySelector(".canvas-container");
+    if (fabricContainer) fabricContainer.style.pointerEvents = "none";
+  }
+}
+
+function worldToScreen(wx, wy) {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  const camX = s * PX_PER_M - w * 0.35;
+  return {
+    x: (wx - camX) * view.scale + view.x,
+    y: (wy) * view.scale + view.y + h * 0.55
+  };
+}
+
+function drawArrow(x1, y1, x2, y2, color, lw) {
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 12 * Math.cos(ang - 0.4), y2 - 12 * Math.sin(ang - 0.4));
+  ctx.lineTo(x2 - 12 * Math.cos(ang + 0.4), y2 - 12 * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawScene() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  ctx.clearRect(0, 0, w, h);
+
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, "#0b1224");
+  g.addColorStop(0.55, "#132038");
+  g.addColorStop(1, "#0f172a");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.save();
+  const camX = s * PX_PER_M - w * 0.35;
+
+  ctx.translate(view.x, view.y);
+  ctx.scale(view.scale, view.scale);
+  ctx.translate(-camX, 0);
+
+  const roadY = h * 0.55;
+  ctx.fillStyle = "#1e293b";
+  ctx.fillRect(camX - 80, roadY, w / view.scale + 400, 90);
+  ctx.fillStyle = "#334155";
+  ctx.fillRect(camX - 80, roadY + 88, w / view.scale + 400, 18);
+
+  ctx.strokeStyle = "#f8fafc33";
+  ctx.setLineDash([18, 16]);
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(camX - 80, roadY + 44);
+  ctx.lineTo(camX + w / view.scale + 400, roadY + 44);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  const startM = Math.floor((camX) / PX_PER_M) - 2;
+  const endM = startM + Math.ceil((w / view.scale) / PX_PER_M) + 8;
+  for (let m = startM; m <= endM; m++) {
+    const x = m * PX_PER_M;
+    ctx.fillStyle = m % 10 === 0 ? "#64748b" : "#334155";
+    ctx.fillRect(x, roadY + 90, 2, m % 10 === 0 ? 14 : 8);
+    if (m % 10 === 0) {
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "11px Inter, sans-serif";
+      ctx.fillText(m + " m", x + 4, roadY + 118);
+    }
+  }
+
+  dots.forEach((d, i) => {
+    ctx.beginPath();
+    ctx.fillStyle = "#9E9E9E";
+    ctx.arc(d.s * PX_PER_M, roadY + 70, 5, 0, Math.PI * 2);
+    ctx.fill();
+    if (i > 0) {
+      ctx.fillStyle = "#64748b";
+      ctx.font = "10px Fira Code, monospace";
+      const gap = d.s - dots[i - 1].s;
+      ctx.fillText(gap.toFixed(1) + " m", (d.s + dots[i - 1].s) / 2 * PX_PER_M - 10, roadY + 58);
+    }
+  });
+
+  const cx = s * PX_PER_M;
+  const cy = roadY + 28;
+  ctx.fillStyle = "#2196F3";
+  roundRect(ctx, cx - 34, cy - 22, 72, 28, 8);
+  ctx.fill();
+  ctx.fillStyle = "#1565C0";
+  roundRect(ctx, cx - 8, cy - 34, 36, 16, 6);
+  ctx.fill();
+  ctx.fillStyle = "#0f172a";
+  ctx.beginPath(); ctx.arc(cx - 18, cy + 10, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 22, cy + 10, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx - 18, cy + 10, 8, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + 22, cy + 10, 8, 0, Math.PI * 2); ctx.stroke();
+
+  const vLen = Math.max(16, Math.min(140, Math.abs(v) * 3.2));
+  if (Math.abs(v) > 0.05) {
+    drawArrow(cx + 40, cy - 48, cx + 40 + Math.sign(v || 1) * vLen, cy - 48, "#4CAF50", 3);
+    ctx.fillStyle = "#86efac";
+    ctx.font = "12px Fira Code, monospace";
+    ctx.fillText("v", cx + 40 + Math.sign(v || 1) * vLen + 6, cy - 52);
+  }
+  if (Math.abs(a) > 0.05) {
+    const aLen = Math.max(20, Math.abs(a) * 18);
+    const col = a > 0 ? "#FF5722" : "#ef4444";
+    drawArrow(cx, cy - 72, cx + Math.sign(a) * aLen, cy - 72, col, 3);
+    ctx.fillStyle = col;
+    ctx.font = "12px Fira Code, monospace";
+    ctx.fillText("a", cx + Math.sign(a) * aLen + 6, cy - 76);
+  } else {
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "12px Inter, sans-serif";
+    ctx.fillText("a = 0", cx - 12, cy - 76);
+  }
+
+  ctx.restore();
+
+  drawSpeedo(w, h);
+}
+
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+
+function drawSpeedo(w, h) {
+  const x = w - 90, y = h - 90, r = 52;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(15,23,42,0.85)";
+  ctx.fill();
+  ctx.strokeStyle = "#00f3ff55";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  const ang = -Math.PI * 0.75 + (Math.min(50, Math.max(0, Math.abs(v))) / 50) * Math.PI * 1.5;
+  ctx.strokeStyle = "#4CAF50";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + Math.cos(ang) * (r - 12), y + Math.sin(ang) * (r - 12));
+  ctx.stroke();
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "11px Inter, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(v.toFixed(1) + " m/s", x, y + 28);
+  ctx.fillStyle = Math.abs(a) < 0.05 ? "#94a3b8" : (a > 0 ? "#FF5722" : "#f87171");
+  ctx.fillText("a " + a.toFixed(1), x, y + 42);
+  ctx.textAlign = "start";
+}
+
+function step(ts) {
+  if (running) {
+    if (!lastTs) lastTs = ts;
+    let dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    v += a * dt;
+    if (v < 0) v = 0;
+    s += v * dt;
+    time += dt;
+    if (time >= nextDotT) {
+      dots.push({ s: s, t: time });
+      if (dots.length > 40) dots.shift();
+      nextDotT += 1;
+    }
+    if (s > 2400) { s = 8; dots = []; }
+    updateHUD();
+    drawStack();
+  }
+  drawScene();
+  requestAnimationFrame(step);
+}
+
+/* ===== Zoom / pan ===== */
+function zoomBy(f) {
+  view.scale = Math.max(0.55, Math.min(2.6, view.scale * f));
+}
+function resetView() { view.scale = 1; view.x = 0; view.y = 0; }
+
+function bindZoomPan() {
+  const vp = document.getElementById("sim-viewport");
+  vp.addEventListener("wheel", (e) => {
+    if (isAnnoActive) return;
+    e.preventDefault();
+    zoomBy(e.deltaY < 0 ? 1.08 : 1 / 1.08);
+  }, { passive: false });
+
+  vp.addEventListener("pointerdown", (e) => {
+    if (isAnnoActive) return;
+    if (e.target.closest("#anno-float") || e.target.closest("button") || e.target.closest("input")) return;
+    panning = true;
+    panStart = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!panning || isAnnoActive) return;
+    view.x = panStart.vx + (e.clientX - panStart.x);
+    view.y = panStart.vy + (e.clientY - panStart.y);
+  });
+  window.addEventListener("pointerup", () => panning = false);
+
+  let pinch = 0;
+  vp.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinch = Math.hypot(dx, dy);
+    }
+  }, { passive: true });
+  vp.addEventListener("touchmove", (e) => {
+    if (isAnnoActive || e.touches.length !== 2) return;
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const d = Math.hypot(dx, dy);
+    if (pinch) zoomBy(d / pinch);
+    pinch = d;
+  }, { passive: false });
+}
+
+/* ===== Annotation (exact logic) ===== */
+let fCanvas;
+let isAnnoActive = false;
+
+function initAnnotationCanvas(w, h) {
+    fCanvas = new fabric.Canvas('fabricLayer', {
+        isDrawingMode: false,
+        width: w,
+        height: h
+    });
+    fCanvas.freeDrawingBrush.color = document.getElementById('anno-color').value;
+    fCanvas.freeDrawingBrush.width = 4;
+
+    fCanvas.on('mouse:down', function(options) {
+        if(isAnnoActive && !fCanvas.isDrawingMode && options.target) {
+            fCanvas.remove(options.target);
+        }
+    });
+}
+
+function toggleAnnotationMode() {
+    isAnnoActive = !isAnnoActive;
+    const btn = document.getElementById('btn-anno-toggle');
+    const toolbar = document.getElementById('anno-toolbar');
+
+    const fabricContainer = document.querySelector('.canvas-container');
+
+    if (isAnnoActive) {
+        btn.classList.replace('text-slate-400', 'text-cyan-400');
+        toolbar.classList.remove('max-w-0', 'opacity-0');
+        toolbar.classList.add('max-w-xs', 'opacity-100');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'auto';
+        setAnnoMode('pen');
+    } else {
+        btn.classList.replace('text-cyan-400', 'text-slate-400');
+        toolbar.classList.remove('max-w-xs', 'opacity-100');
+        toolbar.classList.add('max-w-0', 'opacity-0');
+        if(fabricContainer) fabricContainer.style.pointerEvents = 'none';
+        if (fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function setAnnoMode(mode) {
+    document.getElementById('anno-pen').classList.replace('text-cyan-400', 'text-slate-400');
+    document.getElementById('anno-eraser').classList.replace('text-cyan-400', 'text-slate-400');
+
+    if (mode === 'pen') {
+        document.getElementById('anno-pen').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = true;
+    } else {
+        document.getElementById('anno-eraser').classList.replace('text-slate-400', 'text-cyan-400');
+        if(fCanvas) fCanvas.isDrawingMode = false;
+    }
+}
+
+function changeAnnoColor(color) {
+    if(fCanvas) fCanvas.freeDrawingBrush.color = color;
+    setAnnoMode('pen');
+}
+
+function clearAnnotations() {
+    if(fCanvas) fCanvas.clear();
+}
+
+function toggleAnnoFloat() {
+  const card = document.getElementById("anno-float");
+  const body = document.getElementById("anno-float-body");
+  const icon = document.getElementById("anno-float-icon");
+  card.classList.toggle("collapsed");
+  if (card.classList.contains("collapsed")) {
+    body.style.display = "none";
+    icon.className = "fa-solid fa-pen-nib";
+  } else {
+    body.style.display = "flex";
+    icon.className = "fa-solid fa-minus";
+  }
+}
+
+(function makeDraggable() {
+  const card = document.getElementById("anno-float");
+  let drag = false, sx, sy, ox, oy;
+  card.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button") || e.target.closest("input")) return;
+    drag = true;
+    const r = card.getBoundingClientRect();
+    const vp = document.getElementById("sim-viewport").getBoundingClientRect();
+    sx = e.clientX; sy = e.clientY; ox = r.left - vp.left; oy = r.top - vp.top;
+    card.setPointerCapture(e.pointerId);
+  });
+  card.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    card.style.left = (ox + e.clientX - sx) + "px";
+    card.style.top = (oy + e.clientY - sy) + "px";
+    card.style.right = "auto";
+  });
+  card.addEventListener("pointerup", () => drag = false);
+})();
+
+function toggleFullScreen() {
+  const el = document.getElementById("sim-viewport");
+  const icon = document.getElementById("fs-icon");
+  const done = () => {
+    const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    icon.className = on ? "fa-solid fa-compress" : "fa-solid fa-expand";
+    setTimeout(resizeSim, 120);
+  };
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen).call(el).then(done).catch(done);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document).then(done).catch(done);
+  }
+  document.addEventListener("fullscreenchange", done);
+}
+
+function switchTab(name) {
+  document.getElementById("view-sim").classList.toggle("hidden", name !== "sim");
+  document.getElementById("view-quiz").classList.toggle("hidden", name !== "quiz");
+  document.getElementById("view-sim").classList.toggle("flex", name === "sim");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    const isSimBtn = b.id === "tab-sim" || (name === "sim" && b.getAttribute("onclick") === "switchTab('sim')");
+    const isQuizBtn = b.id === "tab-quiz" || (name === "quiz" && b.getAttribute("onclick") === "switchTab('quiz')");
+    if ((name === "sim" && isSimBtn) || (name === "quiz" && isQuizBtn)) b.classList.add("active");
+  });
+  if (name === "sim") setTimeout(resizeSim, 40);
+}
+
+function renderQuiz() {
+  const box = document.getElementById("quiz-box");
+  const res = document.getElementById("quiz-result");
+  if (quizIndex >= QUIZ.length) {
+    box.innerHTML = "";
+    const pct = Math.round((quizScore / QUIZ.length) * 100);
+    res.classList.remove("hidden");
+    res.innerHTML = `
+      <div class="text-slate-400 text-sm" data-keep>${t("score")}</div>
+      <div class="text-4xl font-extrabold text-cyan-300 mt-2">${quizScore} / ${QUIZ.length}</div>
+      <div class="text-2xl text-emerald-300 mt-1">${pct}%</div>
+      <button onclick="restartQuiz()" class="mt-6 px-6 py-3 rounded-xl bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold glow-cyan">${t("qRestart")}</button>
+    `;
+    return;
+  }
+  res.classList.add("hidden");
+  const item = QUIZ[quizIndex];
+  const answered = quizDone[quizIndex];
+  let opts = item.opts.map((k, i) => {
+    let cls = "quiz-opt w-full text-start px-4 py-3 rounded-xl border border-slate-600 bg-slate-800/50 hover:bg-slate-700 transition";
+    if (answered != null) {
+      if (i === item.ans) cls += " correct";
+      else if (i === answered && i !== item.ans) cls += " wrong";
+    }
+    return `<button class="${cls}" ${answered != null ? "disabled" : ""} onclick="answerQuiz(${i})">${String.fromCharCode(65 + i)}) ${t(k)}</button>`;
+  }).join("");
+  box.innerHTML = `
+    <div class="glass-panel rounded-2xl p-5 space-y-4">
+      <div class="text-xs text-slate-500">${quizIndex + 1} / ${QUIZ.length}</div>
+      <h3 class="text-lg font-semibold text-slate-100">${t(item.q)}</h3>
+      <div class="space-y-2">${opts}</div>
+      ${answered != null ? `<div class="text-sm rounded-xl p-3 ${answered === item.ans ? "bg-emerald-500/10 text-emerald-200" : "bg-red-500/10 text-red-200"}"><strong>${answered === item.ans ? t("correct") : t("wrong")}:</strong> ${t(item.exp)}</div>
+        <button onclick="nextQuiz()" class="px-5 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold">${t("qNext")}</button>` : ""}
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (quizDone[quizIndex] != null) return;
+  quizDone[quizIndex] = i;
+  if (i === QUIZ[quizIndex].ans) quizScore++;
+  renderQuiz();
+}
+function nextQuiz() { quizIndex++; renderQuiz(); }
+function restartQuiz() { quizIndex = 0; quizScore = 0; quizDone = []; renderQuiz(); }
+
+function bootIntro() {
+  const bar = document.getElementById("intro-bar");
+  const t0 = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - t0) / 5000);
+    bar.style.width = (p * 100) + "%";
+    if (p < 1) requestAnimationFrame(tick);
+    else {
+      const intro = document.getElementById("intro-screen");
+      intro.style.opacity = "0";
+      intro.style.transition = "opacity 0.6s ease";
+      setTimeout(() => intro.remove(), 650);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+window.addEventListener("resize", resizeSim);
+window.addEventListener("load", () => {
+  applyLanguage();
+  resizeSim();
+  bindZoomPan();
+  resetSim();
+  requestAnimationFrame(step);
+  bootIntro();
+});
+</script>
+</body>
+</html>
